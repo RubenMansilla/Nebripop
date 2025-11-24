@@ -89,3 +89,4 @@ async validateUser(email: string, password: string) {
     return { message: 'Logout correcto' };
   }
 }
+ 
