@@ -1,0 +1,284 @@
+/* =========================================================
+   RESET GLOBAL
+========================================================= */
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+body {
+  overflow-x: hidden; /* ← evita banda negra derecha */
+  background: #fdfdfd;
+  font-family: Arial, sans-serif;
+}
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL
+========================================================= */
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh; /* altura natural */
+}
+
+/* =========================================================
+   HEADER SUPERIOR
+========================================================= */
+
+.topbar {
+  width: 100%;
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid #ececec;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 25px;
+  box-sizing: border-box;   /* ← no sobresale */
+  overflow: hidden;         /* ← evita banda negra */
+}
+
+.logo-box {
+  font-size: 20px;
+  font-weight: 700;
+  color: #d4bfa2;
+}
+
+/* Centro del header */
+.topbar-center {
+  flex: 1;                   /* ocupa el espacio flexible */
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 450px;          /* límite exacto */
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 30px;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Lado derecho */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;            /* evita que se desborde */
+}
+
+.top-btn {
+  background: none;
+  border: 1px solid #ccc;
+  padding: 7px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+.sell-btn {
+  background: #d6c6b0;
+  border: none;
+  color: white;
+  padding: 7px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   SECCIÓN LOGIN (contenedor del card)
+========================================================= */
+
+.login-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 40px 20px;
+  box-sizing: border-box;  /* ← evita que sobresalga */
+}
+
+/* =========================================================
+   CARD DEL LOGIN
+========================================================= */
+
+.login-box {
+  width: 980px;
+  height: 520px;
+
+  background: white;
+  border-radius: 15px;
+
+  display: flex;
+  overflow: hidden;
+
+  /* sombra igual que la imagen */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ===== Panel izquierdo ===== */
+
+.login-left {
+  width: 35%;
+  background: #d6c6b0;
+  padding: 60px 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  color: white;
+}
+
+.brand-title {
+  font-size: 38px;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  margin-top: 10px;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+/* ===== Panel derecho ===== */
+
+.login-right {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+}
+
+.welcome-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* Inputs */
+
+.login-input {
+  width: 340px;
+  height: 46px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding-left: 10px;
+  margin-bottom: 12px;
+  outline: none;
+}
+
+/* CAPTCHA fake */
+
+.captcha-box {
+  width: 340px;
+  height: 80px;
+  border: 1px solid #dfdfdf;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin: 10px 0 15px 0;
+}
+
+.captcha-check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #555;
+  border-radius: 4px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.captcha-text {
+  margin-left: 10px;
+  font-size: 14px;
+}
+
+.captcha-img {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Link olvidar contraseña */
+
+.forgot-password {
+  font-size: 14px;
+  color: #c2a98a;
+  margin-bottom: 18px;
+  cursor: pointer;
+}
+
+/* Botón login */
+
+.login-btn {
+  width: 340px;
+  height: 50px;
+  background: #d6c6b0;
+  border: none;
+  border-radius: 10px;
+
+  color: white;
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   FOOTER debajo del card
+========================================================= */
+
+.privacy-footer {
+  margin-top: 25px;
+  font-size: 12px;
+  color: #444;
+  text-align: center;
+}
+
+.privacy-footer a {
+  color: #c2a98a;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .login-box {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .login-left,
+  .login-right {
+    width: 100%;
+    text-align: center;
+  }
+
+  .login-input,
+  .captcha-box,
+  .login-btn {
+    max-width: 100%;
+  }
+
+  .brand-title {
+    font-size: 32px;
+  }
+}
