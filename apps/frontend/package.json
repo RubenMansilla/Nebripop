@@ -13,11 +13,6 @@
     "axios": "^1.7.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-<<<<<<< HEAD
-    "react-google-recaptcha": "^3.1.0",
-    "react-router-dom": "^7.9.6",
-=======
->>>>>>> 885bb7ee3134581af63a8278cf4015f868ee7c94
     "react-toastify": "^10.0.6",
     "zustand": "^5.0.1"
   },

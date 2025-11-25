@@ -1,0 +1,90 @@
+/* Fondo oscuro */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Caja del pop-up */
+.popup-box {
+  width: 900px;
+  height: 520px;
+  background: white;
+  border-radius: 15px;
+  display: flex;
+  overflow: hidden;
+  animation: popup 0.25s ease-out;
+}
+
+@keyframes popup {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Lado izquierdo */
+.popup-left {
+  width: 35%;
+  background: #d6c6b0;
+  padding: 60px 40px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Lado derecho */
+.popup-right {
+  width: 65%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-input {
+  width: 340px;
+  height: 46px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding-left: 10px;
+  margin-bottom: 12px;
+}
+
+.forgot-password {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #c2a98a;
+  cursor: pointer;
+}
+
+.login-btn {
+  width: 340px;
+  height: 48px;
+  background: #d6c6b0;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+.register-text {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #444;
+}
+
+.register-link {
+  color: #c2a98a;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.register-link:hover {
+  text-decoration: underline;
+}

@@ -4,7 +4,12 @@ import "./Navbar.css";
 import logo from "../../assets/logos/nebripop.png";
 import searchIcon from "../../assets/iconos/buscar.png";
 
+// 👉 IMPORTACIÓN NECESARIA
+import { useLoginModal } from "../../context/LoginModalContext";
+
 export default function Navbar() {
+  const { openLogin } = useLoginModal(); // 👉 aquí obtenemos la función para abrir el popup
+
   const words = [
     "nintendo",
     "iPhone",
@@ -105,12 +110,17 @@ export default function Navbar() {
 
       {/* ZONA DERECHA */}
       <div className="nav-right">
-        <button className="btn-registro">Registrarte o Inicia sesión</button>
+
+        {/* 🔥 ESTE BOTÓN AHORA ABRE EL POPUP */}
+        <button className="btn-registro" onClick={openLogin}>
+          Registrarte o Inicia sesión
+        </button>
 
         <button className="btn-vender">
           Vender <span className="icon-plus">+</span>
         </button>
       </div>
+
     </nav>
   );
 }
