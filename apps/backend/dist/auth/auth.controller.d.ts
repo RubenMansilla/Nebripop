@@ -1,11 +1,19 @@
 import { AuthService } from './auth.service';
-import { CaptchaService } from './captcha.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 export declare class AuthController {
-    private readonly authService;
-    private readonly captchaService;
-    constructor(authService: AuthService, captchaService: CaptchaService);
-    login(body: any): Promise<{
-        message: string;
-        email: string;
+    private authService;
+    constructor(authService: AuthService);
+    register(data: RegisterDto): Promise<{
+        user: import("../users/users.entity").User;
+        token: string;
+    }>;
+    login(data: LoginDto): Promise<{
+        user: {
+            id: number;
+            fullName: string;
+            email: string;
+        };
+        token: string;
     }>;
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLoginModal } from "../../context/LoginModalContext";
+import { registerUser } from "../../api/auth.api";
 import "./RegisterPopup.css";
 
 interface RegisterPopupProps {
@@ -19,11 +20,14 @@ export default function RegisterPopup({ open, onClose }: RegisterPopupProps) {
     if (!open) return null;
 
     const goToLogin = () => {
-        onClose();    // cierra registro
-        openLogin();  // abre login
+        onClose();
+        openLogin();
     };
 
-    const passwordMatch = pass1 === pass2 && pass1.length >= 6;
+    // ---- VALIDACIONES ----
+    const bothFilled = pass1.length > 0 && pass2.length > 0;
+    const passTooShort = pass1.length > 0 && pass1.length < 6;
+    const passwordsEqual = pass1 === pass2 && pass1.length >= 6;
 
     return (
         <div className="popup-overlay" onClick={onClose}>
@@ -62,6 +66,7 @@ export default function RegisterPopup({ open, onClose }: RegisterPopupProps) {
                         type="password"
                         value={pass1}
                         onChange={(e) => setPass1(e.target.value)}
+                        autoComplete="new-password"
                     />
 
                     <input
@@ -70,27 +75,48 @@ export default function RegisterPopup({ open, onClose }: RegisterPopupProps) {
                         type="password"
                         value={pass2}
                         onChange={(e) => setPass2(e.target.value)}
+                        autoComplete="new-password"
                     />
 
-                    {/* Validación */}
-                    {pass1 && pass2 && (
+                    {/* Validación mensajes */}
+                    {bothFilled && (
                         <p
                             className="password-check"
-                            style={{ color: passwordMatch ? "green" : "red" }}
+                            style={{
+                                color: passwordsEqual ? "green" : "red",
+                            }}
                         >
-                            {passwordMatch
-                                ? "✔ Las contraseñas coinciden"
-                                : "✘ Las contraseñas no coinciden"}
+                            {passTooShort
+                                ? "✘ La contraseña debe tener al menos 6 caracteres"
+                                : passwordsEqual
+                                    ? "✔ Las contraseñas coinciden"
+                                    : "✘ Las contraseñas no coinciden"}
                         </p>
                     )}
 
                     <button
                         className="login-btn"
-                        disabled={!passwordMatch || !email || !fullName}
-                        style={{
-                            opacity: passwordMatch ? 1 : 0.6,
-                            cursor: passwordMatch ? "pointer" : "not-allowed",
-                            marginTop: "12px",
+                        disabled={!passwordsEqual || !email || !fullName}
+                        onClick={async () => {
+                            try {
+                                const res = await registerUser({
+                                    fullName,
+                                    email,
+                                    password: pass1,
+                                });
+
+                                console.log("Usuario registrado:", res);
+
+                                localStorage.setItem("token", res.token);
+
+                                alert("Cuenta creada con éxito");
+
+                                onClose();
+                                openLogin();
+
+                            } catch (err: any) {
+                                alert(err.message);
+                            }
                         }}
                     >
                         Crear cuenta

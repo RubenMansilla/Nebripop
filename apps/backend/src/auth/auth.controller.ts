@@ -1,32 +1,20 @@
-import {
-  Body,
-  Controller,
-  Post,
-  UnauthorizedException,
-} from '@nestjs/common';
-
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CaptchaService } from './captcha.service';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly captchaService: CaptchaService,
-  ) {}
+    constructor(private authService: AuthService) { }
 
-  @Post('login')
-  async login(@Body() body: any) {
-    const { email, password, captcha } = body;
-
-    // 1. Verificar CAPTCHA
-    const isValidCaptcha = await this.captchaService.verifyToken(captcha);
-
-    if (!isValidCaptcha) {
-      throw new UnauthorizedException('Captcha inválido');
+    @Post('register')
+    register(@Body() data: RegisterDto) {
+        return this.authService.register(data);
     }
 
-    // 2. Simulación login correcto
-    return this.authService.login(email, password);
-  }
+    @Post('login')
+    login(@Body() data: LoginDto) {
+        return this.authService.login(data);
+    }
+
 }
