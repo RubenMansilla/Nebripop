@@ -3,8 +3,8 @@ import LoginPopup from "../components/LoginPopup/LoginPopup";
 import RegisterPopup from "../components/RegisterPopup/RegisterPopup";
 
 const LoginContext = createContext({
-  openLogin: () => {},
-  openRegister: () => {},
+  openLogin: () => { },
+  openRegister: () => { },
 });
 
 export function useLoginModal() {
