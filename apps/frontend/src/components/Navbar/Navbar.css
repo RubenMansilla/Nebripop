@@ -1,0 +1,194 @@
+/* FUENTE INTER */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --beige: #d2b990;
+  --gris-borde: #bdbdbd;
+  --gris-texto: #5a5959;
+  --gris-claro: #9a9a9a;
+}
+
+/* ======== NAVBAR GLOBAL ======== */
+.navbar {
+  width: 80%;                      /* TU ESTRUCTURA EXACTA */
+  height: 82px;
+  margin: auto;                    /* CENTRADO */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* espacio lógico */
+  background: white;
+  font-family: "Inter", sans-serif;
+  gap: 18px;
+}
+
+/* ======== ZONAS (como tu ejemplo global/logo/buscador/btn1/btn2) ======== */
+.nav-left {
+  width: 16%;
+  display: flex;
+  align-items: center;
+}
+
+.nav-center {
+  width: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-right {
+  width: 36%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+
+/* ========= LOGO ========= */
+.nav-logo img {
+  height: 38px;                    /* tamaño perfecto */
+  width: auto;
+  object-fit: contain;
+}
+
+/* ========= BUSCADOR ========= */
+.search-wrap {
+  position: relative;
+  width: 90%;
+}
+
+.search {
+  width: 100%;
+  padding: 14px 20px 14px 52px;
+  border: 2px solid var(--gris-borde);
+  border-radius: 14px;
+  background: white;
+  font-size: 18px;
+  font-family: "Inter";
+  outline: none;
+  color: var(--gris-texto);
+  transition: border-color .25s ease, box-shadow .25s ease, transform .08s ease;
+}
+
+.search:focus {
+  border-color: var(--beige);
+  box-shadow: 0 6px 18px rgba(210,185,144,.25);
+  transform: scale(1.01);
+}
+
+.icon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+}
+
+/* Placeholder dinámico */
+.fake-placeholder {
+  position: absolute;
+  left: 52px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+  pointer-events: none;
+  font-size: 18px;
+  color: var(--gris-claro);
+  white-space: nowrap;
+  transition: opacity .2s ease;
+}
+
+.fake-placeholder .buscar {
+  color: var(--gris-claro);
+}
+
+.fake-placeholder b {
+  color: var(--gris-texto);
+  font-weight: 600;
+}
+
+.search:not(:placeholder-shown) ~ .fake-placeholder,
+.search:focus:not(:placeholder-shown) ~ .fake-placeholder {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.fade {
+  animation: fadeWord .45s ease;
+}
+
+@keyframes fadeWord {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ========= BOTONES ========= */
+.btn-registro {
+  padding: 12px 26px;
+  border: 2px solid var(--beige);
+  border-radius: 12px;
+  font-size: 17px;
+  background: white;
+  color: var(--gris-texto);
+  cursor: pointer;
+  transition: .25s ease;
+}
+
+.btn-registro:hover {
+  background: var(--beige);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* ===== BOTÓN VENDER (idéntico al ejemplo que pasaste) ===== */
+.btn-vender {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border: 2px solid var(--beige);
+  border-radius: 10px;
+  background-color: white;
+  color: var(--gris-texto);
+  font-size: 17px;
+  font-family: "Inter";
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* icono redondo */
+.btn-vender .icon-plus {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--beige);
+  border-radius: 50%;
+  font-size: 18px;
+  color: var(--beige);
+  background: white;
+  transition: all 0.3s ease;
+}
+
+/* Hover idéntico */
+.btn-vender:hover {
+  background-color: var(--beige);
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-vender:hover .icon-plus {
+  background-color: white;
+  color: var(--beige);
+  transform: rotate(90deg);
+}
+
+
+.navbar-line {
+  width: 100vw;
+  height: 1px;
+  background: #e8e8e8;
+}

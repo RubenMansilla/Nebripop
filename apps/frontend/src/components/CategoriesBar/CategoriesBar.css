@@ -1,0 +1,56 @@
+.category-bar {
+  width: 80%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 15px 5px;
+  background: white;
+  font-family: "Inter", sans-serif;
+}
+
+/* botón hamburguesa */
+.menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 8px 12px;
+}
+.cat-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.hamb-line {
+  width: 20px;
+  height: 2px;
+  background: #d2b990;
+  border-radius: 2px;
+}
+
+.menu-text {
+  color: #5a5959;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* categorías horizontales */
+.cat-links {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+}
+
+.cat-item {
+  color: #c7a87b;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cat-item:hover {
+  color: #a58866;
+}
