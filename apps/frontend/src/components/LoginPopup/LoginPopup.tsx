@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useLoginModal } from "../../context/LoginModalContext";
 import { loginUser } from "../../api/auth.api";
+import { AuthContext } from "../../context/AuthContext";
 import "./LoginPopup.css";
 
 export default function LoginPopup({
@@ -13,6 +14,7 @@ export default function LoginPopup({
 }) {
     const [captchaValue, setCaptchaValue] = useState<string | null>(null);
     const { openRegister } = useLoginModal();
+    const { login } = useContext(AuthContext);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -60,7 +62,6 @@ export default function LoginPopup({
                         onChange={(value: string | null) => setCaptchaValue(value)}
                     />
 
-
                     <a className="forgot-password">¿Has olvidado tu contraseña?</a>
 
                     <button
@@ -75,12 +76,12 @@ export default function LoginPopup({
 
                                 console.log("Usuario logueado:", res);
 
-                                // Guardar token
-                                localStorage.setItem("token", res.token);
+                                // GUARDAR SESIÓN GLOBAL
+                                login(res.user, res.token);
 
                                 alert("Inicio de sesión correcto");
-
                                 onClose();
+
                             } catch (err: any) {
                                 alert(err.message);
                             }

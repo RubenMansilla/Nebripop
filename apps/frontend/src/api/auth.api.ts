@@ -23,9 +23,10 @@ export async function loginUser(data: { email: string; password: string }) {
 
     if (!res.ok) {
         const error = await res.json().catch(() => null);
-        throw new Error(error?.message || "Email o contraseña incorrectos");
+        throw new Error(error?.message || "Credenciales incorrectas");
     }
 
-    return res.json(); // { user, token }
+    return res.json();
 }
+
 

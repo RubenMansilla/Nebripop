@@ -1,19 +1,36 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LoginModalProvider } from "./context/LoginModalContext";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
-import Home from "./pages/Home/Home.js";
+import Profile from "./pages/Profile/Me";
+import Home from "./pages/Home/Home";
 
 export default function App() {
     return (
-        <LoginModalProvider>
-            <BrowserRouter>
-                <Routes>
+        <AuthProvider>
+            <LoginModalProvider>
+                <BrowserRouter>
 
-                    {/* HOME */}
-                    <Route path="/" element={<Home />} />
+                    <Routes>
 
-                </Routes>
-            </BrowserRouter>
-        </LoginModalProvider>
+                        {/* Rutas Públicas */}
+                        <Route path="/" element={<Home />} />
+
+                        {/* Rutas Protegidas */}
+                        <Route
+                            path="/profile"
+                            element={
+                                <ProtectedRoute>
+                                    <Profile />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                    </Routes>
+
+                </BrowserRouter>
+            </LoginModalProvider>
+        </AuthProvider>
     );
 }
