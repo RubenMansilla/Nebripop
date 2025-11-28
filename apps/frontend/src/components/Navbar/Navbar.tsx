@@ -116,7 +116,7 @@ export default function Navbar() {
             {/* ZONA DERECHA */}
             <div className="nav-right">
 
-                {/* 🔥 CAMBIO: si hay sesión, mostramos un botón diferente */}
+                {/* si hay sesión, muestra un botón diferente */}
                 {user ? (
                     <>
                         <button className="btn-registro sesion-activa">

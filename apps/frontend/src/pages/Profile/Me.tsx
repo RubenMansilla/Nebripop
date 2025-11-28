@@ -1,7 +1,12 @@
-import React from 'react'
+import Navbar from '../../components/Navbar/Navbar'
+import CategoriesBar from '../../components/CategoriesBar/CategoriesBar'
 
 export default function Me() {
     return (
-        <div>Buenas tardes</div>
+        <>
+            <Navbar />
+            <div className="navbar-line"></div>
+            <CategoriesBar />
+        </>
     )
 }
