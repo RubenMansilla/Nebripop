@@ -12,7 +12,7 @@ export default function CategoriesBar() {
     "Moda",
     "Coleccionismo",
     "Arte",
-    "Marcostas",
+    "Mascotas",
     "Bricolaje",
     "Electrodomésticos",
   ];
