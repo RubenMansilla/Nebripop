@@ -1,0 +1,52 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+}
+
+/* Scrollbar */
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #b7bec3;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #9aa1a6;
+}
+
+.sidebar-container {
+    width: 100%;
+    margin: auto;
+    height: calc(100vh - 82px - 72px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.sidebar-right {
+    background-color: rgba(0, 0, 255, 0.127);
+    width: 85%;
+    height: 100%;
+}
+
+/* Estilos tablet y móvil */
+@media (max-width: 990px) {
+
+    .sidebar-container {
+        width: 100%;
+    }
+
+    .sidebar-right {
+        display: none;
+    }
+
+}

@@ -4,12 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { User } from './users/users.entity';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,  // permite usar process.env en todo Nest
+      isGlobal: true,
     }),
 
     TypeOrmModule.forRootAsync({
@@ -22,7 +21,10 @@ import { User } from './users/users.entity';
         autoLoadEntities: true,
         synchronize: true,
 
-        ssl: false,
+        // 🔥 NECESARIO para Supabase
+        ssl: {
+          rejectUnauthorized: false,
+        },
       }),
     }),
 
