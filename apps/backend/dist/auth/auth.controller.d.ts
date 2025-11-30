@@ -5,7 +5,14 @@ export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
     register(data: RegisterDto): Promise<{
-        user: import("../users/users.entity").User;
+        user: {
+            id: number;
+            fullName: string;
+            email: string;
+            createdAt: Date;
+            profilePicture: string;
+            walletBalance: number;
+        };
         token: string;
     }>;
     login(data: LoginDto): Promise<{
@@ -13,6 +20,9 @@ export declare class AuthController {
             id: number;
             fullName: string;
             email: string;
+            createdAt: Date;
+            profilePicture: string;
+            walletBalance: number;
         };
         token: string;
     }>;

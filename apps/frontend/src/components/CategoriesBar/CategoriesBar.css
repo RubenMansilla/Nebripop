@@ -1,5 +1,5 @@
 .category-bar {
-  width: 80%;
+  width: 100%;
   margin: auto;
   display: flex;
   align-items: center;
@@ -8,6 +8,12 @@
   background: white;
   font-family: "Inter", sans-serif;
   height: 70px;
+  /*Fijar barra arriba*/
+  position: sticky;
+  top: 82px;
+  z-index: 999;
+  padding-inline: 10%;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 /* botón hamburguesa */

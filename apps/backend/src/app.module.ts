@@ -19,7 +19,7 @@ import { UsersModule } from './users/users.module';
         url: config.get<string>('DATABASE_URL'),
 
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
 
         // 🔥 NECESARIO para Supabase
         ssl: {

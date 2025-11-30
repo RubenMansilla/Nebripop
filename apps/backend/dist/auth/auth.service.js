@@ -47,7 +47,6 @@ const common_1 = require("@nestjs/common");
 const users_service_1 = require("../users/users.service");
 const bcrypt = __importStar(require("bcrypt"));
 const jwt_1 = require("@nestjs/jwt");
-const exceptions_1 = require("@nestjs/common/exceptions");
 let AuthService = class AuthService {
     usersService;
     jwt;
@@ -57,31 +56,37 @@ let AuthService = class AuthService {
     }
     async register(data) {
         const existing = await this.usersService.findByEmail(data.email);
-        if (existing)
-            throw new common_1.ConflictException('Email already registered');
-        const hashedPass = await bcrypt.hash(data.password, 10);
+        if (existing) {
+            throw new common_1.ConflictException('Email ya está registrado');
+        }
+        const passwordHash = await bcrypt.hash(data.password, 10);
         const user = await this.usersService.create({
-            ...data,
-            password: hashedPass,
+            fullName: data.fullName,
+            email: data.email,
+            passwordHash,
         });
-        const token = this.jwt.sign({ id: user.id, email: user.email });
-        return { user, token };
+        const token = this.jwt.sign({
+            id: user.id,
+            email: user.email,
+        });
+        const { passwordHash: omit, ...safeUser } = user;
+        return { user: safeUser, token };
     }
     async login(data) {
         const user = await this.usersService.findByEmail(data.email);
         if (!user) {
-            throw new exceptions_1.UnauthorizedException('Email o contraseña incorrectos');
+            throw new common_1.UnauthorizedException('Email o contraseña incorrectos');
         }
-        const match = await bcrypt.compare(data.password, user.password);
-        if (!match) {
-            throw new exceptions_1.UnauthorizedException('Email o contraseña incorrectos');
+        const valid = await bcrypt.compare(data.password, user.passwordHash);
+        if (!valid) {
+            throw new common_1.UnauthorizedException('Email o contraseña incorrectos');
         }
         const token = this.jwt.sign({
             id: user.id,
             email: user.email,
         });
-        const { password, ...rest } = user;
-        return { user: rest, token };
+        const { passwordHash: omit, ...safeUser } = user;
+        return { user: safeUser, token };
     }
 };
 exports.AuthService = AuthService;

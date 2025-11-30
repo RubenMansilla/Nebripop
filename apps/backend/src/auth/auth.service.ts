@@ -1,10 +1,9 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class AuthService {
@@ -14,35 +13,43 @@ export class AuthService {
     ) { }
 
     async register(data: RegisterDto) {
-        // comprobar si email ya existe
+        // Verificar si el email ya existe
         const existing = await this.usersService.findByEmail(data.email);
-        if (existing) throw new ConflictException('Email already registered');
+        if (existing) {
+            throw new ConflictException('Email ya está registrado');
+        }
 
-        // Hash de contraseña
-        const hashedPass = await bcrypt.hash(data.password, 10);
+        // Encriptar contraseña
+        const passwordHash = await bcrypt.hash(data.password, 10);
 
-        // Crear usuario en DB
+        // Crear usuario
         const user = await this.usersService.create({
-            ...data,
-            password: hashedPass,
+            fullName: data.fullName,
+            email: data.email,
+            passwordHash,
         });
 
-        // Crear token JWT
-        const token = this.jwt.sign({ id: user.id, email: user.email });
+        // Crear token
+        const token = this.jwt.sign({
+            id: user.id,
+            email: user.email,
+        });
 
-        return { user, token };
+        // Ocultar passwordHash
+        const { passwordHash: omit, ...safeUser } = user;
+
+        return { user: safeUser, token };
     }
-    async login(data: LoginDto) {
 
-        // Buscar usuario por email
+    async login(data: LoginDto) {
         const user = await this.usersService.findByEmail(data.email);
         if (!user) {
             throw new UnauthorizedException('Email o contraseña incorrectos');
         }
 
         // Comparar contraseña
-        const match = await bcrypt.compare(data.password, user.password);
-        if (!match) {
+        const valid = await bcrypt.compare(data.password, user.passwordHash);
+        if (!valid) {
             throw new UnauthorizedException('Email o contraseña incorrectos');
         }
 
@@ -52,10 +59,9 @@ export class AuthService {
             email: user.email,
         });
 
-        // Devolver user sin password
-        const { password, ...rest } = user;
+        // Ocultar passwordHash
+        const { passwordHash: omit, ...safeUser } = user;
 
-        return { user: rest, token };
+        return { user: safeUser, token };
     }
-
 }

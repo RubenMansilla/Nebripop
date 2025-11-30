@@ -10,15 +10,23 @@
 
 /* ======== NAVBAR GLOBAL ======== */
 .navbar {
-  width: 80%;                      /* TU ESTRUCTURA EXACTA */
+  width: 100%;
+  /* TU ESTRUCTURA EXACTA */
   height: 82px;
-  margin: auto;                    /* CENTRADO */
+  margin: auto;
+  /* CENTRADO */
   display: flex;
   align-items: center;
-  justify-content: space-between;  /* espacio lógico */
+  justify-content: space-between;
+  /* espacio lógico */
   background: white;
   font-family: "Inter", sans-serif;
   gap: 18px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding-inline: 10%;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 /* ======== ZONAS (como tu ejemplo global/logo/buscador/btn1/btn2) ======== */
@@ -46,7 +54,8 @@
 
 /* ========= LOGO ========= */
 .nav-logo img {
-  height: 38px;                    /* tamaño perfecto */
+  height: 38px;
+  /* tamaño perfecto */
   width: auto;
   object-fit: contain;
 }
@@ -72,7 +81,7 @@
 
 .search:focus {
   border-color: var(--beige);
-  box-shadow: 0 6px 18px rgba(210,185,144,.25);
+  box-shadow: 0 6px 18px rgba(210, 185, 144, .25);
   transform: scale(1.01);
 }
 
@@ -109,8 +118,8 @@
   font-weight: 600;
 }
 
-.search:not(:placeholder-shown) ~ .fake-placeholder,
-.search:focus:not(:placeholder-shown) ~ .fake-placeholder {
+.search:not(:placeholder-shown)~.fake-placeholder,
+.search:focus:not(:placeholder-shown)~.fake-placeholder {
   opacity: 0;
   visibility: hidden;
 }
@@ -120,8 +129,15 @@
 }
 
 @keyframes fadeWord {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ========= BOTONES ========= */
@@ -188,7 +204,5 @@
 
 
 .navbar-line {
-  width: 100vw;
-  height: 1px;
-  background: #e8e8e8;
+  display: none;
 }

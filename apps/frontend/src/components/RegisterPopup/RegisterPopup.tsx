@@ -107,7 +107,9 @@ export default function RegisterPopup({ open, onClose }: RegisterPopupProps) {
 
                                 console.log("Usuario registrado:", res);
 
+                                localStorage.setItem("user", JSON.stringify(res.user));
                                 localStorage.setItem("token", res.token);
+
 
                                 alert("Cuenta creada con éxito");
 

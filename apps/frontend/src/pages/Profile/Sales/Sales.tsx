@@ -10,7 +10,9 @@ export default function Sales() {
             <div className="navbar-line"></div>
             <CategoriesBar />
             <section className='sidebar-container'>
-                <ProfileSideBar />
+                <div className='hide-left-sidebar'>
+                    <ProfileSideBar />
+                </div>
                 <div className='sidebar-right'>
                     <div className='sidebar-content'>
                     </div>

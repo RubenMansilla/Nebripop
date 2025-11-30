@@ -32,8 +32,14 @@
     align-items: flex-start;
 }
 
-.sidebar-right {
-    background-color: rgba(0, 0, 255, 0.127);
+.show-left-sidebar {
+    width: 15%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.sidebar-right-me {
+    border: 1px solid #e0e0e0;
     width: 85%;
     height: 100%;
 }
@@ -41,11 +47,23 @@
 /* Estilos tablet y móvil */
 @media (max-width: 990px) {
 
+    .show-left-sidebar {
+        width: 100%;
+        height: auto;
+        background: #f4f5f7;
+        padding: 0;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding-block: 10px;
+    }
+
     .sidebar-container {
         width: 100%;
     }
 
-    .sidebar-right {
+    .sidebar-right-me {
         display: none;
     }
 

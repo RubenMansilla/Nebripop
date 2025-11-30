@@ -1,12 +1,15 @@
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
+
 interface User {
     id: number;
     fullName: string;
     email: string;
+    createdAt: string;
+    profilePicture?: string;
+    walletBalance?: number;
 }
-
 interface AuthContextType {
     user: User | null;
     token: string | null;

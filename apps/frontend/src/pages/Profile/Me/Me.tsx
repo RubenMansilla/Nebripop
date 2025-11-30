@@ -11,10 +11,10 @@ export default function Me() {
             <div className="navbar-line"></div>
             <CategoriesBar />
             <section className='sidebar-container'>
-                <ProfileSideBar />
-                <div className='sidebar-right'>
-                    <div className='sidebar-content'>
-                    </div>
+                <div className='show-left-sidebar'>
+                    <ProfileSideBar />
+                </div>
+                <div className='sidebar-right-me'>
                 </div>
             </section>
         </>
