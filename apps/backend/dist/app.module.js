@@ -28,8 +28,10 @@ exports.AppModule = AppModule = __decorate([
                     type: 'postgres',
                     url: config.get('DATABASE_URL'),
                     autoLoadEntities: true,
-                    synchronize: true,
-                    ssl: false,
+                    synchronize: false,
+                    ssl: {
+                        rejectUnauthorized: false,
+                    },
                 }),
             }),
             users_module_1.UsersModule,

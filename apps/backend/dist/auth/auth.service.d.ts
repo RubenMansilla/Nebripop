@@ -7,7 +7,14 @@ export declare class AuthService {
     private jwt;
     constructor(usersService: UsersService, jwt: JwtService);
     register(data: RegisterDto): Promise<{
-        user: import("../users/users.entity").User;
+        user: {
+            id: number;
+            fullName: string;
+            email: string;
+            createdAt: Date;
+            profilePicture: string;
+            walletBalance: number;
+        };
         token: string;
     }>;
     login(data: LoginDto): Promise<{
@@ -15,6 +22,9 @@ export declare class AuthService {
             id: number;
             fullName: string;
             email: string;
+            createdAt: Date;
+            profilePicture: string;
+            walletBalance: number;
         };
         token: string;
     }>;

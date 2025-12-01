@@ -5,6 +5,7 @@ import logo from "../../assets/logos/nebripop.png";
 import searchIcon from "../../assets/iconos/buscar.png";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 
 // 👉 IMPORTACIÓN NECESARIA
@@ -12,6 +13,8 @@ import { useLoginModal } from "../../context/LoginModalContext";
 
 export default function Navbar() {
     const { openLogin } = useLoginModal(); // 👉 aquí obtenemos la función para abrir el popup
+
+    const navigate = useNavigate();
 
     const words = [
         "nintendo",
@@ -89,7 +92,7 @@ export default function Navbar() {
 
             {/* ZONA IZQUIERDA */}
             <div className="nav-left">
-                <div className="nav-logo">
+                <div className="nav-logo" onClick={() => navigate("/")}>
                     <img src={logo} alt="nebripop" />
                 </div>
             </div>
@@ -119,12 +122,12 @@ export default function Navbar() {
                 {/* si hay sesión, muestra un botón diferente */}
                 {user ? (
                     <>
-                        <button className="btn-registro sesion-activa">
+                        <button className="btn-registro sesion-activa" onClick={() => navigate(`/profile/info`)}>
                             Bienvenido {user.fullName.split(" ")[0]}
                         </button>
 
-                        <button className="btn-vender" onClick={logout}>
-                            Cerrar sesión
+                        <button className="btn-vender">
+                            Vender <span className="icon-plus">+</span>
                         </button>
                     </>
                 ) : (
