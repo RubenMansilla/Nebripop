@@ -13,6 +13,8 @@ export class AuthService {
     ) { }
 
     async register(data: RegisterDto) {
+        console.log("ENV JWT_SECRET (auth.service register):", process.env.JWT_SECRET);
+
         // Verificar si el email ya existe
         const existing = await this.usersService.findByEmail(data.email);
         if (existing) {
@@ -42,6 +44,8 @@ export class AuthService {
     }
 
     async login(data: LoginDto) {
+        console.log("ENV JWT_SECRET (auth.service login):", process.env.JWT_SECRET);
+
         const user = await this.usersService.findByEmail(data.email);
         if (!user) {
             throw new UnauthorizedException('Email o contraseña incorrectos');

@@ -4,6 +4,8 @@ export declare class User {
     email: string;
     passwordHash: string;
     createdAt: Date;
+    birthDate: string | null;
+    gender: string | null;
     profilePicture: string;
     walletBalance: number;
 }

@@ -55,6 +55,7 @@ let AuthService = class AuthService {
         this.jwt = jwt;
     }
     async register(data) {
+        console.log("ENV JWT_SECRET (auth.service register):", process.env.JWT_SECRET);
         const existing = await this.usersService.findByEmail(data.email);
         if (existing) {
             throw new common_1.ConflictException('Email ya está registrado');
@@ -73,6 +74,7 @@ let AuthService = class AuthService {
         return { user: safeUser, token };
     }
     async login(data) {
+        console.log("ENV JWT_SECRET (auth.service login):", process.env.JWT_SECRET);
         const user = await this.usersService.findByEmail(data.email);
         if (!user) {
             throw new common_1.UnauthorizedException('Email o contraseña incorrectos');

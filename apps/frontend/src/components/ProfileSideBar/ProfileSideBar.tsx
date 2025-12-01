@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import proflipePic from "../../assets/logos/grefg.png";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import './ProfileSideBar.css';
@@ -10,12 +9,14 @@ export default function ProfileSideBar() {
     const location = useLocation();
     const { user } = useContext(AuthContext);
 
+    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+
     if (!user) return null;
 
     const year = new Date(user.createdAt).getFullYear();
 
     // 🔥 Foto del usuario (o la que ya tienes)
-    const imageSrc = user.profilePicture || proflipePic;
+    const imageSrc = user.profilePicture || defaultPic;
 
     return (
         <>
