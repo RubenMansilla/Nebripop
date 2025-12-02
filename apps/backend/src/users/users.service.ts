@@ -26,13 +26,13 @@ export class UsersService {
         return this.repo.findOne({ where: { email } });
     }
 
-    // 🔥 Actualización parcial de datos
+    // Actualización parcial de datos
     async updateUser(id: number, data: Partial<User>) {
         await this.repo.update(id, data);
         return this.repo.findOne({ where: { id } });
     }
 
-    // 🔥 Subir imagen y guardar URL pública
+    // Subir imagen y guardar URL pública
     async updateProfilePicture(id: number, file: Express.Multer.File) {
         const ext = file.originalname.split('.').pop();
         const fileName = `user_${id}_${Date.now()}.${ext}`;

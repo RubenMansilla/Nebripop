@@ -1,13 +1,13 @@
 .hide-left-sidebar {
     display: block;
     height: 100%;
-    width: 15%;
+    width: 16%;
     min-width: 200px;
     overflow-y: auto;
 }
 
 .sidebar-right {
-    width: 85%;
+    width: 84%;
     height: 100%;
     /* background-color: #f4f5f7; */
     display: flex;

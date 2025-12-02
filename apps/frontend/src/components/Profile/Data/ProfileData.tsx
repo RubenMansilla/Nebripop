@@ -34,32 +34,6 @@ export default function ProfileData() {
         setPreview(tempUrl);
     };
 
-    const handleSavePublic = async () => {
-        try {
-            // 1️⃣ Actualizar nombre
-            const updated = await updateUser({ fullName: name }, token!);
-            setUser(updated);
-
-            // 2️⃣ Subir imagen si existe
-            if (selectedFileRef.current) {
-                setIsUploading(true); // 🚀 Evita que el preview vuelva a la foto antigua
-
-                const updatedUser = await uploadProfilePicture(
-                    selectedFileRef.current,
-                    token!
-                );
-
-                setUser(updatedUser);
-                setPreview(updatedUser.profilePicture);
-
-                setIsUploading(false);
-            }
-
-        } catch (err) {
-            console.error("Error actualizando perfil:", err);
-        }
-    };
-
     useEffect(() => {
         if (!isUploading) {
             setPreview(user?.profilePicture || defaultPic);
@@ -67,44 +41,71 @@ export default function ProfileData() {
     }, [user, isUploading]);
 
 
-    const handleSavePersonal = async () => {
+    const handleSave = async () => {
         try {
-            const body = { email, birthDate, gender };
+            // 1) Actualizar datos públicos + personales
+            const body = {
+                fullName: name,
+                email,
+                birthDate,
+                gender,
+            };
 
-            const updated = await updateUser(body, token!);
-            setUser(updated);
+            const updatedUser = await updateUser(body, token!);
+            setUser(updatedUser);
+
+            // 2) Subir foto si existe
+            if (selectedFileRef.current) {
+                setIsUploading(true);
+
+                const updatedPicUser = await uploadProfilePicture(
+                    selectedFileRef.current,
+                    token!
+                );
+
+                setUser(updatedPicUser);
+                setPreview(updatedPicUser.profilePicture);
+
+                setIsUploading(false);
+            }
 
         } catch (err) {
-            console.error("Error actualizando datos personales:", err);
+            console.error("Error guardando datos:", err);
         }
     };
 
-    console.log("USER EN CONTEXTO:", user);
-
     return (
         <>
+            {/*TODO: mensajes de error y responsive */}
             {/* --- INFORMACIÓN PÚBLICA --- */}
             <div className="profile-info-container">
-                <div className="title-section">
-                    <h3>Información pública</h3>
-                </div>
-
                 <div className="public-info-content">
+                    <div className="title-section">
+                        <h3>Información pública</h3>
+                    </div>
                     <div className="profile-photo-section">
-                        <img src={preview} className="profile-photo" />
-                        <div>
-                            <button
-                                className="change-photo-btn"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                Cambiar foto
-                            </button>
-                            <p className="photo-hint">
-                                Formatos admitidos: .jpg y .png (máx. 50 MB)
-                            </p>
+                        <div className="photo-label">
+                            <label>Foto de perfil</label>
+                        </div>
+                        <div className="photo-actions">
+                            <div className="photo-preview">
+                                <img src={preview} className="profile-photo" />
+                            </div>
+                            <div className="photo-buttons">
+                                <div className="change-photo-btn-container">
+                                    <button
+                                        className="change-photo-btn"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    >
+                                        Cambiar foto
+                                    </button>
+                                </div>
+                                <p className="photo-hint">
+                                    Formatos admitidos: .jpg y .png (máx. 50 MB)
+                                </p>
+                            </div>
                         </div>
                     </div>
-
                     <input
                         type="file"
                         accept="image/*"
@@ -112,7 +113,6 @@ export default function ProfileData() {
                         style={{ display: "none" }}
                         onChange={handleFileChange}
                     />
-
                     <div className="input-group">
                         <label>Nombre</label>
                         <input
@@ -121,20 +121,13 @@ export default function ProfileData() {
                             onChange={(e) => setName(e.target.value)}
                         />
                     </div>
-
-                    <button className="save-btn" onClick={handleSavePublic}>
-                        Guardar
-                    </button>
-                </div>
-            </div>
-
-            {/* --- INFORMACIÓN PERSONAL --- */}
-            <div className="profile-info-container">
-                <div className="title-section">
-                    <h3>Información personal</h3>
                 </div>
 
+                {/* --- INFORMACIÓN PERSONAL --- */}
                 <div className="personal-info-content">
+                    <div className="title-section">
+                        <h3>Información personal</h3>
+                    </div>
                     {/* Fecha */}
                     <div className="input-group">
                         <label>Fecha de nacimiento</label>
@@ -173,10 +166,11 @@ export default function ProfileData() {
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
-
-                    <button className="save-btn" onClick={handleSavePersonal}>
-                        Guardar
-                    </button>
+                    <div className="save-btn-container">
+                        <button className="save-btn" onClick={handleSave} disabled={isUploading}>
+                            Guardar
+                        </button>
+                    </div>
                 </div>
             </div>
         </>

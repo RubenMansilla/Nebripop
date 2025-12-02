@@ -15,7 +15,7 @@ export default function ProfileSideBar() {
 
     const year = new Date(user.createdAt).getFullYear();
 
-    // 🔥 Foto del usuario (o la que ya tienes)
+    // Foto del usuario o por defecto en caso de no tener
     const imageSrc = user.profilePicture || defaultPic;
 
     return (

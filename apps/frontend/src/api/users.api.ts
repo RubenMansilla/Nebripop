@@ -1,5 +1,3 @@
-// services/userService.ts
-
 export async function updateUser(data: any, token: string) {
     const res = await fetch("http://localhost:3001/users/update", {
         method: "PATCH",

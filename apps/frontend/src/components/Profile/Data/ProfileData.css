@@ -2,13 +2,20 @@
     border: 1.5px solid var(--beige);
     width: 100%;
     border-radius: 12px;
-    padding: 24px 120px;
-    margin-top: 20px;
+    padding: 35px 120px;
+    margin-top: 10px;
+    display: flex;
+    gap: 70px;
+    flex-wrap: wrap;
+}
+
+.title-section {
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 /* Título */
 .title-section h3 {
-    margin-bottom: 30px;
     font-size: 16px;
     font-weight: 700;
 }
@@ -17,19 +24,46 @@
 .public-info-content,
 .personal-info-content {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 28px;
-    padding-inline: 60px;
     justify-content: center;
     align-items: center;
+    width: 100%;
 }
 
 /* FOTO Y BOTÓN */
 .profile-photo-section {
     display: flex;
     align-items: center;
-    gap: 25px;
-    width: 60%;
+    gap: 80px;
+    width: 80%;
+}
+
+.photo-label {
+    width: 200px;
+    min-width: 150px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+.photo-actions {
+    width: fit-content;
+    display: flex;
+    gap: 20px;
+}
+
+.photo-preview {
+    width: fit-content;
+}
+
+.photo-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .profile-photo {
@@ -39,13 +73,17 @@
     object-fit: cover;
 }
 
+.change-photo-btn-container {
+    width: 100%;
+}
+
 .change-photo-btn {
     background-color: transparent;
-    border: 1px solid var(--beige);
     padding: 12px 20px;
     border-radius: 12px;
     font-size: 14px;
     cursor: pointer;
+    border: 1px solid var(--beige);
     transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
 }
 
@@ -60,56 +98,85 @@
 }
 
 /* INPUTS */
+/* GRUPOS DE INPUTS */
 .input-group {
     display: flex;
-    width: 60%;
     align-items: center;
-    gap: 60px;
+    width: 80%;
+    gap: 80px;
 }
 
+/* LABELS ALINEADOS A LA DERECHA */
 .input-group label {
+    width: 200px;
+    min-width: 150px;
+    text-align: right;
     font-size: 15px;
-    color: #000000;
+    color: #333;
+    font-weight: 500;
 }
 
+/* INPUT NORMAL */
 .input-group input {
     flex: 1;
-    padding: 12px 14px;
+    padding: 14px 12px;
     border: 1px solid #dedfe0;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 10px;
+    font-size: 16px;
 }
 
 .input-group input:focus {
+    border-color: var(--beige);
     outline: none;
-    box-shadow: 0 0 0 2px var(--beige);
-    border-color: #d6c9b4;
+    box-shadow: 0 0 0 2px #e8ddcf;
 }
 
-/* SEXO */
 .gender-options {
+    flex: 1;
     display: flex;
-    gap: 20px;
-    margin-top: 0px;
-    padding-left: 12px;
+    justify-content: flex-start;
+    gap: 14px;
 }
 
 .gender-option {
-    border: 1px solid var(--beige);
     padding: 12px 20px;
-    border-radius: 12px;
+    min-height: 30px;
+    min-width: 100px;
+    border-radius: 10px;
+    border: 1px solid #dedfe0;
     cursor: pointer;
+    font-size: 15px;
     text-align: center;
-    font-size: 14px;
-    color: #607d8b;
-    transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+    transition: background-color 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.gender-option.active {
+    background-color: var(--beige);
+    border-color: var(--beige);
 }
 
 .gender-option:hover {
-    background-color: #d6c9b4;
+    border: 1px solid #d6c9b4;
+    box-shadow: 0 0 0 2px #d6c9b4;
 }
 
-/* BOTÓN GUARDAR */
+.gender-option:not(.active):hover {
+    border: 1px solid #d6c9b4;
+    box-shadow: 0 0 0 2px #d6c9b4;
+}
+
+.gender-option.active:hover {
+    border: 1px solid var(--beige);
+    box-shadow: none;
+}
+
+
+.save-btn-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .save-btn {
     margin-top: 6px;
     align-self: center;
@@ -131,7 +198,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: text;
 }
-
 
 /* RESPONSIVE */
 @media (max-width: 990px) {

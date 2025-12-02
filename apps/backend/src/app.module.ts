@@ -21,7 +21,7 @@ import { UsersModule } from './users/users.module';
                 autoLoadEntities: true,
                 synchronize: false,
 
-                // 🔥 NECESARIO para Supabase
+                // NECESARIO para Supabase
                 ssl: {
                     rejectUnauthorized: false,
                 },
