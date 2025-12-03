@@ -5,8 +5,9 @@
     padding: 35px 120px;
     margin-top: 10px;
     display: flex;
-    gap: 70px;
+    gap: 60px;
     flex-wrap: wrap;
+    background-color: white;
 }
 
 .title-section {

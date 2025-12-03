@@ -1,11 +1,12 @@
 import Navbar from '../../../components/Navbar/Navbar'
 import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
 import ProfileSideBar from '../../../components/ProfileSideBar/ProfileSideBar';
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import './Info.css'
-import defaultPic from "../../../assets/logos/grefg.png";
 import ProfileData from '../../../components/Profile/Data/ProfileData';
+import ReviewProfile from '../../../components/ReviewProfile/ReviewProfile';
+import picture from '../../../assets/logos/image.png';
 
 export default function Info() {
 
@@ -13,12 +14,6 @@ export default function Info() {
 
     /* info item active */
     const [selected, setSelected] = useState("perfil");
-
-    const { user } = useContext(AuthContext);
-    const profilePic = user?.profilePicture || defaultPic;
-
-    /* Al pulsar en Perfil mostrar  */
-
 
     return (
         <>
@@ -44,25 +39,23 @@ export default function Info() {
                         </div>
                     </div>
                     <div className="info-selector">
-                        <div
-                            className={`info-item ${selected === "perfil" ? "active" : ""}`}
-                            onClick={() => setSelected("perfil")}
-                        >
-                            <p>Perfil</p>
-                        </div>
-                        <div
-                            className={`info-item ${selected === "valoraciones" ? "active" : ""}`}
-                            onClick={() => setSelected("valoraciones")}
-                        >
-                            <p>Valoraciones</p>
+                        <div className="info-items">
+                            <div
+                                className={`info-item ${selected === "perfil" ? "active" : ""}`}
+                                onClick={() => setSelected("perfil")}
+                            >
+                                <p>Perfil</p>
+                            </div>
+                            <div
+                                className={`info-item ${selected === "valoraciones" ? "active" : ""}`}
+                                onClick={() => setSelected("valoraciones")}
+                            >
+                                <p>Valoraciones</p>
+                            </div>
                         </div>
                     </div>
                     {selected === "perfil" && <ProfileData />}
-                    {selected === "valoraciones" && <div className="coming-soon">
-                        <h2>Sección en construcción</h2>
-                        <p>Próximamente podrás ver y gestionar las valoraciones que has recibido de otros usuarios.</p>
-                    </div>
-                    }
+                    {selected === "valoraciones" && <ReviewProfile />}
                 </div>
             </section>
         </>

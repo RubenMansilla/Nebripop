@@ -9,7 +9,7 @@
 .sidebar-right {
     width: 84%;
     height: 100%;
-    /* background-color: #f4f5f7; */
+    background-color: #f6f9fc;
     display: flex;
     gap: 20px;
     padding: 18px;
@@ -77,29 +77,34 @@
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
     height: fit-content;
 }
 
+.info-items {
+    background-color: #E5DED4;
+    width: fit-content;
+    display: flex;
+    border-radius: 25px;
+}
+
 .info-item {
-    border: 1px solid var(--beige);
-    color: #253238;
+    color: #5A5959;
     font-size: 14px;
     font-weight: 700;
     line-height: 21px;
+    width: 170px;
     height: fit-content;
     padding: 6px 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    border-radius: 25px;
     cursor: pointer;
 }
 
 .info-item.active {
-    background-color: #253238;
-    color: #fff;
-    border-color: #253238;
+    background-color: #D6C9B4;
+    color: #000000;
     transition: 0.2s ease;
 }
 
