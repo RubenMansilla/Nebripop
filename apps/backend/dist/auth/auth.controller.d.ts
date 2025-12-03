@@ -10,6 +10,8 @@ export declare class AuthController {
             fullName: string;
             email: string;
             createdAt: Date;
+            birthDate: string | null;
+            gender: string | null;
             profilePicture: string;
             walletBalance: number;
         };
@@ -21,6 +23,8 @@ export declare class AuthController {
             fullName: string;
             email: string;
             createdAt: Date;
+            birthDate: string | null;
+            gender: string | null;
             profilePicture: string;
             walletBalance: number;
         };

@@ -1,0 +1,218 @@
+.profile-info-container {
+    border: 1.5px solid var(--beige);
+    width: 100%;
+    border-radius: 12px;
+    padding: 35px 120px;
+    margin-top: 10px;
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+    background-color: white;
+}
+
+.title-section {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Título */
+.title-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* CONTENIDO GENERAL */
+.public-info-content,
+.personal-info-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* FOTO Y BOTÓN */
+.profile-photo-section {
+    display: flex;
+    align-items: center;
+    gap: 80px;
+    width: 80%;
+}
+
+.photo-label {
+    width: 200px;
+    min-width: 150px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+.photo-actions {
+    width: fit-content;
+    display: flex;
+    gap: 20px;
+}
+
+.photo-preview {
+    width: fit-content;
+}
+
+.photo-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile-photo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.change-photo-btn-container {
+    width: 100%;
+}
+
+.change-photo-btn {
+    background-color: transparent;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    border: 1px solid var(--beige);
+    transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.change-photo-btn:hover {
+    background-color: #d6c9b4;
+}
+
+.photo-hint {
+    font-size: 13px;
+    color: #607d8b;
+    margin-top: 10px;
+}
+
+/* INPUTS */
+/* GRUPOS DE INPUTS */
+.input-group {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    gap: 80px;
+}
+
+/* LABELS ALINEADOS A LA DERECHA */
+.input-group label {
+    width: 200px;
+    min-width: 150px;
+    text-align: right;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* INPUT NORMAL */
+.input-group input {
+    flex: 1;
+    padding: 14px 12px;
+    border: 1px solid #dedfe0;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.input-group input:focus {
+    border-color: var(--beige);
+    outline: none;
+    box-shadow: 0 0 0 2px #e8ddcf;
+}
+
+.gender-options {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    gap: 14px;
+}
+
+.gender-option {
+    padding: 12px 20px;
+    min-height: 30px;
+    min-width: 100px;
+    border-radius: 10px;
+    border: 1px solid #dedfe0;
+    cursor: pointer;
+    font-size: 15px;
+    text-align: center;
+    transition: background-color 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.gender-option.active {
+    background-color: var(--beige);
+    border-color: var(--beige);
+}
+
+.gender-option:hover {
+    border: 1px solid #d6c9b4;
+    box-shadow: 0 0 0 2px #d6c9b4;
+}
+
+.gender-option:not(.active):hover {
+    border: 1px solid #d6c9b4;
+    box-shadow: 0 0 0 2px #d6c9b4;
+}
+
+.gender-option.active:hover {
+    border: 1px solid var(--beige);
+    box-shadow: none;
+}
+
+
+.save-btn-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.save-btn {
+    margin-top: 6px;
+    align-self: center;
+    background-color: transparent;
+    border: 1px solid var(--beige);
+    color: #000000;
+    padding: 12px 25px;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+}
+
+.save-btn:hover {
+    background-color: #d6c9b4;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: text;
+}
+
+/* RESPONSIVE */
+@media (max-width: 990px) {
+
+    .profile-info-container {
+        padding: 20px;
+    }
+
+    .profile-photo-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .gender-options {
+        flex-direction: column;
+    }
+}

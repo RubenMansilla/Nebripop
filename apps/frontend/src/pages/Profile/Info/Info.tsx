@@ -1,9 +1,12 @@
 import Navbar from '../../../components/Navbar/Navbar'
 import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
 import ProfileSideBar from '../../../components/ProfileSideBar/ProfileSideBar';
-import { useContext, useState } from 'react';
+import { useContext, useState, useRef } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import './Info.css'
+import ProfileData from '../../../components/Profile/Data/ProfileData';
+import ReviewProfile from '../../../components/ReviewProfile/ReviewProfile';
+import picture from '../../../assets/logos/image.png';
 
 export default function Info() {
 
@@ -36,21 +39,23 @@ export default function Info() {
                         </div>
                     </div>
                     <div className="info-selector">
-                        <div
-                            className={`info-item ${selected === "perfil" ? "active" : ""}`}
-                            onClick={() => setSelected("perfil")}
-                        >
-                            <p>Perfil</p>
+                        <div className="info-items">
+                            <div
+                                className={`info-item ${selected === "perfil" ? "active" : ""}`}
+                                onClick={() => setSelected("perfil")}
+                            >
+                                <p>Perfil</p>
+                            </div>
+                            <div
+                                className={`info-item ${selected === "valoraciones" ? "active" : ""}`}
+                                onClick={() => setSelected("valoraciones")}
+                            >
+                                <p>Valoraciones</p>
+                            </div>
                         </div>
-
-                        <div
-                            className={`info-item ${selected === "valoraciones" ? "active" : ""}`}
-                            onClick={() => setSelected("valoraciones")}
-                        >
-                            <p>Valoraciones</p>
-                        </div>
-
                     </div>
+                    {selected === "perfil" && <ProfileData />}
+                    {selected === "valoraciones" && <ReviewProfile />}
                 </div>
             </section>
         </>

@@ -17,8 +17,10 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const users_entity_1 = require("./users.entity");
+const supabase_js_1 = require("@supabase/supabase-js");
 let UsersService = class UsersService {
     repo;
+    supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
     constructor(repo) {
         this.repo = repo;
     }
@@ -28,6 +30,28 @@ let UsersService = class UsersService {
     }
     findByEmail(email) {
         return this.repo.findOne({ where: { email } });
+    }
+    async updateUser(id, data) {
+        await this.repo.update(id, data);
+        return this.repo.findOne({ where: { id } });
+    }
+    async updateProfilePicture(id, file) {
+        const ext = file.originalname.split('.').pop();
+        const fileName = `user_${id}_${Date.now()}.${ext}`;
+        const { error } = await this.supabase.storage
+            .from('userImg')
+            .upload(fileName, file.buffer, {
+            contentType: file.mimetype,
+            upsert: true
+        });
+        if (error)
+            throw new Error(error.message);
+        const { data } = this.supabase.storage
+            .from('userImg')
+            .getPublicUrl(fileName);
+        await this.repo.update(id, { profilePicture: data.publicUrl });
+        const updatedUser = await this.repo.findOne({ where: { id } });
+        return updatedUser;
     }
 };
 exports.UsersService = UsersService;

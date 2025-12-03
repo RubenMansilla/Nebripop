@@ -17,7 +17,7 @@
 }
 
 .sidebar-left {
-    width: 100%;
+    width: 98%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -37,11 +37,11 @@
 }
 
 .sidebar-profile:hover {
-    background: #f1ebe3;
+    background: #eceff1;
 }
 
 .sidebar-profile.active {
-    background: #f1ebe3;
+    background: #eceff1;
 }
 
 .profile-pic img {
@@ -99,7 +99,7 @@
 }
 
 .menu-item:hover {
-    background: #f1ebe3;
+    background: #eceff1;
 }
 
 .menu-item svg {
@@ -118,7 +118,7 @@
 
 /* ESTILO PARA ITEM ACTIVO */
 .menu-item.active {
-    background: #f1ebe3;
+    background: #eceff1;
 }
 
 .arrow {
