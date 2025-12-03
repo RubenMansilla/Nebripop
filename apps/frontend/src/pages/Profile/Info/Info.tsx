@@ -1,12 +1,11 @@
 import Navbar from '../../../components/Navbar/Navbar'
 import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
 import ProfileSideBar from '../../../components/ProfileSideBar/ProfileSideBar';
-import { useContext, useState, useRef } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import './Info.css'
 import ProfileData from '../../../components/Profile/Data/ProfileData';
 import ReviewProfile from '../../../components/ReviewProfile/ReviewProfile';
-import picture from '../../../assets/logos/image.png';
 
 export default function Info() {
 
@@ -19,7 +18,7 @@ export default function Info() {
         <>
             <Navbar />
             <div className="navbar-line"></div>
-            <CategoriesBar />
+            {/* <CategoriesBar /> */}
             <section className='sidebar-container'>
                 <div className='hide-left-sidebar'>
                     <ProfileSideBar />

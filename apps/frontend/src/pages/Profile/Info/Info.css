@@ -109,8 +109,8 @@
 }
 
 
-/* Estilos tablet y móvil */
-@media (max-width: 990px) {
+/* Estilos tablet */
+@media (max-width: 992px) {
     .hide-left-sidebar {
         display: none;
     }
@@ -118,6 +118,7 @@
     .sidebar-right {
         width: 100%;
         gap: 10px;
+        padding-inline: 5%;
     }
 
     .logout {
@@ -126,5 +127,19 @@
 
     .info-item {
         justify-content: center;
+    }
+}
+
+/* Estilos móvil */
+@media (max-width: 768px) {
+    .sidebar-right {
+        padding-inline: 4%;
+    }
+}
+
+@media (max-width: 560px) {
+    .info-item {
+        width: 140px;
+        font-size: 13px;
     }
 }

@@ -6,8 +6,6 @@ import "./ProfileData.css";
 export default function ProfileData() {
     const { user, token, setUser } = useContext(AuthContext);
 
-    console.log("TOKEN ENVIADO:", token);
-
     const profilePic = user?.profilePicture;
 
     const [isUploading, setIsUploading] = useState(false);

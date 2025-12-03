@@ -68,10 +68,10 @@
     border: 1.5px solid var(--beige);
     width: 100%;
     border-radius: 12px;
-    padding-top: 30px;
+    padding-top: 35px;
     margin-top: 10px;
     display: flex;
-    gap: 30px;
+    gap: 25px;
     flex-wrap: wrap;
     background-color: white;
     justify-content: center;

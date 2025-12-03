@@ -2,24 +2,24 @@
 > @nebripop/backend@0.0.1 dev
 > nest start --watch
 
-[2J[3J[H[[90m8:57:29[0m] Starting compilation in watch mode...
+[2J[3J[H[[90m19:18:41[0m] Starting compilation in watch mode...
 
-[[90m8:57:34[0m] Found 0 errors. Watching for file changes.
+[[90m19:18:44[0m] Found 0 errors. Watching for file changes.
 
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +14ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:37 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +87ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +1512ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +3ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +5ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/update, PATCH} route[39m[38;5;3m +4ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/profile-picture, PATCH} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 25936  - [39m03/12/2025, 8:57:39 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +8ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:46 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +58ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +640ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +2ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/update, PATCH} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/profile-picture, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 7100  - [39m03/12/2025, 19:18:47 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
