@@ -15,6 +15,10 @@ export async function registerUser(data: {
 }
 
 export async function loginUser(data: { email: string; password: string }) {
+
+    console.log("EMAIL (frontend):", data.email);
+    console.log("PASSWORD (frontend):", data.password);
+
     const res = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -28,5 +32,3 @@ export async function loginUser(data: { email: string; password: string }) {
 
     return res.json();
 }
-
-

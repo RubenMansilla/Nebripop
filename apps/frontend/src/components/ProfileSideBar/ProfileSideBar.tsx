@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getUserReviewSummary } from "../../api/reviews.api";
 import type { ReviewSummary } from "../../types/Review";
-
+import { reviewSummaryStore } from "../../store/reviewSummaryStore";
 import './ProfileSideBar.css';
 
 export default function ProfileSideBar() {
@@ -25,9 +25,16 @@ export default function ProfileSideBar() {
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
 
     useEffect(() => {
-        getUserReviewSummary(user.id)
-            .then(data => setSummary(data))
-            .catch(err => console.error(err));
+
+        // Usar la media guardada (si existe)
+        if (reviewSummaryStore.value) {
+            setSummary(reviewSummaryStore.value);
+        }
+
+        // Escuchar cambios cuando ReviewProfile actualice la media
+        const unsub = reviewSummaryStore.subscribe((v) => setSummary(v));
+
+        return () => unsub();
     }, []);
 
     const starClass = (n: number) => {

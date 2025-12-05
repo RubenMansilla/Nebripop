@@ -60,11 +60,12 @@ let AuthService = class AuthService {
         if (existing) {
             throw new common_1.ConflictException('Email ya está registrado');
         }
+        console.log("Register data:", data);
         const passwordHash = await bcrypt.hash(data.password, 10);
         const user = await this.usersService.create({
             fullName: data.fullName,
             email: data.email,
-            passwordHash,
+            passwordHash
         });
         const token = this.jwt.sign({
             id: user.id,
@@ -74,6 +75,8 @@ let AuthService = class AuthService {
         return { user: safeUser, token };
     }
     async login(data) {
+        console.log("EMAIL:", data.email);
+        console.log("PASSWORD:", data.password);
         console.log("ENV JWT_SECRET (auth.service login):", process.env.JWT_SECRET);
         const user = await this.usersService.findByEmail(data.email);
         if (!user) {
