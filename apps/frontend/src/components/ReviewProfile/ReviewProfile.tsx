@@ -4,6 +4,7 @@ import Review from '../Review/Review';
 import { getReviews } from "../../api/reviews.api";
 import type { ReviewType } from '../../types/Review';
 import ReviewSkeleton from '../Review/ReviewSkeleton';
+import { reviewSummaryStore } from '../../store/reviewSummaryStore';
 
 export default function ReviewProfile() {
 
@@ -52,7 +53,13 @@ export default function ReviewProfile() {
         getReviews(3, sortOption)
             .then(data => {
                 setReviews(data);
+                const total = data.length;
+                const avg = total
+                    ? data.reduce((acc: number, r: ReviewType) => acc + r.rating, 0) / total
+                    : 0;
                 setVisibleCount(35); // reiniciar al cambiar de orden
+                reviewSummaryStore.set({ average: avg, total });
+
             })
             .finally(() => setLoading(false)); // desactiva skeleton cuando llega la data
     }, [sortOption]);
