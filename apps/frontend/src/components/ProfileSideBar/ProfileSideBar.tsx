@@ -1,7 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { getUserReviewSummary } from "../../api/reviews.api";
 import type { ReviewSummary } from "../../types/Review";
 import { reviewSummaryStore } from "../../store/reviewSummaryStore";
 import './ProfileSideBar.css';

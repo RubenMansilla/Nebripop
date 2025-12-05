@@ -1,5 +1,5 @@
 import './Review.css'
-import type { ReviewType } from '../../types/review';
+import type { ReviewType } from '../../types/Review';
 import { formatRelativeTime } from '../../utils/date';
 import { formatAccountAge } from "../../utils/accountAge";
 

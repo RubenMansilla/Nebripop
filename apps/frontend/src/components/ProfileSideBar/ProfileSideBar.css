@@ -44,6 +44,12 @@
     background: #eceff1;
 }
 
+.profile-pic {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .profile-pic img {
     width: 42px;
     height: 42px;

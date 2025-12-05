@@ -6,8 +6,6 @@ import "./ProfileData.css";
 export default function ProfileData() {
     const { user, token, setUser } = useContext(AuthContext);
 
-    console.log("TOKEN ENVIADO:", token);
-
     const profilePic = user?.profilePicture;
 
     const [isUploading, setIsUploading] = useState(false);
@@ -76,7 +74,6 @@ export default function ProfileData() {
 
     return (
         <>
-            {/*TODO: mensajes de error y responsive */}
             {/* --- INFORMACIÓN PÚBLICA --- */}
             <div className="profile-info-container">
                 <div className="public-info-content">

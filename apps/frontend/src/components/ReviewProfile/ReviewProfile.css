@@ -29,9 +29,8 @@
 .sort-dropdown {
     position: absolute;
     top: 38px;
-    /* Justo debajo del botón */
     right: 0;
-    width: 220px;
+    width: auto;
     background-color: white;
     border: 1px solid var(--beige);
     border-radius: 8px;
@@ -97,4 +96,78 @@
 
 .btn-more-reviews:hover {
     background-color: #ede4d5;
+}
+
+.sort-by.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.no-reviews {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 5px;
+    color: #29363d;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.no-reviews-img {
+    width: 330px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Título */
+.no-reviews h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #000000;
+}
+
+/* Descripción */
+.no-reviews p {
+    font-size: 18px;
+    line-height: 20px;
+    color: #607d8b;
+    line-height: 24px;
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .no-reviews {
+        padding: 30px 10px;
+    }
+
+    .no-reviews h3 {
+        font-size: 17px;
+    }
+
+    .no-reviews p {
+        font-size: 13px;
+        max-width: 260px;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+    .no-reviews {
+        padding: 25px 8px;
+        gap: 4px;
+    }
+
+    .no-reviews h3 {
+        font-size: 16px;
+    }
+
+    .no-reviews p {
+        font-size: 12.5px;
+        max-width: 220px;
+    }
 }
