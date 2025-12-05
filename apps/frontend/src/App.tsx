@@ -13,6 +13,8 @@ import Purchases from "./pages/Profile/Purchases/Purchases";
 import Sales from "./pages/Profile/Sales/Sales";
 import Stats from "./pages/Profile/Stats/Stats";
 import Info from "./pages/Profile/Info/Info";
+import FormularioProducto from "./pages/SellProduct";
+
 
 export default function App() {
     return (
@@ -98,6 +100,16 @@ export default function App() {
                                 </ProtectedRoute>
                             }
                         />
+
+                        <Route
+    path="/sell-product"
+    element={
+        <ProtectedRoute>
+            <FormularioProducto />
+        </ProtectedRoute>
+    }
+/>
+
 
                     </Routes>
 

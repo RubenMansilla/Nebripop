@@ -1,0 +1,722 @@
+/* ========================================= */
+/* WRAPPER GENERAL DEL FORMULARIO            */
+/* ========================================= */
+
+.formulario-wrapper {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto 40px;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.bloque {
+  margin-top: 20px;
+  background: #ffffff;
+  border: 1px solid #e3e4e6;
+  border-radius: 20px;
+  padding: 26px;
+  box-sizing: border-box;
+}
+
+/* ========================================= */
+/* TITULOS GENERALES                         */
+/* ========================================= */
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+/* ========================================= */
+/* INPUTS / TEXTAREAS / SELECTS (PRO)        */
+/* ========================================= */
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  background: #ffffff;
+  font-size: 15px;
+  color: #333333;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.15s;
+}
+
+/* Placeholder suave */
+input::placeholder,
+textarea::placeholder {
+  color: #b8b8b8;
+  font-weight: 400;
+}
+
+/* Altura estándar de input */
+input {
+  height: 48px;
+}
+
+/* Textarea */
+textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+/* Hover */
+input:hover,
+textarea:hover,
+select:hover {
+  border-color: #d3d3d3;
+}
+
+/* Focus */
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* ========================================= */
+/* BLOQUE RESUMEN INICIAL                    */
+/* ========================================= */
+
+.input-wrapper {
+  border-radius: 16px;
+  padding: 0;
+  border: none;
+}
+
+.input-label {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input-textarea {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #e5e5e5;
+  padding: 14px 16px;
+  font-size: 15px;
+  resize: none;
+  background: #ffffff;
+}
+
+.input-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.counter {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* BOTÓN CONTINUAR */
+
+.continue-btn {
+  margin-top: 16px;
+  background: #d2b990;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 11px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.15s;
+  width: 100%;
+}
+
+.continue-btn:hover {
+  opacity: 0.92;
+}
+
+.continue-btn:active {
+  transform: scale(0.98);
+}
+
+/* ========================================= */
+/* FOTOS                                     */
+/* ========================================= */
+
+.fotos-container {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 24px;
+}
+
+.fotos-container h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.dropzone {
+  border: 1px dashed #d2b990;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.upload-btn {
+  border-radius: 999px;
+  border: 1px solid #d2b990;
+  padding: 6px 18px;
+  font-size: 13px;
+  background: #ffffff;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.fotos-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.foto {
+  background: #f3f4f6;
+  border-radius: 12px;
+  height: 72px;
+}
+
+/* ========================================= */
+/* CATEGORÍA / SUBCATEGORÍA                  */
+/* ========================================= */
+
+.categoria-container {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 24px;
+}
+
+/* Botón principal selector */
+
+.categoria-selector {
+  border: 1px solid #dcdcdc;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 8px;
+  font-size: 15px;
+  transition: background 0.15s, border-color 0.2s;
+}
+
+.categoria-selector:hover {
+  background: #fafafa;
+}
+
+.categoria-selector-text {
+  color: #374151;
+  font-size: 15px;
+}
+
+.categoria-selector-arrow {
+  color: #bfbfbf;
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.categoria-selector-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Panel desplegable */
+
+.categoria-panel {
+  margin-top: 10px;
+  border: 1px solid #dadada;
+  border-radius: 14px;
+  max-height: 280px;
+  overflow-y: auto;
+  background: #ffffff;
+  padding: 8px 0;
+}
+
+.categoria-panel-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  padding: 0 18px 12px;
+}
+
+/* Fila categoría / subcategoría */
+
+.categoria-item {
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.15s;
+}
+
+.categoria-item:last-child {
+  border-bottom: none;
+}
+
+.categoria-item:hover {
+  background: #fafafa;
+}
+
+.categoria-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.categoria-text {
+  font-size: 15px;
+  color: #111827;
+}
+
+.categoria-arrow {
+  font-size: 18px;
+  color: #c4c4c4;
+}
+
+/* Botón volver */
+
+.categoria-back {
+  border: none;
+  background: none;
+  color: #2563eb;
+  font-size: 14px;
+  padding: 6px 18px 10px;
+  cursor: pointer;
+}
+
+/* Scrollbar del panel */
+
+.categoria-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.categoria-panel::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 4px;
+}
+
+.categoria-panel::-webkit-scrollbar-thumb:hover {
+  background: #bfbfbf;
+}
+
+/* ========================================= */
+/* DETALLES PRODUCTO                         */
+/* ========================================= */
+
+.detalles-container {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 26px;
+}
+
+.detalles-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  color: #111827;
+}
+
+.detalles-input,
+.detalles-textarea,
+.detalles-select {
+  margin-bottom: 16px;
+}
+
+.detalles-input label,
+.detalles-textarea label,
+.detalles-select label {
+  margin-bottom: 8px;
+  display: block;
+  color: #444444;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+/* Fila doble (marca/color) */
+
+.detalles-row-2 {
+  display: flex;
+  gap: 16px;
+}
+
+.detalles-row-2 .detalles-input {
+  flex: 1;
+}
+
+/* Fila triple (medidas) */
+
+.detalles-subtitle {
+  margin: 20px 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.detalles-row-3 {
+  display: flex;
+  gap: 12px;
+}
+
+.detalles-row-3 input {
+  flex: 1;
+  height: 48px;
+}
+
+/* Contadores */
+
+.contador {
+  float: right;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+/* PRECIO obligatorio */
+
+.detalles-precio {
+  margin-top: 18px;
+}
+
+.detalles-precio label {
+  display: block;
+  margin-bottom: 6px;
+  color: #444444;
+  font-weight: 500;
+}
+
+.precio-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 10px 14px;
+  border: 1px solid #d0d5dd;
+  background: #ffffff;
+}
+
+.precio-box span:first-child {
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.precio-box input {
+  border: none;
+  outline: none;
+  height: auto;
+  padding: 0;
+}
+
+/* Error precio */
+
+.precio-box.error {
+  border-color: #f97373;
+  background: #fff5f5;
+}
+
+.error-icon {
+  color: #f97373;
+  font-weight: 700;
+}
+
+.obligatorio-texto {
+  font-size: 12px;
+  color: #f97373;
+  margin-top: 4px;
+}
+
+/* ===================================== */
+/*           OPCIONES DE ENVÍO           */
+/* ===================================== */
+
+.envio-container {
+  background: #fff;
+  border-radius: 20px;
+  padding: 26px;
+  border: 1px solid #e5e5e5;
+}
+
+/* HEADER */
+.envio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.envio-beneficios {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: #374151;
+}
+
+.envio-beneficios li {
+  margin-bottom: 4px;
+}
+
+.envio-img {
+  width: 110px;
+}
+
+/* FAQ */
+.envio-faq {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Divider */
+.envio-divider {
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  margin: 14px 0;
+}
+
+/* TOGGLE */
+.envio-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+/* Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  border-radius: 999px;
+  background: #d1d5db;
+  transition: 0.2s;
+}
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 18px; height: 18px;
+  left: 3px; top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+}
+.switch input:checked + .slider {
+  background: #22c55e;
+}
+.switch input:checked + .slider:before {
+  transform: translateX(18px);
+}
+
+/* TITULOS */
+.envio-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 12px 0 4px;
+}
+
+.envio-description {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+/* OPCIONES DE TAMAÑO */
+.envio-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.envio-option-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.option-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.envio-separator {
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  margin: 6px 0;
+}
+
+.nuevo-badge {
+  background: #ff2d55;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+/* PESO */
+.peso-list {
+  margin-top: 6px;
+}
+
+.peso-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.peso-row:last-child {
+  border-bottom: none;
+}
+
+.peso-row input {
+  width: 18px;
+  height: 18px;
+}
+
+/* ===================================== */
+/*      RADIO BUTTON ESTILO WALLAPOP     */
+/* ===================================== */
+
+.envio-option input[type="radio"],
+.peso-row input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 18px;
+  height: 18px;
+
+  border: 2px solid #bfbfbf;
+  border-radius: 50%;
+
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.envio-option input[type="radio"]:checked,
+.peso-row input[type="radio"]:checked {
+  border-color: #007aff;
+}
+
+.envio-option input[type="radio"]:checked::before,
+.peso-row input[type="radio"]:checked::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  background: #007aff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+
+/* ========================================= */
+/* ZONA DE VENTA                             */
+/* ========================================= */
+
+.zona-container {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 24px;
+}
+
+.zona-container h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.zona-container label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.zona-input {
+  margin-bottom: 12px;
+}
+
+.zona-map-box {
+  margin-top: 8px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+}
+
+/* ========================================= */
+/* BOTÓN PUBLICAR PRODUCTO                   */
+/* ========================================= */
+
+.publicar-container {
+  text-align: center;
+}
+
+.publicar-btn {
+  background: #d2b990;
+  border-radius: 12px;
+  padding: 14px 0;
+  width: 100%;
+  color: white;
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.publicar-btn:hover {
+  opacity: 0.93;
+}
+
+.publicar-btn:active {
+  transform: scale(0.98);
+}
+
+
