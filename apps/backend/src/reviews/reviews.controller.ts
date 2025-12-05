@@ -14,4 +14,10 @@ export class ReviewsController {
         return this.reviewsService.getReviewsForUser(userId, sortOption);
     }
 
+    @Get('user/:id/summary')
+    getUserRatingSummary(@Param('id') userId: number) {
+        return this.reviewsService.getUserRatingSummary(userId);
+    }
+
+
 }

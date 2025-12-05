@@ -3,4 +3,8 @@ export declare class ReviewsController {
     private reviewsService;
     constructor(reviewsService: ReviewsService);
     getReviewsForUser(userId: number, sortOption: string): Promise<import("./review.entity").Review[]>;
+    getUserRatingSummary(userId: number): Promise<{
+        average: number;
+        total: number;
+    }>;
 }

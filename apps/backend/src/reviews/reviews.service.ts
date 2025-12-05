@@ -37,4 +37,21 @@ export class ReviewsService {
         });
     }
 
+    async getUserRatingSummary(userId: number) {
+        const reviews = await this.reviewRepo.find({
+            where: { reviewed_user_id: userId },
+            select: ['rating']
+        });
+
+        if (reviews.length === 0) {
+            return { average: 0, total: 0 };
+        }
+
+        const total = reviews.length;
+        const sum = reviews.reduce((acc, rev) => acc + rev.rating, 0);
+        const average = sum / total;
+
+        return { average, total };
+    }
+
 }

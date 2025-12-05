@@ -46,6 +46,19 @@ let ReviewsService = class ReviewsService {
             order,
         });
     }
+    async getUserRatingSummary(userId) {
+        const reviews = await this.reviewRepo.find({
+            where: { reviewed_user_id: userId },
+            select: ['rating']
+        });
+        if (reviews.length === 0) {
+            return { average: 0, total: 0 };
+        }
+        const total = reviews.length;
+        const sum = reviews.reduce((acc, rev) => acc + rev.rating, 0);
+        const average = sum / total;
+        return { average, total };
+    }
 };
 exports.ReviewsService = ReviewsService;
 exports.ReviewsService = ReviewsService = __decorate([

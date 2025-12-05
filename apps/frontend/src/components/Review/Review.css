@@ -114,11 +114,12 @@
 
 .star path {
     fill: none;
-    stroke: #000;
+    stroke: #d6c9b4;
+    stroke-width: 2px;
 }
 
 .star.filled path {
-    fill: #29363d;
+    fill: var(--beige);
 }
 
 

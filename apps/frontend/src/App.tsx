@@ -102,13 +102,13 @@ export default function App() {
                         />
 
                         <Route
-    path="/sell-product"
-    element={
-        <ProtectedRoute>
-            <FormularioProducto />
-        </ProtectedRoute>
-    }
-/>
+                            path="/sell-product"
+                            element={
+                                <ProtectedRoute>
+                                    <FormularioProducto />
+                                </ProtectedRoute>
+                            }
+                        />
 
 
                     </Routes>

@@ -24,6 +24,9 @@ let ReviewsController = class ReviewsController {
     getReviewsForUser(userId, sortOption) {
         return this.reviewsService.getReviewsForUser(userId, sortOption);
     }
+    getUserRatingSummary(userId) {
+        return this.reviewsService.getUserRatingSummary(userId);
+    }
 };
 exports.ReviewsController = ReviewsController;
 __decorate([
@@ -34,6 +37,13 @@ __decorate([
     __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", void 0)
 ], ReviewsController.prototype, "getReviewsForUser", null);
+__decorate([
+    (0, common_1.Get)('user/:id/summary'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], ReviewsController.prototype, "getUserRatingSummary", null);
 exports.ReviewsController = ReviewsController = __decorate([
     (0, common_1.Controller)('reviews'),
     __metadata("design:paramtypes", [reviews_service_1.ReviewsService])

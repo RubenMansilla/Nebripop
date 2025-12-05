@@ -17,3 +17,9 @@ export interface ReviewType {
         images: { image_url: string }[];
     };
 }
+
+export interface ReviewSummary {
+    average: number; // media entre 0 y 5
+    total: number;   // número de valoraciones
+}
+
