@@ -11,10 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductImage = void 0;
 const typeorm_1 = require("typeorm");
+const typeorm_2 = require("typeorm");
+const products_entity_1 = require("../products/products.entity");
 let ProductImage = class ProductImage {
     id;
     product_id;
     image_url;
+    product;
 };
 exports.ProductImage = ProductImage;
 __decorate([
@@ -29,6 +32,11 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], ProductImage.prototype, "image_url", void 0);
+__decorate([
+    (0, typeorm_2.ManyToOne)(() => products_entity_1.Product, (product) => product.images),
+    (0, typeorm_2.JoinColumn)({ name: 'product_id' }),
+    __metadata("design:type", products_entity_1.Product)
+], ProductImage.prototype, "product", void 0);
 exports.ProductImage = ProductImage = __decorate([
     (0, typeorm_1.Entity)('product_images')
 ], ProductImage);

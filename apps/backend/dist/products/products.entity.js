@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const typeorm_1 = require("typeorm");
+const typeorm_2 = require("typeorm");
+const products_image_entity_1 = require("../products/products-image.entity");
 let Product = class Product {
     id;
     owner_id;
@@ -33,6 +35,7 @@ let Product = class Product {
     postal_code;
     latitude;
     longitude;
+    images;
 };
 exports.Product = Product;
 __decorate([
@@ -119,6 +122,10 @@ __decorate([
     (0, typeorm_1.Column)("numeric", { nullable: true }),
     __metadata("design:type", Number)
 ], Product.prototype, "longitude", void 0);
+__decorate([
+    (0, typeorm_2.OneToMany)(() => products_image_entity_1.ProductImage, (img) => img.product),
+    __metadata("design:type", Array)
+], Product.prototype, "images", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)('products')
 ], Product);
