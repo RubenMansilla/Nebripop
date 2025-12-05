@@ -116,33 +116,41 @@ export default function Navbar() {
                 </div>
             </div>
 
-            {/* ZONA DERECHA */}
-            <div className="nav-right">
+          <div className="nav-right">
 
-                {/* si hay sesión, muestra un botón diferente */}
-                {user ? (
-                    <>
-                        <button className="btn-registro sesion-activa" onClick={() => navigate(`/profile/info`)}>
-                            Bienvenido {user.fullName.split(" ")[0]}
-                        </button>
+    {user ? (
+        <>
+            <button 
+                className="btn-registro sesion-activa" 
+                onClick={() => navigate(`/profile/info`)}
+            >
+                Bienvenido {user.fullName.split(" ")[0]}
+            </button>
 
-                        <button className="btn-vender">
-                            Vender <span className="icon-plus">+</span>
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <button className="btn-registro" onClick={openLogin}>
-                            Registrarte o Inicia sesión
-                        </button>
+            <button 
+                className="btn-vender"
+                onClick={() => navigate("/sell-product")}
+            >
+                Vender <span className="icon-plus">+</span>
+            </button>
+        </>
+    ) : (
+        <>
+            <button className="btn-registro" onClick={openLogin}>
+                Registrarte o Inicia sesión
+            </button>
 
-                        <button className="btn-vender">
-                            Vender <span className="icon-plus">+</span>
-                        </button>
-                    </>
-                )}
+            <button  
+                className="btn-vender"
+                onClick={() => navigate("/sell-product")}
+            >
+                Vender <span className="icon-plus">+</span>
+            </button>
+        </>
+    )}
 
-            </div>
+</div>
+
 
         </nav>
     );
