@@ -1,3 +1,6 @@
+// Funciones para interactuar con la API de usuarios
+
+// Actualizar datos de usuario
 export async function updateUser(data: any, token: string) {
     const res = await fetch("http://localhost:3001/users/update", {
         method: "PATCH",
@@ -13,6 +16,7 @@ export async function updateUser(data: any, token: string) {
     return res.json();
 }
 
+// Subir imagen de perfil
 export async function uploadProfilePicture(file: File, token: string) {
     const formData = new FormData();
     formData.append("file", file);

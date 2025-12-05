@@ -4,7 +4,7 @@
     display: flex;
     flex-wrap: wrap;
     padding-bottom: 25px;
-    gap: 20px;
+    gap: 100px;
 }
 
 .review:last-child {
@@ -35,11 +35,12 @@
 }
 
 .review-body {
-    width: calc(100% - 220px);
+    flex: 1;
     display: flex;
     flex-wrap: wrap;
     align-content: start;
     gap: 14px;
+    padding-right: 100px;
 }
 
 .review-note {
@@ -110,6 +111,16 @@
     font-size: 14px;
     color: #29363d;
 }
+
+.star path {
+    fill: none;
+    stroke: #000;
+}
+
+.star.filled path {
+    fill: #29363d;
+}
+
 
 /* RESPONSIVE móvil */
 @media (max-width: 768px) {

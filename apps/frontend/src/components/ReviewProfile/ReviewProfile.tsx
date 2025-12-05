@@ -1,6 +1,9 @@
 import './ReviewProfile.css'
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Review from '../Review/Review';
+import { getReviews } from "../../api/reviews.api";
+import type { ReviewType } from '../../types/review';
+import ReviewSkeleton from '../Review/ReviewSkeleton';
 
 export default function ReviewProfile() {
 
@@ -31,6 +34,29 @@ export default function ReviewProfile() {
         setOpen(false);
     };
 
+    // State para las reviews
+    const [reviews, setReviews] = useState<ReviewType[]>([]);
+    // State para el loading
+    const [loading, setLoading] = useState(true);
+    // State para el número de reviews visibles
+    const [visibleCount, setVisibleCount] = useState(35);
+
+    // Función para cargar más reviews
+    const loadMore = () => {
+        setVisibleCount(prev => prev + 35);
+    };
+
+    // useEffect para cargar las reviews cuando cambia sortOption
+    useEffect(() => {
+        setLoading(true); // activa skeleton antes de pedir las reviews
+        getReviews(3, sortOption)
+            .then(data => {
+                setReviews(data);
+                setVisibleCount(35); // reiniciar al cambiar de orden
+            })
+            .finally(() => setLoading(false)); // desactiva skeleton cuando llega la data
+    }, [sortOption]);
+
     return (
         <>
             <div className="sort-by-container">
@@ -50,14 +76,24 @@ export default function ReviewProfile() {
                 )}
             </div>
             <div className="review-container">
-                {/* Aquí se mostrarán las reviews ordenadas según sortOption, Pasar SortOption a Review */}
-                <Review sortOption={sortOption} />
-                <Review sortOption={sortOption} />
-                <Review sortOption={sortOption} />
+                {loading && (
+                    <>
+                        <ReviewSkeleton />
+                        <ReviewSkeleton />
+                        <ReviewSkeleton />
+                    </>
+                )}
+                {!loading && reviews.slice(0, visibleCount).map((rev) => (
+                    <Review review={rev} key={rev.id} />
+                ))}
             </div>
-            <div className="btn-more-reviews-container">
-                <div className='btn-more-reviews'>Ver más valoraciones</div>
-            </div>
+            {!loading && reviews.length > visibleCount && (
+                <div className="btn-more-reviews-container">
+                    <div className='btn-more-reviews' onClick={loadMore}>
+                        Ver más valoraciones
+                    </div>
+                </div>
+            )}
         </>
     )
 }

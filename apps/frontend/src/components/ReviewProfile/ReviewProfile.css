@@ -88,13 +88,33 @@
     padding: 12px 24px;
     border-radius: 100px;
     text-align: center;
-    background-color: var(--beige);
     transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
     cursor: pointer;
     font-weight: 600;
     font-size: 16px;
+    background-color: #ede4d5;
 }
 
 .btn-more-reviews:hover {
-    background-color: #ede4d5;
+    background-color: var(--beige);
+}
+
+.review-skeleton {
+    height: 140px;
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: linear-gradient(90deg, #e8e8e8 0%, #f3f3f3 50%, #e8e8e8 100%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
 }
