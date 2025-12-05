@@ -1,3 +1,4 @@
+import { ProductImage } from "../products/products-image.entity";
 export declare class Product {
     id: number;
     owner_id: number;
@@ -20,4 +21,5 @@ export declare class Product {
     postal_code: string;
     latitude: number;
     longitude: number;
+    images: ProductImage[];
 }

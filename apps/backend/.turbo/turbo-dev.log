@@ -2,27 +2,53 @@
 > @nebripop/backend@0.0.1 dev
 > nest start --watch
 
-[2J[3J[H[[90m10:55:46[0m] Starting compilation in watch mode...
+[2J[3J[H[[90m11:49:58[0m] Starting compilation in watch mode...
 
-[[90m10:55:48[0m] Found 0 errors. Watching for file changes.
+[[90m11:50:01[0m] Found 0 errors. Watching for file changes.
 
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +8ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:49 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +32ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +948ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +3ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/update, PATCH} route[39m[38;5;3m +2ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/profile-picture, PATCH} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +1ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 24292  - [39m05/12/2025, 10:55:50 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/products}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +15ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:02 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +57ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +1004ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReviewsModule dependencies initialized[39m[38;5;3m +2ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +4ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/update, PATCH} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/profile-picture, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/products}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReviewsController {/reviews}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reviews/user/:id, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reviews/user/:id/summary, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 32208  - [39m05/12/2025, 11:50:03 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +4ms[39m
+[31m[Nest] 32208  - [39m05/12/2025, 11:50:05 [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mEntityPropertyNotFoundError: Property "images" was not found in "Product". Make sure your query is correct.
+    at <anonymous> (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3995:23)
+    at Array.forEach (<anonymous>)
+    at SelectQueryBuilder.buildRelations (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3987:32)
+    at <anonymous> (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:4057:26)
+    at Array.forEach (<anonymous>)
+    at SelectQueryBuilder.buildRelations (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3987:32)
+    at SelectQueryBuilder.applyFindOptions (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3176:22)
+    at SelectQueryBuilder.setFindOptions (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:106:14)
+    at EntityManager.find (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\entity-manager\src\entity-manager\EntityManager.ts:1118:14)
+    at Repository.find (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\repository\src\repository\Repository.ts:573:29)
+[31m[Nest] 32208  - [39m05/12/2025, 11:50:05 [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mEntityPropertyNotFoundError: Property "images" was not found in "Product". Make sure your query is correct.
+    at <anonymous> (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3995:23)
+    at Array.forEach (<anonymous>)
+    at SelectQueryBuilder.buildRelations (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3987:32)
+    at <anonymous> (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:4057:26)
+    at Array.forEach (<anonymous>)
+    at SelectQueryBuilder.buildRelations (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3987:32)
+    at SelectQueryBuilder.applyFindOptions (C:\Users\ruman\Desktop\Nebrija\DAW\nebripop\node_modules\[4mtypeorm[24m\query-builder\src\query-builder\SelectQueryBuilder.ts:3176:22)
