@@ -1,6 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { OneToMany } from "typeorm";
+import { ProductImage } from "../products/products-image.entity";
 
-@Entity('products')  // 👈 Usar nombre EXACTO de la tabla en Supabase
+@Entity('products')
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
@@ -64,4 +66,9 @@ export class Product {
 
   @Column("numeric", { nullable: true })
   longitude: number;
+
+  @OneToMany(() => ProductImage, (img) => img.product)
+  images: ProductImage[];
+
+
 }

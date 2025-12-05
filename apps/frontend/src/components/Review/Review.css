@@ -14,7 +14,7 @@
 .review-header {
     display: flex;
     gap: 14px;
-    min-width: 190px;
+    width: 210px;
 }
 
 .reviewer-pic {
