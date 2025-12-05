@@ -1,10 +1,10 @@
 .review {
-    width: 96%;
+    width: 95%;
     border-bottom: 1px solid var(--beige);
     display: flex;
     flex-wrap: wrap;
     padding-bottom: 25px;
-    padding-inline: 5px;
+    gap: 100px;
 }
 
 .review:last-child {
@@ -12,9 +12,9 @@
 }
 
 .review-header {
-    width: 28%;
     display: flex;
     gap: 14px;
+    width: 210px;
 }
 
 .reviewer-pic {
@@ -29,17 +29,18 @@
 .reviewer-info {
     display: flex;
     flex-direction: column;
-    height: 60px;
+    height: 55px;
     justify-content: center;
     gap: 4px;
 }
 
 .review-body {
-    width: 65%;
+    flex: 1;
     display: flex;
     flex-wrap: wrap;
     align-content: start;
     gap: 14px;
+    padding-right: 100px;
 }
 
 .review-note {
@@ -47,11 +48,21 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
+}
+
+.stars {
+    display: flex;
+}
+
+.stars svg {
+    width: 20px;
+    height: 20px;
+    fill: #29363d;
 }
 
 .review-date {
-    font-size: 12px;
+    font-size: 13px;
     color: #212529;
     line-height: 16px;
 }
@@ -99,4 +110,39 @@
 .review-product-name {
     font-size: 14px;
     color: #29363d;
+}
+
+.star path {
+    fill: none;
+    stroke: #d6c9b4;
+    stroke-width: 2px;
+}
+
+.star.filled path {
+    fill: var(--beige);
+}
+
+
+/* RESPONSIVE móvil */
+@media (max-width: 768px) {
+
+    .sort-by-container {
+        margin-top: 10px;
+    }
+
+    .review {
+        flex-direction: column;
+        gap: 0px;
+        width: 92%;
+    }
+
+    .review-body {
+        width: 100%;
+        margin-top: 4px;
+        gap: 10px;
+    }
+
+    .review-product {
+        margin-top: 2px;
+    }
 }
