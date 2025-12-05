@@ -1,19 +1,13 @@
 .category-bar {
-  width: 100%;
+  width: 80%;
   margin: auto;
   display: flex;
   align-items: center;
+  justify-content: start;
   gap: 32px;
   padding: 15px 5px;
   background: white;
   font-family: "Inter", sans-serif;
-  height: 70px;
-  /*Fijar barra arriba*/
-  position: sticky;
-  top: 82px;
-  z-index: 999;
-  padding-inline: 10%;
-  border-bottom: 1px solid #e0e0e0;
 }
 
 /* botón hamburguesa */
@@ -26,13 +20,11 @@
   cursor: pointer;
   padding: 8px 12px;
 }
-
 .cat-hamburger {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .hamb-line {
   width: 20px;
   height: 2px;
@@ -62,4 +54,58 @@
 
 .cat-item:hover {
   color: #a58866;
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .category-bar {
+    width: 90%;
+    gap: 20px;
+  }
+  .cat-links {
+    gap: 28px;
+  }
+  .cat-item {
+    font-size: 15px;
+  }
+}
+
+/* Móviles grandes */
+@media (max-width: 768px) {
+  .category-bar {
+    width: 100%;
+    gap: 16px;
+  }
+  .menu-text {
+    font-size: 15px;
+  }
+  .cat-links {
+    gap: 18px;
+  }
+  .cat-item {
+    font-size: 14px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 600px) {
+
+  .cat-links {
+    display: none;
+  }
+
+  .category-bar {
+    justify-content: flex-start;
+  }
+
+  .menu-text {
+    font-size: 15px;
+  }
+}
+
+/* Ultra-pequeños */
+@media (max-width: 420px) {
+  .menu-text {
+    font-size: 14px;
+  }
 }
