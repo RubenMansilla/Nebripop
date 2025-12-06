@@ -10,52 +10,45 @@
 
 /* ======== NAVBAR GLOBAL ======== */
 .navbar {
-  width: 100%;
-  /* TU ESTRUCTURA EXACTA */
+  width: 80%;
   height: 82px;
   margin: auto;
-  /* CENTRADO */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  /* espacio lógico */
+  flex-wrap: nowrap; /* se activará más tarde en responsive */
   background: white;
   font-family: "Inter", sans-serif;
   gap: 18px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  padding-inline: 10%;
-  border-bottom: 1px solid #e8e8e8;
+  align-items: center;
 }
 
-/* ======== ZONAS (como tu ejemplo global/logo/buscador/btn1/btn2) ======== */
+/* ======== ZONAS FLEXIBLES ======== */
 .nav-left {
-  width: 16%;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
 }
 
 .nav-center {
-  width: 48%;
+  flex: 1; /* 🟢 el buscador se expande dinámicamente */
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 240px;
 }
 
 .nav-right {
-  width: 36%;
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 20px;
 }
 
-
 /* ========= LOGO ========= */
 .nav-logo img {
   height: 38px;
-  /* tamaño perfecto */
   width: auto;
   object-fit: contain;
 }
@@ -64,6 +57,7 @@
 .search-wrap {
   position: relative;
   width: 90%;
+  max-width: 480px;
 }
 
 .search {
@@ -76,12 +70,12 @@
   font-family: "Inter";
   outline: none;
   color: var(--gris-texto);
-  transition: border-color .25s ease, box-shadow .25s ease, transform .08s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.08s ease;
 }
 
 .search:focus {
   border-color: var(--beige);
-  box-shadow: 0 6px 18px rgba(210, 185, 144, .25);
+  box-shadow: 0 6px 18px rgba(210, 185, 144, 0.25);
   transform: scale(1.01);
 }
 
@@ -106,7 +100,7 @@
   font-size: 18px;
   color: var(--gris-claro);
   white-space: nowrap;
-  transition: opacity .2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .fake-placeholder .buscar {
@@ -118,14 +112,14 @@
   font-weight: 600;
 }
 
-.search:not(:placeholder-shown)~.fake-placeholder,
-.search:focus:not(:placeholder-shown)~.fake-placeholder {
+.search:not(:placeholder-shown) ~ .fake-placeholder,
+.search:focus:not(:placeholder-shown) ~ .fake-placeholder {
   opacity: 0;
   visibility: hidden;
 }
 
 .fade {
-  animation: fadeWord .45s ease;
+  animation: fadeWord 0.45s ease;
 }
 
 @keyframes fadeWord {
@@ -133,7 +127,6 @@
     opacity: 0;
     transform: translateY(4px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -149,7 +142,7 @@
   background: white;
   color: var(--gris-texto);
   cursor: pointer;
-  transition: .25s ease;
+  transition: 0.25s ease;
 }
 
 .btn-registro:hover {
@@ -158,7 +151,6 @@
   transform: scale(1.05);
 }
 
-/* ===== BOTÓN VENDER (idéntico al ejemplo que pasaste) ===== */
 .btn-vender {
   display: inline-flex;
   align-items: center;
@@ -169,12 +161,10 @@
   background-color: white;
   color: var(--gris-texto);
   font-size: 17px;
-  font-family: "Inter";
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-/* icono redondo */
 .btn-vender .icon-plus {
   display: inline-flex;
   justify-content: center;
@@ -189,7 +179,6 @@
   transition: all 0.3s ease;
 }
 
-/* Hover idéntico */
 .btn-vender:hover {
   background-color: var(--beige);
   color: white;
@@ -202,7 +191,68 @@
   transform: rotate(90deg);
 }
 
-
 .navbar-line {
-  display: none;
+  width: 100vw;
+  height: 1px;
+  background: #e8e8e8;
+}
+
+
+
+.hamb-menu {
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 12px;
+  color: var(--gris-texto);
+
+  transition: background 0.2s ease;
+}
+
+
+.hamb-menu:hover {
+  background: #f7f3ec;
+}
+
+/* MENÚ MÓVIL */
+.mobile-user-menu {
+  position: absolute;
+  top: 82px;                 
+  right: 12px;
+  background: white;
+  border: 1px solid var(--beige);
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 12px 0;
+  width: 220px;
+  z-index: 2000;
+  animation: fadeDown 0.25s ease;
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-menu-link {
+  display: block;
+  padding: 14px 18px;
+  font-size: 16px;
+  color: var(--gris-texto);
+  text-decoration: none;      
+  transition: background 0.2s ease;
+}
+
+.mobile-menu-link:hover {
+  background: #f7f3ec;         
 }
