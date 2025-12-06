@@ -11,4 +11,6 @@ export declare class ProductsService {
     createProduct(dto: CreateProductDto, files: Express.Multer.File[], userId: number): Promise<{
         productId: number;
     }>;
+    getActiveProductsByUser(userId: number): Promise<Product[]>;
+    getSoldProductsByUser(userId: number): Promise<Product[]>;
 }

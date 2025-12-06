@@ -26,6 +26,14 @@ let ProductsController = class ProductsController {
     create(dto, images, req) {
         return this.productsService.createProduct(dto, images, req.user.id);
     }
+    async getMyActiveProducts(req) {
+        const userId = req.user.id;
+        return this.productsService.getActiveProductsByUser(userId);
+    }
+    async getMySoldProducts(req) {
+        const userId = req.user.id;
+        return this.productsService.getSoldProductsByUser(userId);
+    }
 };
 exports.ProductsController = ProductsController;
 __decorate([
@@ -39,6 +47,22 @@ __decorate([
     __metadata("design:paramtypes", [create_products_dto_1.CreateProductDto, Array, Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "create", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('my-products/active'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getMyActiveProducts", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('my-products/sold'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getMySoldProducts", null);
 exports.ProductsController = ProductsController = __decorate([
     (0, common_1.Controller)("products"),
     __metadata("design:paramtypes", [products_service_1.ProductsService])

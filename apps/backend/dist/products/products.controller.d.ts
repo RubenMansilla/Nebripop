@@ -6,4 +6,6 @@ export declare class ProductsController {
     create(dto: CreateProductDto, images: Express.Multer.File[], req: any): Promise<{
         productId: number;
     }>;
+    getMyActiveProducts(req: any): Promise<import("./products.entity").Product[]>;
+    getMySoldProducts(req: any): Promise<import("./products.entity").Product[]>;
 }
