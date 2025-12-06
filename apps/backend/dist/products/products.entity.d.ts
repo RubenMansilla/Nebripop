@@ -21,5 +21,6 @@ export declare class Product {
     postal_code: string;
     latitude: number;
     longitude: number;
+    sold: boolean;
     images: ProductImage[];
 }

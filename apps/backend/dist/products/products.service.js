@@ -66,6 +66,30 @@ let ProductsService = class ProductsService {
             throw err;
         }
     }
+    async getActiveProductsByUser(userId) {
+        return await this.productRepo.find({
+            where: {
+                owner_id: userId,
+                sold: false
+            },
+            relations: ['images'],
+            order: {
+                id: 'DESC'
+            }
+        });
+    }
+    async getSoldProductsByUser(userId) {
+        return await this.productRepo.find({
+            where: {
+                owner_id: userId,
+                sold: true
+            },
+            relations: ['images'],
+            order: {
+                id: 'DESC'
+            }
+        });
+    }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([

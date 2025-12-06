@@ -1,0 +1,48 @@
+/* ---- SKELETON BASE ---- */
+
+.skeleton-box {
+    background: #e9ecef;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Tamaños */
+.skeleton .product-img {
+    width: 100%;
+    aspect-ratio: 0.8;
+}
+
+.skeleton .small {
+    height: 14px;
+    width: 40%;
+}
+
+.skeleton .medium {
+    height: 14px;
+    width: 70%;
+}
+
+/* Espaciado del info */
+.skeleton .product-info {
+    gap: 10px;
+}
+
+/* ---- EFECTO SHIMMER ---- */
+.skeleton-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.6) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}

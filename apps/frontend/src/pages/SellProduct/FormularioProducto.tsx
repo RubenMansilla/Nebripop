@@ -10,7 +10,7 @@ import ZonaVenta from "./ZonaVenta";
 
 import { AuthContext } from "../../context/AuthContext";
 import { createProduct } from "../../api/products.api";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 export default function FormularioProducto() {
   const { token } = useContext(AuthContext);
@@ -140,54 +140,54 @@ export default function FormularioProducto() {
   // =======================
   // PUBLICAR
   // =======================
-const handlePublish = async () => {
-  if (!token) {
-    showToast("Inicia sesión para publicar un producto.");
-    return;
-  }
+  const handlePublish = async () => {
+    if (!token) {
+      showToast("Inicia sesión para publicar un producto.");
+      return;
+    }
 
-  if (!summary.trim()) {
-    showToast("Debes escribir un resumen del producto.");
-    return;
-  }
+    if (!summary.trim()) {
+      showToast("Debes escribir un resumen del producto.");
+      return;
+    }
 
-  if (images.length === 0) {
-    showToast("Debes subir al menos una foto.");
-    return;
-  }
+    if (images.length === 0) {
+      showToast("Debes subir al menos una foto.");
+      return;
+    }
 
-  if (!categoryId || !subcategoryId) {
-    showToast("Debes seleccionar una categoría.");
-    return;
-  }
+    if (!categoryId || !subcategoryId) {
+      showToast("Debes seleccionar una categoría.");
+      return;
+    }
 
-  // Precio obligatorio
-  if (!details?.price || Number(details.price) <= 0) {
-    showToast("Debes introducir un precio válido.");
-    return;
-  }
+    // Precio obligatorio
+    if (!details?.price || Number(details.price) <= 0) {
+      showToast("Debes introducir un precio válido.");
+      return;
+    }
 
-  const body = {
-    summary,
-    ...details,
-    category_id: categoryId,
-    subcategory_id: subcategoryId,
-    ...shipping,
-    ...zone,
+    const body = {
+      summary,
+      ...details,
+      category_id: categoryId,
+      subcategory_id: subcategoryId,
+      ...shipping,
+      ...zone,
+    };
+
+    try {
+      await createProduct(body, images, token!);
+
+      // 🔥 Redirigir directamente si todo salió bien
+      navigate("/catalog/published");
+
+
+    } catch (err) {
+      console.error(err);
+      showToast("Error al publicar el producto.");
+    }
   };
-
-  try {
-    await createProduct(body, images, token!);
-
-    // 🔥 Redirigir directamente si todo salió bien
-    navigate("/profile/catalog");
-
-    
-  } catch (err) {
-    console.error(err);
-    showToast("Error al publicar el producto.");
-  }
-};
 
 
 

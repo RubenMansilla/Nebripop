@@ -3,16 +3,18 @@ import { LoginModalProvider } from "./context/LoginModalContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
-import Profile from "./pages/Profile/Me/Me";
+import User from "./pages/User/Me/Me";
 import Home from "./pages/Home/Home";
-import Catalog from "./pages/Profile/Catalog/Catalog";
-import Wallet from "./pages/Profile/Wallet/Wallet";
-import Chat from "./pages/Profile/Chat/Chat";
-import Favorites from "./pages/Profile/Favorites/Favorites";
-import Purchases from "./pages/Profile/Purchases/Purchases";
-import Sales from "./pages/Profile/Sales/Sales";
-import Stats from "./pages/Profile/Stats/Stats";
-import Info from "./pages/Profile/Info/Info";
+import Published from "./pages/User/Catalog/Published/Published";
+import Solds from "./pages/User/Catalog/Sold/Solds";
+import Wallet from "./pages/User/Wallet/Wallet";
+import Chat from "./pages/User/Chat/Chat";
+import Favorites from "./pages/User/Favorites/Favorites";
+import Purchases from "./pages/User/Purchases/Purchases";
+import Sales from "./pages/User/Sales/Sales";
+import Stats from "./pages/User/Stats/Stats";
+import Info from "./pages/User/Info/Info";
+import ReviewProfile from "./pages/User/ReviewProfile/ReviewProfile";
 import FormularioProducto from "./pages/SellProduct";
 
 
@@ -32,7 +34,7 @@ export default function App() {
                             path="/profile"
                             element={
                                 <ProtectedRoute>
-                                    <Profile />
+                                    <User />
                                 </ProtectedRoute>
                             }
                         />
@@ -45,10 +47,26 @@ export default function App() {
                             }
                         />
                         <Route
-                            path="/profile/catalog"
+                            path="/profile/reviews"
                             element={
                                 <ProtectedRoute>
-                                    <Catalog />
+                                    <ReviewProfile />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/catalog/published"
+                            element={
+                                <ProtectedRoute>
+                                    <Published />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/catalog/sold"
+                            element={
+                                <ProtectedRoute>
+                                    <Solds />
                                 </ProtectedRoute>
                             }
                         />
@@ -102,13 +120,13 @@ export default function App() {
                         />
 
                         <Route
-    path="/sell-product"
-    element={
-        <ProtectedRoute>
-            <FormularioProducto />
-        </ProtectedRoute>
-    }
-/>
+                            path="/sell-product"
+                            element={
+                                <ProtectedRoute>
+                                    <FormularioProducto />
+                                </ProtectedRoute>
+                            }
+                        />
 
 
                     </Routes>

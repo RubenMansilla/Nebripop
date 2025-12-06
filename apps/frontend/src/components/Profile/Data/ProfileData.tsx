@@ -3,7 +3,12 @@ import { AuthContext } from "../../../context/AuthContext";
 import { updateUser, uploadProfilePicture } from "../../../api/users.api";
 import "./ProfileData.css";
 
-export default function ProfileData() {
+interface ProfileDataProps {
+    setHasUnsavedChanges: (value: boolean) => void;
+}
+
+export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) {
+
     const { user, token, setUser } = useContext(AuthContext);
 
     const profilePic = user?.profilePicture;
@@ -19,6 +24,7 @@ export default function ProfileData() {
         user?.birthDate ? user.birthDate.split("T")[0] : "2000-01-01"
     );
     const [gender, setGender] = useState(user?.gender || "");
+    const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const selectedFileRef = useRef<File | null>(null);
@@ -30,6 +36,7 @@ export default function ProfileData() {
         selectedFileRef.current = file;
         const tempUrl = URL.createObjectURL(file);
         setPreview(tempUrl);
+        setHasUnsavedChanges(true);
     };
 
     useEffect(() => {
@@ -38,10 +45,64 @@ export default function ProfileData() {
         }
     }, [user, isUploading]);
 
+    const handleNameChange = (value: string) => {
+        setName(value);
+        setHasUnsavedChanges(true);
+
+        if (!value.trim()) {
+            setErrors(prev => ({ ...prev, name: "El nombre no puede estar vacío" }));
+        } else {
+            setErrors(prev => ({ ...prev, name: undefined }));
+        }
+    };
+
+    const handleEmailChange = (value: string) => {
+        setEmail(value);
+        setHasUnsavedChanges(true);
+
+        if (!value.trim()) {
+            setErrors(prev => ({ ...prev, email: "El correo no puede estar vacío" }));
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            setErrors(prev => ({ ...prev, email: "Introduce un correo válido" }));
+        } else {
+            setErrors(prev => ({ ...prev, email: undefined }));
+        }
+    };
+
+    const validate = () => {
+        const newErrors: { name?: string; email?: string } = {};
+
+        if (!name.trim()) {
+            newErrors.name = "El nombre no puede estar vacío";
+        }
+
+        if (!email.trim()) {
+            newErrors.email = "El correo no puede estar vacío";
+        } else {
+            // Validar formato de correo
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                newErrors.email = "Introduce un correo válido";
+            }
+        }
+
+        setErrors(newErrors);
+
+        // Si no hay errores devolvemos true
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSave = async () => {
+
+        // Si hay errores, no continuar
+        if (!validate()) return;
+
         try {
-            // 1) Actualizar datos públicos + personales
+            // Actualizar datos públicos + personales
             const body = {
                 fullName: name,
                 email,
@@ -52,7 +113,7 @@ export default function ProfileData() {
             const updatedUser = await updateUser(body, token!);
             setUser(updatedUser);
 
-            // 2) Subir foto si existe
+            // Subir foto si existe
             if (selectedFileRef.current) {
                 setIsUploading(true);
 
@@ -60,13 +121,11 @@ export default function ProfileData() {
                     selectedFileRef.current,
                     token!
                 );
-
                 setUser(updatedPicUser);
                 setPreview(updatedPicUser.profilePicture);
-
                 setIsUploading(false);
             }
-
+            setHasUnsavedChanges(false);
         } catch (err) {
             console.error("Error guardando datos:", err);
         }
@@ -74,6 +133,7 @@ export default function ProfileData() {
 
     return (
         <>
+            {/*TODO: mensajes de error, nombre no puede estar vacio, el correo tampoco, si el input de nombre y correo esta vacio poner el borde del input de color rojo. validar que lo que se ponga en el input del correo sea un correo    */}
             {/* --- INFORMACIÓN PÚBLICA --- */}
             <div className="profile-info-container">
                 <div className="public-info-content">
@@ -115,7 +175,8 @@ export default function ProfileData() {
                         <input
                             type="text"
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => handleNameChange(e.target.value)}
+                            className={errors.name ? "input-error" : "input-normal"}
                         />
                     </div>
                 </div>
@@ -132,6 +193,7 @@ export default function ProfileData() {
                             type="date"
                             value={birthDate}
                             onChange={(e) => setBirthDate(e.target.value)}
+                            className="input-normal"
                         />
                     </div>
 
@@ -160,7 +222,8 @@ export default function ProfileData() {
                         <input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => handleEmailChange(e.target.value)}
+                            className={errors.email ? "input-error" : "input-normal"}
                         />
                     </div>
                     <div className="save-btn-container">

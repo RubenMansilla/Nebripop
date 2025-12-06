@@ -1,4 +1,4 @@
-import type { ReviewSummary } from "../types/Review";
+import type { ReviewSummary } from "../types/review";
 
 const stored = localStorage.getItem("reviewSummary");
 

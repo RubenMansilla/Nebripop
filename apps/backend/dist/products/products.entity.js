@@ -35,6 +35,7 @@ let Product = class Product {
     postal_code;
     latitude;
     longitude;
+    sold;
     images;
 };
 exports.Product = Product;
@@ -122,6 +123,10 @@ __decorate([
     (0, typeorm_1.Column)("numeric", { nullable: true }),
     __metadata("design:type", Number)
 ], Product.prototype, "longitude", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    __metadata("design:type", Boolean)
+], Product.prototype, "sold", void 0);
 __decorate([
     (0, typeorm_2.OneToMany)(() => products_image_entity_1.ProductImage, (img) => img.product),
     __metadata("design:type", Array)
