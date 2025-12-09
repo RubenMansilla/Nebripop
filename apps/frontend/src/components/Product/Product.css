@@ -1,0 +1,263 @@
+.product {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 8px;
+}
+
+.product-img {
+    width: 100%;
+    aspect-ratio: 0.8;
+    overflow: hidden;
+    border-radius: 12px;
+    user-select: none;
+    position: relative;
+    background-color: #f0f0f0;
+}
+
+.product-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+}
+
+.sold-banner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ffffff;
+    color: black;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 16px;
+    border: 1.5px solid #ced4da;
+    z-index: 2;
+}
+
+/* Estilo para el esqueleto de carga */
+.img-skeleton-loader {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-skeleton 1.5s infinite;
+    z-index: 1;
+    /* Para que quede encima hasta que la imagen cargue */
+}
+
+/* Animación de brillo/movimiento */
+@keyframes loading-skeleton {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.img-counter {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(33, 37, 41, 0.6);
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    /* Forma de píldora */
+    pointer-events: none;
+    z-index: 2;
+}
+
+.img-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, transform 0.1s;
+}
+
+.img-btn svg {
+    width: 10px;
+    height: 10px;
+}
+
+.prev-btn {
+    left: 8px;
+}
+
+.next-btn {
+    right: 8px;
+}
+
+.product-img:hover .img-btn {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .img-btn {
+        opacity: 1;
+    }
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-inline: 0px;
+    justify-content: space-between;
+}
+
+.product-price {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.product-price p {
+    width: fit-content;
+    color: #212529;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.product-actions {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.favorite {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite svg {
+    stroke: none;
+    transition: 0.2s ease;
+    fill-opacity: 1;
+    transition: all 0.2s ease;
+}
+
+.favorite svg:hover {
+    transform: scale(1.1);
+}
+
+.favorite.liked svg {
+    fill: #ff3c55;
+    stroke: none;
+    animation: heart-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #29363d;
+    fill: none;
+    transition: 0.2s ease;
+    cursor: pointer;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Definición del rebote estilo Wallapop */
+@keyframes heart-bounce {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.35);
+        /* Crece un poco más de lo normal */
+    }
+
+    100% {
+        transform: scale(1);
+        /* Vuelve a su tamaño */
+    }
+}
+
+.product-title {
+    color: #212529;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.product-delivery {
+    width: 100%;
+
+    margin-top: 2px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.product-delivery p {
+    font-size: 12px;
+    color: #86418a;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .product-title p {
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .product-price p {
+        font-size: 13px;
+    }
+}

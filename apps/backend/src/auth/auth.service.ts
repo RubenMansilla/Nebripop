@@ -13,11 +13,15 @@ export class AuthService {
     ) { }
 
     async register(data: RegisterDto) {
+        console.log("ENV JWT_SECRET (auth.service register):", process.env.JWT_SECRET);
+
         // Verificar si el email ya existe
         const existing = await this.usersService.findByEmail(data.email);
         if (existing) {
             throw new ConflictException('Email ya está registrado');
         }
+
+        console.log("Register data:", data);
 
         // Encriptar contraseña
         const passwordHash = await bcrypt.hash(data.password, 10);
@@ -26,7 +30,7 @@ export class AuthService {
         const user = await this.usersService.create({
             fullName: data.fullName,
             email: data.email,
-            passwordHash,
+            passwordHash
         });
 
         // Crear token
@@ -42,6 +46,11 @@ export class AuthService {
     }
 
     async login(data: LoginDto) {
+        // 1. Log de lo que llega desde el frontend
+        console.log("EMAIL:", data.email);
+        console.log("PASSWORD:", data.password);
+        console.log("ENV JWT_SECRET (auth.service login):", process.env.JWT_SECRET);
+
         const user = await this.usersService.findByEmail(data.email);
         if (!user) {
             throw new UnauthorizedException('Email o contraseña incorrectos');

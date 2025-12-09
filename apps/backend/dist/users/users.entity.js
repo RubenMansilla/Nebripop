@@ -17,6 +17,8 @@ let User = class User {
     email;
     passwordHash;
     createdAt;
+    birthDate;
+    gender;
     profilePicture;
     walletBalance;
 };
@@ -42,7 +44,19 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "createdAt", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'profile_picture', nullable: true }),
+    (0, typeorm_1.Column)({ name: 'birth_date', type: 'date', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "birthDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'gender', type: 'text', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "gender", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        name: 'profile_picture',
+        nullable: false,
+        default: "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I"
+    }),
     __metadata("design:type", String)
 ], User.prototype, "profilePicture", void 0);
 __decorate([

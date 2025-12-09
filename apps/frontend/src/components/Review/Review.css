@@ -1,0 +1,149 @@
+.review {
+    width: 95%;
+    border-bottom: 1px solid var(--beige);
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 25px;
+    gap: 100px;
+}
+
+.review:last-child {
+    border-bottom: none;
+}
+
+.review-header {
+    display: flex;
+    gap: 14px;
+    width: 210px;
+}
+
+.reviewer-pic {
+    height: 55px;
+}
+
+.reviewer-pic img {
+    width: 55px;
+    border-radius: 50%;
+}
+
+.reviewer-info {
+    display: flex;
+    flex-direction: column;
+    height: 55px;
+    justify-content: center;
+    gap: 4px;
+}
+
+.review-body {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: start;
+    gap: 14px;
+    padding-right: 100px;
+}
+
+.review-note {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.stars {
+    display: flex;
+}
+
+.stars svg {
+    width: 20px;
+    height: 20px;
+    fill: #29363d;
+}
+
+.review-date {
+    font-size: 13px;
+    color: #212529;
+    line-height: 16px;
+}
+
+.review-text {
+    line-height: 24px;
+    color: #212529;
+}
+
+.review-product {
+    border: 1px solid #d1dbe0;
+    border-radius: 8px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px;
+}
+
+.review-product-img {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.review-product-img img {
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+}
+
+.review-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+}
+
+.review-product-ds {
+    font-size: 12px;
+    line-height: 16px;
+    color: #5c7a89;
+}
+
+.review-product-name {
+    font-size: 14px;
+    color: #29363d;
+}
+
+.star path {
+    fill: none;
+    stroke: #d6c9b4;
+    stroke-width: 2px;
+}
+
+.star.filled path {
+    fill: var(--beige);
+}
+
+
+/* RESPONSIVE móvil */
+@media (max-width: 768px) {
+
+    .sort-by-container {
+        margin-top: 10px;
+    }
+
+    .review {
+        flex-direction: column;
+        gap: 0px;
+        width: 92%;
+    }
+
+    .review-body {
+        width: 100%;
+        margin-top: 4px;
+        gap: 10px;
+        padding-right: 0px;
+    }
+
+    .review-product {
+        margin-top: 2px;
+    }
+}

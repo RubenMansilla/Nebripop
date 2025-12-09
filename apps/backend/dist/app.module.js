@@ -12,6 +12,9 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const products_module_1 = require("./products/products.module");
+const reviews_module_1 = require("./reviews/reviews.module");
+const favorites_module_1 = require("./favorites/favorites.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -20,6 +23,7 @@ exports.AppModule = AppModule = __decorate([
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
+                envFilePath: '.env',
             }),
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
@@ -36,6 +40,9 @@ exports.AppModule = AppModule = __decorate([
             }),
             users_module_1.UsersModule,
             auth_module_1.AuthModule,
+            products_module_1.ProductsModule,
+            reviews_module_1.ReviewsModule,
+            favorites_module_1.FavoritesModule,
         ],
     })
 ], AppModule);
