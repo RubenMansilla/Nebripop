@@ -1,4 +1,6 @@
+import React, { type JSX } from "react";
 import "./Footer.css";
+
 import apple from "../../assets/iconos/Apple.png";
 import huawei from "../../assets/iconos/Huawei.png";
 import android from "../../assets/iconos/Android.png";
@@ -8,20 +10,19 @@ import twitter from "../../assets/iconos/Twitter.png";
 import paypal from "../../assets/iconos/PayPal.png";
 import visa from "../../assets/iconos/Visa.png";
 
-export default function Footer() {
+export default function Footer(): JSX.Element {
   return (
     <footer className="footer">
 
-      {/* TOP SECTION (BEIGE) */}
       <div className="footer-top-bg">
         <div className="footer-container footer-top">
           
           <div className="footer-column">
             <h4>NEBRIPOP</h4>
-            <a href="#">Quiénes somos</a>
-            <a href="#">Cómo funciona</a>
-            <a href="#">Empleo</a>
-            <a href="#">Sostenibilidad</a>
+            <a href="/quienes-somos">Quiénes somos</a>
+            <a href="/como-funciona">Cómo funciona</a>
+            <a href="/empleo">Empleo</a>
+            <a href="/sostenibilidad">Sostenibilidad</a>
             <p className="footer-address">
               Calle Joaquín María López, 25 Madrid 28019
             </p>
@@ -29,15 +30,15 @@ export default function Footer() {
 
           <div className="footer-column">
             <h4>SOPORTE</h4>
-            <a href="#">Ayuda</a>
-            <a href="#">Consejos de seguridad</a>
-            <a href="#">Normas de la comunidad</a>
+            <a href="/ayuda">Ayuda</a>
+            <a href="/seguridad">Consejos de seguridad</a>
+            <a href="/normas">Normas de la comunidad</a>
           </div>
 
           <div className="footer-column">
             <h4>LEGAL</h4>
-            <a href="#">Política de Privacidad</a>
-            <a href="#">Condiciones de uso</a>
+            <a href="/privacidad">Política de Privacidad</a>
+            <a href="/condiciones">Condiciones de uso</a>
           </div>
 
           <div className="footer-column subscribe">
@@ -58,20 +59,13 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* BOTTOM SECTION (WHITE) */}
       <div className="footer-bottom-bg">
         <div className="footer-container footer-bottom">
 
           <div className="stores">
-            <a className="store">
-              <img src={apple} /> Apple Store
-            </a>
-            <a className="store">
-              <img src={huawei} /> AppGallery
-            </a>
-            <a className="store">
-              <img src={android} /> Google Play
-            </a>
+            <a className="store"><img src={apple} /> Apple Store</a>
+            <a className="store"><img src={huawei} /> AppGallery</a>
+            <a className="store"><img src={android} /> Google Play</a>
           </div>
 
           <div className="social">

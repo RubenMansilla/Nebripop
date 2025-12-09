@@ -1,0 +1,78 @@
+/* ==== CONTENEDOR GENERAL ==== */
+.page-wrapper {
+  padding: 40px 8% 0 8%;           /* Quitamos padding inferior */
+  background: #f7f5f2;
+  font-family: "Inter", sans-serif;
+  width: 100%;
+  margin: 0;                       /* Sin márgenes */
+}
+
+/* ==== EVITAR ESPACIO ANTES DEL FOOTER ==== */
+.page-wrapper::after {
+  content: "";
+  display: block;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Asegura que ningún componente meta espacio abajo */
+.section:last-child {
+  margin-bottom: 20px !important;
+}
+
+/* ==== TÍTULO PRINCIPAL ==== */
+.page-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 40px;
+  color: #3A3A3A;
+}
+
+/* ==== SECCIONES ==== */
+.section {
+  margin-bottom: 60px;
+}
+
+.section h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: #3A3A3A;
+}
+
+.section p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: #4A4A4A;
+  margin-bottom: 12px;
+}
+
+/* ==== GALERÍA DE IMÁGENES CENTRADAS ==== */
+.image-section {
+  margin: 50px auto;
+  display: grid;
+  
+  /* CENTRAR IMÁGENES */
+  justify-content: center;
+  justify-items: center;
+
+  grid-template-columns: repeat(2, minmax(300px, 1fr));
+  gap: 28px;
+  width: 100%;
+}
+
+/* ==== IMÁGENES ==== */
+.image-section img {
+  width: 100%;
+  max-width: 500px;          /* Para que no sean enormes */
+  height: 280px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Evitar que quede fondo blanco entre el último contenido y el footer */
+html, body {
+  background: #f7f5f2;
+}

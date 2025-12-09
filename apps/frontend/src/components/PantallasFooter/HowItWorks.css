@@ -1,0 +1,41 @@
+.page-wrapper {
+  padding: 40px 8%;
+  background: #f7f5f2;
+  font-family: "Inter", sans-serif;
+}
+
+.page-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.section {
+  margin-bottom: 60px;
+}
+
+.section h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #3e3e3e;
+}
+
+.section p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #444;
+}
+
+.image-section {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.image-section img {
+  width: 420px;
+  border-radius: 16px;
+  object-fit: cover;
+}

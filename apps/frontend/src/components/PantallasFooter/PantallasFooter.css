@@ -1,0 +1,259 @@
+:root {
+  --beige: #d6c9b4;
+  --beige-light: #efe9df;
+  --beige-soft: #f3ebdf;
+  --text-dark: #353535;
+  --text-light: #6f6f6f;
+  --bg-light: #faf8f5;
+  --white: #ffffff;
+  --max-width: min(1200px, 92vw);
+}
+
+.pantalla-wrapper {
+  font-family: "Inter", sans-serif;
+  background: var(--bg-light);
+  padding-bottom: 80px;
+}
+
+/* ================================
+   ENCABEZADO H1 PRINCIPAL
+================================ */
+
+.pantalla-header {
+  background: var(--beige);
+  padding: 60px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.pantalla-header::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--beige-light);
+  clip-path: polygon(75% 0, 100% 0, 100% 100%, 55% 100%);
+}
+
+.pantalla-header h1 {
+  position: relative;
+  z-index: 2;
+  width: var(--max-width);
+  margin: 0 auto;
+  color: white;
+  font-weight: 800;
+  font-size: clamp(32px, 6vw, 60px);
+}
+
+/* ================================
+   CONTENIDO
+================================ */
+
+.pantalla-content {
+  width: var(--max-width);
+  margin: 60px auto;
+  background: var(--white);
+  padding: 40px 35px;
+  border-radius: 18px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.06);
+}
+
+.pantalla-content p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--text-dark);
+  margin-bottom: 18px;
+}
+
+.pantalla-content h2 {
+  margin-top: 40px;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.pantalla-content h3 {
+  margin-top: 28px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+/* LISTAS */
+.pantalla-content ul {
+  margin: 20px 0 20px 22px;
+  padding: 0;
+}
+
+.pantalla-content li {
+  margin-bottom: 12px;
+  line-height: 1.6;
+  color: var(--text-light);
+  font-size: 16px;
+}
+
+/* ENLACES */
+.pantalla-content a {
+  color: var(--beige);
+  text-decoration: none;
+}
+
+.pantalla-content a:hover {
+  text-decoration: underline;
+}
+
+/* ================================
+   CITA / BLOQUE ESPECIAL
+================================ */
+
+.pantalla-quote {
+  margin: 35px 0;
+  padding: 22px 26px;
+  background: var(--beige-soft);
+  border-left: 6px solid var(--beige);
+  border-radius: 12px;
+  font-size: 17px;
+  color: var(--text-dark);
+  line-height: 1.55;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+  .pantalla-content {
+    padding: 24px;
+  }
+
+  .pantalla-header h1 {
+    font-size: 34px;
+  }
+}
+
+/* ---------------- HERO ---------------- */
+
+.footer-hero {
+  width: 100%;
+  position: relative;
+  height: 380px;
+  overflow: hidden;
+  border-bottom: 4px solid #d6c9b4;
+}
+
+.footer-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(62%);
+}
+
+.footer-hero-content {
+  position: absolute;
+  z-index: 20;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+}
+
+.footer-hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.footer-hero-subtitle {
+  font-size: 18px;
+  font-weight: 400;
+  opacity: 0.95;
+}
+
+/* ---------------- TARJETAS ---------------- */
+
+.footer-cards {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.footer-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+  padding-bottom: 16px;
+  overflow: hidden;
+  transition: transform 0.25s ease;
+}
+
+.footer-card:hover {
+  transform: translateY(-6px);
+}
+
+.footer-card-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.footer-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 16px;
+}
+
+.footer-card-text {
+  font-size: 15px;
+  color: #555;
+  margin: 0 16px 16px 16px;
+  line-height: 1.55;
+}
+
+/* WRAPPER GENERAL CON MÁRGENES A LOS LADOS */
+.footer-page-wrapper {
+  width: min(1200px, 92vw);   /* igual que Home */
+  margin: 40px auto;          /* centra todo y da margen arriba */
+}
+
+/* MÁRGENES LATERALES EN CONTENIDO PRINCIPAL */
+.footer-page-content {
+  padding: 0 20px;            /* margen lateral de 20px */
+}
+
+/* Ajuste para el HERO (que va full width pero mantiene coherencia) */
+.footer-hero {
+  margin-bottom: 30px;
+}
+
+/* También ponemos margen lateral a subtítulos y texto */
+.footer-page-subtitle,
+.footer-page-text {
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+/* Ajuste para las tarjetas — añado un pequeño margen interno */
+.footer-cards {
+  padding: 0 4px;
+}
+
+/* Más espacio entre sección "Nuestra misión" y "Qué hacemos" */
+.footer-section {
+  margin-bottom: 60px !important;   /* antes 30–40, ahora más amplio */
+}
+
+/* Más separación justo debajo del título principal */
+.footer-section h2 {
+  margin-bottom: 22px;
+}
+
+/* Más espacio entre las imágenes y el bloque "Nuestro compromiso" */
+.footer-image-block {
+  margin-bottom: 50px;              /* separación grande */
+}
+
+/* Espacio adicional arriba del bloque de compromiso */
+.footer-commitment {
+  margin-top: 40px;
+}
