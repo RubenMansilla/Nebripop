@@ -15,6 +15,15 @@ export default function Published() {
     const { token } = useContext(AuthContext);
     const [Activeproducts, setActiveProducts] = useState<ProductType[]>([]);
 
+    const [visibleCount, setVisibleCount] = useState(25);
+    const visibleProducts = Activeproducts.slice(0, visibleCount);
+
+    const showMore = () => {
+        setVisibleCount(prev => prev + 25);
+    };
+
+    const hasMore = visibleCount < Activeproducts.length;
+
     useEffect(() => {
         if (!token) return;
 
@@ -22,8 +31,6 @@ export default function Published() {
             .then((data) => setActiveProducts(data))
             .catch((err) => console.error(err));
     }, [token]);
-
-    console.log("Productos activos:", JSON.stringify(Activeproducts, null, 2));
 
     const navigate = useNavigate();
     /* info item active */
@@ -73,19 +80,20 @@ export default function Published() {
                     </div>
                     <ul className="product-container">
                         {Activeproducts.length === 0 ? (
-                            // Mientras carga → 5 skeletons
                             [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                         ) : (
-                            Activeproducts.map((p) => (
-                                <Product key={p.id} product={p} />
+                            visibleProducts.map((p) => (
+                                <Product key={p.id} product={p} mode="active" />
                             ))
                         )}
                     </ul>
-                    <div className="btn-more-reviews-container">
-                        <div className='btn-more-reviews'>
-                            Ver más productos
+                    {hasMore && (
+                        <div className="btn-more-reviews-container" onClick={showMore}>
+                            <div className='btn-more-reviews'>
+                                Ver más productos
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
         </>

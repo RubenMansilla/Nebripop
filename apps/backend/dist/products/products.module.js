@@ -13,12 +13,13 @@ const products_entity_1 = require("./products.entity");
 const products_image_entity_1 = require("./products-image.entity");
 const products_controller_1 = require("./products.controller");
 const products_service_1 = require("./products.service");
+const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
 let ProductsModule = class ProductsModule {
 };
 exports.ProductsModule = ProductsModule;
 exports.ProductsModule = ProductsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([products_entity_1.Product, products_image_entity_1.ProductImage])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([products_entity_1.Product, products_image_entity_1.ProductImage, favorite_product_entity_1.FavoriteProduct])],
         controllers: [products_controller_1.ProductsController],
         providers: [products_service_1.ProductsService],
     })

@@ -20,13 +20,16 @@ const products_entity_1 = require("./products.entity");
 const products_image_entity_1 = require("./products-image.entity");
 const supabase_js_1 = require("@supabase/supabase-js");
 const uuid_1 = require("uuid");
+const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
 let ProductsService = class ProductsService {
     productRepo;
     productImagesRepo;
+    favoritesRepo;
     supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
-    constructor(productRepo, productImagesRepo) {
+    constructor(productRepo, productImagesRepo, favoritesRepo) {
         this.productRepo = productRepo;
         this.productImagesRepo = productImagesRepo;
+        this.favoritesRepo = favoritesRepo;
     }
     async uploadImages(files, productId) {
         const urls = [];
@@ -67,7 +70,7 @@ let ProductsService = class ProductsService {
         }
     }
     async getActiveProductsByUser(userId) {
-        return await this.productRepo.find({
+        const products = await this.productRepo.find({
             where: {
                 owner_id: userId,
                 sold: false
@@ -77,9 +80,17 @@ let ProductsService = class ProductsService {
                 id: 'DESC'
             }
         });
+        const favorites = await this.favoritesRepo.find({
+            where: { user_id: userId }
+        });
+        const favoriteProductIds = favorites.map(f => f.product_id);
+        return products.map(p => ({
+            ...p,
+            isFavorite: favoriteProductIds.includes(p.id)
+        }));
     }
     async getSoldProductsByUser(userId) {
-        return await this.productRepo.find({
+        const products = await this.productRepo.find({
             where: {
                 owner_id: userId,
                 sold: true
@@ -89,6 +100,14 @@ let ProductsService = class ProductsService {
                 id: 'DESC'
             }
         });
+        const favorites = await this.favoritesRepo.find({
+            where: { user_id: userId }
+        });
+        const favoriteProductIds = favorites.map(f => f.product_id);
+        return products.map(p => ({
+            ...p,
+            isFavorite: favoriteProductIds.includes(p.id)
+        }));
     }
 };
 exports.ProductsService = ProductsService;
@@ -96,7 +115,9 @@ exports.ProductsService = ProductsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(products_entity_1.Product)),
     __param(1, (0, typeorm_1.InjectRepository)(products_image_entity_1.ProductImage)),
+    __param(2, (0, typeorm_1.InjectRepository)(favorite_product_entity_1.FavoriteProduct)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], ProductsService);
 //# sourceMappingURL=products.service.js.map

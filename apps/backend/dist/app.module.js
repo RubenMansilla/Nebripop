@@ -14,6 +14,7 @@ const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const products_module_1 = require("./products/products.module");
 const reviews_module_1 = require("./reviews/reviews.module");
+const favorites_module_1 = require("./favorites/favorites.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -41,6 +42,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             products_module_1.ProductsModule,
             reviews_module_1.ReviewsModule,
+            favorites_module_1.FavoritesModule,
         ],
     })
 ], AppModule);

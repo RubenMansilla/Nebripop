@@ -133,7 +133,6 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
 
     return (
         <>
-            {/*TODO: mensajes de error, nombre no puede estar vacio, el correo tampoco, si el input de nombre y correo esta vacio poner el borde del input de color rojo. validar que lo que se ponga en el input del correo sea un correo    */}
             {/* --- INFORMACIÓN PÚBLICA --- */}
             <div className="profile-info-container">
                 <div className="public-info-content">

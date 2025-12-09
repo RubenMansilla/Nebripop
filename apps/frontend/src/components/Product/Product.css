@@ -25,6 +25,20 @@
     pointer-events: none;
 }
 
+.sold-banner {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ffffff;
+    color: black;
+    padding: 5px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 16px;
+    border: 1.5px solid #ced4da;
+    z-index: 2;
+}
+
 /* Estilo para el esqueleto de carga */
 .img-skeleton-loader {
     width: 100%;
@@ -129,6 +143,14 @@
     font-size: 14px;
 }
 
+.product-actions {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
 .favorite {
     width: fit-content;
     display: flex;
@@ -137,10 +159,72 @@
 }
 
 .favorite svg {
+    width: 24px;
+    height: 24px;
+    margin-right: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.favorite svg {
+    stroke: none;
+    transition: 0.2s ease;
+    fill-opacity: 1;
+    transition: all 0.2s ease;
+}
+
+.favorite svg:hover {
+    transform: scale(1.1);
+}
+
+.favorite.liked svg {
+    fill: #ff3c55;
+    stroke: none;
+    animation: heart-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn svg {
     width: 20px;
     height: 20px;
     stroke: #29363d;
-    margin-right: 0px;
+    fill: none;
+    transition: 0.2s ease;
+    cursor: pointer;
+}
+
+.delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Definición del rebote estilo Wallapop */
+@keyframes heart-bounce {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.35);
+        /* Crece un poco más de lo normal */
+    }
+
+    100% {
+        transform: scale(1);
+        /* Vuelve a su tamaño */
+    }
 }
 
 .product-title {

@@ -6,6 +6,7 @@ import { ProductImage } from "./products-image.entity";
 import { CreateProductDto } from "./create-products.dto";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
+import { FavoriteProduct } from "../favorites/favorite-product.entity";
 
 @Injectable()
 export class ProductsService {
@@ -19,7 +20,11 @@ export class ProductsService {
         private productRepo: Repository<Product>,
 
         @InjectRepository(ProductImage)
-        private productImagesRepo: Repository<ProductImage>
+        private productImagesRepo: Repository<ProductImage>,
+
+        @InjectRepository(FavoriteProduct)
+        private favoritesRepo: Repository<FavoriteProduct>,
+
     ) { }
 
     async uploadImages(files: Express.Multer.File[], productId: number) {
@@ -71,7 +76,8 @@ export class ProductsService {
     }
 
     async getActiveProductsByUser(userId: number) {
-        return await this.productRepo.find({
+        // 1. Obtener productos
+        const products = await this.productRepo.find({
             where: {
                 owner_id: userId,
                 sold: false
@@ -81,10 +87,23 @@ export class ProductsService {
                 id: 'DESC'
             }
         });
+
+        // 2. Obtener lista de favoritos del usuario
+        const favorites = await this.favoritesRepo.find({
+            where: { user_id: userId }
+        });
+
+        const favoriteProductIds = favorites.map(f => f.product_id);
+
+        // 3. Devolver productos + isFavorite
+        return products.map(p => ({
+            ...p,
+            isFavorite: favoriteProductIds.includes(p.id)
+        }));
     }
 
     async getSoldProductsByUser(userId: number) {
-        return await this.productRepo.find({
+        const products = await this.productRepo.find({
             where: {
                 owner_id: userId,
                 sold: true
@@ -94,6 +113,17 @@ export class ProductsService {
                 id: 'DESC'
             }
         });
+
+        const favorites = await this.favoritesRepo.find({
+            where: { user_id: userId }
+        });
+
+        const favoriteProductIds = favorites.map(f => f.product_id);
+
+        return products.map(p => ({
+            ...p,
+            isFavorite: favoriteProductIds.includes(p.id)
+        }));
     }
 
 }

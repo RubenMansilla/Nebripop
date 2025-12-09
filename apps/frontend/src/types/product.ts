@@ -4,4 +4,5 @@ export interface ProductType {
     price: number;
     images: { image_url: string }[];
     shipping_active: boolean;
+    isFavorite?: boolean;
 }

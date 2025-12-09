@@ -10,19 +10,29 @@ import type { ProductType } from '../../../../types/product'
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
 
 export default function Solds() {
+
     const navigate = useNavigate();
 
     /* info item active */
     const [selected, setSelected] = useState("sold");
+
+    const { token } = useContext(AuthContext);
+    const [Soldproducts, setSoldProducts] = useState<ProductType[]>([]);
+
+    const [visibleCount, setVisibleCount] = useState(25);
+    const visibleProducts = Soldproducts.slice(0, visibleCount);
+
+    const showMore = () => {
+        setVisibleCount(prev => prev + 25);
+    };
+
+    const hasMore = visibleCount < Soldproducts.length;
 
     useEffect(() => {
         if (selected === "published") {
             navigate("/catalog/published");
         }
     }, [selected, navigate]);
-
-    const { token } = useContext(AuthContext);
-    const [Soldproducts, setSoldProducts] = useState<ProductType[]>([]);
 
     useEffect(() => {
         if (!token) return;
@@ -31,8 +41,6 @@ export default function Solds() {
             .then((data) => setSoldProducts(data))
             .catch((err) => console.error(err));
     }, [token]);
-
-    console.log("Productos vendidos:", JSON.stringify(Soldproducts, null, 2));
 
     return (
         <>
@@ -72,18 +80,20 @@ export default function Solds() {
                     </div>
                     <ul className="product-container">
                         {Soldproducts.length === 0 ? (
-                            [...Array(6)].map((_, i) => <ProductSkeleton key={i} />)
+                            [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                         ) : (
-                            Soldproducts.map((p) => (
-                                <Product key={p.id} product={p} />
+                            visibleProducts.map((p) => (
+                                <Product key={p.id} product={p} mode="sold" />
                             ))
                         )}
                     </ul>
-                    <div className="btn-more-reviews-container">
-                        <div className='btn-more-reviews'>
-                            Ver más productos
+                    {hasMore && (
+                        <div className="btn-more-reviews-container" onClick={showMore}>
+                            <div className='btn-more-reviews'>
+                                Ver más productos
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
         </>
