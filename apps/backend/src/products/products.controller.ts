@@ -12,6 +12,7 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./create-products.dto";
+import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
 
 @Controller("products")
 export class ProductsController {
@@ -42,10 +43,14 @@ export class ProductsController {
         return this.productsService.getSoldProductsByUser(userId);
     }
     // Obtener todos los productos (sin necesidad de login)
-    @Get()
-    async getAllProducts() {
-    return this.productsService.getAllProducts();
-    }
+    @UseGuards(OptionalJwtAuthGuard)
+@Get()
+getAllProducts(@Req() req) {
+  const userId = req.user?.id || null;
+  return this.productsService.getAllProducts(userId);
+}
+
+
 
 
 }
