@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
@@ -24,7 +25,13 @@ import pesasImg from "../../assets/fitness/pesas.png";
 
 import { Link } from "react-router-dom";
 
+// CHAT POPUP TEST
+import ChatTestPopup from "../../components/ChatTest/ChatTestPopup";
+import "../../components/ChatTest/ChatTestPopup.css";
+
 export default function Home() {
+  const [chatOpen, setChatOpen] = useState(false);
+
   return (
     <>
       <Navbar />
@@ -237,6 +244,14 @@ export default function Home() {
           />
         </div>
       </section>
+
+      {/* BOTÓN FLOTANTE DEL CHAT */}
+      <div className="chat-floating-btn" onClick={() => setChatOpen(true)}>
+        💬
+      </div>
+
+      {/* POPUP DE CHAT */}
+      <ChatTestPopup open={chatOpen} onClose={() => setChatOpen(false)} />
 
       <Footer />
     </>

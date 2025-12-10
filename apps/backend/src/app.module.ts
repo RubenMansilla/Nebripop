@@ -2,41 +2,50 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+// MÓDULOS DEL PROYECTO
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { FavoritesModule } from './favorites/favorites.module';
 
+// 🟩 AÑADIR CHAT MODULE
+import { ChatModule } from './chat/chat.module';
+
 @Module({
-    imports: [
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: '.env',
-        }),
+  imports: [
+    // ==== VARIABLES DE ENTORNO ====
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
 
-        TypeOrmModule.forRootAsync({
-            imports: [ConfigModule],
-            inject: [ConfigService],
-            useFactory: (config: ConfigService) => ({
-                type: 'postgres',
-                url: config.get<string>('DATABASE_URL'),
+    // ==== TYPEORM + SUPABASE ====
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        url: config.get<string>('DATABASE_URL'),
 
-                autoLoadEntities: true,
-                synchronize: false,
+        autoLoadEntities: true, // ← detecta todas las entidades automáticamente (incluye Chat y ChatMessage)
+        synchronize: false,     // ← NO TOCAR (Supabase NO permite sync)
 
-                // NECESARIO para Supabase
-                ssl: {
-                    rejectUnauthorized: false,
-                },
-            }),
-        }),
+        ssl: {
+          rejectUnauthorized: false, // Necesario para Supabase
+        },
+      }),
+    }),
 
-        UsersModule,
-        AuthModule,
-        ProductsModule,
-        ReviewsModule,
-        FavoritesModule,
-    ],
+    // ==== MÓDULOS DEL PROYECTO ====
+    UsersModule,
+    AuthModule,
+    ProductsModule,
+    ReviewsModule,
+    FavoritesModule,
+
+    // 🟩 MÓDULO DEL CHAT
+    ChatModule,
+  ],
 })
-export class AppModule { }
+export class AppModule {}
