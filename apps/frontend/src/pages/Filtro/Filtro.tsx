@@ -1,12 +1,14 @@
 // src/pages/Filtro/Filtro.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import "./Filtro.css";
+import { AuthContext } from "../../context/AuthContext";
 
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
 
 import { getAllProducts } from "../../api/products.api";
+
 
 export default function Filtro() {
   // ========================
@@ -24,14 +26,17 @@ export default function Filtro() {
   // ========================
   // CARGAR PRODUCTOS
   // ========================
+  const { token } = useContext(AuthContext);
+
   useEffect(() => {
-    getAllProducts()
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch((err) => console.error(err));
-  }, []);
+  getAllProducts(token)
+    .then((data) => {
+      setProducts(data);
+      setLoading(false);
+    })
+    .catch(err => console.error(err));
+}, [token]);
+
 
   // ========================
   // TOGGLE DE CHECKBOXES
