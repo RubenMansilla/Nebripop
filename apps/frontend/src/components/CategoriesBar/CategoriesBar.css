@@ -59,61 +59,46 @@
   color: #a58866;
 }
 
-/* Tablets */
-@media (max-width: 1024px) {
+@media (max-width: 1500px) and (min-width: 600px) {
+
   .category-bar {
-    width: 90%;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 12px 100px;   /* 🔥 margen grande a la izquierda */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     gap: 20px;
+    box-sizing: border-box;
+    overflow-x: hidden !important;
   }
 
   .cat-links {
-    gap: 28px;
-  }
-
-  .cat-item {
-    font-size: 15px;
+    display: none !important;
   }
 }
 
-/* Móviles grandes */
-@media (max-width: 768px) {
-  .category-bar {
-    width: 100%;
-    gap: 16px;
-  }
-
-  .menu-text {
-    font-size: 15px;
-  }
-
-  .cat-links {
-    gap: 18px;
-  }
-
-  .cat-item {
-    font-size: 14px;
-  }
-}
-
-/* Móviles pequeños */
 @media (max-width: 600px) {
 
-  .cat-links {
-    display: none;
-  }
-
   .category-bar {
+    width: 100% !important;      /* 🔥 ocupa todo el ancho */
+    margin: 0 !important;        /* quita centrado con auto */
+    padding: 12px 14px;          /* padding cómodo móvil */
+    display: flex;
+    align-items: center;
     justify-content: flex-start;
+    gap: 16px;
+    box-sizing: border-box;      /* evita overflow */
+    overflow-x: hidden !important;
   }
 
+  /* Ocultamos las categorías horizontales */
+  .cat-links {
+    display: none !important;
+  }
+
+  /* Ajuste de tamaño del texto del menú */
   .menu-text {
     font-size: 15px;
-  }
-}
-
-/* Ultra-pequeños */
-@media (max-width: 420px) {
-  .menu-text {
-    font-size: 14px;
   }
 }
