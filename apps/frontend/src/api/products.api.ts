@@ -52,11 +52,19 @@ export async function getMySoldProducts(token: string) {
     return res.json();
 }
 
-export async function getAllProducts() {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
-        method: "GET",
-    });
+export async function getAllProducts(token?: string | null) {
+  const headers: any = {};
 
-    if (!res.ok) throw new Error("Error al obtener todos los productos");
-    return res.json();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
+    method: "GET",
+    headers,
+  });
+
+  if (!res.ok) throw new Error("Error al obtener todos los productos");
+  return res.json();
 }
+
