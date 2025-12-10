@@ -3,8 +3,19 @@ import "./Navbar.css";
 
 import logo from "../../assets/logos/nebripop.png";
 import searchIcon from "../../assets/iconos/buscar.png";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useLoginModal } from "../../context/LoginModalContext";
 
 export default function Navbar() {
+
+  const { openLogin } = useLoginModal();
+
+  const navigate = useNavigate();
+
+  const { user } = useContext(AuthContext);
+
   const words = [
     "nintendo",
     "iPhone",
@@ -117,11 +128,20 @@ export default function Navbar() {
       {/* ZONA DERECHA */}
       <div className="nav-right">
 
-        {!isMobile && (
+        {!isMobile && !user && (
           <>
-            <button className="btn-registro">Registrarte o Inicia sesión</button>
+            <button className="btn-registro" onClick={openLogin}>Registrarte o Inicia sesión</button>
 
-            <button className="btn-vender">
+            <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+              Vender <span className="icon-plus">+</span>
+            </button>
+          </>
+        )}
+
+        {!isMobile && user && (
+          <>
+            <button className="btn-registro" onClick={() => navigate(`/profile/info`)}>Bienvenido {user.fullName.split(" ")[0]}</button>
+            <button className="btn-vender" onClick={() => navigate("/sell-product")}>
               Vender <span className="icon-plus">+</span>
             </button>
           </>
@@ -139,11 +159,11 @@ export default function Navbar() {
         {isMobile && userMenuOpen && (
           <div className="mobile-user-menu">
 
-            <a href="/login" className="mobile-menu-link">
+            <a href="/login" className="mobile-menu-link" onClick={openLogin}>
               Registrarte o Iniciar sesión
             </a>
 
-            <a href="/vender" className="mobile-menu-link">
+            <a href="/vender" className="mobile-menu-link" onClick={() => navigate("/sell-product")}>
               Vender artículos
             </a>
 

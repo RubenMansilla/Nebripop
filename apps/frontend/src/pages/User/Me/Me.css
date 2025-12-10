@@ -47,6 +47,10 @@
 /* Estilos tablet y móvil */
 @media (max-width: 990px) {
 
+    .sidebar-container {
+        height: calc(100vh - 160px);
+    }
+
     .show-left-sidebar {
         width: 100%;
         height: auto;
