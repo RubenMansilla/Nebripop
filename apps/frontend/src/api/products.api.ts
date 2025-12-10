@@ -51,3 +51,12 @@ export async function getMySoldProducts(token: string) {
     if (!res.ok) throw new Error("Error al obtener productos vendidos");
     return res.json();
 }
+
+export async function getAllProducts() {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
+        method: "GET",
+    });
+
+    if (!res.ok) throw new Error("Error al obtener todos los productos");
+    return res.json();
+}
