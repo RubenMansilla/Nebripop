@@ -7,6 +7,9 @@ import { CreateProductDto } from "./create-products.dto";
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 import { FavoriteProduct } from "../favorites/favorite-product.entity";
+import { Not } from "typeorm";
+
+
 
 @Injectable()
 export class ProductsService {
@@ -125,12 +128,18 @@ export class ProductsService {
             isFavorite: favoriteProductIds.includes(p.id)
         }));
     }
-    async getAllProducts() {
+    
+    async getAllProducts(userId?: number) {
+    const whereClause = userId
+        ? { owner_id: Not(userId) } // excluir productos propios
+        : {};
+
     return this.productRepo.find({
-        relations: ["images"],  // incluir imágenes
-        order: { id: "DESC" },  // ordenar por más nuevos
+        where: whereClause,
+        relations: ["images"],
+        order: { id: "DESC" } // ordenar por productos más recientes
     });
 }
 
-
 }
+
