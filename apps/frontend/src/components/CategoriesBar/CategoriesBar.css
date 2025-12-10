@@ -64,7 +64,7 @@
   .category-bar {
     width: 100% !important;
     margin: 0 !important;
-    padding: 12px 100px;   /* 🔥 margen grande a la izquierda */
+    padding: 12px 100px;   
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -78,26 +78,24 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
   .category-bar {
-    width: 100% !important;      /* 🔥 ocupa todo el ancho */
-    margin: 0 !important;        /* quita centrado con auto */
-    padding: 12px 14px;          /* padding cómodo móvil */
+    width: 100% !important;      
+    margin: 0 !important;        
+    padding: 12px 14px;          
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 16px;
-    box-sizing: border-box;      /* evita overflow */
+    box-sizing: border-box;      
     overflow-x: hidden !important;
   }
 
-  /* Ocultamos las categorías horizontales */
   .cat-links {
     display: none !important;
   }
 
-  /* Ajuste de tamaño del texto del menú */
   .menu-text {
     font-size: 15px;
   }
