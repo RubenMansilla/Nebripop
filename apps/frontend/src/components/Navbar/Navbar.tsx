@@ -101,9 +101,10 @@ export default function Navbar() {
 
       {/* ZONA IZQUIERDA */}
       <div className="nav-left">
-        <div className="nav-logo">
-          <img src={logo} alt="nebripop" />
+        <div className="nav-logo" onClick={() => navigate("/")}>
+          <img src={logo} alt="nebripop" style={{ cursor: "pointer" }} />
         </div>
+
       </div>
 
       {/* ZONA CENTRAL */}
