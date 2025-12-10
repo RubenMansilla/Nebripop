@@ -12,9 +12,12 @@ import Published from "./pages/User/Catalog/Published/Published";
 import Solds from "./pages/User/Catalog/Sold/Solds";
 import Wallet from "./pages/User/Wallet/Wallet";
 import Chat from "./pages/User/Chat/Chat";
-import Favorites from "./pages/User/Favorites/Favorites";
-import Purchases from "./pages/User/Purchases/Purchases";
-import Sales from "./pages/User/Sales/Sales";
+import FavoritesProducts from "./pages/User/Favorites/Products/FavoritesProducts";
+import FavoritesProfiles from "./pages/User/Favorites/Profiles/FavoritesProfiles";
+import PurchasesOngoing from "./pages/User/Purchases/Ongoing/PurchasesOngoing";
+import PurchasesCompleted from "./pages/User/Purchases/Completed/PurchasesCompleted";
+import SalesOngoing from "./pages/User/Sales/Ongoing/SalesOngoing";
+import SalesCompleted from "./pages/User/Sales/Completed/SalesCompleted";
 import Stats from "./pages/User/Stats/Stats";
 import Info from "./pages/User/Info/Info";
 import ReviewProfile from "./pages/User/ReviewProfile/ReviewProfile";
@@ -120,28 +123,55 @@ export default function App() {
             />
 
             <Route
-              path="/profile/favorites"
+              path="/favorites/products"
               element={
                 <ProtectedRoute>
-                  <Favorites />
+                  <FavoritesProducts />
                 </ProtectedRoute>
               }
             />
 
             <Route
-              path="/profile/purchases"
+              path="/favorites/profiles"
               element={
                 <ProtectedRoute>
-                  <Purchases />
+                  <FavoritesProfiles />
                 </ProtectedRoute>
               }
             />
 
             <Route
-              path="/profile/sales"
+              path="/purchases/ongoing"
               element={
                 <ProtectedRoute>
-                  <Sales />
+                  <PurchasesOngoing />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/purchases/completed"
+              element={
+                <ProtectedRoute>
+                  <PurchasesCompleted />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/sales/ongoing"
+              element={
+                <ProtectedRoute>
+                  <SalesOngoing />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/sales/completed"
+              element={
+                <ProtectedRoute>
+                  <SalesCompleted />
                 </ProtectedRoute>
               }
             />
