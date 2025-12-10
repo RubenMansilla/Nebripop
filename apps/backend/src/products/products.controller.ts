@@ -41,5 +41,11 @@ export class ProductsController {
         const userId = req.user.id;
         return this.productsService.getSoldProductsByUser(userId);
     }
+    // Obtener todos los productos (sin necesidad de login)
+    @Get()
+    async getAllProducts() {
+    return this.productsService.getAllProducts();
+    }
+
 
 }
