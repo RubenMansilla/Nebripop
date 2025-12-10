@@ -125,5 +125,12 @@ export class ProductsService {
             isFavorite: favoriteProductIds.includes(p.id)
         }));
     }
+    async getAllProducts() {
+    return this.productRepo.find({
+        relations: ["images"],  // incluir imágenes
+        order: { id: "DESC" },  // ordenar por más nuevos
+    });
+}
+
 
 }
