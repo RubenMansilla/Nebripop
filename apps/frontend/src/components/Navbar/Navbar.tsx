@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import "./Navbar.css";
 
 import logo from "../../assets/logos/nebripop.png";
@@ -6,6 +6,7 @@ import searchIcon from "../../assets/iconos/buscar.png";
 
 import { AuthContext } from "../../context/AuthContext";
 import { useLoginModal } from "../../context/LoginModalContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const words = ["nintendo", "iPhone", "bicicleta", "PlayStation", "Switch", "patinete", "cámara", "AirPods"];
@@ -19,14 +20,16 @@ export default function Navbar() {
 
   const { user } = useContext(AuthContext);
   const { openLogin } = useLoginModal();
+  const navigate = useNavigate();
 
+  /* ----------------- RESPONSIVE ----------------- */
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1000);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // -------- ANIMACIÓN BUSCADOR --------
+  /* ----------------- ANIMACIÓN DEL BUSCADOR ----------------- */
   useEffect(() => {
     let i = 0;
     let timer: any;
@@ -88,8 +91,8 @@ export default function Navbar() {
     <nav className="navbar">
       {/* IZQUIERDA */}
       <div className="nav-left">
-        <div className="nav-logo">
-          <img src={logo} alt="nebripop" />
+        <div className="nav-logo" onClick={() => navigate("/")}>
+          <img src={logo} alt="nebripop" style={{ cursor: "pointer" }} />
         </div>
       </div>
 
@@ -109,25 +112,34 @@ export default function Navbar() {
 
       {/* DERECHA */}
       <div className="nav-right">
-        {!isMobile && (
-          <>
-            {!user ? (
-              <button className="btn-registro" onClick={openLogin}>
-                Registrarte o Inicia sesión
-              </button>
-            ) : (
-              <div className="nav-user">
-                <span className="nav-username">{user.fullName}</span>
-                <a href="/profile" className="nav-profile-link">Mi perfil</a>
-              </div>
-            )}
 
-            <button className="btn-vender">
+        {/* ---------- DESKTOP SIN SESIÓN ---------- */}
+        {!isMobile && !user && (
+          <>
+            <button className="btn-registro" onClick={openLogin}>
+              Registrarte o Inicia sesión
+            </button>
+
+            <button className="btn-vender" onClick={() => navigate("/sell-product")}>
               Vender <span className="icon-plus">+</span>
             </button>
           </>
         )}
 
+        {/* ---------- DESKTOP CON SESIÓN ---------- */}
+        {!isMobile && user && (
+          <>
+            <button className="btn-registro" onClick={() => navigate(`/profile/info`)}>
+              Bienvenido {user.fullName.split(" ")[0]}
+            </button>
+
+            <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+              Vender <span className="icon-plus">+</span>
+            </button>
+          </>
+        )}
+
+        {/* ---------- MOBILE ---------- */}
         {isMobile && (
           <button className="hamb-menu" onClick={() => setUserMenuOpen(!userMenuOpen)}>
             ☰
@@ -141,14 +153,15 @@ export default function Navbar() {
                 Registrarte o Iniciar sesión
               </div>
             ) : (
-              <a href="/profile" className="mobile-menu-link">
-                Mi perfil
-              </a>
+              <a href="/profile" className="mobile-menu-link">Mi perfil</a>
             )}
 
-            <a href="/vender" className="mobile-menu-link">
+            <div
+              className="mobile-menu-link"
+              onClick={() => navigate("/sell-product")}
+            >
               Vender artículos
-            </a>
+            </div>
           </div>
         )}
       </div>

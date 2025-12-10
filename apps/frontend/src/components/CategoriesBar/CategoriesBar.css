@@ -8,6 +8,7 @@
   padding: 15px 5px;
   background: white;
   font-family: "Inter", sans-serif;
+  height: 70px;
 }
 
 /* botón hamburguesa */
@@ -20,11 +21,13 @@
   cursor: pointer;
   padding: 8px 12px;
 }
+
 .cat-hamburger {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
+
 .hamb-line {
   width: 20px;
   height: 2px;
@@ -62,9 +65,11 @@
     width: 90%;
     gap: 20px;
   }
+
   .cat-links {
     gap: 28px;
   }
+
   .cat-item {
     font-size: 15px;
   }
@@ -76,12 +81,15 @@
     width: 100%;
     gap: 16px;
   }
+
   .menu-text {
     font-size: 15px;
   }
+
   .cat-links {
     gap: 18px;
   }
+
   .cat-item {
     font-size: 14px;
   }

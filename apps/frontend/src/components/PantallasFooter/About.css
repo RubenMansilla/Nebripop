@@ -1,10 +1,12 @@
 /* ==== CONTENEDOR GENERAL ==== */
 .page-wrapper {
-  padding: 40px 8% 0 8%;           /* Quitamos padding inferior */
+  padding: 40px 8% 0 8%;
+  /* Quitamos padding inferior */
   background: #f7f5f2;
   font-family: "Inter", sans-serif;
   width: 100%;
-  margin: 0;                       /* Sin márgenes */
+  margin: 0;
+  /* Sin márgenes */
 }
 
 /* ==== EVITAR ESPACIO ANTES DEL FOOTER ==== */
@@ -52,7 +54,7 @@
 .image-section {
   margin: 50px auto;
   display: grid;
-  
+
   /* CENTRAR IMÁGENES */
   justify-content: center;
   justify-items: center;
@@ -65,14 +67,10 @@
 /* ==== IMÁGENES ==== */
 .image-section img {
   width: 100%;
-  max-width: 500px;          /* Para que no sean enormes */
+  max-width: 500px;
+  /* Para que no sean enormes */
   height: 280px;
   object-fit: cover;
   border-radius: 18px;
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.12);
-}
-
-/* Evitar que quede fondo blanco entre el último contenido y el footer */
-html, body {
-  background: #f7f5f2;
 }
