@@ -68,3 +68,19 @@ export async function getAllProducts(token?: string | null) {
   return res.json();
 }
 
+export async function getProductById(productId: string) {
+  const token = localStorage.getItem('token'); // O desde el contexto de autenticación
+  
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`, // Pasar el token aquí
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Error al obtener el producto");
+  }
+  return res.json();
+}
+
