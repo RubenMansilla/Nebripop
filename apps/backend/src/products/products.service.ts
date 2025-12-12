@@ -141,5 +141,24 @@ export class ProductsService {
     });
 }
 
+async getProductById(productId: number, userId: number | null) {
+  const product = await this.productRepo.findOne({
+    where: { id: productId },
+    relations: ["images"], // Including related images
+  });
+
+  if (!product) {
+    throw new Error('Producto no encontrado');
+  }
+
+  // Check if user is trying to view their own product (optional logic)
+  if (product.owner_id === userId) {
+    throw new Error("No puedes ver tus propios productos en la página de detalle");
+  }
+
+  return product;
+}
+
+
 }
 
