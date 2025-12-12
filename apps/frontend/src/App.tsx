@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
 // HOME
 import Home from "./pages/Home/Home";
+import Detail from "./pages/Product/Detail";
 
 // USER PROFILE PAGES (NUEVA RUTA)
 import User from "./pages/User/Me/Me";
@@ -63,6 +64,7 @@ export default function App() {
             <Route path="/condiciones" element={<Terms />} />
 
             <Route path="/filtros" element={<Filtro />} />
+            <Route path="/product/:productId" element={<Detail />} />
 
             {/* PROTECTED ROUTES */}
             <Route
