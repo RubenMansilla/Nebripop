@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductsService = void 0;
 const common_1 = require("@nestjs/common");
@@ -21,6 +24,8 @@ const products_image_entity_1 = require("./products-image.entity");
 const supabase_js_1 = require("@supabase/supabase-js");
 const uuid_1 = require("uuid");
 const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
+const typeorm_3 = require("typeorm");
+const sharp_1 = __importDefault(require("sharp"));
 let ProductsService = class ProductsService {
     productRepo;
     productImagesRepo;
@@ -32,25 +37,30 @@ let ProductsService = class ProductsService {
         this.favoritesRepo = favoritesRepo;
     }
     async uploadImages(files, productId) {
-        const urls = [];
-        for (const file of files) {
-            const path = `${productId}/${(0, uuid_1.v4)()}-${file.originalname}`;
+        const tasks = files.map(async (file) => {
+            const processed = await (0, sharp_1.default)(file.buffer)
+                .resize(1400, 1400, { fit: "inside" })
+                .webp({ quality: 80 })
+                .toBuffer();
+            const filePath = `${productId}/${(0, uuid_1.v4)()}.webp`;
             const { error } = await this.supabase.storage
                 .from("productsimg")
-                .upload(path, file.buffer, {
-                contentType: file.mimetype,
+                .upload(filePath, processed, {
+                contentType: "image/webp",
+                upsert: true,
             });
             if (error)
                 throw error;
             const { data } = this.supabase.storage
                 .from("productsimg")
-                .getPublicUrl(path);
-            urls.push(data.publicUrl);
+                .getPublicUrl(filePath);
             await this.productImagesRepo.save({
                 product_id: productId,
                 image_url: data.publicUrl,
             });
-        }
+            return data.publicUrl;
+        });
+        const urls = await Promise.all(tasks);
         return urls;
     }
     async createProduct(dto, files, userId) {
@@ -108,6 +118,47 @@ let ProductsService = class ProductsService {
             ...p,
             isFavorite: favoriteProductIds.includes(p.id)
         }));
+    }
+    async getAllProducts(userId) {
+        const whereClause = userId
+            ? { owner_id: (0, typeorm_3.Not)(userId) }
+            : {};
+        return this.productRepo.find({
+            where: whereClause,
+            relations: ["images"],
+            order: { id: "DESC" }
+        });
+    }
+    async getProductById(productId, userId) {
+        const product = await this.productRepo.findOne({
+            where: { id: productId },
+            relations: ["images"],
+        });
+        if (!product) {
+            throw new Error('Producto no encontrado');
+        }
+        if (product.owner_id === userId) {
+            throw new Error("No puedes ver tus propios productos en la página de detalle");
+        }
+        return product;
+    }
+    async deleteProduct(productId) {
+        const productImages = await this.productImagesRepo.find({
+            where: { product_id: productId },
+        });
+        for (const image of productImages) {
+            const { error } = await this.supabase.storage
+                .from('productsimg')
+                .remove([image.image_url]);
+            if (error) {
+                throw new Error(`Error al eliminar la imagen: ${error.message}`);
+            }
+        }
+        const deleteResult = await this.productRepo.delete(productId);
+        if (deleteResult.affected === 0) {
+            throw new Error('No se encontró el producto para eliminar.');
+        }
+        return { message: 'Producto eliminado correctamente' };
     }
 };
 exports.ProductsService = ProductsService;

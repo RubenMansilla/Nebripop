@@ -58,4 +58,9 @@ export declare class ProductsController {
         sold: boolean;
         images: import("./products-image.entity").ProductImage[];
     }[]>;
+    getAllProducts(req: any): Promise<import("./products.entity").Product[]>;
+    deleteProduct(productId: number): Promise<{
+        message: string;
+    }>;
+    getProductById(productId: string, req: any): Promise<import("./products.entity").Product>;
 }

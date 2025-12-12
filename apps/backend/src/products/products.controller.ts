@@ -2,6 +2,7 @@ import {
     Controller,
     Post,
     Get,
+    Delete,
     Body,
     Req,
     UseInterceptors,
@@ -45,18 +46,25 @@ export class ProductsController {
     }
     // Obtener todos los productos (sin necesidad de login)
     @UseGuards(OptionalJwtAuthGuard)
-@Get()
-getAllProducts(@Req() req) {
-  const userId = req.user?.id || null;
-  return this.productsService.getAllProducts(userId);
-}
+    @Get()
+    getAllProducts(@Req() req) {
+        const userId = req.user?.id || null;
+        return this.productsService.getAllProducts(userId);
+    }
 
-@UseGuards(JwtAuthGuard)
-@Get(':productId')
-async getProductById(@Param('productId') productId: string, @Req() req) {
-    const userId = req.user?.id || null;
-    const productIdNumber = parseInt(productId, 10); // Convert productId to number
-    return this.productsService.getProductById(productIdNumber, userId);
-}
+    // Ruta para eliminar el producto
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    async deleteProduct(@Param('id') productId: number) {
+        return this.productsService.deleteProduct(productId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':productId')
+    async getProductById(@Param('productId') productId: string, @Req() req) {
+        const userId = req.user?.id || null;
+        const productIdNumber = parseInt(productId, 10); // Convert productId to number
+        return this.productsService.getProductById(productIdNumber, userId);
+    }
 
 }

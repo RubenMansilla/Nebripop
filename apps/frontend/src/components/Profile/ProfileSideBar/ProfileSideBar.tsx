@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import type { ReviewSummary } from "../../../types/review";
 import { reviewSummaryStore } from "../../../store/reviewSummaryStore";
+import { getReviews } from "../../../api/reviews.api"; // <--- IMPORTANTE: Importa tu API aquí
 import './ProfileSideBar.css';
 
 export default function ProfileSideBar() {
@@ -24,17 +25,49 @@ export default function ProfileSideBar() {
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
 
     useEffect(() => {
+        if (!user) return;
 
-        // Usar la media guardada (si existe)
-        if (reviewSummaryStore.value) {
-            setSummary(reviewSummaryStore.value);
+        // 1. COMPROBAR DATOS EN CACHÉ (STORE)
+        const cachedData = reviewSummaryStore.value;
+        const hasValidData = cachedData && cachedData._userId === user.id;
+
+        if (hasValidData) {
+            // A: Si tenemos datos válidos del usuario actual, los usamos ya.
+            setSummary(cachedData);
+        } else {
+            // B: Si NO hay datos o son de otro usuario, reseteamos a 0 visualmente...
+            setSummary({ average: 0, total: 0 });
+
+            // ... Y HACEMOS EL FETCH AQUÍ MISMO PARA CALCULARLOS
+            getReviews(user.id, "newest") // O el filtro que uses por defecto
+                .then((data) => {
+                    const total = data.length;
+                    // Evitar división por cero
+                    const avg = total > 0
+                        ? data.reduce((acc: any, r: any) => acc + r.rating, 0) / total
+                        : 0;
+
+                    const newSummary = { average: avg, total };
+
+                    // Actualizamos el estado local
+                    setSummary(newSummary);
+
+                    // Actualizamos el store global para que otras partes (y la caché) se enteren
+                    reviewSummaryStore.set(newSummary, user.id);
+                })
+                .catch(err => console.error("Error cargando resumen de reviews:", err));
         }
 
-        // Escuchar cambios cuando ReviewProfile actualice la media
-        const unsub = reviewSummaryStore.subscribe((v) => setSummary(v));
+        // 2. SUSCRIPCIÓN (Para que si ReviewProfile actualiza algo, la barra lateral se entere)
+        const unsub = reviewSummaryStore.subscribe((v) => {
+            // Solo actualizamos si el ID coincide (o si el store maneja eso internamente)
+            if (reviewSummaryStore.value?._userId === user.id) {
+                setSummary(v);
+            }
+        });
 
         return () => unsub();
-    }, []);
+    }, [user]);
 
     const starClass = (n: number) => {
         return n <= summary.average ? "filled" : "";

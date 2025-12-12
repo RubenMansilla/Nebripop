@@ -1,5 +1,5 @@
 export async function updateUser(data: any, token: string) {
-    const res = await fetch("http://localhost:3001/users/update", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/users/update`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -17,7 +17,7 @@ export async function uploadProfilePicture(file: File, token: string) {
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("http://localhost:3001/users/profile-picture", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/users/profile-picture`, {
         method: "PATCH",
         headers: {
             Authorization: `Bearer ${token}`,

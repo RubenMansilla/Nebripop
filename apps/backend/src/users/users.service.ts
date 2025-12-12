@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './users.entity';
 import { createClient } from '@supabase/supabase-js';
+import sharp from 'sharp';
 
 @Injectable()
 export class UsersService {
@@ -34,25 +35,32 @@ export class UsersService {
 
     // Subir imagen y guardar URL pública
     async updateProfilePicture(id: number, file: Express.Multer.File) {
-        const ext = file.originalname.split('.').pop();
-        const fileName = `user_${id}_${Date.now()}.${ext}`;
+        // 1. Procesar imagen con Sharp
+        const processedImage = await sharp(file.buffer)
+            .resize(800, 800, { fit: 'inside' })  // límite de tamaño
+            .webp({ quality: 80 })                // compresión potente
+            .toBuffer();
 
+        const fileName = `user_${id}_${Date.now()}.webp`;
+
+        // 2. Subir imagen optimizada a Supabase
         const { error } = await this.supabase.storage
             .from('userImg')
-            .upload(fileName, file.buffer, {
-                contentType: file.mimetype,
+            .upload(fileName, processedImage, {
+                contentType: 'image/webp',
                 upsert: true
             });
 
         if (error) throw new Error(error.message);
 
+        // 3. Conseguir URL pública
         const { data } = this.supabase.storage
             .from('userImg')
             .getPublicUrl(fileName);
 
+        // 4. Guardar nueva URL en la BD
         await this.repo.update(id, { profilePicture: data.publicUrl });
 
-        const updatedUser = await this.repo.findOne({ where: { id } });
-        return updatedUser;
+        return this.repo.findOne({ where: { id } });
     }
 }

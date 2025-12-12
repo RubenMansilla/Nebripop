@@ -1,55 +1,55 @@
 export async function createProduct(data: any, images: File[], token: string) {
-    const formData = new FormData();
+  const formData = new FormData();
 
-    Object.entries(data).forEach(([key, value]) => {
-        if (
-            value !== undefined &&
-            value !== null &&
-            value !== "" &&
-            !Number.isNaN(value)
-        ) {
-            formData.append(key, String(value));
-        }
-    });
-
-    for (const img of images) {
-        formData.append("images", img);
+  Object.entries(data).forEach(([key, value]) => {
+    if (
+      value !== undefined &&
+      value !== null &&
+      value !== "" &&
+      !Number.isNaN(value)
+    ) {
+      formData.append(key, String(value));
     }
+  });
 
-    const res = await fetch("http://localhost:3001/products", {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-    });
+  for (const img of images) {
+    formData.append("images", img);
+  }
 
-    if (!res.ok) throw new Error("Error al crear producto");
-    return res.json();
+  const res = await fetch("http://localhost:3001/products", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error("Error al crear producto");
+  return res.json();
 }
 
 export async function getMyActiveProducts(token: string) {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/active`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/active`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    if (!res.ok) throw new Error("Error al obtener productos activos");
-    return res.json();
+  if (!res.ok) throw new Error("Error al obtener productos activos");
+  return res.json();
 }
 
 export async function getMySoldProducts(token: string) {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/sold`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/sold`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
-    if (!res.ok) throw new Error("Error al obtener productos vendidos");
-    return res.json();
+  if (!res.ok) throw new Error("Error al obtener productos vendidos");
+  return res.json();
 }
 
 export async function getAllProducts(token?: string | null) {
@@ -70,7 +70,7 @@ export async function getAllProducts(token?: string | null) {
 
 export async function getProductById(productId: string) {
   const token = localStorage.getItem('token'); // O desde el contexto de autenticación
-  
+
   const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`, {
     method: "GET",
     headers: {
@@ -84,3 +84,23 @@ export async function getProductById(productId: string) {
   return res.json();
 }
 
+export async function deleteProduct(productId: number, token: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Error al eliminar el producto");
+    }
+
+    return res.json(); // Devuelves la respuesta del backend, por ejemplo, un mensaje de éxito.
+  } catch (error) {
+    console.error("Error al eliminar el producto:", error);
+    throw new Error("Hubo un problema al eliminar el producto. Intenta nuevamente.");
+  }
+}

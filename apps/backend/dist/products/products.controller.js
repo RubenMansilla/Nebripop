@@ -18,6 +18,8 @@ const platform_express_1 = require("@nestjs/platform-express");
 const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const products_service_1 = require("./products.service");
 const create_products_dto_1 = require("./create-products.dto");
+const optional_jwt_guard_1 = require("../auth/optional-jwt.guard");
+const common_2 = require("@nestjs/common");
 let ProductsController = class ProductsController {
     productsService;
     constructor(productsService) {
@@ -33,6 +35,18 @@ let ProductsController = class ProductsController {
     async getMySoldProducts(req) {
         const userId = req.user.id;
         return this.productsService.getSoldProductsByUser(userId);
+    }
+    getAllProducts(req) {
+        const userId = req.user?.id || null;
+        return this.productsService.getAllProducts(userId);
+    }
+    async deleteProduct(productId) {
+        return this.productsService.deleteProduct(productId);
+    }
+    async getProductById(productId, req) {
+        const userId = req.user?.id || null;
+        const productIdNumber = parseInt(productId, 10);
+        return this.productsService.getProductById(productIdNumber, userId);
     }
 };
 exports.ProductsController = ProductsController;
@@ -63,6 +77,31 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "getMySoldProducts", null);
+__decorate([
+    (0, common_1.UseGuards)(optional_jwt_guard_1.OptionalJwtAuthGuard),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "getAllProducts", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_2.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "deleteProduct", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(':productId'),
+    __param(0, (0, common_2.Param)('productId')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getProductById", null);
 exports.ProductsController = ProductsController = __decorate([
     (0, common_1.Controller)("products"),
     __metadata("design:paramtypes", [products_service_1.ProductsService])

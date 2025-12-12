@@ -1,4 +1,6 @@
-import { useState, ChangeEvent } from "react";
+import { useState } from "react";
+import type { ChangeEvent } from "react";
+import imageCompression from "browser-image-compression";
 import "./FormularioProducto.css";
 
 interface Props {
@@ -12,11 +14,11 @@ export default function Fotos({ onContinue, showToast }: Props) {
   const MAX_FILES = 6;
   const MAX_SIZE_MB = 50;
 
-  const handleSelect = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files ? Array.from(e.target.files) : [];
     if (!selected.length) return;
 
-    // Validar tamaño
+    // Validar tamaño original
     for (const file of selected) {
       if (file.size / 1024 / 1024 > MAX_SIZE_MB) {
         showToast(`El archivo ${file.name} supera los ${MAX_SIZE_MB} MB.`);
@@ -30,8 +32,31 @@ export default function Fotos({ onContinue, showToast }: Props) {
       return;
     }
 
-    setFiles((prev) => [...prev, ...selected]);
+    const compressedFiles: File[] = [];
+
+    for (const file of selected) {
+      const options = {
+        maxSizeMB: 1.5,            // Mejor calidad para productos
+        maxWidthOrHeight: 1600,    // Mejor resolución para productos
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedBlob = await imageCompression(file, options);
+
+        const compressedFile = new File([compressedBlob], file.name, { type: file.type });
+
+        compressedFiles.push(compressedFile);
+      } catch (err) {
+        console.error("Error al comprimir una imagen:", err);
+        showToast("Error al procesar una de las imágenes.");
+        return;
+      }
+    }
+
+    setFiles(prev => [...prev, ...compressedFiles]);
   };
+
 
   const removeImage = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));

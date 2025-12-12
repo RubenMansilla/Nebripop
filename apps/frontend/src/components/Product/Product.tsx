@@ -3,16 +3,51 @@ import type { ProductType } from '../../types/product';
 import { useState, useContext } from 'react';
 import { addFavorite, removeFavorite } from '../../api/favorites.api';
 import { AuthContext } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
+import { deleteProduct } from '../../api/products.api';
 
-export default function Product({ product, mode }: { product: ProductType, mode: "public" | "active" | "sold" }) {
+export default function Product({ product, mode, onDelete }: { product: ProductType, mode: "public" | "active" | "sold", onDelete?: (id: number) => void }) {
 
     const { token } = useContext(AuthContext);
 
+    const [showPopup, setShowPopup] = useState(false);
+
+    // Función que muestra el pop-up
+    const handleDeleteClick = (productId: number) => {
+        setShowPopup(true);
+    };
+
+    // Función que confirma la eliminación
+    const handleConfirmDelete = async () => {
+        if (!token) {
+            toast.error("Error de autenticación. Por favor, inicia sesión de nuevo.");
+            return;
+        }
+        setShowPopup(false);
+        if (onDelete) {
+            onDelete(product.id);
+        }
+        try {
+            // función para eliminar el producto 
+            await deleteProduct(product.id, token);
+
+            toast.success("Producto eliminado correctamente.");
+
+        } catch (err) {
+            toast.error("Hubo un problema al eliminar el producto.");
+            console.error("Error eliminando el producto:", err);
+            setShowPopup(false);
+            window.location.reload();
+        }
+    };
+
+    // Función que cancela la eliminación
+    const handleCancelDelete = () => {
+        setShowPopup(false);
+    };
+
     // Estado para saber qué imagen del array mostrar (empieza en la 0)
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
-
-    // Estado para controlar el esqueleto de carga
-    const [imageLoaded, setImageLoaded] = useState(false);
 
     // Estado para favoritos ---
     const [isFavorite, setIsFavorite] = useState(product.isFavorite ?? false);
@@ -43,7 +78,6 @@ export default function Product({ product, mode }: { product: ProductType, mode:
     const handleNext = (e: React.MouseEvent) => {
         e.stopPropagation(); // Evita entrar al producto si haces click en la flecha
         if (currentImgIndex < totalImages - 1) {
-            setImageLoaded(false); // Volvemos a mostrar el esqueleto mientras carga la nueva
             setCurrentImgIndex(prev => prev + 1);
         }
     };
@@ -51,7 +85,6 @@ export default function Product({ product, mode }: { product: ProductType, mode:
     const handlePrev = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (currentImgIndex > 0) {
-            setImageLoaded(false);
             setCurrentImgIndex(prev => prev - 1);
         }
     };
@@ -60,16 +93,25 @@ export default function Product({ product, mode }: { product: ProductType, mode:
         <>
             <li className="product">
                 <div className="product-img">
-                    {/* Placeholder que se muestra SOLO si la imagen no ha cargado */}
-                    {!imageLoaded && (
-                        <div className="img-skeleton-loader"></div>
-                    )}
-                    <img
-                        src={images[currentImgIndex]?.image_url}
-                        alt={product.name}
-                        onLoad={() => setImageLoaded(true)}
-                        style={{ display: imageLoaded ? 'block' : 'none' }}
-                    />
+                    <div
+                        className="slider-track"
+                        style={{
+                            transform: `translateX(-${currentImgIndex * 100}%)`
+                        }}
+                    >
+                        {images.length > 0 ? (
+                            images.map((img, index) => (
+                                <img
+                                    key={index}
+                                    src={img.image_url}
+                                    alt={`${product.name} - ${index + 1}`}
+                                />
+                            ))
+                        ) : (
+                            // Fallback opcional por si no hay imágenes
+                            <img src="/placeholder-image.png" alt="Sin imagen" />
+                        )}
+                    </div>
                     {/* MOSTRAR FRANJA VENDIDO SOLO EN MODE=SOLD */}
                     {mode === "sold" && (
                         <div className="sold-banner">VENDIDO</div>
@@ -146,9 +188,9 @@ export default function Product({ product, mode }: { product: ProductType, mode:
                                 </div>
                             )}
 
-                            {/* ELIMINAR SOLO EN ACTIVE */}
-                            {mode === "active" && (
-                                <div className="delete-btn" onClick={() => console.log("BORRAR", product.id)}>
+                            {/* ELIMINAR SOLO EN ACTIVE y en SOLD */}
+                            {(mode === "active" || mode === "sold") && (
+                                <div className="delete-btn" onClick={() => handleDeleteClick(product.id)}>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="#000000" stroke-width="1.5"><path d="M3.04 4.294a.5.5 0 0 1 .191-.479C3.927 3.32 6.314 2 12 2s8.073 1.32 8.769 1.815a.5.5 0 0 1 .192.479l-1.7 12.744a4 4 0 0 1-1.98 2.944l-.32.183a10 10 0 0 1-9.922 0l-.32-.183a4 4 0 0 1-1.98-2.944z" /><path d="M3 5c2.571 2.667 15.429 2.667 18 0" /></g></svg>                                </div>
                             )}
                         </div>
@@ -157,16 +199,44 @@ export default function Product({ product, mode }: { product: ProductType, mode:
                         <p>{product.name}</p>
                     </div>
                     {/* ENVÍO SOLO EN PUBLIC O ACTIVE */}
-                    {(mode === "public" || mode === "active") && product.shipping_active && (
-                        <div className='product-delivery'>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#86418a" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 .75.75V12H.75a.75.75 0 0 0 0 1.5h1.5v3a2.25 2.25 0 0 0 2.25 2.25h.02a3.375 3.375 0 0 0 6.71 0h3.79a3.375 3.375 0 0 0 6.71 0h.02A2.25 2.25 0 0 0 24 16.5v-2.062a2.25 2.25 0 0 0-.556-1.48l-1.924-2.202-.032-.034-.206-.235-1.093-3.006A2.25 2.25 0 0 0 18.074 6H16.5v-.75A2.25 2.25 0 0 0 14.25 3H4.5a2.25 2.25 0 0 0-2.25 2.25V9a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-6zm16.463 13.5a1.876 1.876 0 1 1-3.676-.751 1.876 1.876 0 0 1 3.675.751m-12.338 1.5a1.876 1.876 0 1 1 0-3.751 1.876 1.876 0 0 1 0 3.751M16.5 10.5h3.19l-.91-2.506a.75.75 0 0 0-.706-.494H16.5z" clip-rule="evenodd"></path></svg>
-                            <p>Envío disponible</p>
+                    {(mode === "public" || mode === "active") && (
+                        <div className="product-delivery">
+                            {product.shipping_active ? (
+                                <>
+                                    {/* Envío disponible */}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#86418a" viewBox="0 0 24 24">
+                                        <path fillRule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 .75.75V12H.75a.75.75 0 0 0 0 1.5h1.5v3a2.25 2.25 0 0 0 2.25 2.25h.02a3.375 3.375 0 0 0 6.71 0h3.79a3.375 3.375 0 0 0 6.71 0h.02A2.25 2.25 0 0 0 24 16.5v-2.062a2.25 2.25 0 0 0-.556-1.48l-1.924-2.202-.032-.034-.206-.235-1.093-3.006A2.25 2.25 0 0 0 18.074 6H16.5v-.75A2.25 2.25 0 0 0 14.25 3H4.5a2.25 2.25 0 0 0-2.25 2.25V9a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-6zm16.463 13.5a1.876 1.876 0 1 1-3.676-.751 1.876 1.876 0 0 1 3.675.751m-12.338 1.5a1.876 1.876 0 1 1 0-3.751 1.876 1.876 0 0 1 0 3.751M16.5 10.5h3.19l-.91-2.506a.75.75 0 0 0-.706-.494H16.5z" />
+                                    </svg>
+                                    <p className='delivery-available'>Envío disponible</p>
+                                </>
+                            ) : (
+                                <>
+                                    {/* SOLO recogida */}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#5c7a89" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M15 7.496a3 3 0 0 1-1.323 2.488A6.004 6.004 0 0 1 18 15.748a.75.75 0 1 1-1.5 0 4.5 4.5 0 1 0-9 0 .75.75 0 1 1-1.5 0 6.004 6.004 0 0 1 4.323-5.764A3 3 0 1 1 15 7.496m-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" clip-rule="evenodd"></path><path fill-rule="evenodd" d="m12.54 23.816.075-.039C15 22.5 22.5 18 22.498 10.497 22.498 4.495 18 0 12 0S1.5 4.495 1.5 10.495C1.5 18 9 22.5 11.382 23.78l.016.008c.187.1.396.213.602.213.186 0 .367-.094.54-.184m-5.92-5.394c1.964 2.01 4.212 3.351 5.377 3.984 1.165-.63 3.416-1.973 5.382-3.984 2.018-2.064 3.62-4.709 3.62-7.925C20.996 5.324 17.171 1.5 12 1.5s-9 3.825-9 8.995c0 3.218 1.603 5.863 3.62 7.927" clip-rule="evenodd"></path></svg>
+                                    <p className='delivery-unavailable'>Solo venta en persona</p>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
             </li>
+            {showPopup && (
+                <div className="popup-backdrop">
+                    <div className="unsaved-changes-popup">
+                        <h3>¿Estás seguro que quieres eliminar este producto?</h3>
+                        <p>Esta acción no se puede deshacer. Si eliminas el producto, se perderá toda la información asociada.</p>
+                        <div className="popup-buttons">
+                            <span className="popup-no" onClick={handleCancelDelete}>
+                                No
+                            </span>
+                            <span className="divider"></span>
+                            <span className="popup-yes" onClick={handleConfirmDelete}>
+                                Sí, eliminar
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
-
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#29363d" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M8.411 3.75c1.216.004 2.4.385 3.373 1.09l.005.004q.093.069.211.072a.4.4 0 0 0 .225-.072l.005-.004a5.8 5.8 0 0 1 3.39-1.09h.011a6.37 6.37 0 0 1 4.304 1.737c1.148 1.096 1.804 2.581 1.815 4.142v.005c0 3.182-1.948 5.652-3.974 7.362-2.037 1.72-4.277 2.777-5.144 3.135l-.012.005a1.7 1.7 0 0 1-.609.113 1.6 1.6 0 0 1-.657-.124c-.838-.366-3.077-1.419-5.118-3.133-2.029-1.704-3.986-4.168-3.986-7.358v-.005c.01-1.566.672-3.056 1.827-4.152A6.38 6.38 0 0 1 8.4 3.75zm4.702 2.303c-.323.238-.719.36-1.108.363h-.01c-.4-.003-.778-.13-1.094-.363a4.3 4.3 0 0 0-2.49-.803A4.88 4.88 0 0 0 5.11 6.565a4.28 4.28 0 0 0-1.36 3.071c.001 2.536 1.56 4.619 3.45 6.207 1.868 1.569 3.94 2.551 4.738 2.9l.019.006h.048a.3.3 0 0 0 .066-.009c.793-.328 2.87-1.314 4.738-2.89 1.887-1.594 3.44-3.683 3.441-6.214a4.28 4.28 0 0 0-1.35-3.063 4.88 4.88 0 0 0-3.285-1.323 4.3 4.3 0 0 0-2.502.803" clip-rule="evenodd"></path></svg>
