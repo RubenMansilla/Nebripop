@@ -2,6 +2,7 @@
 import { useState, useEffect, useContext } from "react";
 import "./Filtro.css";
 import { AuthContext } from "../../context/AuthContext";
+import { Link } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
@@ -29,13 +30,13 @@ export default function Filtro() {
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
-  getAllProducts(token)
-    .then((data) => {
-      setProducts(data);
-      setLoading(false);
-    })
-    .catch(err => console.error(err));
-}, [token]);
+    getAllProducts(token)
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      })
+      .catch(err => console.error(err));
+  }, [token]);
 
 
   // ========================
@@ -216,33 +217,34 @@ export default function Filtro() {
                 <p>No se encontraron productos</p>
               ) : (
                 filteredProducts.map((p) => (
-                  <div className="product-card" key={p.id}>
-                    <img
-                      className="product-img"
-                      src={
-                        p.images?.[0]?.image_url &&
-                          p.images[0].image_url.trim() !== ""
-                          ? p.images[0].image_url
-                          : "/no-image.webp"
-                      }
-                      alt={p.name}
-                    />
-
-                    <p className="product-price">{p.price} €</p>
-                    <p className="product-title">{p.name}</p>
-                    <p className="product-info">{p.condition}</p>
-
-                    <div className="product-footer">
-                      {p.shipping_available ? (
-                        <span className="tag envio">Envío disponible</span>
-                      ) : (
-                        <span className="tag personal">Solo en persona</span>
-                      )}
+                  <Link to={`/product/${p.id}`} key={p.id}>  {/* Envolvemos el producto con Link */}
+                    <div className="product-card">
+                      <img
+                        className="product-img"
+                        src={
+                          p.images?.[0]?.image_url &&
+                            p.images[0].image_url.trim() !== ""
+                            ? p.images[0].image_url
+                            : "/no-image.webp"
+                        }
+                        alt={p.name}
+                      />
+                      <p className="product-price">{p.price} €</p>
+                      <p className="product-title">{p.name}</p>
+                      <p className="product-info">{p.condition}</p>
+                      <div className="product-footer">
+                        {p.shipping_available ? (
+                          <span className="tag envio">Envío disponible</span>
+                        ) : (
+                          <span className="tag personal">Solo en persona</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  </Link> 
                 ))
-              )}
+  )}
             </div>
+
           </div>
         </main>
       </div>
