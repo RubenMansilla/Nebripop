@@ -13,6 +13,7 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./create-products.dto";
 import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
+import { Param } from '@nestjs/common';
 
 @Controller("products")
 export class ProductsController {
@@ -50,7 +51,12 @@ getAllProducts(@Req() req) {
   return this.productsService.getAllProducts(userId);
 }
 
-
-
+@UseGuards(JwtAuthGuard)
+@Get(':productId')
+async getProductById(@Param('productId') productId: string, @Req() req) {
+    const userId = req.user?.id || null;
+    const productIdNumber = parseInt(productId, 10); // Convert productId to number
+    return this.productsService.getProductById(productIdNumber, userId);
+}
 
 }
