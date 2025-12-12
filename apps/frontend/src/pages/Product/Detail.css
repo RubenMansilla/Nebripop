@@ -1,0 +1,167 @@
+/* Contenedor principal de la página */
+.detail-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Sidebar izquierdo con publicidad */
+.left-sidebar {
+  width: 25%;
+  margin-right: 20px;
+  height: 100%; /* Asegúrate de que ocupe todo el alto disponible */
+}
+
+.ad-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Main content - Detalles del producto */
+.detail-main {
+  width: 60%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-category {
+  font-size: 1rem;
+  color: #8e8e8e;
+  margin-bottom: 15px;
+}
+
+/* Imágenes del producto */
+.product-images {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.product-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Detalles del producto */
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.product-price {
+  font-size: 1.8rem;
+  color: #28a745;
+}
+
+.product-condition {
+  font-size: 1rem;
+  color: gray;
+}
+
+.product-description {
+  font-size: 1.2rem;
+}
+
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.tag {
+  padding: 5px;
+  font-size: 0.9rem;
+  border-radius: 5px;
+}
+
+.envio {
+  background-color: #28a745;
+  color: white;
+}
+
+.personal {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-buy {
+  margin-top: 10px;
+  padding: 10px 20px;
+  font-size: 1.1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn-buy:hover {
+  background-color: #0056b3;
+}
+
+/* Sidebar derecho con información del vendedor y opciones de envío */
+.right-sidebar {
+  width: 30%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Información de pago */
+.payment-info {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.apple-pay-logo {
+  width: 50px;
+  height: auto;
+}
+
+/* Información del vendedor */
+.seller-info {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.seller {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seller-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.seller p {
+  margin: 0;
+}
+
+/* Opciones de envío */
+.shipping-options {
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.shipping-options p {
+  margin: 5px 0;
+}
