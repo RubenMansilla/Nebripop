@@ -2,6 +2,7 @@ import {
     Controller,
     Post,
     Get,
+    Delete,
     Body,
     Req,
     UseInterceptors,
@@ -12,6 +13,8 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./create-products.dto";
+import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
+import { Param } from '@nestjs/common';
 
 @Controller("products")
 export class ProductsController {
@@ -40,6 +43,28 @@ export class ProductsController {
     async getMySoldProducts(@Req() req) {
         const userId = req.user.id;
         return this.productsService.getSoldProductsByUser(userId);
+    }
+    // Obtener todos los productos (sin necesidad de login)
+    @UseGuards(OptionalJwtAuthGuard)
+    @Get()
+    getAllProducts(@Req() req) {
+        const userId = req.user?.id || null;
+        return this.productsService.getAllProducts(userId);
+    }
+
+    // Ruta para eliminar el producto
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    async deleteProduct(@Param('id') productId: number) {
+        return this.productsService.deleteProduct(productId);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get(':productId')
+    async getProductById(@Param('productId') productId: string, @Req() req) {
+        const userId = req.user?.id || null;
+        const productIdNumber = parseInt(productId, 10); // Convert productId to number
+        return this.productsService.getProductById(productIdNumber, userId);
     }
 
 }

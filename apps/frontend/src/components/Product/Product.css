@@ -15,6 +15,22 @@
     user-select: none;
     position: relative;
     background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.slider-track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.slider-track img {
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
 }
 
 .product-img img {
@@ -29,7 +45,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    background: #ffffff;
+    background-color: rgba(255, 255, 255, 0.9);
     color: black;
     padding: 5px 10px;
     font-size: 13px;
@@ -37,6 +53,7 @@
     border-radius: 16px;
     border: 1.5px solid #ced4da;
     z-index: 2;
+
 }
 
 /* Estilo para el esqueleto de carga */
@@ -243,9 +260,15 @@
     align-items: center;
 }
 
-.product-delivery p {
+.delivery-available {
     font-size: 12px;
     color: #86418a;
+    font-weight: 600;
+}
+
+.delivery-unavailable {
+    font-size: 12px;
+    color: #5c7a89;
     font-weight: 600;
 }
 

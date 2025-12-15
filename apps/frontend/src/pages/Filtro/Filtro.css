@@ -1,0 +1,419 @@
+/* ============================================
+   CONTENEDOR GENERAL
+============================================ */
+.filtro-container {
+  display: flex;
+  width: 100%;
+  max-width: 1300px;
+  margin: 40px auto; /* ✔ centrado sin espacio lateral */
+  gap: 50px;
+  padding: 0 20px;  /* ✔ margen suave responsivo */
+}
+
+
+/* ============================================
+   SIDEBAR IZQUIERDO
+============================================ */
+.filtro-sidebar {
+  width: 260px;
+  padding-right: 16px;
+}
+
+.filtro-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 28px;
+  color: #3a3a3a;
+}
+
+.filtro-block {
+  margin-bottom: 32px;
+}
+
+.filtro-subtitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #3a3a3a;
+  margin-bottom: 12px;
+}
+
+.filtro-list li {
+  list-style: none;
+  margin: 6px 0;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3a3a3a;
+}
+
+.filtro-list li:hover {
+  color: #b9a48a;
+}
+
+.ver-todo {
+  color: #d2b990;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* ============================================
+   UBICACIÓN
+============================================ */
+.filtro-gray {
+  color: #6f6c69;
+}
+
+.filtro-link {
+  color: #d2b990;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filtro-link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   OPCIONES DE ENVÍO
+============================================ */
+.envio-toggle {
+  display: flex;
+  width: 100%;
+  background: #ece6de;
+  border-radius: 50px;
+  height: 30px;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.envio-option {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a766f;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.envio-option.active {
+  background: #d1c1a7;
+  border-radius: 50px;
+  color: white;
+}
+
+/* ============================================
+   ESTADO (CHECKBOXES)
+============================================ */
+.estado-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 26px;
+  cursor: pointer;
+}
+
+.estado-checkbox {
+  width: 30px;
+  height: 30px;
+  appearance: none;
+  border-radius: 5px;
+  border: 3px solid #d6c9b4;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.estado-checkbox:checked {
+  background-color: #d6c9b4;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.estado-textos {
+  display: flex;
+  flex-direction: column;
+}
+
+.estado-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #d2b990;
+}
+
+.estado-desc {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #898989;
+}
+
+/* ============================================
+   PRECIO (SLIDER)
+============================================ */
+.filtro-precio .range-labels {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.np-slider-wrapper {
+  position: relative;
+  margin-top: 10px;
+  height: 6px;
+}
+
+/* TRACK inferior */
+.np-range-min::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #c8c4c4;
+  border-radius: 10px;
+}
+
+.np-range-min::-moz-range-track {
+  height: 6px;
+  background: #c8c4c4;
+  border-radius: 10px;
+}
+
+/* MAX no pinta nada */
+.np-range-max::-webkit-slider-runnable-track,
+.np-range-max::-moz-range-track {
+  background: transparent !important;
+}
+
+/* INPUT RANGE */
+.np-range-min,
+.np-range-max {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  background: none;
+  border: none;
+  top: 0;
+  left: 0;
+  margin: 0;
+  z-index: 5;
+}
+
+/* THUMB */
+.np-range-min::-webkit-slider-thumb,
+.np-range-max::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #d6c9b4;
+  border-radius: 50%;
+  border: 3px solid white;
+  cursor: pointer;
+  margin-top: -8px;
+}
+
+.np-selected-range {
+  position: absolute;
+  top: 0;
+  height: 6px;
+  background: #d2b990;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+/* ============================================
+   FECHA (RADIOS)
+============================================ */
+.np-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.np-radio-item input[type="radio"] {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #d6c9b4;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+
+.np-radio-item input[type="radio"]:checked {
+  border-color: #d2b990;
+}
+
+.np-radio-item input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  background: #d2b990;
+  border-radius: 50%;
+}
+
+.np-radio-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d2b990;
+}
+
+/* ============================================
+   RESULTADOS DERECHA
+============================================ */
+.filtro-results {
+  flex: 1;
+}
+
+/* ===== ORDENAR — estilo Figma Wallapop ===== */
+
+/* Contenedor horizontal */
+.order-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+/* Texto "Ordenar por:" */
+.order-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #3a3a3a;
+}
+
+/* Select estilo Figma */
+.order-select {
+  border: 2px solid #d6c9b4;     /* BEIGE suave */
+  border-radius: 12px;           /* Esquinas redondeadas estilo Wallapop */
+  padding: 10px 38px 10px 16px;  /* Alto perfecto, espacio para la flecha */
+  font-size: 15px;
+  font-weight: 600;              /* Negrita en el valor */
+  color: #5a5752;
+
+  background-color: white;
+  appearance: none;              /* Quitamos estilo nativo */
+  cursor: pointer;
+
+  width: 260px;                  /* Tamaño exacto como Figma */
+  position: relative;
+}
+
+/* Flecha ↓ personalizada */
+.order-select {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%236f6f6f' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><polygon points='0,0 20,0 10,12'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: right 14px center;
+}
+
+
+/* Títulos */
+.results-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.results-subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* GRID PRODUCTOS */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-top: 10px;
+}
+
+/* CARD PRODUCTO */
+.product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding-bottom: 8px;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+}
+
+.product-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.product-price {
+  font-weight: 800;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+.product-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.product-info {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+/* TAGS */
+.product-footer {
+  margin-top: 4px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.tag.envio {
+  background: #efe8d9;
+  color: #b4976b;
+}
+
+.tag.destacado {
+  background: #fff4c2;
+  color: #b19319;
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+@media (max-width: 900px) {
+  .filtro-container {
+    flex-direction: column;
+  }
+
+  .filtro-sidebar {
+    width: 100%;
+    order: 2;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+}

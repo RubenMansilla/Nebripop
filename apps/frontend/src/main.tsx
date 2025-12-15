@@ -10,9 +10,13 @@ import { AuthProvider } from "./context/AuthContext";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ToastContainer
+      position="top-right"
+      autoClose={3000}
+      theme="light"
+    />
     <AuthProvider>
       <App />
-      <ToastContainer position="top-right" autoClose={3000} />
     </AuthProvider>
   </StrictMode>,
 )

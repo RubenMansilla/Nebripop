@@ -8,19 +8,21 @@ import { AuthContext } from "../../../../context/AuthContext";
 import Product from '../../../../components/Product/Product';
 import type { ProductType } from '../../../../types/product'
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
+import noReviewsImg from '../../../../assets/profile/pop-no-sales-completed.svg';
 
 export default function Solds() {
 
     const navigate = useNavigate();
-
-    /* info item active */
     const [selected, setSelected] = useState("sold");
-
     const { token } = useContext(AuthContext);
     const [Soldproducts, setSoldProducts] = useState<ProductType[]>([]);
 
     const [visibleCount, setVisibleCount] = useState(25);
     const visibleProducts = Soldproducts.slice(0, visibleCount);
+
+    // 1. Loading controla la lógica, pero showSkeleton controla lo visual
+    const [loading, setLoading] = useState(true);
+    const [showSkeleton, setShowSkeleton] = useState(false);
 
     const showMore = () => {
         setVisibleCount(prev => prev + 25);
@@ -37,9 +39,31 @@ export default function Solds() {
     useEffect(() => {
         if (!token) return;
 
+        setLoading(true);
+        setShowSkeleton(false); // Reseteamos al iniciar
+
+        // Solo mostramos el skeleton si tarda más de 300ms
+        const skeletonTimer = setTimeout(() => {
+            setShowSkeleton(true);
+        }, 300);
+
         getMySoldProducts(token)
-            .then((data) => setSoldProducts(data))
-            .catch((err) => console.error(err));
+            .then((data) => {
+                setSoldProducts(data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                // Si la carga fue rápida (menos de 300ms), cancelamos el timer
+                // El skeleton NUNCA habrá salido, y pasará directo a "Sin productos"
+                clearTimeout(skeletonTimer);
+                setLoading(false);
+            });
+
+        // Cleanup function por si el componente se desmonta
+        return () => clearTimeout(skeletonTimer);
+
     }, [token]);
 
     return (
@@ -78,21 +102,43 @@ export default function Solds() {
                             </div>
                         </div>
                     </div>
-                    <ul className="product-container">
-                        {Soldproducts.length === 0 ? (
-                            [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
-                        ) : (
-                            visibleProducts.map((p) => (
-                                <Product key={p.id} product={p} mode="sold" />
-                            ))
-                        )}
-                    </ul>
-                    {hasMore && (
-                        <div className="btn-more-reviews-container" onClick={showMore}>
-                            <div className='btn-more-reviews'>
-                                Ver más productos
-                            </div>
-                        </div>
+                    {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
+                    {loading && showSkeleton ? (
+                        <ul className="product-container">
+                            {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                        </ul>
+                    ) : (
+                        /* Ya cargó (o cargó tan rápido que no salió skeleton) */
+                        <>
+                            {/* No hay productos */}
+                            {Soldproducts.length === 0 && !loading && (
+                                <div className="no-reviews">
+                                    <img
+                                        src={noReviewsImg}
+                                        alt="Sin valoraciones"
+                                        className="no-reviews-img"
+                                    />
+                                    <h3>Sin ventas finalizadas todavía</h3>
+                                    <p>Cuando vendas un producto aparecerá aquí.</p>
+                                </div>
+                            )}
+
+                            {/* Hay productos */}
+                            {Soldproducts.length > 0 && (
+                                <>
+                                    <ul className="product-container">
+                                        {visibleProducts.map((p) => (
+                                            <Product key={p.id} product={p} mode="sold" />
+                                        ))}
+                                    </ul>
+                                    {hasMore && (
+                                        <div className="btn-more-reviews-container" onClick={showMore}>
+                                            <div className='btn-more-reviews'>Ver más productos</div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </>
                     )}
                 </div>
             </section>

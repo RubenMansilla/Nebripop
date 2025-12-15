@@ -11,6 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
@@ -18,6 +21,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const users_entity_1 = require("./users.entity");
 const supabase_js_1 = require("@supabase/supabase-js");
+const sharp_1 = __importDefault(require("sharp"));
 let UsersService = class UsersService {
     repo;
     supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
@@ -36,12 +40,15 @@ let UsersService = class UsersService {
         return this.repo.findOne({ where: { id } });
     }
     async updateProfilePicture(id, file) {
-        const ext = file.originalname.split('.').pop();
-        const fileName = `user_${id}_${Date.now()}.${ext}`;
+        const processedImage = await (0, sharp_1.default)(file.buffer)
+            .resize(800, 800, { fit: 'inside' })
+            .webp({ quality: 80 })
+            .toBuffer();
+        const fileName = `user_${id}_${Date.now()}.webp`;
         const { error } = await this.supabase.storage
             .from('userImg')
-            .upload(fileName, file.buffer, {
-            contentType: file.mimetype,
+            .upload(fileName, processedImage, {
+            contentType: 'image/webp',
             upsert: true
         });
         if (error)
@@ -50,8 +57,7 @@ let UsersService = class UsersService {
             .from('userImg')
             .getPublicUrl(fileName);
         await this.repo.update(id, { profilePicture: data.publicUrl });
-        const updatedUser = await this.repo.findOne({ where: { id } });
-        return updatedUser;
+        return this.repo.findOne({ where: { id } });
     }
 };
 exports.UsersService = UsersService;

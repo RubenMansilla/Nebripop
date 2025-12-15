@@ -107,7 +107,7 @@
 .no-reviews {
     width: 100%;
     text-align: center;
-    padding-bottom: 5px;
+    padding-bottom: 60px;
     color: #29363d;
     display: flex;
     flex-direction: column;
@@ -116,7 +116,7 @@
     gap: 20px;
 }
 
-.no-reviews-img {
+.no-reviews img {
     width: 330px;
     display: flex;
     justify-content: center;
@@ -152,6 +152,10 @@
     .no-reviews p {
         font-size: 13px;
         max-width: 260px;
+    }
+
+    .no-reviews img {
+        width: 280px;
     }
 }
 

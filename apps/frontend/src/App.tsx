@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
 // HOME
 import Home from "./pages/Home/Home";
+import Detail from "./pages/Product/Detail";
 
 // USER PROFILE PAGES (NUEVA RUTA)
 import User from "./pages/User/Me/Me";
@@ -33,6 +34,10 @@ import Safety from "./components/PantallasFooter/Safety";
 import Community from "./components/PantallasFooter/Community";
 import Privacy from "./components/PantallasFooter/Privacy";
 import Terms from "./components/PantallasFooter/Terms";
+import Filtro from "./pages/Filtro/Filtro";
+
+
+
 
 export default function App() {
   return (
@@ -57,6 +62,9 @@ export default function App() {
 
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/condiciones" element={<Terms />} />
+
+            <Route path="/filtros" element={<Filtro />} />
+            <Route path="/product/:productId" element={<Detail />} />
 
             {/* PROTECTED ROUTES */}
             <Route

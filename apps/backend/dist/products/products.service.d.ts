@@ -65,4 +65,9 @@ export declare class ProductsService {
         sold: boolean;
         images: ProductImage[];
     }[]>;
+    getAllProducts(userId?: number): Promise<Product[]>;
+    getProductById(productId: number, userId: number | null): Promise<Product>;
+    deleteProduct(productId: number): Promise<{
+        message: string;
+    }>;
 }

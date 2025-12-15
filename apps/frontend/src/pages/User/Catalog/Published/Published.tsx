@@ -2,15 +2,25 @@ import './Published.css'
 import Navbar from '../../../../components/Navbar/Navbar'
 import CategoriesBar from '../../../../components/CategoriesBar/CategoriesBar'
 import ProfileSideBar from '../../../../components/Profile/ProfileSideBar/ProfileSideBar';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState, useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect, useState, useContext, useRef } from 'react';
 import Product from '../../../../components/Product/Product';
 import { getMyActiveProducts } from "../../../../api/products.api";
 import type { ProductType } from '../../../../types/product';
 import { AuthContext } from "../../../../context/AuthContext";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
+import { toast } from "react-toastify";
+import noReviewsImg from '../../../../assets/profile/pop-nothing-for-sale.svg';
 
 export default function Published() {
+
+    const location = useLocation();
+    const navigate = useNavigate();
+    const hasShownToast = useRef(false);
+
+    // --- State para la lógica de carga ---
+    const [loading, setLoading] = useState(true);
+    const [showSkeleton, setShowSkeleton] = useState(false); // Controla visualmente el skeleton
 
     const { token } = useContext(AuthContext);
     const [Activeproducts, setActiveProducts] = useState<ProductType[]>([]);
@@ -18,29 +28,77 @@ export default function Published() {
     const [visibleCount, setVisibleCount] = useState(25);
     const visibleProducts = Activeproducts.slice(0, visibleCount);
 
+    /* info item active */
+    const [selected, setSelected] = useState("published");
+
     const showMore = () => {
         setVisibleCount(prev => prev + 25);
     };
 
     const hasMore = visibleCount < Activeproducts.length;
 
+    const handleRemoveFromList = (deletedId: number) => {
+        // Actualiza el estado local quitando el ID eliminado
+        setActiveProducts(current => current.filter(p => p.id !== deletedId));
+    };
+
+    // Lógica del Toast (sin cambios)
     useEffect(() => {
-        if (!token) return;
+        if (location.state?.success && !hasShownToast.current) {
+            hasShownToast.current = true;
+            toast.success("Producto publicado correctamente", {
+                style: {
+                    borderRadius: "14px",
+                    padding: "14px 18px",
+                    backgroundColor: "#f6fff8",
+                    color: "#114b2c",
+                    border: "1px solid #d5f3df",
+                    fontWeight: 500,
+                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
+                },
+                progressStyle: {
+                    background: "#28c76f",
+                }
+            });
+            navigate(location.pathname, { replace: true });
+        }
+    }, [location.state, navigate, location.pathname]);
 
-        getMyActiveProducts(token)
-            .then((data) => setActiveProducts(data))
-            .catch((err) => console.error(err));
-    }, [token]);
-
-    const navigate = useNavigate();
-    /* info item active */
-    const [selected, setSelected] = useState("published");
-
+    // Lógica de navegación de pestañas
     useEffect(() => {
         if (selected === "sold") {
             navigate("/catalog/sold");
         }
     }, [selected, navigate]);
+
+    // --- Lógica de Carga con Debounce (Anti-parpadeo) ---
+    useEffect(() => {
+        if (!token) return;
+
+        setLoading(true);
+        setShowSkeleton(false); // Reseteamos para que no salga de inmediato
+
+        // Solo mostramos el skeleton si la petición tarda más de 300ms
+        const skeletonTimer = setTimeout(() => {
+            setShowSkeleton(true);
+        }, 300);
+
+        getMyActiveProducts(token)
+            .then((data) => {
+                setActiveProducts(data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                // Si la API responde antes de 300ms, cancelamos el timer.
+                // El skeleton NUNCA habrá aparecido.
+                clearTimeout(skeletonTimer);
+                setLoading(false);
+            });
+
+        return () => clearTimeout(skeletonTimer);
+    }, [token]);
 
     return (
         <>
@@ -78,21 +136,47 @@ export default function Published() {
                             </div>
                         </div>
                     </div>
-                    <ul className="product-container">
-                        {Activeproducts.length === 0 ? (
-                            [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
-                        ) : (
-                            visibleProducts.map((p) => (
-                                <Product key={p.id} product={p} mode="active" />
-                            ))
-                        )}
-                    </ul>
-                    {hasMore && (
-                        <div className="btn-more-reviews-container" onClick={showMore}>
-                            <div className='btn-more-reviews'>
-                                Ver más productos
-                            </div>
-                        </div>
+                    {/* CASO 1: Cargando lento -> Muestra Skeleton */}
+                    {loading && showSkeleton ? (
+                        <ul className="product-container">
+                            {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                        </ul>
+                    ) : (
+                        /* CASO 2: Ya cargó (o cargó rápido) */
+                        <>
+                            {/* Lista vacía */}
+                            {Activeproducts.length === 0 && !loading && (
+                                <div className="no-reviews">
+                                    <img
+                                        src={noReviewsImg}
+                                        alt="Sin valoraciones"
+                                        className="no-reviews-img"
+                                    />
+                                    <h3>Nada en venta todavía</h3>
+                                    <p>
+                                        Cuando publiques un producto aparecerá aquí.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Hay productos */}
+                            {Activeproducts.length > 0 && (
+                                <>
+                                    <ul className="product-container">
+                                        {visibleProducts.map((p) => (
+                                            <Product key={p.id} product={p} mode="active" onDelete={handleRemoveFromList} />
+                                        ))}
+                                    </ul>
+                                    {hasMore && (
+                                        <div className="btn-more-reviews-container" onClick={showMore}>
+                                            <div className='btn-more-reviews'>
+                                                Ver más productos
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
+                        </>
                     )}
                 </div>
             </section>
