@@ -1,167 +1,566 @@
-/* Contenedor principal de la página */
-.detail-container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  /* ======================================================
+    1. CONTENEDOR PRINCIPAL DE LA PÁGINA
+  ====================================================== */
+  .detail-container {
+    display: flex;
+    gap: 24px;
+    margin: 24px auto;
+    max-width: 1280px;
+    padding: 0 20px;
+    align-items: flex-start;
+  }
+
+
+  /* ======================================================
+    2. SIDEBAR IZQUIERDO (PUBLICIDAD)
+  ====================================================== */
+  .left-sidebar {
+    width: 22%;
+    min-width: 220px;
+  }
+
+  .ad-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+
+  /* ======================================================
+    3. CONTENIDO CENTRAL (DETALLE DEL PRODUCTO)
+  ====================================================== */
+  .detail-main {
+    width: 56%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+
+  /* -------- Breadcrumb / Categoría -------- */
+  .product-category {
+    font-size: 14px;
+    color: #c3b8a8;
+  }
+
+
+  /* -------- Galería de imágenes -------- */
+  .product-images {
+    display: flex;
+    gap: 12px;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    /* 🔥 como Wallapop */
+    border-radius: 18px;
+    overflow: hidden;
+    background-color: #f3eee7;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+  }
+
+  .image-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 10px;
+    /* cuadrado suave */
+    font-size: 26px;
+    cursor: pointer;
+    color: #4b4b4b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+  }
+
+  .image-arrow.left {
+    left: 12px;
+  }
+
+  .image-arrow.right {
+    right: 12px;
+  }
+
+  .image-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 3;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+  }
+
+  .dot.active {
+    background-color: #ffffff;
+  }
+
+
+  /* -------- Info principal -------- */
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .product-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4b4b4b;
+  }
+
+  .product-price {
+    font-size: 22px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .product-condition {
+    font-size: 14px;
+    color: #9a9a9a;
+  }
+
+  .product-description {
+    font-size: 15px;
+    color: #6f6f6f;
+    line-height: 1.5;
+  }
+
+
+  /* -------- Tags de envío -------- */
+  .product-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .tag-chip {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 18px;
+    border: 1.5px solid #e6d8c3;
+    color: #6f6f6f;
+    background-color: #ffffff;
+    font-weight: 500;
+  }
+
+  .tag-chip.secondary {
+    background-color: #f3eee7;
+  }
+
+
+  .product-details {
+  padding: 20px 0;
+  border-bottom: 1.5px solid #e6d8c3;
 }
 
-/* Sidebar izquierdo con publicidad */
-.left-sidebar {
-  width: 25%;
-  margin-right: 20px;
-  height: 100%; /* Asegúrate de que ocupe todo el alto disponible */
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #4b4b4b;
 }
 
-.ad-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
+.details-description {
+  font-size: 14px;
+  color: #6f6f6f;
+  margin-bottom: 10px;
 }
 
-/* Main content - Detalles del producto */
-.detail-main {
-  width: 60%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
+.details-list {
+  font-size: 14px;
+  color: #6f6f6f;
+  margin-bottom: 14px;
 }
 
-.product-category {
-  font-size: 1rem;
-  color: #8e8e8e;
-  margin-bottom: 15px;
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  font-size: 14px;
 }
 
-/* Imágenes del producto */
-.product-images {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+.details-grid span {
+  color: #9a9a9a;
 }
 
-.product-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 8px;
+.details-grid strong {
+  display: block;
+  color: #4b4b4b;
 }
-
-/* Detalles del producto */
-.product-info {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.product-title {
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.product-price {
-  font-size: 1.8rem;
-  color: #28a745;
-}
-
-.product-condition {
-  font-size: 1rem;
-  color: gray;
-}
-
-.product-description {
-  font-size: 1.2rem;
-}
-
-.product-footer {
+.bundle-card {
+  margin: 20px 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: #f3eee7;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
+  gap: 12px;
+  font-size: 14px;
+  color: #6f6f6f;
 }
 
-.tag {
-  padding: 5px;
-  font-size: 0.9rem;
-  border-radius: 5px;
-}
-
-.envio {
-  background-color: #28a745;
-  color: white;
-}
-
-.personal {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-buy {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 1.1rem;
-  background-color: #007bff;
-  color: white;
+.bundle-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
   border: none;
+  background-color: #d8cfbf;
+  color: white;
+  font-weight: 600;
   cursor: pointer;
-  width: 100%;
+}
+.product-location {
+  padding: 16px 0;
+  border-top: 1.5px solid #e6d8c3;
+  border-bottom: 1.5px solid #e6d8c3;
+  font-size: 15px;
+  font-weight: 600;
+  color: #4b4b4b;
+}
+.seller-reviews {
+  padding: 20px 0;
 }
 
-.btn-buy:hover {
-  background-color: #0056b3;
+.reviews-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e6d8c3;
 }
 
-/* Sidebar derecho con información del vendedor y opciones de envío */
-.right-sidebar {
-  width: 30%;
-  padding: 20px;
+.review-item {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  gap: 12px;
+  margin-top: 16px;
 }
 
-/* Información de pago */
-.payment-info {
-  background-color: #f8f8f8;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.apple-pay-logo {
-  width: 50px;
-  height: auto;
-}
-
-/* Información del vendedor */
-.seller-info {
-  background-color: #f8f8f8;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-.seller {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.seller-image {
-  width: 50px;
-  height: 50px;
+.review-avatar {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
-.seller p {
-  margin: 0;
+.review-author {
+  font-weight: 600;
 }
 
-/* Opciones de envío */
-.shipping-options {
-  background-color: #f8f8f8;
-  padding: 15px;
-  border-radius: 8px;
+.review-stars {
+  color: #f4c430;
+  font-size: 16px;
 }
 
-.shipping-options p {
-  margin: 5px 0;
+.review-comment {
+  font-size: 14px;
+  color: #6f6f6f;
 }
+
+.review-date {
+  font-size: 12px;
+  color: #9a9a9a;
+}
+
+
+
+  /* ======================================================
+    4. SIDEBAR DERECHO (COMPRA + VENDEDOR)
+  ====================================================== */
+  .right-sidebar {
+    width: 22%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Título */
+  .buy-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+    font-weight: 700;
+    color: #4b4b4b;
+  }
+
+  /* Subtítulo */
+  .buy-subtitle {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #9a9a9a;
+  }
+
+  /* Precio */
+  .buy-price {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #4b4b4b;
+    line-height: 1;
+  }
+
+
+  /* Apple Pay */
+  .buy-payments {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .apple-pay {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #e6d8c3;
+    background-color: #f8f6f3;
+    font-size: 14px;
+    color: #c1b7a6;
+    white-space: nowrap;
+  }
+
+  .apple-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    color: #9a9a9a;
+  }
+
+  .apple-info a {
+    margin-top: 4px;
+    text-decoration: underline;
+    color: #6f6f6f;
+  }
+
+  /* Separador */
+  .buy-divider {
+    height: 1px;
+    background-color: #ede6da;
+    margin: 8px 0;
+    margin-bottom: 16px;
+  }
+
+
+  /* Envío */
+  .buy-shipping {
+    font-size: 14px;
+    color: #c1b7a6;
+    margin-bottom: 16px;
+  }
+
+  /* Botones */
+  .buy-main-btn {
+    padding: 8px;
+    width: 100%;
+    border-radius: 12px;
+    background-color: #d8cfbf;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .buy-main-btn:hover {
+    background-color: #cfc5b3;
+  }
+
+
+  .buy-offer-btn {
+    width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+    border: 2px solid #d8cfbf;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    color: #5a5a5a;
+    cursor: pointer;
+  }
+
+  .buy-offer-btn:hover {
+    background-color: #f3eee7;
+  }
+
+
+
+  /* ======================================================
+    6. TARJETA VENDEDOR
+  ====================================================== */
+  .seller-card {
+    border: 2px solid #e6d8c3;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    gap: 14px;
+    background-color: #fff;
+    align-items: center;
+  }
+
+  .seller-avatar {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .seller-data {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .seller-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .seller-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .seller-chat {
+    padding: 6px 14px;
+    border-radius: 10px;
+    border: 2px solid #e6d8c3;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6f6f6f;
+    cursor: pointer;
+  }
+
+  .seller-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .star {
+    color: #f4c430;
+    font-size: 18px;
+  }
+
+  .rating-number {
+    font-size: 15px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .seller-meta {
+    font-size: 13px;
+    color: #9a9a9a;
+  }
+
+
+  /* ======================================================
+    7. TARJETA ENVÍO / PROTECCIÓN
+  ====================================================== */
+  .shipping-card {
+    border: 2px solid #e6d8c3;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background-color: #fff;
+  }
+
+  /* Pills */
+  .shipping-tabs {
+    display: flex;
+    background-color: #f3eee7;
+    border-radius: 20px;
+    width: fit-content;
+  }
+
+  .shipping-tab {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 16px;
+    color: #9a9a9a;
+    font-weight: 500;
+  }
+
+  .shipping-tab.active {
+    background-color: #d8cfbf;
+    color: white;
+  }
+
+  /* Row */
+  .shipping-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Icon */
+  .shipping-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background-color: #f3eee7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  /* Info */
+  .shipping-info {
+    flex: 1;
+  }
+
+  .shipping-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .shipping-desc {
+    font-size: 13px;
+    color: #8b8b8b;
+    margin-top: 2px;
+  }
+
+  /* Price */
+  .shipping-price {
+    font-size: 13px;
+    color: #6f6f6f;
+    white-space: nowrap;
+  }
+
+  .shipping-tab {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
