@@ -155,34 +155,20 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                             ? `${currentImgIndex + 1} / ${totalImages}`
                             : "0 / 0"}
                     </div>
-
                     {
                         currentImgIndex > 0 && (
                             <button className="img-btn prev-btn" onClick={handlePrev}>
-                                <svg width="10" height="16" viewBox="0 0 10 16">
-                                    <path
-                                        d="M8.5 15L1.5 8L8.5 1"
-                                        stroke="#222"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
+                                <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.5 15L1.5 8L8.5 1" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </button>
                         )
                     }
-
                     {
                         currentImgIndex < totalImages - 1 && (
                             <button className="img-btn next-btn" onClick={handleNext}>
-                                <svg width="10" height="16" viewBox="0 0 10 16">
-                                    <path
-                                        d="M1.5 1L8.5 8L1.5 15"
-                                        stroke="#222"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
+                                <svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.5 1L8.5 8L1.5 15" stroke="#222" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
                             </button>
                         )
@@ -249,37 +235,57 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                         <p>{product.name}</p>
                     </div>
 
-                    {
-                        (mode === "public" || mode === "active") && (
-                            <div className="product-delivery">
-                                {product.shipping_active ? (
+                    {(mode === "public" || mode === "active") && (
+                        <div className="product-delivery">
+                            {product.shipping_active ? (
+                                <>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        fill="#86418a"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        focusable="false">
+                                        <path fill-rule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 .75.75V12H.75a.75.75 0 0 0 0 1.5h1.5v3a2.25 2.25 0 0 0 2.25 2.25h.02a3.375 3.375 0 0 0 6.71 0h3.79a3.375 3.375 0 0 0 6.71 0h.02A2.25 2.25 0 0 0 24 16.5v-2.062a2.25 2.25 0 0 0-.556-1.48l-1.924-2.202-.032-.034-.206-.235-1.093-3.006A2.25 2.25 0 0 0 18.074 6H16.5v-.75A2.25 2.25 0 0 0 14.25 3H4.5a2.25 2.25 0 0 0-2.25 2.25V9a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-6zm16.463 13.5a1.876 1.876 0 1 1-3.676-.751 1.876 1.876 0 0 1 3.675.751m-12.338 1.5a1.876 1.876 0 1 1 0-3.751 1.876 1.876 0 0 1 0 3.751M16.5 10.5h3.19l-.91-2.506a.75.75 0 0 0-.706-.494H16.5z" clip-rule="evenodd"></path>
+                                    </svg>
                                     <p className="delivery-available">Envío disponible</p>
-                                ) : (
+                                </>
+                            ) : (
+                                <>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        fill="#5c7a89"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                        focusable="false">
+                                        <path fill-rule="evenodd" d="M15 7.496a3 3 0 0 1-1.323 2.488A6.004 6.004 0 0 1 18 15.748a.75.75 0 1 1-1.5 0 4.5 4.5 0 1 0-9 0 .75.75 0 1 1-1.5 0 6.004 6.004 0 0 1 4.323-5.764A3 3 0 1 1 15 7.496m-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" clip-rule="evenodd"></path><path fill-rule="evenodd" d="m12.54 23.816.075-.039C15 22.5 22.5 18 22.498 10.497 22.498 4.495 18 0 12 0S1.5 4.495 1.5 10.495C1.5 18 9 22.5 11.382 23.78l.016.008c.187.1.396.213.602.213.186 0 .367-.094.54-.184m-5.92-5.394c1.964 2.01 4.212 3.351 5.377 3.984 1.165-.63 3.416-1.973 5.382-3.984 2.018-2.064 3.62-4.709 3.62-7.925C20.996 5.324 17.171 1.5 12 1.5s-9 3.825-9 8.995c0 3.218 1.603 5.863 3.62 7.927" clip-rule="evenodd"></path></svg>
                                     <p className="delivery-unavailable">
                                         Solo venta en persona
                                     </p>
-                                )}
-                            </div>
-                        )
-                    }
+                                </>
+                            )}
+                        </div>
+                    )}
                 </div >
             </li >
 
             {/* ================= POPUP ================= */}
-            {
-                showPopup && (
-                    <div className="popup-backdrop">
-                        <div className="unsaved-changes-popup">
-                            <h3>¿Eliminar producto?</h3>
-                            <p>Esta acción no se puede deshacer.</p>
-                            <div className="popup-buttons">
-                                <span onClick={handleCancelDelete}>No</span>
-                                <span onClick={handleConfirmDelete}>Sí, eliminar</span>
-                            </div>
+            {showPopup && (
+                <div className="popup-backdrop">
+                    <div className="unsaved-changes-popup">
+                        <h3>¿Estás seguro que quieres eliminar este producto?</h3>
+                        <p>Esta acción no se puede deshacer. Si eliminas el producto, se perderá toda la información asociada.</p>
+                        <div className="popup-buttons">
+                            <span className="popup-no" onClick={handleCancelDelete}>No</span>
+                            <span className="divider"></span>
+                            <span className="popup-yes" onClick={handleConfirmDelete}>Sí, eliminar</span>
                         </div>
                     </div>
-                )
-            }
+                </div>
+            )}
         </>
     );
 }
