@@ -27,6 +27,9 @@ let FavoritesController = class FavoritesController {
     async removeFavorite(req, productId) {
         return this.favoritesService.removeFavorite(req.user.id, productId);
     }
+    async getFavoriteProducts(req) {
+        return this.favoritesService.getFavoriteProducts(req.user.id);
+    }
 };
 exports.FavoritesController = FavoritesController;
 __decorate([
@@ -47,6 +50,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", Promise)
 ], FavoritesController.prototype, "removeFavorite", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
+    (0, common_1.Get)("products"),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FavoritesController.prototype, "getFavoriteProducts", null);
 exports.FavoritesController = FavoritesController = __decorate([
     (0, common_1.Controller)("favorites"),
     __metadata("design:paramtypes", [favorites_service_1.FavoritesService])

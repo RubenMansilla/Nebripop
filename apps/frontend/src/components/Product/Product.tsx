@@ -4,7 +4,7 @@ import { useState, useContext } from 'react';
 import { addFavorite, removeFavorite } from '../../api/favorites.api';
 import { AuthContext } from '../../context/AuthContext';
 
-export default function Product({ product, mode }: { product: ProductType, mode: "public" | "active" | "sold" }) {
+export default function Product({ product, mode, onUnfavorite }: { product: ProductType, mode: "public" | "active" | "sold" ; onUnfavorite?: (id: number) => void;}) {
 
     const { token } = useContext(AuthContext);
 
@@ -26,6 +26,8 @@ export default function Product({ product, mode }: { product: ProductType, mode:
             if (isFavorite) {
                 await removeFavorite(product.id, token);
                 setIsFavorite(false);
+
+                if (onUnfavorite) onUnfavorite(product.id);
             } else {
                 await addFavorite(product.id, token);
                 setIsFavorite(true);

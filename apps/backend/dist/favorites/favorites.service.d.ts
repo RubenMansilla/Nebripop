@@ -9,4 +9,5 @@ export declare class FavoritesService {
     } & FavoriteProduct>;
     removeFavorite(userId: number, productId: number): Promise<import("typeorm").DeleteResult>;
     isFavorite(userId: number, productId: number): Promise<FavoriteProduct | null>;
+    getFavoriteProducts(userId: number): Promise<any>;
 }

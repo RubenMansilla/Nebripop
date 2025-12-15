@@ -15,3 +15,16 @@ export async function removeFavorite(productId: number, token: string) {
         },
     });
 }
+
+export async function getMyFavoriteProducts(token: string) {
+    const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/favorites/products`,
+        {
+            headers: { Authorization: `Bearer ${token}` }
+        }
+    );
+
+    if (!res.ok) throw new Error("Error fetching favorite products");
+
+    return res.json();
+}

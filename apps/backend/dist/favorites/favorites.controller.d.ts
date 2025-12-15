@@ -7,4 +7,5 @@ export declare class FavoritesController {
         product_id: number;
     } & import("./favorite-product.entity").FavoriteProduct>;
     removeFavorite(req: any, productId: number): Promise<import("typeorm").DeleteResult>;
+    getFavoriteProducts(req: any): Promise<any>;
 }

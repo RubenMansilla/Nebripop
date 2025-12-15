@@ -1,33 +1,48 @@
-import Navbar from '../../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../../components/Profile/ProfileSideBar/ProfileSideBar';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import "./FavoritesProducts.css";
+
+import Navbar from "../../../../components/Navbar/Navbar";
+import CategoriesBar from "../../../../components/CategoriesBar/CategoriesBar";
+import ProfileSideBar from "../../../../components/Profile/ProfileSideBar/ProfileSideBar";
+
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+
+import Product from "../../../../components/Product/Product";
+import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
+
+import { getMyFavoriteProducts } from "../../../../api/favorites.api";
+import type { ProductType } from "../../../../types/product";
+import { AuthContext } from "../../../../context/AuthContext";
 
 export default function FavoritesProducts() {
+    const { token } = useContext(AuthContext);
+    const [FavoriteProducts, setFavoriteProducts] = useState<ProductType[]>([]);
 
-    // const { token } = useContext(AuthContext);
-    // const [Favoriteproducts, setFavoriteProducts] = useState<ProductType[]>([]);
+    // PAGINACIÓN
+    const [visibleCount, setVisibleCount] = useState(25);
+    const visibleProducts = FavoriteProducts.slice(0, visibleCount);
 
-    // const [visibleCount, setVisibleCount] = useState(25);
-    // const visibleProducts = Favoriteproducts.slice(0, visibleCount);
+    const showMore = () => {
+        setVisibleCount((prev) => prev + 25);
+    };
 
-    // const showMore = () => {
-    //     setVisibleCount(prev => prev + 25);
-    // };
+    const hasMore = visibleCount < FavoriteProducts.length;
 
-    // const hasMore = visibleCount < Favoriteproducts.length;
+    // CARGAR FAVORITOS DEL USUARIO
+  useEffect(() => {
+    if (!token) return;
 
-    // useEffect(() => {
-    //     if (!token) return;
+    getMyFavoriteProducts(token)
+        .then((data) => {
+            console.log("FAVORITOS:", data); // <-- AQUÍ
+            setFavoriteProducts(data);
+        })
+        .catch((err) => console.error(err));
+}, [token]);
 
-    //     getMyFavoriteProducts(token)
-    //         .then((data) => setFavoriteProducts(data))
-    //         .catch((err) => console.error(err));
-    // }, [token]);
 
+    // NAVEGAR ENTRE PRODUCTOS / PERFILES
     const navigate = useNavigate();
-    /* info item active */
     const [selected, setSelected] = useState("products");
 
     useEffect(() => {
@@ -41,11 +56,15 @@ export default function FavoritesProducts() {
             <Navbar />
             <div className="navbar-line"></div>
             <CategoriesBar />
-            <section className='sidebar-container'>
-                <div className='hide-left-sidebar'>
+
+            <section className="sidebar-container">
+                <div className="hide-left-sidebar">
                     <ProfileSideBar />
                 </div>
-                <div className='sidebar-right'>
+
+                <div className="sidebar-right">
+
+                    {/* CABECERA */}
                     <div className="info-section">
                         <div className="info-container">
                             <div className="title">
@@ -56,40 +75,63 @@ export default function FavoritesProducts() {
                             </div>
                         </div>
                     </div>
+
+                    {/* SELECTOR */}
                     <div className="info-selector">
                         <div className="info-items">
                             <div
-                                className={`info-item ${selected === "products" ? "active" : ""}`}
+                                className={`info-item ${
+                                    selected === "products" ? "active" : ""
+                                }`}
                                 onClick={() => setSelected("products")}
                             >
                                 <p>Productos</p>
                             </div>
+
                             <div
-                                className={`info-item ${selected === "profiles" ? "active" : ""}`}
+                                className={`info-item ${
+                                    selected === "profiles" ? "active" : ""
+                                }`}
                                 onClick={() => setSelected("profiles")}
                             >
                                 <p>Perfiles</p>
                             </div>
                         </div>
                     </div>
-                    {/* <ul className="product-container">
-                        {Favoriteproducts.length === 0 ? (
+
+                    {/* LISTA DE PRODUCTOS */}
+                    <ul className="product-container">
+                        {FavoriteProducts.length === 0 ? (
                             [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
                         ) : (
                             visibleProducts.map((p) => (
-                                <Product key={p.id} product={p} mode="public" />
+                                <Product
+                                    key={p.id}
+                                    product={p}
+                                    mode="public"
+                                    onUnfavorite={(id) =>
+                                        setFavoriteProducts((prev) =>
+                                            prev.filter((prod) => prod.id !== id)
+                                        )
+                                    }
+                                />
                             ))
                         )}
-                    </ul> */}
-                    {/* {hasMore && (
-                        <div className="btn-more-reviews-container" onClick={showMore}>
-                            <div className='btn-more-reviews'>
+                    </ul>
+
+                    {/* BOTÓN VER MÁS */}
+                    {hasMore && (
+                        <div
+                            className="btn-more-reviews-container"
+                            onClick={showMore}
+                        >
+                            <div className="btn-more-reviews">
                                 Ver más productos
                             </div>
                         </div>
-                    )} */}
+                    )}
                 </div>
             </section>
         </>
-    )
+    );
 }

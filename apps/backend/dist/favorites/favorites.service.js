@@ -39,6 +39,28 @@ let FavoritesService = class FavoritesService {
             where: { user_id: userId, product_id: productId }
         });
     }
+    async getFavoriteProducts(userId) {
+        return await this.favoritesRepo.query(`
+            SELECT 
+                p.*,
+                COALESCE(
+                    json_agg(
+                        json_build_object(
+                            'id', pi.id,
+                            'image_url', pi.image_url
+                        )
+                    ) FILTER (WHERE pi.id IS NOT NULL),
+                    '[]'
+                ) AS images,
+                TRUE AS "isFavorite"
+            FROM favorites_products fp
+            JOIN products p ON p.id = fp.product_id
+            LEFT JOIN product_images pi ON pi.product_id = p.id
+            WHERE fp.user_id = $1
+            GROUP BY p.id
+            ORDER BY p.id DESC;
+        `, [userId]);
+    }
 };
 exports.FavoritesService = FavoritesService;
 exports.FavoritesService = FavoritesService = __decorate([

@@ -8,4 +8,6 @@ export class FavoriteProduct {
 
     @PrimaryColumn()
     product_id: number;
+
+    
 }
