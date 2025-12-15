@@ -7,40 +7,74 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
+import Product from "../../components/Product/Product";
 
 import { getAllProducts } from "../../api/products.api";
-
+import { getCategories } from "../../api/categories.api";
+import { getSubcategoriesByCategory } from "../../api/subcategories.api";
 
 export default function Filtro() {
+  const { token } = useContext(AuthContext);
+
   // ========================
   // ESTADOS PRINCIPALES
   // ========================
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // FILTROS (más tarde los activaremos)
+  // ========================
+  // CATEGORÍAS
+  // ========================
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(null);
+
+  // ========================
+  // FILTROS
+  // ========================
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(20000);
   const [conditionFilters, setConditionFilters] = useState<string[]>([]);
-  const [dateFilter, setDateFilter] = useState<string | null>(null);
+  const [shippingFilter, setShippingFilter] =
+    useState<"shipping" | "person" | null>(null);
 
   // ========================
   // CARGAR PRODUCTOS
   // ========================
-  const { token } = useContext(AuthContext);
-
   useEffect(() => {
     getAllProducts(token)
-      .then((data) => {
-        setProducts(data);
-        setLoading(false);
-      })
-      .catch(err => console.error(err));
+      .then(setProducts)
+      .finally(() => setLoading(false));
   }, [token]);
 
+  // ========================
+  // CARGAR CATEGORÍAS
+  // ========================
+  useEffect(() => {
+    getCategories()
+      .then(setCategories)
+      .catch(console.error);
+  }, []);
 
   // ========================
-  // TOGGLE DE CHECKBOXES
+  // CARGAR SUBCATEGORÍAS
+  // ========================
+  useEffect(() => {
+    if (!selectedCategory) {
+      setSubcategories([]);
+      setSelectedSubcategory(null);
+      return;
+    }
+
+    getSubcategoriesByCategory(selectedCategory)
+      .then(setSubcategories)
+      .catch(console.error);
+  }, [selectedCategory]);
+
+  // ========================
+  // TOGGLE ESTADO
   // ========================
   const toggleCondition = (value: string) => {
     setConditionFilters((prev) =>
@@ -51,50 +85,126 @@ export default function Filtro() {
   };
 
   // ========================
-  // PRODUCTOS FILTRADOS (por ahora sin filtros)
+  // FILTRADO REAL
   // ========================
-  const filteredProducts = products; // 🔥 TEMPORAL — así se muestran todos
+  const filteredProducts = products.filter((p) => {
+    // PRECIO
+    if (p.price < min || p.price > max) return false;
+
+    // ESTADO
+    if (conditionFilters.length > 0 && !conditionFilters.includes(p.condition)) {
+      return false;
+    }
+
+    // ENVÍO
+    if (shippingFilter === "shipping" && !p.shipping_active) return false;
+    if (shippingFilter === "person" && p.shipping_active) return false;
+
+    // CATEGORÍA
+    if (
+      selectedCategory &&
+      (p.category?.id ?? p.category) !== selectedCategory
+    ) {
+      return false;
+    }
+
+    // SUBCATEGORÍA
+    if (
+      selectedSubcategory &&
+      (p.subcategory?.id ?? p.subcategory) !== selectedSubcategory
+    ) {
+      return false;
+    }
+
+
+    return true;
+  });
 
   return (
     <>
       <Navbar />
-      <div className="navbar-line"></div>
+      <div className="navbar-line" />
       <CategoriesBar />
 
       <div className="filtro-container">
-        {/* ====================================
-            SIDEBAR IZQUIERDO
-        ==================================== */}
+        {/* ========================
+            SIDEBAR
+        ======================== */}
         <aside className="filtro-sidebar">
           <h2 className="filtro-title">Filtros</h2>
 
           {/* CATEGORÍAS */}
           <div className="filtro-block">
-            <h3 className="filtro-subtitle">Todas las categorías</h3>
+            <h3 className="filtro-subtitle">Categorías</h3>
             <ul className="filtro-list">
-              <li>Coches</li>
-              <li>Motos</li>
-              <li>Motor y accesorios</li>
-              <li>Moda y accesorios</li>
-              <li>Tecnología y electrónica</li>
-              <li className="ver-todo">Ver todo</li>
+              {categories.map((cat) => (
+                <li
+                  key={cat.id}
+                  className={selectedCategory === cat.id ? "active" : ""}
+                  onClick={() => {
+                    setSelectedCategory(cat.id);
+                    setSelectedSubcategory(null);
+                  }}
+                >
+                  {cat.name}
+                </li>
+              ))}
+              <li
+                className="ver-todo"
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setSelectedSubcategory(null);
+                }}
+              >
+                Ver todo
+              </li>
             </ul>
           </div>
 
-          {/* UBICACIÓN */}
-          <div className="filtro-block">
-            <h3 className="filtro-subtitle">Ubicación</h3>
-            <p className="filtro-gray">Sin ubicación</p>
-            <p className="filtro-link">Cambiar</p>
-          </div>
+          {/* SUBCATEGORÍAS */}
+          {selectedCategory && subcategories.length > 0 && (
+            <div className="filtro-block">
+              <h3 className="filtro-subtitle">Subcategorías</h3>
+              <ul className="filtro-list">
+                {subcategories.map((sub) => (
+                  <li
+                    key={sub.id}
+                    className={selectedSubcategory === sub.id ? "active" : ""}
+                    onClick={() => setSelectedSubcategory(sub.id)}
+                  >
+                    {sub.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* ENVÍO */}
           <div className="filtro-block">
             <h3 className="filtro-subtitle">Opciones de envío</h3>
-
             <div className="envio-toggle">
-              <div className="envio-option active">Con envío</div>
-              <div className="envio-option">Venta en persona</div>
+              <div
+                className={`envio-option ${shippingFilter === "shipping" ? "active" : ""
+                  }`}
+                onClick={() =>
+                  setShippingFilter(
+                    shippingFilter === "shipping" ? null : "shipping"
+                  )
+                }
+              >
+                Con envío
+              </div>
+              <div
+                className={`envio-option ${shippingFilter === "person" ? "active" : ""
+                  }`}
+                onClick={() =>
+                  setShippingFilter(
+                    shippingFilter === "person" ? null : "person"
+                  )
+                }
+              >
+                Venta en persona
+              </div>
             </div>
           </div>
 
@@ -122,130 +232,27 @@ export default function Filtro() {
               </label>
             ))}
           </div>
-
-          {/* PRECIO */}
-          <div className="filtro-block filtro-precio">
-            <h3 className="filtro-subtitle">Precio</h3>
-
-            <p className="range-labels">
-              {min.toLocaleString()} € – +{max.toLocaleString()} €
-            </p>
-
-            <div className="np-slider-wrapper">
-              {/* Rango seleccionado */}
-              <div
-                className="np-selected-range"
-                style={{
-                  left: `${(min / 20000) * 100}%`,
-                  right: `${100 - (max / 20000) * 100}%`,
-                }}
-              ></div>
-
-              {/* SLIDER MIN */}
-              <input
-                type="range"
-                className="np-range-min"
-                min="0"
-                max="20000"
-                value={min}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  if (max - v >= 500) setMin(v);
-                }}
-              />
-
-              {/* SLIDER MAX */}
-              <input
-                type="range"
-                className="np-range-max"
-                min="0"
-                max="20000"
-                value={max}
-                onChange={(e) => {
-                  const v = Number(e.target.value);
-                  if (v - min >= 500) setMax(v);
-                }}
-              />
-            </div>
-          </div>
-
-          {/* FECHA */}
-          <div className="filtro-block">
-            <h3 className="filtro-subtitle">Fecha de publicación</h3>
-
-            {["Hoy", "Últimos 7 días", "Últimos 30 días"].map((label) => (
-              <label key={label} className="np-radio-item">
-                <input
-                  type="radio"
-                  name="fecha"
-                  checked={dateFilter === label}
-                  onChange={() => setDateFilter(label)}
-                />
-                <span className="np-radio-label">{label}</span>
-              </label>
-            ))}
-          </div>
         </aside>
 
-        {/* ====================================
-            RESULTADOS DERECHA
-        ==================================== */}
+        {/* ========================
+            RESULTADOS
+        ======================== */}
         <main className="filtro-results">
-          <div className="filters-right">
-            {/* ORDENAR */}
-            <div className="order-wrapper">
-              <label className="order-label">Ordenar por:</label>
+          <h2 className="results-title">Resultados</h2>
 
-              <select className="order-select">
-                <option value="distancia">Distancia</option>
-                <option value="recientes">Más recientes</option>
-                <option value="precio-asc">Precio (menor → mayor)</option>
-                <option value="precio-desc">Precio (mayor → menor)</option>
-              </select>
-            </div>
-
-
-
-            <h2 className="results-title">Encuentra lo que buscas</h2>
-            <p className="results-subtitle">Resultados de búsqueda</p>
-
-            {/* GRID */}
-            <div className="products-grid">
-              {loading ? (
-                <p>Cargando productos...</p>
-              ) : filteredProducts.length === 0 ? (
-                <p>No se encontraron productos</p>
-              ) : (
-                filteredProducts.map((p) => (
-                  <Link to={`/product/${p.id}`} key={p.id}>  {/* Envolvemos el producto con Link */}
-                    <div className="product-card">
-                      <img
-                        className="product-img"
-                        src={
-                          p.images?.[0]?.image_url &&
-                            p.images[0].image_url.trim() !== ""
-                            ? p.images[0].image_url
-                            : "/no-image.webp"
-                        }
-                        alt={p.name}
-                      />
-                      <p className="product-price">{p.price} €</p>
-                      <p className="product-title">{p.name}</p>
-                      <p className="product-info">{p.condition}</p>
-                      <div className="product-footer">
-                        {p.shipping_available ? (
-                          <span className="tag envio">Envío disponible</span>
-                        ) : (
-                          <span className="tag personal">Solo en persona</span>
-                        )}
-                      </div>
-                    </div>
-                  </Link> 
-                ))
-  )}
-            </div>
-
-          </div>
+          <ul className="products-grid">
+            {loading ? (
+              <p>Cargando productos...</p>
+            ) : filteredProducts.length === 0 ? (
+              <p>No se encontraron productos</p>
+            ) : (
+              filteredProducts.map((p) => (
+                <Link key={p.id} to={`/product/${p.id}`}>
+                  <Product product={p} mode="public" />
+                </Link>
+              ))
+            )}
+          </ul>
         </main>
       </div>
 

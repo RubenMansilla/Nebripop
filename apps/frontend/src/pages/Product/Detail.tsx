@@ -179,9 +179,12 @@ export default function Detail() {
             )}
             <div className="seller-reviews">
 
-              <h3 className="section-title">
-                ⭐ {product.seller.rating} · {product.seller.name} – Valoraciones
-              </h3>
+              {product.seller && (
+                <h3 className="section-title">
+                  ⭐ {product.seller.rating} · {product.seller.name} – Valoraciones
+                </h3>
+              )}
+
 
               <div className="review-item">
                 <img
@@ -248,17 +251,20 @@ export default function Detail() {
 
           <div className="seller-card">
             <div className="seller-left">
-              <img
-                src={product.seller.avatar || "/default-avatar.webp"}
-                className="seller-avatar"
-                alt={product.seller.name}
-              />
+              {product.seller && (
+                <img
+                  src={product.seller.avatar || "/default-avatar.webp"}
+                  className="seller-avatar"
+                  alt={product.seller.name}
+                />
+              )}
+
 
               <div>
-                <p className="seller-name">{product.seller.name}</p>
-                <p className="seller-rating">⭐ {product.seller.rating}</p>
+                <p className="seller-name">{product.seller?.name}</p>
+                <p className="seller-rating">⭐ {product.seller?.rating}</p>
                 <p className="seller-meta">
-                  {product.seller.totalSales} ventas · {product.seller.totalReviews} valoraciones
+                  {product.seller?.totalSales} ventas · {product.seller?.totalReviews} valoraciones
                 </p>
               </div>
             </div>
