@@ -3,12 +3,16 @@ import { Product } from "./products.entity";
 import { ProductImage } from "./products-image.entity";
 import { CreateProductDto } from "./create-products.dto";
 import { FavoriteProduct } from "../favorites/favorite-product.entity";
+import { Chat } from "../chat/chat.entity";
+import { Purchase } from "../purchases/purchase.entity";
 export declare class ProductsService {
     private productRepo;
     private productImagesRepo;
     private favoritesRepo;
+    private chatRepo;
+    private purchaseRepo;
     private supabase;
-    constructor(productRepo: Repository<Product>, productImagesRepo: Repository<ProductImage>, favoritesRepo: Repository<FavoriteProduct>);
+    constructor(productRepo: Repository<Product>, productImagesRepo: Repository<ProductImage>, favoritesRepo: Repository<FavoriteProduct>, chatRepo: Repository<Chat>, purchaseRepo: Repository<Purchase>);
     uploadImages(files: Express.Multer.File[], productId: number): Promise<string[]>;
     createProduct(dto: CreateProductDto, files: Express.Multer.File[], userId: number): Promise<{
         productId: number;
@@ -37,10 +41,13 @@ export declare class ProductsService {
         latitude: number;
         longitude: number;
         sold: boolean;
+        deletedAt: Date;
         images: ProductImage[];
     }[]>;
     getSoldProductsByUser(userId: number): Promise<{
-        isFavorite: boolean;
+        purchaseId: number;
+        soldPrice: number;
+        soldDate: Date;
         id: number;
         owner_id: number;
         summary: string;
@@ -63,11 +70,43 @@ export declare class ProductsService {
         latitude: number;
         longitude: number;
         sold: boolean;
+        deletedAt: Date;
         images: ProductImage[];
     }[]>;
     getAllProducts(userId?: number): Promise<Product[]>;
     getProductById(productId: number, userId: number | null): Promise<Product>;
-    deleteProduct(productId: number): Promise<{
+    deleteProduct(productId: number, userId: number): Promise<{
         message: string;
     }>;
+    getPurchasedProductsByUser(userId: number): Promise<{
+        purchaseId: number;
+        soldPrice: number;
+        soldDate: Date;
+        id: number;
+        owner_id: number;
+        summary: string;
+        name: string;
+        description: string;
+        price: number;
+        condition: string;
+        brand: string;
+        color: string;
+        material: string;
+        width_cm: number;
+        height_cm: number;
+        depth_cm: number;
+        category_id: number;
+        subcategory_id: number;
+        shipping_active: boolean;
+        shipping_size: string;
+        shipping_weight: string;
+        postal_code: string;
+        latitude: number;
+        longitude: number;
+        sold: boolean;
+        deletedAt: Date;
+        images: ProductImage[];
+    }[]>;
+    getBuyingProcessProducts(userId: number): Promise<Product[]>;
+    getSellingProcessProducts(userId: number): Promise<Product[]>;
 }

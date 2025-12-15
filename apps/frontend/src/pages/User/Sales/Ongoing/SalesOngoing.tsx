@@ -4,19 +4,19 @@ import ProfileSideBar from '../../../../components/Profile/ProfileSideBar/Profil
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
-import noReviewsImg from '../../../../assets/profile/pop-no-sales-progress.svg';
+import noReviewsImg from '../../../../assets/profile/pop-no-sales-progress.png';
 import { AuthContext } from "../../../../context/AuthContext";
-import { getMySoldProducts } from "../../../../api/products.api";
 import Product from '../../../../components/Product/Product';
 import type { ProductType } from '../../../../types/product'
+import { getMySellingProcessProducts } from "../../../../api/products.api";
 
 export default function SalesOngoing() {
 
     const { token } = useContext(AuthContext);
-    const [Soldproducts, setSoldProducts] = useState<ProductType[]>([]);
+    const [sellingProcessProducts, setSellingProcessProducts] = useState<ProductType[]>([]);
 
     const [visibleCount, setVisibleCount] = useState(25);
-    const visibleProducts = Soldproducts.slice(0, visibleCount);
+    const visibleProducts = sellingProcessProducts.slice(0, visibleCount);
 
     const [loading, setLoading] = useState(true);
     const [showSkeleton, setShowSkeleton] = useState(false);
@@ -25,8 +25,7 @@ export default function SalesOngoing() {
         setVisibleCount(prev => prev + 25);
     };
 
-    const hasMore = visibleCount < Soldproducts.length;
-
+    const hasMore = visibleCount < sellingProcessProducts.length;
     const navigate = useNavigate();
     /* info item active */
     const [selected, setSelected] = useState("ongoing");
@@ -48,16 +47,18 @@ export default function SalesOngoing() {
             setShowSkeleton(true);
         }, 300);
 
-        getMySoldProducts(token)
+        // CAMBIO AQUÍ: Llamamos a la función de "En proceso de venta"
+        getMySellingProcessProducts(token)
             .then((data) => {
-                setSoldProducts(data);
+                // CAMBIO AQUÍ: Guarda los datos en el estado correcto
+                // Asumo que tienes un state como: const [sellingProcessProducts, setSellingProcessProducts] = useState([]);
+                setSellingProcessProducts(data);
             })
             .catch((err) => {
                 console.error(err);
             })
             .finally(() => {
                 // Si la carga fue rápida (menos de 300ms), cancelamos el timer
-                // El skeleton NUNCA habrá salido, y pasará directo a "Sin productos"
                 clearTimeout(skeletonTimer);
                 setLoading(false);
             });
@@ -112,20 +113,20 @@ export default function SalesOngoing() {
                         /* Ya cargó (o cargó tan rápido que no salió skeleton) */
                         <>
                             {/* No hay productos */}
-                            {Soldproducts.length === 0 && !loading && (
+                            {sellingProcessProducts.length === 0 && !loading && (
                                 <div className="no-reviews">
                                     <img
                                         src={noReviewsImg}
                                         alt="Sin valoraciones"
                                         className="no-reviews-img"
                                     />
-                                    <h3>Sin ventas finalizadas todavía</h3>
-                                    <p>Cuando vendas un producto aparecerá aquí.</p>
+                                    <h3>Sin ventas en curso todavía</h3>
+                                    <p>Empieza a vender en Nebripop. ¡Ya verás qué bien te sienta!</p>
                                 </div>
                             )}
 
                             {/* Hay productos */}
-                            {Soldproducts.length > 0 && (
+                            {sellingProcessProducts.length > 0 && (
                                 <>
                                     <ul className="product-container">
                                         {visibleProducts.map((p) => (

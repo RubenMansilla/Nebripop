@@ -94,13 +94,85 @@ export async function deleteProduct(productId: number, token: string) {
     });
 
     if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Error al eliminar el producto");
+      // Intentamos leer el JSON de error del backend
+      const errorData = await res.json().catch(() => ({}));
+      // Lanzamos el mensaje del backend o uno por defecto
+      throw new Error(errorData.message || `Error ${res.status}: No se pudo eliminar`);
     }
 
-    return res.json(); // Devuelves la respuesta del backend, por ejemplo, un mensaje de éxito.
-  } catch (error) {
+    // Si es 204 No Content, no intentes hacer .json()
+    if (res.status === 204) return true;
+
+    return res.json();
+  } catch (error: any) {
     console.error("Error al eliminar el producto:", error);
-    throw new Error("Hubo un problema al eliminar el producto. Intenta nuevamente.");
+    // CORRECCIÓN: Relanzamos el mensaje original para que el componente lo vea
+    throw new Error(error.message || "Hubo un problema al eliminar el producto.");
+  }
+}
+
+// Obtener mis productos COMPRADOS (Historial de compras)
+export async function getMyPurchasedProducts(token: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/purchased`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Error al obtener productos comprados");
+    }
+
+    return res.json();
+  } catch (error: any) {
+    console.error("Error en getMyPurchasedProducts:", error);
+    throw new Error(error.message || "Error de conexión al obtener compras");
+  }
+}
+
+// Obtener productos en PROCESO DE COMPRA
+export async function getMyBuyingProcessProducts(token: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/buying-process`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Error al obtener procesos de compra");
+    }
+
+    return res.json();
+  } catch (error: any) {
+    console.error("Error en getMyBuyingProcessProducts:", error);
+    throw new Error(error.message || "Error de conexión");
+  }
+}
+
+// Obtener productos en PROCESO DE VENTA
+export async function getMySellingProcessProducts(token: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/selling-process`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Error al obtener procesos de venta");
+    }
+
+    return res.json();
+  } catch (error: any) {
+    console.error("Error en getMySellingProcessProducts:", error);
+    throw new Error(error.message || "Error de conexión");
   }
 }

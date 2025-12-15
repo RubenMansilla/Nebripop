@@ -66,6 +66,11 @@ export default function Solds() {
 
     }, [token]);
 
+    const handleRemoveFromList = (deletedId: number) => {
+        // Actualiza el estado local quitando el ID eliminado
+        setSoldProducts(current => current.filter(p => p.id !== deletedId));
+    };
+
     return (
         <>
             <Navbar />
@@ -119,7 +124,7 @@ export default function Solds() {
                                         className="no-reviews-img"
                                     />
                                     <h3>Sin ventas finalizadas todavía</h3>
-                                    <p>Cuando vendas un producto aparecerá aquí.</p>
+                                    <p>Si quieres vender algo, simplemente súbelo.</p>
                                 </div>
                             )}
 
@@ -128,7 +133,7 @@ export default function Solds() {
                                 <>
                                     <ul className="product-container">
                                         {visibleProducts.map((p) => (
-                                            <Product key={p.id} product={p} mode="sold" />
+                                            <Product key={p.id} product={p} mode="sold" onDelete={handleRemoveFromList} />
                                         ))}
                                     </ul>
                                     {hasMore && (

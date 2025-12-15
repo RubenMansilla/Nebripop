@@ -30,10 +30,13 @@ export declare class ProductsController {
         latitude: number;
         longitude: number;
         sold: boolean;
+        deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
     }[]>;
     getMySoldProducts(req: any): Promise<{
-        isFavorite: boolean;
+        purchaseId: number;
+        soldPrice: number;
+        soldDate: Date;
         id: number;
         owner_id: number;
         summary: string;
@@ -56,11 +59,43 @@ export declare class ProductsController {
         latitude: number;
         longitude: number;
         sold: boolean;
+        deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
     }[]>;
     getAllProducts(req: any): Promise<import("./products.entity").Product[]>;
-    deleteProduct(productId: number): Promise<{
+    deleteProduct(productId: number, req: any): Promise<{
         message: string;
     }>;
     getProductById(productId: string, req: any): Promise<import("./products.entity").Product>;
+    getMyPurchasedProducts(req: any): Promise<{
+        purchaseId: number;
+        soldPrice: number;
+        soldDate: Date;
+        id: number;
+        owner_id: number;
+        summary: string;
+        name: string;
+        description: string;
+        price: number;
+        condition: string;
+        brand: string;
+        color: string;
+        material: string;
+        width_cm: number;
+        height_cm: number;
+        depth_cm: number;
+        category_id: number;
+        subcategory_id: number;
+        shipping_active: boolean;
+        shipping_size: string;
+        shipping_weight: string;
+        postal_code: string;
+        latitude: number;
+        longitude: number;
+        sold: boolean;
+        deletedAt: Date;
+        images: import("./products-image.entity").ProductImage[];
+    }[]>;
+    getBuyingProcess(req: any): Promise<import("./products.entity").Product[]>;
+    getSellingProcess(req: any): Promise<import("./products.entity").Product[]>;
 }

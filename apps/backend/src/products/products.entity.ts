@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, DeleteDateColumn } from "typeorm";
 import { OneToMany } from "typeorm";
 import { ProductImage } from "../products/products-image.entity";
 
@@ -69,6 +69,9 @@ export class Product {
 
     @Column({ default: false })
     sold: boolean;
+
+    @DeleteDateColumn({ name: 'deleted_at', select: false })
+    deletedAt: Date;
 
     @OneToMany(() => ProductImage, (img) => img.product)
     images: ProductImage[];

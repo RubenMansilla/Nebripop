@@ -36,6 +36,7 @@ let Product = class Product {
     latitude;
     longitude;
     sold;
+    deletedAt;
     images;
 };
 exports.Product = Product;
@@ -127,6 +128,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], Product.prototype, "sold", void 0);
+__decorate([
+    (0, typeorm_1.DeleteDateColumn)({ name: 'deleted_at', select: false }),
+    __metadata("design:type", Date)
+], Product.prototype, "deletedAt", void 0);
 __decorate([
     (0, typeorm_2.OneToMany)(() => products_image_entity_1.ProductImage, (img) => img.product),
     __metadata("design:type", Array)

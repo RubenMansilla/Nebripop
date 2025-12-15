@@ -7,6 +7,7 @@ import {
     Req,
     UseInterceptors,
     UploadedFiles,
+    ParseIntPipe,
     UseGuards,
 } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
@@ -38,6 +39,7 @@ export class ProductsController {
         return this.productsService.getActiveProductsByUser(userId);
     }
 
+    // Mis productos VENDIDOS (Historial)
     @UseGuards(JwtAuthGuard)
     @Get('my-products/sold')
     async getMySoldProducts(@Req() req) {
@@ -52,11 +54,15 @@ export class ProductsController {
         return this.productsService.getAllProducts(userId);
     }
 
-    // Ruta para eliminar el producto
+    // Eliminar un producto
     @UseGuards(JwtAuthGuard)
     @Delete(':id')
-    async deleteProduct(@Param('id') productId: number) {
-        return this.productsService.deleteProduct(productId);
+    async deleteProduct(
+        @Param('id', ParseIntPipe) productId: number, // Valida que sea número
+        @Req() req // Necesario para saber QUIÉN borra
+    ) {
+        // Pasamos ambos IDs al servicio
+        return this.productsService.deleteProduct(productId, req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -65,6 +71,27 @@ export class ProductsController {
         const userId = req.user?.id || null;
         const productIdNumber = parseInt(productId, 10); // Convert productId to number
         return this.productsService.getProductById(productIdNumber, userId);
+    }
+
+    // Mis productos COMPRADOS (Historial)
+    @UseGuards(JwtAuthGuard)
+    @Get('my-products/purchased')
+    async getMyPurchasedProducts(@Req() req) {
+        return this.productsService.getPurchasedProductsByUser(req.user.id);
+    }
+
+    // En proceso de COMPRA (Estoy negociando)
+    @UseGuards(JwtAuthGuard)
+    @Get('my-products/buying-process')
+    async getBuyingProcess(@Req() req) {
+        return this.productsService.getBuyingProcessProducts(req.user.id);
+    }
+
+    // En proceso de VENTA (Me están negociando)
+    @UseGuards(JwtAuthGuard)
+    @Get('my-products/selling-process')
+    async getSellingProcess(@Req() req) {
+        return this.productsService.getSellingProcessProducts(req.user.id);
     }
 
 }

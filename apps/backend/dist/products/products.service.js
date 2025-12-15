@@ -25,16 +25,22 @@ const supabase_js_1 = require("@supabase/supabase-js");
 const uuid_1 = require("uuid");
 const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
 const typeorm_3 = require("typeorm");
+const chat_entity_1 = require("../chat/chat.entity");
+const purchase_entity_1 = require("../purchases/purchase.entity");
 const sharp_1 = __importDefault(require("sharp"));
 let ProductsService = class ProductsService {
     productRepo;
     productImagesRepo;
     favoritesRepo;
+    chatRepo;
+    purchaseRepo;
     supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE);
-    constructor(productRepo, productImagesRepo, favoritesRepo) {
+    constructor(productRepo, productImagesRepo, favoritesRepo, chatRepo, purchaseRepo) {
         this.productRepo = productRepo;
         this.productImagesRepo = productImagesRepo;
         this.favoritesRepo = favoritesRepo;
+        this.chatRepo = chatRepo;
+        this.purchaseRepo = purchaseRepo;
     }
     async uploadImages(files, productId) {
         const tasks = files.map(async (file) => {
@@ -100,23 +106,16 @@ let ProductsService = class ProductsService {
         }));
     }
     async getSoldProductsByUser(userId) {
-        const products = await this.productRepo.find({
-            where: {
-                owner_id: userId,
-                sold: true
-            },
-            relations: ['images'],
-            order: {
-                id: 'DESC'
-            }
+        const purchases = await this.purchaseRepo.find({
+            where: { sellerId: userId, deletedBySeller: false },
+            relations: ['product', 'product.images'],
+            order: { purchasedAt: 'DESC' }
         });
-        const favorites = await this.favoritesRepo.find({
-            where: { user_id: userId }
-        });
-        const favoriteProductIds = favorites.map(f => f.product_id);
-        return products.map(p => ({
-            ...p,
-            isFavorite: favoriteProductIds.includes(p.id)
+        return purchases.map(p => ({
+            ...p.product,
+            purchaseId: p.id,
+            soldPrice: p.price,
+            soldDate: p.purchasedAt
         }));
     }
     async getAllProducts(userId) {
@@ -142,23 +141,68 @@ let ProductsService = class ProductsService {
         }
         return product;
     }
-    async deleteProduct(productId) {
-        const productImages = await this.productImagesRepo.find({
-            where: { product_id: productId },
-        });
-        for (const image of productImages) {
+    async deleteProduct(productId, userId) {
+        const product = await this.productRepo.findOne({ where: { id: productId } });
+        if (!product)
+            throw new common_1.NotFoundException('Producto no encontrado');
+        if (product.owner_id !== userId) {
+            throw new common_1.UnauthorizedException('No tienes permiso para eliminar este producto');
+        }
+        if (product.sold) {
+            throw new common_1.BadRequestException('No puedes eliminar un producto vendido. Úsalo la opción "Ocultar" en tu historial de ventas.');
+        }
+        const chatCount = await this.chatRepo.count({ where: { productId: productId } });
+        if (chatCount > 0) {
+            await this.productRepo.softDelete(productId);
+            return { message: 'Producto archivado (Soft Delete) porque tiene chats activos.' };
+        }
+        await this.favoritesRepo.delete({ product_id: productId });
+        const productImages = await this.productImagesRepo.find({ where: { product_id: productId } });
+        if (productImages.length > 0) {
+            const paths = productImages.map(img => img.image_url);
             const { error } = await this.supabase.storage
                 .from('productsimg')
-                .remove([image.image_url]);
-            if (error) {
-                throw new Error(`Error al eliminar la imagen: ${error.message}`);
-            }
+                .remove(paths);
+            if (error)
+                console.error("Error borrando imágenes de Supabase:", error);
+            await this.productImagesRepo.remove(productImages);
         }
-        const deleteResult = await this.productRepo.delete(productId);
-        if (deleteResult.affected === 0) {
-            throw new Error('No se encontró el producto para eliminar.');
-        }
-        return { message: 'Producto eliminado correctamente' };
+        await this.productRepo.delete(productId);
+        return { message: 'Producto eliminado permanentemente (Hard Delete).' };
+    }
+    async getPurchasedProductsByUser(userId) {
+        const purchases = await this.purchaseRepo.find({
+            where: {
+                buyerId: userId,
+                deletedByBuyer: false
+            },
+            relations: ['product', 'product.images'],
+            order: { purchasedAt: 'DESC' }
+        });
+        return purchases.map(p => ({
+            ...p.product,
+            purchaseId: p.id,
+            soldPrice: p.price,
+            soldDate: p.purchasedAt
+        }));
+    }
+    async getBuyingProcessProducts(userId) {
+        return this.productRepo.createQueryBuilder('product')
+            .innerJoin('chats', 'chat', 'chat.product_id = product.id')
+            .leftJoinAndSelect('product.images', 'images')
+            .where('chat.buyer_id = :userId', { userId })
+            .andWhere('product.sold = :sold', { sold: false })
+            .distinct(true)
+            .getMany();
+    }
+    async getSellingProcessProducts(userId) {
+        return this.productRepo.createQueryBuilder('product')
+            .innerJoin('chats', 'chat', 'chat.product_id = product.id')
+            .leftJoinAndSelect('product.images', 'images')
+            .where('chat.seller_id = :userId', { userId })
+            .andWhere('product.sold = :sold', { sold: false })
+            .distinct(true)
+            .getMany();
     }
 };
 exports.ProductsService = ProductsService;
@@ -167,7 +211,11 @@ exports.ProductsService = ProductsService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(products_entity_1.Product)),
     __param(1, (0, typeorm_1.InjectRepository)(products_image_entity_1.ProductImage)),
     __param(2, (0, typeorm_1.InjectRepository)(favorite_product_entity_1.FavoriteProduct)),
+    __param(3, (0, typeorm_1.InjectRepository)(chat_entity_1.Chat)),
+    __param(4, (0, typeorm_1.InjectRepository)(purchase_entity_1.Purchase)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository])
 ], ProductsService);

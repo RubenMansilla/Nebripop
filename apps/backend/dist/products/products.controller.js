@@ -40,13 +40,22 @@ let ProductsController = class ProductsController {
         const userId = req.user?.id || null;
         return this.productsService.getAllProducts(userId);
     }
-    async deleteProduct(productId) {
-        return this.productsService.deleteProduct(productId);
+    async deleteProduct(productId, req) {
+        return this.productsService.deleteProduct(productId, req.user.id);
     }
     async getProductById(productId, req) {
         const userId = req.user?.id || null;
         const productIdNumber = parseInt(productId, 10);
         return this.productsService.getProductById(productIdNumber, userId);
+    }
+    async getMyPurchasedProducts(req) {
+        return this.productsService.getPurchasedProductsByUser(req.user.id);
+    }
+    async getBuyingProcess(req) {
+        return this.productsService.getBuyingProcessProducts(req.user.id);
+    }
+    async getSellingProcess(req) {
+        return this.productsService.getSellingProcessProducts(req.user.id);
     }
 };
 exports.ProductsController = ProductsController;
@@ -88,9 +97,10 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_2.Param)('id')),
+    __param(0, (0, common_2.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "deleteProduct", null);
 __decorate([
@@ -102,6 +112,30 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "getProductById", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('my-products/purchased'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getMyPurchasedProducts", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('my-products/buying-process'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getBuyingProcess", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('my-products/selling-process'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getSellingProcess", null);
 exports.ProductsController = ProductsController = __decorate([
     (0, common_1.Controller)("products"),
     __metadata("design:paramtypes", [products_service_1.ProductsService])

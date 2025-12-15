@@ -22,5 +22,6 @@ export declare class Product {
     latitude: number;
     longitude: number;
     sold: boolean;
+    deletedAt: Date;
     images: ProductImage[];
 }
