@@ -4,4 +4,5 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     updateUser(req: any, body: any): Promise<import("./users.entity").User | null>;
     uploadProfilePicture(file: Express.Multer.File, req: any): Promise<import("./users.entity").User | null>;
+    getPublicUser(id: number): Promise<import("./users.entity").User>;
 }

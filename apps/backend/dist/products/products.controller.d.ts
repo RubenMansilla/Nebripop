@@ -63,6 +63,7 @@ export declare class ProductsController {
         images: import("./products-image.entity").ProductImage[];
     }[]>;
     getAllProducts(req: any): Promise<import("./products.entity").Product[]>;
+    getPublicProductsByUser(userId: number): Promise<import("./products.entity").Product[]>;
     deleteProduct(productId: number, req: any): Promise<{
         message: string;
     }>;

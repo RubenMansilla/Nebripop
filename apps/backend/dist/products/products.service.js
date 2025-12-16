@@ -24,7 +24,6 @@ const products_image_entity_1 = require("./products-image.entity");
 const supabase_js_1 = require("@supabase/supabase-js");
 const uuid_1 = require("uuid");
 const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
-const typeorm_3 = require("typeorm");
 const chat_entity_1 = require("../chat/chat.entity");
 const purchase_entity_1 = require("../purchases/purchase.entity");
 const sharp_1 = __importDefault(require("sharp"));
@@ -66,8 +65,7 @@ let ProductsService = class ProductsService {
             });
             return data.publicUrl;
         });
-        const urls = await Promise.all(tasks);
-        return urls;
+        return Promise.all(tasks);
     }
     async createProduct(dto, files, userId) {
         try {
@@ -105,9 +103,24 @@ let ProductsService = class ProductsService {
             isFavorite: favoriteProductIds.includes(p.id)
         }));
     }
+    async getPublicProductsByUser(userId) {
+        return this.productRepo.find({
+            where: {
+                owner_id: userId,
+                sold: false
+            },
+            relations: ['images'],
+            order: {
+                id: 'DESC'
+            }
+        });
+    }
     async getSoldProductsByUser(userId) {
         const purchases = await this.purchaseRepo.find({
-            where: { sellerId: userId, deletedBySeller: false },
+            where: {
+                sellerId: userId,
+                deletedBySeller: false
+            },
             relations: ['product', 'product.images'],
             order: { purchasedAt: 'DESC' }
         });
@@ -120,7 +133,7 @@ let ProductsService = class ProductsService {
     }
     async getAllProducts(userId) {
         const whereClause = userId
-            ? { owner_id: (0, typeorm_3.Not)(userId) }
+            ? { owner_id: (0, typeorm_2.Not)(userId) }
             : {};
         return this.productRepo.find({
             where: whereClause,
@@ -137,38 +150,52 @@ let ProductsService = class ProductsService {
             throw new Error('Producto no encontrado');
         }
         if (product.owner_id === userId) {
-            throw new Error("No puedes ver tus propios productos en la página de detalle");
+            throw new Error("No puedes ver tus propios productos");
         }
         return product;
     }
     async deleteProduct(productId, userId) {
-        const product = await this.productRepo.findOne({ where: { id: productId } });
-        if (!product)
+        const product = await this.productRepo.findOne({
+            where: { id: productId }
+        });
+        if (!product) {
             throw new common_1.NotFoundException('Producto no encontrado');
+        }
         if (product.owner_id !== userId) {
-            throw new common_1.UnauthorizedException('No tienes permiso para eliminar este producto');
+            throw new common_1.UnauthorizedException('No tienes permiso');
         }
         if (product.sold) {
-            throw new common_1.BadRequestException('No puedes eliminar un producto vendido. Úsalo la opción "Ocultar" en tu historial de ventas.');
+            throw new common_1.BadRequestException('No puedes eliminar un producto vendido');
         }
-        const chatCount = await this.chatRepo.count({ where: { productId: productId } });
+        const chatCount = await this.chatRepo.count({
+            where: { productId }
+        });
         if (chatCount > 0) {
             await this.productRepo.softDelete(productId);
-            return { message: 'Producto archivado (Soft Delete) porque tiene chats activos.' };
+            return {
+                message: 'Producto archivado (Soft Delete)'
+            };
         }
-        await this.favoritesRepo.delete({ product_id: productId });
-        const productImages = await this.productImagesRepo.find({ where: { product_id: productId } });
+        await this.favoritesRepo.delete({
+            product_id: productId
+        });
+        const productImages = await this.productImagesRepo.find({
+            where: { product_id: productId }
+        });
         if (productImages.length > 0) {
             const paths = productImages.map(img => img.image_url);
             const { error } = await this.supabase.storage
                 .from('productsimg')
                 .remove(paths);
-            if (error)
-                console.error("Error borrando imágenes de Supabase:", error);
+            if (error) {
+                console.error("Error borrando imágenes:", error);
+            }
             await this.productImagesRepo.remove(productImages);
         }
         await this.productRepo.delete(productId);
-        return { message: 'Producto eliminado permanentemente (Hard Delete).' };
+        return {
+            message: 'Producto eliminado permanentemente'
+        };
     }
     async getPurchasedProductsByUser(userId) {
         const purchases = await this.purchaseRepo.find({
@@ -187,20 +214,22 @@ let ProductsService = class ProductsService {
         }));
     }
     async getBuyingProcessProducts(userId) {
-        return this.productRepo.createQueryBuilder('product')
+        return this.productRepo
+            .createQueryBuilder('product')
             .innerJoin('chats', 'chat', 'chat.product_id = product.id')
             .leftJoinAndSelect('product.images', 'images')
             .where('chat.buyer_id = :userId', { userId })
-            .andWhere('product.sold = :sold', { sold: false })
+            .andWhere('product.sold = false')
             .distinct(true)
             .getMany();
     }
     async getSellingProcessProducts(userId) {
-        return this.productRepo.createQueryBuilder('product')
+        return this.productRepo
+            .createQueryBuilder('product')
             .innerJoin('chats', 'chat', 'chat.product_id = product.id')
             .leftJoinAndSelect('product.images', 'images')
             .where('chat.seller_id = :userId', { userId })
-            .andWhere('product.sold = :sold', { sold: false })
+            .andWhere('product.sold = false')
             .distinct(true)
             .getMany();
     }

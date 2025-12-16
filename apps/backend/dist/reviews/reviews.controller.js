@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReviewsController = void 0;
 const common_1 = require("@nestjs/common");
 const reviews_service_1 = require("./reviews.service");
-const decorators_1 = require("@nestjs/common/decorators");
 let ReviewsController = class ReviewsController {
     reviewsService;
     constructor(reviewsService) {
@@ -32,7 +31,7 @@ exports.ReviewsController = ReviewsController;
 __decorate([
     (0, common_1.Get)('user/:id'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, decorators_1.Query)('sort')),
+    __param(1, (0, common_1.Query)('sort')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, String]),
     __metadata("design:returntype", void 0)

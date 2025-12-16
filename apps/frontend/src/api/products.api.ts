@@ -1,4 +1,13 @@
-export async function createProduct(data: any, images: File[], token: string) {
+// =========================
+// PRODUCTS API
+// =========================
+
+// ---------- CREAR PRODUCTO ----------
+export async function createProduct(
+  data: any,
+  images: File[],
+  token: string
+) {
   const formData = new FormData();
 
   Object.entries(data).forEach(([key, value]) => {
@@ -16,7 +25,7 @@ export async function createProduct(data: any, images: File[], token: string) {
     formData.append("images", img);
   }
 
-  const res = await fetch("http://localhost:3001/products", {
+  const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -24,34 +33,52 @@ export async function createProduct(data: any, images: File[], token: string) {
     body: formData,
   });
 
-  if (!res.ok) throw new Error("Error al crear producto");
+  if (!res.ok) {
+    throw new Error("Error al crear producto");
+  }
+
   return res.json();
 }
 
+// ---------- MIS PRODUCTOS ACTIVOS ----------
 export async function getMyActiveProducts(token: string) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/active`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/my-products/active`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-  if (!res.ok) throw new Error("Error al obtener productos activos");
+  if (!res.ok) {
+    throw new Error("Error al obtener productos activos");
+  }
+
   return res.json();
 }
 
+// ---------- MIS PRODUCTOS VENDIDOS ----------
 export async function getMySoldProducts(token: string) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/sold`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/my-products/sold`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
-  if (!res.ok) throw new Error("Error al obtener productos vendidos");
+  if (!res.ok) {
+    throw new Error("Error al obtener productos vendidos");
+  }
+
   return res.json();
 }
 
+// ---------- TODOS LOS PRODUCTOS (HOME) ----------
 export async function getAllProducts(token?: string | null) {
   const headers: any = {};
 
@@ -64,115 +91,137 @@ export async function getAllProducts(token?: string | null) {
     headers,
   });
 
-  if (!res.ok) throw new Error("Error al obtener todos los productos");
+  if (!res.ok) {
+    throw new Error("Error al obtener todos los productos");
+  }
+
   return res.json();
 }
 
+// ---------- PRODUCTO POR ID ----------
 export async function getProductById(productId: string) {
-  const token = localStorage.getItem('token'); // O desde el contexto de autenticación
+  const token = localStorage.getItem("token");
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`, // Pasar el token aquí
-    },
-  });
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/${productId}`,
+    {
+      method: "GET",
+      headers: token
+        ? { Authorization: `Bearer ${token}` }
+        : undefined,
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Error al obtener el producto");
   }
+
   return res.json();
 }
 
+// ---------- ELIMINAR PRODUCTO ----------
 export async function deleteProduct(productId: number, token: string) {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/${productId}`, {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/${productId}`,
+    {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    if (!res.ok) {
-      // Intentamos leer el JSON de error del backend
-      const errorData = await res.json().catch(() => ({}));
-      // Lanzamos el mensaje del backend o uno por defecto
-      throw new Error(errorData.message || `Error ${res.status}: No se pudo eliminar`);
     }
+  );
 
-    // Si es 204 No Content, no intentes hacer .json()
-    if (res.status === 204) return true;
-
-    return res.json();
-  } catch (error: any) {
-    console.error("Error al eliminar el producto:", error);
-    // CORRECCIÓN: Relanzamos el mensaje original para que el componente lo vea
-    throw new Error(error.message || "Hubo un problema al eliminar el producto.");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "No se pudo eliminar el producto"
+    );
   }
+
+  if (res.status === 204) {
+    return true;
+  }
+
+  return res.json();
 }
 
-// Obtener mis productos COMPRADOS (Historial de compras)
+// ---------- MIS COMPRAS FINALIZADAS ----------
 export async function getMyPurchasedProducts(token: string) {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/purchased`, {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/my-products/purchased`,
+    {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Error al obtener productos comprados");
     }
+  );
 
-    return res.json();
-  } catch (error: any) {
-    console.error("Error en getMyPurchasedProducts:", error);
-    throw new Error(error.message || "Error de conexión al obtener compras");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || "Error al obtener productos comprados"
+    );
   }
+
+  return res.json();
 }
 
-// Obtener productos en PROCESO DE COMPRA
+// ---------- PROCESO DE COMPRA ----------
 export async function getMyBuyingProcessProducts(token: string) {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/buying-process`, {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/my-products/buying-process`,
+    {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Error al obtener procesos de compra");
     }
+  );
 
-    return res.json();
-  } catch (error: any) {
-    console.error("Error en getMyBuyingProcessProducts:", error);
-    throw new Error(error.message || "Error de conexión");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        "Error al obtener productos en proceso de compra"
+    );
   }
+
+  return res.json();
 }
 
-// Obtener productos en PROCESO DE VENTA
+// ---------- PROCESO DE VENTA ----------
 export async function getMySellingProcessProducts(token: string) {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products/my-products/selling-process`, {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/my-products/selling-process`,
+    {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Error al obtener procesos de venta");
     }
+  );
 
-    return res.json();
-  } catch (error: any) {
-    console.error("Error en getMySellingProcessProducts:", error);
-    throw new Error(error.message || "Error de conexión");
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        "Error al obtener productos en proceso de venta"
+    );
   }
+
+  return res.json();
+}
+
+// ---------- PRODUCTOS PÚBLICOS DE UN USUARIO ----------
+export async function getPublicProductsByUser(userId: number) {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products/public/user/${userId}`
+  );
+
+  if (!res.ok) {
+    throw new Error("Error obteniendo productos del usuario");
+  }
+
+  return res.json();
 }

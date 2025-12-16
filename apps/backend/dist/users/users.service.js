@@ -59,6 +59,16 @@ let UsersService = class UsersService {
         await this.repo.update(id, { profilePicture: data.publicUrl });
         return this.repo.findOne({ where: { id } });
     }
+    async getPublicUser(id) {
+        const user = await this.repo.findOne({
+            where: { id },
+            select: ['id', 'fullName', 'profilePicture', 'createdAt'],
+        });
+        if (!user) {
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        }
+        return user;
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
