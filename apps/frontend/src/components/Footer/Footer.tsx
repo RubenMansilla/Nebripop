@@ -7,7 +7,7 @@ import android from "../../assets/iconos/android.png";
 import facebook from "../../assets/iconos/facebook.png";
 import instagram from "../../assets/iconos/instagram.png";
 import twitter from "../../assets/iconos/twitter.png";
-import paypal from "../../assets/iconos/payPal.png";
+import paypal from "../../assets/iconos/paypal.png";
 import visa from "../../assets/iconos/visa.png";
 
 export default function Footer(): JSX.Element {
