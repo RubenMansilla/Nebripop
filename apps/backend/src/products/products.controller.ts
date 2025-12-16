@@ -72,8 +72,6 @@ export class ProductsController {
         );
     }
 
-
-
     // 🔓 PERFIL PÚBLICO – PRODUCTOS DE UN USUARIO
     @Get('public/user/:userId')
     getPublicProductsByUser(
@@ -120,4 +118,10 @@ export class ProductsController {
     async getSellingProcess(@Req() req) {
         return this.productsService.getSellingProcessProducts(req.user.id);
     }
+
+    @Post(':id/view')
+    incrementView(@Param('id') id: number) {
+        return this.productsService.incrementViews(+id);
+    }
+
 }

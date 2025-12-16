@@ -83,7 +83,7 @@ export default function ProfileSideBar() {
                     </div>
                     <div className="profile-info">
                         <div className="profile-name">
-                            <h3>{user.fullName}</h3>
+                            <h3>{user.fullName.split(" ")[0]}</h3>
                         </div>
                         <div className="profile-rating">
                             <div className="stars-summary">

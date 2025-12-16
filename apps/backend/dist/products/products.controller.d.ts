@@ -108,4 +108,5 @@ export declare class ProductsController {
     }[]>;
     getBuyingProcess(req: any): Promise<import("./products.entity").Product[]>;
     getSellingProcess(req: any): Promise<import("./products.entity").Product[]>;
+    incrementView(id: number): Promise<import("typeorm").UpdateResult>;
 }

@@ -119,4 +119,5 @@ export declare class ProductsService {
         images: ProductImage[];
         createdAt: Date;
     }[]>;
+    incrementViews(productId: number): Promise<import("typeorm").UpdateResult>;
 }

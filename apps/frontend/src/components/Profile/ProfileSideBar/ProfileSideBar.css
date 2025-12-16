@@ -71,6 +71,11 @@
     font-size: 16px;
     color: #253238;
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    display: block;
 }
 
 .profile-rating {

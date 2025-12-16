@@ -313,5 +313,13 @@ export class ProductsService {
         }));
     }
 
+    // Visualizaciones de producto
+    async incrementViews(productId: number) {
+        return this.productRepo.increment(
+            { id: productId },
+            'views_count',
+            1
+        );
+    }
 
 }

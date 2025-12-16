@@ -224,6 +224,9 @@ let ProductsService = class ProductsService {
             soldDate: p.purchasedAt,
         }));
     }
+    async incrementViews(productId) {
+        return this.productRepo.increment({ id: productId }, 'views_count', 1);
+    }
 };
 exports.ProductsService = ProductsService;
 exports.ProductsService = ProductsService = __decorate([

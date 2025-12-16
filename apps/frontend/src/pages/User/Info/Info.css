@@ -17,7 +17,7 @@
     overflow: auto;
     flex-wrap: wrap;
     overflow-y: auto;
-    border-left: 1px solid var(--beige);
+    border-left: 1.3px solid #e7ebed;
     align-content: flex-start;
     justify-content: center;
 }

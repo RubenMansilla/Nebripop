@@ -1,18 +1,15 @@
 import "./FavoritesProducts.css";
-
 import Navbar from "../../../../components/Navbar/Navbar";
 import CategoriesBar from "../../../../components/CategoriesBar/CategoriesBar";
 import ProfileSideBar from "../../../../components/Profile/ProfileSideBar/ProfileSideBar";
-
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-
 import Product from "../../../../components/Product/Product";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
-
 import { getMyFavoriteProducts } from "../../../../api/favorites.api";
 import type { ProductType } from "../../../../types/product";
 import { AuthContext } from "../../../../context/AuthContext";
+import noReviewsImg from '../../../../assets/profile/pop-no-favorite-products.svg';
 
 export default function FavoritesProducts() {
     const { token } = useContext(AuthContext);
@@ -22,6 +19,10 @@ export default function FavoritesProducts() {
     const [visibleCount, setVisibleCount] = useState(25);
     const visibleProducts = FavoriteProducts.slice(0, visibleCount);
 
+    const [loading, setLoading] = useState(true);
+    const [showSkeleton, setShowSkeleton] = useState(false);
+
+
     const showMore = () => {
         setVisibleCount((prev) => prev + 25);
     };
@@ -29,16 +30,33 @@ export default function FavoritesProducts() {
     const hasMore = visibleCount < FavoriteProducts.length;
 
     // CARGAR FAVORITOS DEL USUARIO
-  useEffect(() => {
-    if (!token) return;
+    useEffect(() => {
+        if (!token) return;
 
-    getMyFavoriteProducts(token)
-        .then((data) => {
-            console.log("FAVORITOS:", data); // <-- AQUÍ
-            setFavoriteProducts(data);
-        })
-        .catch((err) => console.error(err));
-}, [token]);
+        setLoading(true);
+        setShowSkeleton(false); // Reseteamos al iniciar
+
+        // Solo mostramos el skeleton si tarda más de 300ms
+        const skeletonTimer = setTimeout(() => {
+            setShowSkeleton(true);
+        }, 300);
+
+        getMyFavoriteProducts(token)
+            .then((data) => {
+                setFavoriteProducts(data);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                // Si la carga fue rápida (menos de 300ms), cancelamos el timer
+                clearTimeout(skeletonTimer);
+                setLoading(false);
+            });
+
+        // Cleanup function por si el componente se desmonta
+        return () => clearTimeout(skeletonTimer);
+    }, [token]);
 
 
     // NAVEGAR ENTRE PRODUCTOS / PERFILES
@@ -80,18 +98,16 @@ export default function FavoritesProducts() {
                     <div className="info-selector">
                         <div className="info-items">
                             <div
-                                className={`info-item ${
-                                    selected === "products" ? "active" : ""
-                                }`}
+                                className={`info-item ${selected === "products" ? "active" : ""
+                                    }`}
                                 onClick={() => setSelected("products")}
                             >
                                 <p>Productos</p>
                             </div>
 
                             <div
-                                className={`info-item ${
-                                    selected === "profiles" ? "active" : ""
-                                }`}
+                                className={`info-item ${selected === "profiles" ? "active" : ""
+                                    }`}
                                 onClick={() => setSelected("profiles")}
                             >
                                 <p>Perfiles</p>
@@ -99,39 +115,67 @@ export default function FavoritesProducts() {
                         </div>
                     </div>
 
-                    {/* LISTA DE PRODUCTOS */}
-                    <ul className="product-container">
-                        {FavoriteProducts.length === 0 ? (
-                            [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
-                        ) : (
-                            visibleProducts.map((p) => (
-                                <Product
-                                    key={p.id}
-                                    product={p}
-                                    mode="public"
-                                    onUnfavorite={(id) =>
-                                        setFavoriteProducts((prev) =>
-                                            prev.filter((prod) => prod.id !== id)
-                                        )
-                                    }
-                                />
-                            ))
-                        )}
-                    </ul>
+                    {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
+                    {loading && showSkeleton ? (
+                        <ul className="product-container">
+                            {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                        </ul>
+                    ) : (
+                        <>
+                            {/* No hay productos */}
+                            {FavoriteProducts.length === 0 && !loading && (
+                                <div className="no-reviews">
+                                    <img
+                                        src={noReviewsImg}
+                                        alt="Sin valoraciones"
+                                        className="no-reviews-img"
+                                    />
+                                    <h3>Productos que te gustan</h3>
+                                    <p>Para guardar un producto, pulsa el icono de producto favorito (❤️).</p>
+                                </div>
+                            )}
 
-                    {/* BOTÓN VER MÁS */}
-                    {hasMore && (
-                        <div
-                            className="btn-more-reviews-container"
-                            onClick={showMore}
-                        >
-                            <div className="btn-more-reviews">
-                                Ver más productos
-                            </div>
-                        </div>
+                            {/* LISTA DE PRODUCTOS */}
+                            {FavoriteProducts.length > 0 && (
+                                <>
+                                    <ul className="product-container">
+                                        {visibleProducts.map((p) => (
+                                            <Product key={p.id} product={p} mode="public" onUnfavorite={(id) =>
+                                                setFavoriteProducts((prev) =>
+                                                    prev.filter((prod) => prod.id !== id)
+                                                )
+                                            } />
+                                        ))}
+                                    </ul>
+                                    {hasMore && (
+                                        <div className="btn-more-reviews-container" onClick={showMore}>
+                                            <div className='btn-more-reviews'>Ver más productos</div>
+                                        </div>
+                                    )}
+                                    {/* < ul className="product-container">
+                                        {FavoriteProducts.length === 0 ? (
+                                            [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
+                                        ) : (
+                                            visibleProducts.map((p) => (
+                                                <Product
+                                                    key={p.id}
+                                                    product={p}
+                                                    mode="public"
+                                                    onUnfavorite={(id) =>
+                                                        setFavoriteProducts((prev) =>
+                                                            prev.filter((prod) => prod.id !== id)
+                                                        )
+                                                    }
+                                                />
+                                            ))
+                                        )}
+                                    </ul> */}
+                                </>
+                            )}
+                        </>
                     )}
-                </div>
-            </section>
+                </div >
+            </section >
         </>
     );
 }

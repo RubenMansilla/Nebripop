@@ -50,8 +50,6 @@ export default function SalesOngoing() {
         // CAMBIO AQUÍ: Llamamos a la función de "En proceso de venta"
         getMySellingProcessProducts(token)
             .then((data) => {
-                // CAMBIO AQUÍ: Guarda los datos en el estado correcto
-                // Asumo que tienes un state como: const [sellingProcessProducts, setSellingProcessProducts] = useState([]);
                 setSellingProcessProducts(data);
             })
             .catch((err) => {
