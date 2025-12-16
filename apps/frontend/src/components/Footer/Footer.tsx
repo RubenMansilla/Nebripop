@@ -1,14 +1,14 @@
 import React, { type JSX } from "react";
 import "./Footer.css";
 
-import apple from "../../assets/iconos/Apple.png";
-import huawei from "../../assets/iconos/Huawei.png";
-import android from "../../assets/iconos/Android.png";
-import facebook from "../../assets/iconos/Facebook.png";
-import instagram from "../../assets/iconos/Instagram.png";
-import twitter from "../../assets/iconos/Twitter.png";
-import paypal from "../../assets/iconos/PayPal.png";
-import visa from "../../assets/iconos/Visa.png";
+import apple from "../../assets/iconos/apple.png";
+import huawei from "../../assets/iconos/huawei.png";
+import android from "../../assets/iconos/android.png";
+import facebook from "../../assets/iconos/facebook.png";
+import instagram from "../../assets/iconos/instagram.png";
+import twitter from "../../assets/iconos/twitter.png";
+import paypal from "../../assets/iconos/payPal.png";
+import visa from "../../assets/iconos/visa.png";
 
 export default function Footer(): JSX.Element {
   return (
@@ -16,7 +16,7 @@ export default function Footer(): JSX.Element {
 
       <div className="footer-top-bg">
         <div className="footer-container footer-top">
-          
+
           <div className="footer-column">
             <h4>NEBRIPOP</h4>
             <a href="/quienes-somos">Quiénes somos</a>
