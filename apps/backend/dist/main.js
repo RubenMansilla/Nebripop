@@ -6,7 +6,10 @@ const common_1 = require("@nestjs/common");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { cors: true });
     app.enableCors({
-        origin: "http://localhost:5173",
+        origin: [
+            'http://localhost:5173',
+            'https://nebripop.vercel.app'
+        ],
         credentials: true,
     });
     app.useGlobalPipes(new common_1.ValidationPipe({
