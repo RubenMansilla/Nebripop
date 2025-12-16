@@ -1,5 +1,3 @@
-// apps/frontend/src/api/subcategories.api.ts
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 export interface Subcategory {
@@ -15,7 +13,7 @@ export async function getSubcategoriesByCategory(
   categoryId: number
 ): Promise<Subcategory[]> {
   const res = await fetch(
-    `${API_URL}/subcategories/by-category/${categoryId}`
+    `${API_URL}/subcategories/category/${categoryId}` // 👈 AQUÍ
   );
 
   if (!res.ok) {

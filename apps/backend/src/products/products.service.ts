@@ -148,17 +148,41 @@ export class ProductsService {
     }
 
     // Obtener todos los productos, excluyendo los del usuario si se proporciona userId
-    async getAllProducts(userId?: number) {
-        const whereClause = userId
-            ? { owner_id: Not(userId) } // excluir productos propios
-            : {};
+    async getAllProducts(
+    userId?: number,
+    categoryId?: number,
+    subcategoryId?: number,
+) {
+    const where: any = {};
 
-        return this.productRepo.find({
-            where: whereClause,
-            relations: ["images"],
-            order: { id: "DESC" } // ordenar por productos más recientes
-        });
+    // Excluir productos propios
+    if (userId) {
+        where.owner_id = Not(userId);
     }
+
+    // 🔥 FILTRO POR CATEGORÍA (CLAVE)
+    if (categoryId) {
+        where.category = { id: Number(categoryId) };
+    }
+
+    // 🔥 FILTRO POR SUBCATEGORÍA
+    if (subcategoryId) {
+        where.subcategory = { id: Number(subcategoryId) };
+    }
+
+    return this.productRepo.find({
+        where,
+        relations: {
+            images: true,
+            category: true,
+            subcategory: true,
+        },
+        order: {
+            id: "DESC",
+        },
+    });
+}
+
 
     // Obtener detalles de un producto por ID
     async getProductById(productId: number, userId: number | null) {

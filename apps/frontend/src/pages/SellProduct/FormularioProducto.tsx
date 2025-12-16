@@ -16,7 +16,6 @@ export default function FormularioProducto() {
     const { token } = useContext(AuthContext);
     const navigate = useNavigate();
 
-
     // =======================
     // ESTADOS DEL FORMULARIO
     // =======================
@@ -36,75 +35,6 @@ export default function FormularioProducto() {
     const showToast = (msg: string) => {
         setToastMessage(msg);
         setTimeout(() => setToastMessage(null), 3000);
-    };
-
-    // =======================
-    // MAPAS CATEGORÍAS
-    // =======================
-    const categoryMap: Record<string, number> = {
-        "Hogar y jardín": 1,
-        "Bricolaje": 2,
-        "Deporte y ocio": 3,
-        "Industria y agricultura": 4,
-        "Motos": 5,
-        "Motor y accesorios": 6,
-        "Moda y accesorios": 7,
-        "Tecnología y electrónica": 8,
-        "Mascotas": 9,
-        "Electrodomésticos": 10,
-    };
-
-    const subcategoryMap: Record<string, number> = {
-        "Muebles": 1,
-        "Decoración": 2,
-        "Cocina": 3,
-        "Baño": 4,
-        "Jardín": 5,
-        "Taladros": 6,
-        "Pintura": 7,
-        "Tornillería": 8,
-        "Sierras": 9,
-        "Herramientas": 10,
-        "Fitness": 11,
-        "Ciclismo": 12,
-        "Fútbol": 13,
-        "Running": 14,
-        "Otros deportes": 15,
-        "Maquinaria": 16,
-        "Suministros": 17,
-        "Materiales": 18,
-        "Seguridad": 19,
-        "Otros": 20,
-        "Casco": 21,
-        "Piezas (Moto)": 22,
-        "Accesorios (Moto)": 23,
-        "Ropa Moto": 24,
-        "Scooters": 25,
-        "Piezas": 26,
-        "Neumáticos": 27,
-        "Audio coche": 28,
-        "Luces": 29,
-        "Averías": 30,
-        "Hombre": 31,
-        "Mujer": 32,
-        "Calzado": 33,
-        "Bolsos": 34,
-        "Accesorios": 35,
-        "Móviles": 36,
-        "Portátiles": 37,
-        "Auriculares": 38,
-        "Consolas": 39,
-        "Televisores": 40,
-        "Perros": 41,
-        "Gatos": 42,
-        "Aves": 43,
-        "Reptiles": 44,
-        "Roedores": 45,
-        "Cocina (Electrodomésticos)": 46,
-        "Limpieza": 47,
-        "Climatización": 48,
-        "Baño (Electrodomésticos)": 49,
-        "Pequeños": 50,
     };
 
     // =======================
@@ -156,12 +86,12 @@ export default function FormularioProducto() {
             return;
         }
 
+        // ✅ AHORA ESTO FUNCIONA
         if (!categoryId || !subcategoryId) {
             showToast("Debes seleccionar una categoría.");
             return;
         }
 
-        // Precio obligatorio
         if (!details?.price || Number(details.price) <= 0) {
             showToast("Debes introducir un precio válido.");
             return;
@@ -178,10 +108,7 @@ export default function FormularioProducto() {
 
         try {
             await createProduct(body, images, token!);
-
-            // Redirigir directamente si todo salió bien
             navigate("/catalog/published", { state: { success: true } });
-
         } catch (err) {
             console.error(err);
             showToast("Error al publicar el producto.");
@@ -245,10 +172,11 @@ export default function FormularioProducto() {
             {showCategoria && (
                 <div ref={categoriaRef} className="bloque">
                     <Categoria
-                        onSelect={(data) => {
-                            setCategoryId(categoryMap[data.categoria]);
-                            setSubcategoryId(subcategoryMap[data.subcategoria]);
-                            setShowDetalles(data.tipoFormulario);
+                        onSelect={({ categoryId, subcategoryId, tipoFormulario }) => {
+                            // ✅ CAMBIO CLAVE AQUÍ
+                            setCategoryId(categoryId);
+                            setSubcategoryId(subcategoryId);
+                            setShowDetalles(tipoFormulario);
                         }}
                     />
                 </div>

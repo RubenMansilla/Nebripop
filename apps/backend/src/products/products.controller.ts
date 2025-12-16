@@ -16,6 +16,8 @@ import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./create-products.dto";
 import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
 import { Param } from '@nestjs/common';
+import { Query } from "@nestjs/common";
+
 
 @Controller("products")
 export class ProductsController {
@@ -46,13 +48,22 @@ export class ProductsController {
         const userId = req.user.id;
         return this.productsService.getSoldProductsByUser(userId);
     }
-    // Obtener todos los productos (sin necesidad de login)
     @UseGuards(OptionalJwtAuthGuard)
     @Get()
-    getAllProducts(@Req() req) {
+    getAllProducts(
+        @Req() req,
+        @Query('categoryId') categoryId?: number,
+        @Query('subcategoryId') subcategoryId?: number,
+    ) {
         const userId = req.user?.id || null;
-        return this.productsService.getAllProducts(userId);
+
+        return this.productsService.getAllProducts(
+            userId,
+            categoryId,
+            subcategoryId
+        );
     }
+
 
     // Eliminar un producto
     @UseGuards(JwtAuthGuard)
@@ -93,5 +104,6 @@ export class ProductsController {
     async getSellingProcess(@Req() req) {
         return this.productsService.getSellingProcessProducts(req.user.id);
     }
+
 
 }

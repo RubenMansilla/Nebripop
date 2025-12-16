@@ -8,6 +8,9 @@ import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PurchasesModule } from './purchases/purchases.module';
+import { CategoriesModule } from './categories/categories.module';
+import { SubcategoriesModule } from './subcategories/subcategories.module';
+
 
 @Module({
     imports: [
@@ -39,6 +42,8 @@ import { PurchasesModule } from './purchases/purchases.module';
         ReviewsModule,
         FavoritesModule,
         PurchasesModule,
+        CategoriesModule,
+        SubcategoriesModule,
     ],
 })
 export class AppModule { }
