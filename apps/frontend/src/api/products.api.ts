@@ -79,24 +79,34 @@ export async function getMySoldProducts(token: string) {
 }
 
 // ---------- TODOS LOS PRODUCTOS (HOME) ----------
-export async function getAllProducts(token?: string | null) {
+export async function getAllProducts(
+  token?: string | null,
+  categoryId?: number | null,
+  subcategoryId?: number | null,
+  minPrice?: number,
+  maxPrice?: number,
+  dateFilter?: "today" | "7days" | "30days"
+) {
   const headers: any = {};
+  const params = new URLSearchParams();
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (categoryId) params.append("categoryId", String(categoryId));
+  if (subcategoryId) params.append("subcategoryId", String(subcategoryId));
+  if (minPrice !== undefined) params.append("minPrice", String(minPrice));
+  if (maxPrice !== undefined) params.append("maxPrice", String(maxPrice));
+  if (dateFilter) params.append("dateFilter", dateFilter);
 
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
-    method: "GET",
-    headers,
-  });
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/products?${params.toString()}`,
+    { headers }
+  );
 
-  if (!res.ok) {
-    throw new Error("Error al obtener todos los productos");
-  }
-
+  if (!res.ok) throw new Error("Error al obtener productos");
   return res.json();
 }
+
+
 
 // ---------- PRODUCTO POR ID ----------
 export async function getProductById(productId: string) {
@@ -183,7 +193,7 @@ export async function getMyBuyingProcessProducts(token: string) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
       errorData.message ||
-        "Error al obtener productos en proceso de compra"
+      "Error al obtener productos en proceso de compra"
     );
   }
 
@@ -206,7 +216,7 @@ export async function getMySellingProcessProducts(token: string) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(
       errorData.message ||
-        "Error al obtener productos en proceso de venta"
+      "Error al obtener productos en proceso de venta"
     );
   }
 

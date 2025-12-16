@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  CreateDateColumn,
 } from "typeorm";
 
 import { ProductImage } from "../products/products-image.entity";
@@ -111,4 +112,9 @@ export class Product {
   // ======================
   @OneToMany(() => ProductImage, (img) => img.product)
   images: ProductImage[];
+
+  @CreateDateColumn({ name: "created_at" })
+  createdAt: Date;
+
+
 }

@@ -23,6 +23,8 @@ export declare class ProductsController {
         depth_cm: number;
         category_id: number;
         subcategory_id: number;
+        category: import("../categories/categories.entity").Category;
+        subcategory: import("../subcategories/subcategories.entity").Subcategory;
         shipping_active: boolean;
         shipping_size: string;
         shipping_weight: string;
@@ -32,6 +34,7 @@ export declare class ProductsController {
         sold: boolean;
         deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
+        createdAt: Date;
     }[]>;
     getMySoldProducts(req: any): Promise<{
         purchaseId: number;
@@ -52,6 +55,8 @@ export declare class ProductsController {
         depth_cm: number;
         category_id: number;
         subcategory_id: number;
+        category: import("../categories/categories.entity").Category;
+        subcategory: import("../subcategories/subcategories.entity").Subcategory;
         shipping_active: boolean;
         shipping_size: string;
         shipping_weight: string;
@@ -61,8 +66,9 @@ export declare class ProductsController {
         sold: boolean;
         deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
+        createdAt: Date;
     }[]>;
-    getAllProducts(req: any): Promise<import("./products.entity").Product[]>;
+    getAllProducts(req: any, categoryId?: number, subcategoryId?: number, minPrice?: number, maxPrice?: number, dateFilter?: "today" | "7days" | "30days"): Promise<import("./products.entity").Product[]>;
     getPublicProductsByUser(userId: number): Promise<import("./products.entity").Product[]>;
     deleteProduct(productId: number, req: any): Promise<{
         message: string;
@@ -87,6 +93,8 @@ export declare class ProductsController {
         depth_cm: number;
         category_id: number;
         subcategory_id: number;
+        category: import("../categories/categories.entity").Category;
+        subcategory: import("../subcategories/subcategories.entity").Subcategory;
         shipping_active: boolean;
         shipping_size: string;
         shipping_weight: string;
@@ -96,6 +104,7 @@ export declare class ProductsController {
         sold: boolean;
         deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
+        createdAt: Date;
     }[]>;
     getBuyingProcess(req: any): Promise<import("./products.entity").Product[]>;
     getSellingProcess(req: any): Promise<import("./products.entity").Product[]>;

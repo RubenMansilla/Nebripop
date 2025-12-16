@@ -1,4 +1,6 @@
 import { ProductImage } from "../products/products-image.entity";
+import { Category } from "../categories/categories.entity";
+import { Subcategory } from "../subcategories/subcategories.entity";
 export declare class Product {
     id: number;
     owner_id: number;
@@ -15,6 +17,8 @@ export declare class Product {
     depth_cm: number;
     category_id: number;
     subcategory_id: number;
+    category: Category;
+    subcategory: Subcategory;
     shipping_active: boolean;
     shipping_size: string;
     shipping_weight: string;
@@ -24,4 +28,5 @@ export declare class Product {
     sold: boolean;
     deletedAt: Date;
     images: ProductImage[];
+    createdAt: Date;
 }

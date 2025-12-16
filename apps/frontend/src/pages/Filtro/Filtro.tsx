@@ -31,6 +31,14 @@ export default function Filtro() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(null);
 
+
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(20000);
+  const [dateFilter, setDateFilter] = useState<
+    "today" | "7days" | "30days" | undefined
+  >(undefined);
+
+
   // ========================
   // FILTROS
   // ========================
@@ -44,10 +52,29 @@ export default function Filtro() {
   // CARGAR PRODUCTOS
   // ========================
   useEffect(() => {
-    getAllProducts(token)
+    setLoading(true);
+
+    getAllProducts(
+      token,
+      selectedCategory,
+      selectedSubcategory,
+      minPrice,
+      maxPrice,
+      dateFilter
+    )
       .then(setProducts)
       .finally(() => setLoading(false));
-  }, [token]);
+
+  }, [
+    token,
+    selectedCategory,
+    selectedSubcategory,
+    minPrice,
+    maxPrice,
+    dateFilter
+  ]);
+
+
 
   // ========================
   // CARGAR CATEGORÍAS
@@ -88,8 +115,10 @@ export default function Filtro() {
   // FILTRADO REAL
   // ========================
   const filteredProducts = products.filter((p) => {
-    // PRECIO
-    if (p.price < min || p.price > max) return false;
+    const price = Number(p.price);
+
+    if (Number.isNaN(price)) return false;
+    if (price < min || price > max) return false;
 
     // ESTADO
     if (conditionFilters.length > 0 && !conditionFilters.includes(p.condition)) {
@@ -100,25 +129,9 @@ export default function Filtro() {
     if (shippingFilter === "shipping" && !p.shipping_active) return false;
     if (shippingFilter === "person" && p.shipping_active) return false;
 
-    // CATEGORÍA
-    if (
-      selectedCategory &&
-      (p.category?.id ?? p.category) !== selectedCategory
-    ) {
-      return false;
-    }
-
-    // SUBCATEGORÍA
-    if (
-      selectedSubcategory &&
-      (p.subcategory?.id ?? p.subcategory) !== selectedSubcategory
-    ) {
-      return false;
-    }
-
-
     return true;
   });
+
 
   return (
     <>
@@ -232,6 +245,60 @@ export default function Filtro() {
               </label>
             ))}
           </div>
+          <div className="filtro-block filtro-precio-inputs">
+            <h3 className="filtro-subtitle">Precio</h3>
+
+            <div className="precio-inputs">
+              <input
+                type="number"
+                placeholder="0"
+                value={min}
+                onChange={(e) => setMin(Number(e.target.value))}
+              />
+              <span className="precio-separador">€</span>
+              <input
+                type="number"
+                placeholder="20000"
+                value={max}
+                onChange={(e) => setMax(Number(e.target.value))}
+              />
+              <span className="precio-separador">€</span>
+            </div>
+          </div>
+          <div className="filtro-block">
+            <h3 className="filtro-subtitle">Fecha de publicación</h3>
+
+            <ul className="filtro-list">
+              <li
+                className={dateFilter === "today" ? "active" : ""}
+                onClick={() => setDateFilter("today")}
+              >
+                Hoy
+              </li>
+
+              <li
+                className={dateFilter === "7days" ? "active" : ""}
+                onClick={() => setDateFilter("7days")}
+              >
+                Últimos 7 días
+              </li>
+
+              <li
+                className={dateFilter === "30days" ? "active" : ""}
+                onClick={() => setDateFilter("30days")}
+              >
+                Últimos 30 días
+              </li>
+
+              <li
+                className="ver-todo"
+                onClick={() => setDateFilter(undefined)}
+              >
+                Ver todo
+              </li>
+            </ul>
+          </div>
+
         </aside>
 
         {/* ========================

@@ -15,6 +15,7 @@ import { FavoriteProduct } from "../favorites/favorite-product.entity";
 import { Chat } from "../chat/chat.entity";
 import { Purchase } from "../purchases/purchase.entity";
 import sharp from "sharp";
+import { MoreThan, Between } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
@@ -133,30 +134,65 @@ export class ProductsService {
     // TODOS LOS PRODUCTOS + FILTROS
     // ============================
     async getAllProducts(
-        userId?: number,
+        userId?: number | null,
         categoryId?: number,
-        subcategoryId?: number
+        subcategoryId?: number,
+        minPrice?: number,
+        maxPrice?: number,
+        dateFilter?: "today" | "7days" | "30days"
     ) {
         const where: any = {};
 
+        // Excluir productos propios
         if (userId) {
             where.owner_id = Not(userId);
         }
 
+        // Categoría
         if (categoryId) {
             where.category_id = Number(categoryId);
         }
 
+        // Subcategoría
         if (subcategoryId) {
             where.subcategory_id = Number(subcategoryId);
+        }
+
+        // Precio
+        // Precio (CORRECTO, acepta 0)
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            where.price = Between(
+                Number(minPrice),
+                Number(maxPrice)
+            );
+        }
+
+
+        // Fecha de publicación
+        if (dateFilter) {
+            const now = new Date();
+            let from: Date;
+
+            if (dateFilter === "today") {
+                from = new Date();
+                from.setHours(0, 0, 0, 0);
+            } else if (dateFilter === "7days") {
+                from = new Date(now.setDate(now.getDate() - 7));
+            } else {
+                from = new Date(now.setDate(now.getDate() - 30));
+            }
+
+            where.createdAt = MoreThan(from);
         }
 
         return this.productRepo.find({
             where,
             relations: ["images"],
-            order: { id: "DESC" },
+            order: { createdAt: "DESC" },
         });
     }
+
+
 
     // ============================
     // DETALLE PRODUCTO

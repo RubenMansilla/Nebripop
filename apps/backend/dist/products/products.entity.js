@@ -11,8 +11,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const typeorm_1 = require("typeorm");
-const typeorm_2 = require("typeorm");
 const products_image_entity_1 = require("../products/products-image.entity");
+const categories_entity_1 = require("../categories/categories.entity");
+const subcategories_entity_1 = require("../subcategories/subcategories.entity");
 let Product = class Product {
     id;
     owner_id;
@@ -29,6 +30,8 @@ let Product = class Product {
     depth_cm;
     category_id;
     subcategory_id;
+    category;
+    subcategory;
     shipping_active;
     shipping_size;
     shipping_weight;
@@ -38,6 +41,7 @@ let Product = class Product {
     sold;
     deletedAt;
     images;
+    createdAt;
 };
 exports.Product = Product;
 __decorate([
@@ -101,6 +105,16 @@ __decorate([
     __metadata("design:type", Number)
 ], Product.prototype, "subcategory_id", void 0);
 __decorate([
+    (0, typeorm_1.ManyToOne)(() => categories_entity_1.Category, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: "category_id" }),
+    __metadata("design:type", categories_entity_1.Category)
+], Product.prototype, "category", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => subcategories_entity_1.Subcategory, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: "subcategory_id" }),
+    __metadata("design:type", subcategories_entity_1.Subcategory)
+], Product.prototype, "subcategory", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], Product.prototype, "shipping_active", void 0);
@@ -129,14 +143,18 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Product.prototype, "sold", void 0);
 __decorate([
-    (0, typeorm_1.DeleteDateColumn)({ name: 'deleted_at', select: false }),
+    (0, typeorm_1.DeleteDateColumn)({ name: "deleted_at", select: false }),
     __metadata("design:type", Date)
 ], Product.prototype, "deletedAt", void 0);
 __decorate([
-    (0, typeorm_2.OneToMany)(() => products_image_entity_1.ProductImage, (img) => img.product),
+    (0, typeorm_1.OneToMany)(() => products_image_entity_1.ProductImage, (img) => img.product),
     __metadata("design:type", Array)
 ], Product.prototype, "images", void 0);
+__decorate([
+    (0, typeorm_1.CreateDateColumn)({ name: "created_at" }),
+    __metadata("design:type", Date)
+], Product.prototype, "createdAt", void 0);
 exports.Product = Product = __decorate([
-    (0, typeorm_1.Entity)('products')
+    (0, typeorm_1.Entity)("products")
 ], Product);
 //# sourceMappingURL=products.entity.js.map

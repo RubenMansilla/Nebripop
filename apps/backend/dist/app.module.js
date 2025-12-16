@@ -16,6 +16,8 @@ const products_module_1 = require("./products/products.module");
 const reviews_module_1 = require("./reviews/reviews.module");
 const favorites_module_1 = require("./favorites/favorites.module");
 const purchases_module_1 = require("./purchases/purchases.module");
+const categories_module_1 = require("./categories/categories.module");
+const subcategories_module_1 = require("./subcategories/subcategories.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -45,6 +47,8 @@ exports.AppModule = AppModule = __decorate([
             reviews_module_1.ReviewsModule,
             favorites_module_1.FavoritesModule,
             purchases_module_1.PurchasesModule,
+            categories_module_1.CategoriesModule,
+            subcategories_module_1.SubcategoriesModule,
         ],
     })
 ], AppModule);

@@ -19,6 +19,7 @@ const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const products_service_1 = require("./products.service");
 const create_products_dto_1 = require("./create-products.dto");
 const optional_jwt_guard_1 = require("../auth/optional-jwt.guard");
+const common_2 = require("@nestjs/common");
 let ProductsController = class ProductsController {
     productsService;
     constructor(productsService) {
@@ -35,9 +36,9 @@ let ProductsController = class ProductsController {
         const userId = req.user.id;
         return this.productsService.getSoldProductsByUser(userId);
     }
-    getAllProducts(req) {
+    getAllProducts(req, categoryId, subcategoryId, minPrice, maxPrice, dateFilter) {
         const userId = req.user?.id || null;
-        return this.productsService.getAllProducts(userId);
+        return this.productsService.getAllProducts(userId, categoryId, subcategoryId, minPrice, maxPrice, dateFilter);
     }
     getPublicProductsByUser(userId) {
         return this.productsService.getPublicProductsByUser(userId);
@@ -92,8 +93,13 @@ __decorate([
     (0, common_1.UseGuards)(optional_jwt_guard_1.OptionalJwtAuthGuard),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_2.Query)("categoryId")),
+    __param(2, (0, common_2.Query)("subcategoryId")),
+    __param(3, (0, common_2.Query)("minPrice")),
+    __param(4, (0, common_2.Query)("maxPrice")),
+    __param(5, (0, common_2.Query)("dateFilter")),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Number, Number, Number, Number, String]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "getAllProducts", null);
 __decorate([

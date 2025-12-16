@@ -54,17 +54,24 @@ export class ProductsController {
     @Get()
     getAllProducts(
         @Req() req,
-        @Query('categoryId') categoryId?: number,
-        @Query('subcategoryId') subcategoryId?: number,
+        @Query("categoryId") categoryId?: number,
+        @Query("subcategoryId") subcategoryId?: number,
+        @Query("minPrice") minPrice?: number,
+        @Query("maxPrice") maxPrice?: number,
+        @Query("dateFilter") dateFilter?: "today" | "7days" | "30days"
     ) {
         const userId = req.user?.id || null;
 
         return this.productsService.getAllProducts(
             userId,
             categoryId,
-            subcategoryId
+            subcategoryId,
+            minPrice,
+            maxPrice,
+            dateFilter
         );
     }
+
 
 
     // 🔓 PERFIL PÚBLICO – PRODUCTOS DE UN USUARIO
