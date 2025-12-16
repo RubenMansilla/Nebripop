@@ -16,12 +16,13 @@ const products_service_1 = require("./products.service");
 const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
 const chat_entity_1 = require("../chat/chat.entity");
 const purchase_entity_1 = require("../purchases/purchase.entity");
+const review_entity_1 = require("../reviews/review.entity");
 let ProductsModule = class ProductsModule {
 };
 exports.ProductsModule = ProductsModule;
 exports.ProductsModule = ProductsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([products_entity_1.Product, products_image_entity_1.ProductImage, favorite_product_entity_1.FavoriteProduct, chat_entity_1.Chat, purchase_entity_1.Purchase])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([products_entity_1.Product, products_image_entity_1.ProductImage, favorite_product_entity_1.FavoriteProduct, chat_entity_1.Chat, purchase_entity_1.Purchase, review_entity_1.Review])],
         controllers: [products_controller_1.ProductsController],
         providers: [products_service_1.ProductsService],
     })

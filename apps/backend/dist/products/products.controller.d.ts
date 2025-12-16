@@ -35,6 +35,9 @@ export declare class ProductsController {
         deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
         createdAt: Date;
+        views_count: number;
+        favorites: import("../favorites/favorite-product.entity").FavoriteProduct[];
+        chats: import("../chat/chat.entity").Chat[];
     }[]>;
     getMySoldProducts(req: any): Promise<{
         purchaseId: number;
@@ -67,12 +70,25 @@ export declare class ProductsController {
         deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
         createdAt: Date;
+        views_count: number;
+        favorites: import("../favorites/favorite-product.entity").FavoriteProduct[];
+        chats: import("../chat/chat.entity").Chat[];
     }[]>;
     getAllProducts(req: any, categoryId?: number, subcategoryId?: number, minPrice?: number, maxPrice?: number, dateFilter?: "today" | "7days" | "30days"): Promise<import("./products.entity").Product[]>;
     getPublicProductsByUser(userId: number): Promise<import("./products.entity").Product[]>;
     deleteProduct(productId: number, req: any): Promise<{
         message: string;
     }>;
+    getTopProducts(): Promise<{
+        id: number;
+        name: string;
+        created_at: Date;
+        price: number;
+        views_count: number;
+        first_img: string | null;
+        total_favorites: any;
+        total_chats: any;
+    }[]>;
     getProductById(productId: string, req: any): Promise<import("./products.entity").Product>;
     getMyPurchasedProducts(req: any): Promise<{
         purchaseId: number;
@@ -105,8 +121,17 @@ export declare class ProductsController {
         deletedAt: Date;
         images: import("./products-image.entity").ProductImage[];
         createdAt: Date;
+        views_count: number;
+        favorites: import("../favorites/favorite-product.entity").FavoriteProduct[];
+        chats: import("../chat/chat.entity").Chat[];
     }[]>;
     getBuyingProcess(req: any): Promise<import("./products.entity").Product[]>;
     getSellingProcess(req: any): Promise<import("./products.entity").Product[]>;
     incrementView(id: number): Promise<import("typeorm").UpdateResult>;
+    getFinancialStats(req: any, range?: 'week' | 'month' | 'year'): Promise<{
+        chartData: any[];
+        meta: {
+            totalViews: number;
+        };
+    }>;
 }

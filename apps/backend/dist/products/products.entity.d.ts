@@ -1,6 +1,8 @@
 import { ProductImage } from "../products/products-image.entity";
 import { Category } from "../categories/categories.entity";
 import { Subcategory } from "../subcategories/subcategories.entity";
+import { FavoriteProduct } from "../favorites/favorite-product.entity";
+import { Chat } from "../chat/chat.entity";
 export declare class Product {
     id: number;
     owner_id: number;
@@ -29,4 +31,7 @@ export declare class Product {
     deletedAt: Date;
     images: ProductImage[];
     createdAt: Date;
+    views_count: number;
+    favorites: FavoriteProduct[];
+    chats: Chat[];
 }

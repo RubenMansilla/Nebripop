@@ -91,6 +91,12 @@ export class ProductsController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('top-success')
+    getTopProducts() {
+        return this.productsService.getTopSuccessfulProducts();
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get(':productId')
     async getProductById(@Param('productId') productId: string, @Req() req) {
         const userId = req.user?.id || null;
@@ -122,6 +128,15 @@ export class ProductsController {
     @Post(':id/view')
     incrementView(@Param('id') id: number) {
         return this.productsService.incrementViews(+id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('stats/financial')
+    async getFinancialStats(
+        @Req() req,
+        @Query('range') range: 'week' | 'month' | 'year' = 'year' // Por defecto año
+    ) {
+        return this.productsService.getFinancialStats(req.user.id, range);
     }
 
 }

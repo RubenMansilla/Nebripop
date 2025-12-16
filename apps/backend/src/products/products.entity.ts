@@ -12,6 +12,8 @@ import {
 import { ProductImage } from "../products/products-image.entity";
 import { Category } from "../categories/categories.entity";
 import { Subcategory } from "../subcategories/subcategories.entity";
+import { FavoriteProduct } from "../favorites/favorite-product.entity";
+import { Chat } from "../chat/chat.entity";
 
 @Entity("products")
 export class Product {
@@ -116,5 +118,13 @@ export class Product {
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
+  @Column({ default: 0 })
+  views_count: number;
+
+  @OneToMany(() => FavoriteProduct, (fav) => fav.product)
+  favorites: FavoriteProduct[];
+
+  @OneToMany(() => Chat, (chat) => chat.product)
+  chats: Chat[];
 
 }

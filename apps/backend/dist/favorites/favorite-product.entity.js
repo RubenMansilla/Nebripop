@@ -11,9 +11,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FavoriteProduct = void 0;
 const typeorm_1 = require("typeorm");
+const typeorm_2 = require("typeorm");
+const products_entity_1 = require("../products/products.entity");
 let FavoriteProduct = class FavoriteProduct {
     user_id;
     product_id;
+    product;
 };
 exports.FavoriteProduct = FavoriteProduct;
 __decorate([
@@ -24,6 +27,11 @@ __decorate([
     (0, typeorm_1.PrimaryColumn)(),
     __metadata("design:type", Number)
 ], FavoriteProduct.prototype, "product_id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => products_entity_1.Product, (product) => product.favorites),
+    (0, typeorm_2.JoinColumn)({ name: 'product_id' }),
+    __metadata("design:type", products_entity_1.Product)
+], FavoriteProduct.prototype, "product", void 0);
 exports.FavoriteProduct = FavoriteProduct = __decorate([
     (0, typeorm_1.Entity)("favorites_products")
 ], FavoriteProduct);

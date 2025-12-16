@@ -5,14 +5,16 @@ import { CreateProductDto } from "./create-products.dto";
 import { FavoriteProduct } from "../favorites/favorite-product.entity";
 import { Chat } from "../chat/chat.entity";
 import { Purchase } from "../purchases/purchase.entity";
+import { Review } from "../reviews/review.entity";
 export declare class ProductsService {
     private productRepo;
     private productImagesRepo;
     private favoritesRepo;
     private chatRepo;
     private purchaseRepo;
+    private reviewRepo;
     private supabase;
-    constructor(productRepo: Repository<Product>, productImagesRepo: Repository<ProductImage>, favoritesRepo: Repository<FavoriteProduct>, chatRepo: Repository<Chat>, purchaseRepo: Repository<Purchase>);
+    constructor(productRepo: Repository<Product>, productImagesRepo: Repository<ProductImage>, favoritesRepo: Repository<FavoriteProduct>, chatRepo: Repository<Chat>, purchaseRepo: Repository<Purchase>, reviewRepo: Repository<Review>);
     uploadImages(files: Express.Multer.File[], productId: number): Promise<string[]>;
     createProduct(dto: CreateProductDto, files: Express.Multer.File[], userId: number): Promise<{
         productId: number;
@@ -46,6 +48,9 @@ export declare class ProductsService {
         deletedAt: Date;
         images: ProductImage[];
         createdAt: Date;
+        views_count: number;
+        favorites: FavoriteProduct[];
+        chats: Chat[];
     }[]>;
     getPublicProductsByUser(userId: number): Promise<Product[]>;
     getAllProducts(userId?: number | null, categoryId?: number, subcategoryId?: number, minPrice?: number, maxPrice?: number, dateFilter?: "today" | "7days" | "30days"): Promise<Product[]>;
@@ -84,6 +89,9 @@ export declare class ProductsService {
         deletedAt: Date;
         images: ProductImage[];
         createdAt: Date;
+        views_count: number;
+        favorites: FavoriteProduct[];
+        chats: Chat[];
     }[]>;
     getBuyingProcessProducts(userId: number): Promise<Product[]>;
     getSellingProcessProducts(userId: number): Promise<Product[]>;
@@ -118,6 +126,25 @@ export declare class ProductsService {
         deletedAt: Date;
         images: ProductImage[];
         createdAt: Date;
+        views_count: number;
+        favorites: FavoriteProduct[];
+        chats: Chat[];
     }[]>;
     incrementViews(productId: number): Promise<import("typeorm").UpdateResult>;
+    getTopSuccessfulProducts(): Promise<{
+        id: number;
+        name: string;
+        created_at: Date;
+        price: number;
+        views_count: number;
+        first_img: string | null;
+        total_favorites: any;
+        total_chats: any;
+    }[]>;
+    getFinancialStats(userId: number, range: 'week' | 'month' | 'year'): Promise<{
+        chartData: any[];
+        meta: {
+            totalViews: number;
+        };
+    }>;
 }

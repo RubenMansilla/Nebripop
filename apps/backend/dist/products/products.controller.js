@@ -46,6 +46,9 @@ let ProductsController = class ProductsController {
     async deleteProduct(productId, req) {
         return this.productsService.deleteProduct(productId, req.user.id);
     }
+    getTopProducts() {
+        return this.productsService.getTopSuccessfulProducts();
+    }
     async getProductById(productId, req) {
         const userId = req.user?.id || null;
         const productIdNumber = parseInt(productId, 10);
@@ -62,6 +65,9 @@ let ProductsController = class ProductsController {
     }
     incrementView(id) {
         return this.productsService.incrementViews(+id);
+    }
+    async getFinancialStats(req, range = 'year') {
+        return this.productsService.getFinancialStats(req.user.id, range);
     }
 };
 exports.ProductsController = ProductsController;
@@ -123,6 +129,13 @@ __decorate([
 ], ProductsController.prototype, "deleteProduct", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('top-success'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "getTopProducts", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':productId'),
     __param(0, (0, common_1.Param)('productId')),
     __param(1, (0, common_1.Req)()),
@@ -161,6 +174,15 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "incrementView", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('stats/financial'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_2.Query)('range')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "getFinancialStats", null);
 exports.ProductsController = ProductsController = __decorate([
     (0, common_1.Controller)("products"),
     __metadata("design:paramtypes", [products_service_1.ProductsService])

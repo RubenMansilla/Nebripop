@@ -14,6 +14,8 @@ const typeorm_1 = require("typeorm");
 const products_image_entity_1 = require("../products/products-image.entity");
 const categories_entity_1 = require("../categories/categories.entity");
 const subcategories_entity_1 = require("../subcategories/subcategories.entity");
+const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
+const chat_entity_1 = require("../chat/chat.entity");
 let Product = class Product {
     id;
     owner_id;
@@ -42,6 +44,9 @@ let Product = class Product {
     deletedAt;
     images;
     createdAt;
+    views_count;
+    favorites;
+    chats;
 };
 exports.Product = Product;
 __decorate([
@@ -154,6 +159,18 @@ __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: "created_at" }),
     __metadata("design:type", Date)
 ], Product.prototype, "createdAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    __metadata("design:type", Number)
+], Product.prototype, "views_count", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => favorite_product_entity_1.FavoriteProduct, (fav) => fav.product),
+    __metadata("design:type", Array)
+], Product.prototype, "favorites", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => chat_entity_1.Chat, (chat) => chat.product),
+    __metadata("design:type", Array)
+], Product.prototype, "chats", void 0);
 exports.Product = Product = __decorate([
     (0, typeorm_1.Entity)("products")
 ], Product);
