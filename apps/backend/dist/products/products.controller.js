@@ -19,7 +19,6 @@ const jwt_auth_guard_1 = require("../auth/jwt-auth.guard");
 const products_service_1 = require("./products.service");
 const create_products_dto_1 = require("./create-products.dto");
 const optional_jwt_guard_1 = require("../auth/optional-jwt.guard");
-const common_2 = require("@nestjs/common");
 let ProductsController = class ProductsController {
     productsService;
     constructor(productsService) {
@@ -39,6 +38,9 @@ let ProductsController = class ProductsController {
     getAllProducts(req) {
         const userId = req.user?.id || null;
         return this.productsService.getAllProducts(userId);
+    }
+    getPublicProductsByUser(userId) {
+        return this.productsService.getPublicProductsByUser(userId);
     }
     async deleteProduct(productId, req) {
         return this.productsService.deleteProduct(productId, req.user.id);
@@ -95,9 +97,16 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "getAllProducts", null);
 __decorate([
+    (0, common_1.Get)('public/user/:userId'),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], ProductsController.prototype, "getPublicProductsByUser", null);
+__decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_2.Param)('id', common_1.ParseIntPipe)),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
@@ -106,7 +115,7 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':productId'),
-    __param(0, (0, common_2.Param)('productId')),
+    __param(0, (0, common_1.Param)('productId')),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),

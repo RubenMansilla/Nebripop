@@ -32,7 +32,7 @@ export class ReviewsService {
 
         return await this.reviewRepo.find({
             where: { reviewed_user_id: userId },
-            relations: ['reviewer', 'product', 'product.images'], // incluye imagen del producto
+            relations: ['reviewer', 'product', 'product.images'],
             order,
         });
     }
@@ -53,5 +53,5 @@ export class ReviewsService {
 
         return { average, total };
     }
-
 }
+    

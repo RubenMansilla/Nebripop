@@ -44,6 +44,7 @@ export declare class ProductsService {
         deletedAt: Date;
         images: ProductImage[];
     }[]>;
+    getPublicProductsByUser(userId: number): Promise<Product[]>;
     getSoldProductsByUser(userId: number): Promise<{
         purchaseId: number;
         soldPrice: number;

@@ -28,6 +28,9 @@ let UsersController = class UsersController {
     uploadProfilePicture(file, req) {
         return this.usersService.updateProfilePicture(req.user.id, file);
     }
+    getPublicUser(id) {
+        return this.usersService.getPublicUser(id);
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -49,6 +52,13 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "uploadProfilePicture", null);
+__decorate([
+    (0, common_1.Get)('public/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "getPublicUser", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

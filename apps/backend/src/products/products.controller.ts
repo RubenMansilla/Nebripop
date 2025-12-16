@@ -9,13 +9,13 @@ import {
     UploadedFiles,
     ParseIntPipe,
     UseGuards,
+    Param,
 } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./create-products.dto";
 import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
-import { Param } from '@nestjs/common';
 
 @Controller("products")
 export class ProductsController {
@@ -46,6 +46,7 @@ export class ProductsController {
         const userId = req.user.id;
         return this.productsService.getSoldProductsByUser(userId);
     }
+
     // Obtener todos los productos (sin necesidad de login)
     @UseGuards(OptionalJwtAuthGuard)
     @Get()
@@ -54,14 +55,21 @@ export class ProductsController {
         return this.productsService.getAllProducts(userId);
     }
 
+    // 🔓 PERFIL PÚBLICO – PRODUCTOS DE UN USUARIO
+    @Get('public/user/:userId')
+    getPublicProductsByUser(
+        @Param('userId', ParseIntPipe) userId: number
+    ) {
+        return this.productsService.getPublicProductsByUser(userId);
+    }
+
     // Eliminar un producto
     @UseGuards(JwtAuthGuard)
     @Delete(':id')
     async deleteProduct(
-        @Param('id', ParseIntPipe) productId: number, // Valida que sea número
-        @Req() req // Necesario para saber QUIÉN borra
+        @Param('id', ParseIntPipe) productId: number,
+        @Req() req
     ) {
-        // Pasamos ambos IDs al servicio
         return this.productsService.deleteProduct(productId, req.user.id);
     }
 
@@ -69,7 +77,7 @@ export class ProductsController {
     @Get(':productId')
     async getProductById(@Param('productId') productId: string, @Req() req) {
         const userId = req.user?.id || null;
-        const productIdNumber = parseInt(productId, 10); // Convert productId to number
+        const productIdNumber = parseInt(productId, 10);
         return this.productsService.getProductById(productIdNumber, userId);
     }
 
@@ -80,18 +88,17 @@ export class ProductsController {
         return this.productsService.getPurchasedProductsByUser(req.user.id);
     }
 
-    // En proceso de COMPRA (Estoy negociando)
+    // En proceso de COMPRA
     @UseGuards(JwtAuthGuard)
     @Get('my-products/buying-process')
     async getBuyingProcess(@Req() req) {
         return this.productsService.getBuyingProcessProducts(req.user.id);
     }
 
-    // En proceso de VENTA (Me están negociando)
+    // En proceso de VENTA
     @UseGuards(JwtAuthGuard)
     @Get('my-products/selling-process')
     async getSellingProcess(@Req() req) {
         return this.productsService.getSellingProcessProducts(req.user.id);
     }
-
 }

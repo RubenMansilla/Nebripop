@@ -8,4 +8,5 @@ export declare class UsersService {
     findByEmail(email: string): Promise<User | null>;
     updateUser(id: number, data: Partial<User>): Promise<User | null>;
     updateProfilePicture(id: number, file: Express.Multer.File): Promise<User | null>;
+    getPublicUser(id: number): Promise<User>;
 }

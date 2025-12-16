@@ -36,6 +36,9 @@ import Privacy from "./components/PantallasFooter/Privacy";
 import Terms from "./components/PantallasFooter/Terms";
 import Filtro from "./pages/Filtro/Filtro";
 
+// PERFIL PÚBLICO
+import PublicUser from "./pages/PublicUser/PublicUser";
+
 
 
 
@@ -201,6 +204,9 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route path="/users/:userId" element={<PublicUser />} />
+
 
           </Routes>
         </BrowserRouter>
