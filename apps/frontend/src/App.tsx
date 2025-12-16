@@ -36,7 +36,7 @@ import Privacy from "./components/PantallasFooter/Privacy";
 import Terms from "./components/PantallasFooter/Terms";
 import Filtro from "./pages/Filtro/Filtro";
 
-
+import NotFound from "./pages/NotFound/NotFound";
 
 
 export default function App() {
@@ -201,6 +201,8 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route path="*" element={<NotFound />} />
 
           </Routes>
         </BrowserRouter>
