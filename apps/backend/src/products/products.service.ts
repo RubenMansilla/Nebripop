@@ -331,13 +331,15 @@ export class ProductsService {
         );
     }
 
-    async getTopSuccessfulProducts() {
+    // CAMBIO 1: Recibimos el userId como argumento
+    async getTopSuccessfulProducts(userId: number) {
 
         const products = await this.productRepo.createQueryBuilder('product')
             .leftJoinAndSelect('product.images', 'images')
 
-            .loadRelationCountAndMap('product.favoritesCount', 'product.favorites')
+            .where('product.owner_id = :userId', { userId })
 
+            .loadRelationCountAndMap('product.favoritesCount', 'product.favorites')
             .loadRelationCountAndMap('product.chatsCount', 'product.chats')
 
             .orderBy('product.views_count', 'DESC')
@@ -351,9 +353,7 @@ export class ProductsService {
             created_at: p.createdAt,
             price: p.price,
             views_count: p.views_count,
-
             first_img: p.images && p.images.length > 0 ? p.images[0].image_url : null,
-
             total_favorites: p['favoritesCount'] || 0,
             total_chats: p['chatsCount'] || 0,
         }));

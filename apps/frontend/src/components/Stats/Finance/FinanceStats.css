@@ -70,15 +70,12 @@
     gap: 4px;
 }
 
-/* Texto pequeño */
 .kpi-card span {
     font-size: 12px;
     font-weight: 500;
     color: #6b7280;
-    /* gris neutro */
 }
 
-/* Número */
 .kpi-card h4 {
     margin: 0;
     font-size: 24px;
@@ -87,21 +84,17 @@
     letter-spacing: -0.3px;
 }
 
-/* Variantes MUY sutiles */
 .kpi-card.profit h4 {
     color: #1f7a1f;
-    /* verde serio */
 }
 
 .kpi-card.expense h4 {
     color: #c12121;
-    /* rojo apagado */
 }
 
 .kpi-card.neutral h4 {
     color: #111827;
 }
-
 
 /* RESPONSIVE */
 @media (max-width: 768px) {

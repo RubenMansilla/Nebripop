@@ -234,9 +234,10 @@ let ProductsService = class ProductsService {
     async incrementViews(productId) {
         return this.productRepo.increment({ id: productId }, 'views_count', 1);
     }
-    async getTopSuccessfulProducts() {
+    async getTopSuccessfulProducts(userId) {
         const products = await this.productRepo.createQueryBuilder('product')
             .leftJoinAndSelect('product.images', 'images')
+            .where('product.owner_id = :userId', { userId })
             .loadRelationCountAndMap('product.favoritesCount', 'product.favorites')
             .loadRelationCountAndMap('product.chatsCount', 'product.chats')
             .orderBy('product.views_count', 'DESC')

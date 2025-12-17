@@ -46,8 +46,8 @@ let ProductsController = class ProductsController {
     async deleteProduct(productId, req) {
         return this.productsService.deleteProduct(productId, req.user.id);
     }
-    getTopProducts() {
-        return this.productsService.getTopSuccessfulProducts();
+    getTopProducts(req) {
+        return this.productsService.getTopSuccessfulProducts(req.user.id);
     }
     async getProductById(productId, req) {
         const userId = req.user?.id || null;
@@ -130,8 +130,9 @@ __decorate([
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('top-success'),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], ProductsController.prototype, "getTopProducts", null);
 __decorate([

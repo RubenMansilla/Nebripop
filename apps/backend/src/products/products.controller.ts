@@ -92,8 +92,8 @@ export class ProductsController {
 
     @UseGuards(JwtAuthGuard)
     @Get('top-success')
-    getTopProducts() {
-        return this.productsService.getTopSuccessfulProducts();
+    getTopProducts(@Req() req) {
+        return this.productsService.getTopSuccessfulProducts(req.user.id);
     }
 
     @UseGuards(JwtAuthGuard)

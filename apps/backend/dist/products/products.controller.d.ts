@@ -79,7 +79,7 @@ export declare class ProductsController {
     deleteProduct(productId: number, req: any): Promise<{
         message: string;
     }>;
-    getTopProducts(): Promise<{
+    getTopProducts(req: any): Promise<{
         id: number;
         name: string;
         created_at: Date;

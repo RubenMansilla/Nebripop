@@ -131,7 +131,7 @@ export declare class ProductsService {
         chats: Chat[];
     }[]>;
     incrementViews(productId: number): Promise<import("typeorm").UpdateResult>;
-    getTopSuccessfulProducts(): Promise<{
+    getTopSuccessfulProducts(userId: number): Promise<{
         id: number;
         name: string;
         created_at: Date;
