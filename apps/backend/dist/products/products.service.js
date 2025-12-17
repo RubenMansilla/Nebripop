@@ -141,7 +141,11 @@ let ProductsService = class ProductsService {
     async getProductById(productId, userId) {
         const product = await this.productRepo.findOne({
             where: { id: productId },
-            relations: ["images"],
+            relations: [
+                "images",
+                "category",
+                "subcategory",
+            ],
         });
         if (!product)
             throw new Error("Producto no encontrado");

@@ -44,6 +44,38 @@
     color: #c3b8a8;
   }
 
+  .breadcrumb {
+    font-size: 14px;
+    color: #b9a48a;
+    margin: 12px auto 22px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 900px;
+  }
+
+  .breadcrumb a {
+    color: #d2b990;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb span {
+    color: #b9a48a;
+  }
+
+  .breadcrumb-current {
+    color: #7a766f;
+    font-weight: 600;
+  }
+
+
 
   /* -------- Galería de imágenes -------- */
   .product-images {
@@ -158,24 +190,36 @@
   /* -------- Tags de envío -------- */
   .product-tags {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 14px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
   }
 
-  .tag-chip {
+  .product-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     padding: 6px 14px;
-    font-size: 13px;
-    border-radius: 18px;
-    border: 1.5px solid #e6d8c3;
-    color: #6f6f6f;
-    background-color: #ffffff;
-    font-weight: 500;
+    border: 2px solid #e2d4bd;
+    border-radius: 20px;
+    background: white;
+    font-size: 14px;
+    font-weight: 600;
+    color: #b4976b;
   }
 
-  .tag-chip.secondary {
-    background-color: #f3eee7;
+  .product-tag img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
   }
+
+  .product-tag.sub {
+    border-style: dashed;
+    opacity: 0.85;
+  }
+
+
 
 
   .product-details {
@@ -320,14 +364,65 @@
     color: #9a9a9a;
   }
 
-  /* Precio */
-  .buy-price {
-    font-size: 42px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: #4b4b4b;
-    line-height: 1;
+  /* CARD derecha (precio / comprar) */
+  .detail-buy-card {
+    border: 2px solid #e8dece;
+    /* borde beige suave */
+    border-radius: 18px;
+    padding: 18px;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
   }
+
+  /* Precio grande */
+  .buy-price {
+    font-size: 44px;
+    font-weight: 800;
+    margin: 6px 0 10px;
+    color: #2e2e2e;
+  }
+
+  /* Separador */
+  .buy-divider {
+    height: 1px;
+    background: #eee4d6;
+    margin: 14px 0;
+  }
+
+  /* Botones */
+  .buy-main-btn {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: #d6c9b4;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .buy-main-btn:hover {
+    filter: brightness(0.97);
+  }
+
+  .buy-offer-btn {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 2px solid #d6c9b4;
+    color: #3a3a3a;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .buy-offer-btn:hover {
+    background: #fbf8f3;
+  }
+
 
 
   /* Apple Pay */

@@ -6,6 +6,9 @@ import "./Detail.css";
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
+import { Link } from "react-router-dom";
+import { getCategoryIcon } from "../../utils/categoryIcons";
+
 
 export default function Detail() {
   const { productId } = useParams(); // Capturamos el productId de la URL
@@ -57,6 +60,17 @@ export default function Detail() {
     return <div>Producto no encontrado</div>; // Si no encontramos el producto
   }
 
+  const formatPrice = (value: number) => {
+    // Si es entero -> "24€"
+    if (Number.isInteger(value)) return `${value}€`;
+
+    // Si tiene decimales -> "24,35€" (estilo ES)
+    return `${value.toLocaleString("es-ES", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}€`;
+  };
+
   const categoryName =
     typeof product.category === "object"
       ? product.category?.name
@@ -66,6 +80,7 @@ export default function Detail() {
     typeof product.subcategory === "object"
       ? product.subcategory?.name
       : product.subcategory;
+
 
 
   return (
@@ -82,8 +97,31 @@ export default function Detail() {
         </div>
 
         <div className="detail-main">
-          <div className="product-category">
-            <span>{product.category} / {product.subcategory}</span> {/* Categoría y subcategoría */}
+          <div className="breadcrumb">
+            <Link to="/">Inicio</Link>
+
+            {product.category && (
+              <>
+                <span>/</span>
+                <Link to={`/filtros?categoryId=${product.category_id}`}>
+                  {categoryName}
+                </Link>
+              </>
+            )}
+
+            {product.subcategory && (
+              <>
+                <span>/</span>
+                <Link
+                  to={`/filtros?categoryId=${product.category_id}&subcategoryId=${product.subcategory_id}`}
+                >
+                  {subcategoryName}
+                </Link>
+              </>
+            )}
+
+            <span>/</span>
+            <span className="breadcrumb-current">{product.name}</span>
           </div>
 
           <div className="product-images">
@@ -128,6 +166,38 @@ export default function Detail() {
               )}
 
             </div>
+          </div>
+
+          <div className="product-tags">
+            {/* Categoría */}
+            {product.category && (
+              <div className="product-tag">
+                <img
+                  src={getCategoryIcon(
+                    typeof product.category === "object"
+                      ? product.category.name
+                      : product.category
+                  )}
+                  alt="icon"
+                />
+                <span>
+                  {typeof product.category === "object"
+                    ? product.category.name
+                    : product.category}
+                </span>
+              </div>
+            )}
+
+            {/* Subcategoría */}
+            {product.subcategory && (
+              <div className="product-tag sub">
+                <span>
+                  {typeof product.subcategory === "object"
+                    ? product.subcategory.name
+                    : product.subcategory}
+                </span>
+              </div>
+            )}
           </div>
 
 
@@ -219,8 +289,9 @@ export default function Detail() {
             </p>
 
             <p className="buy-price">
-              {product.price}€
+              {formatPrice(Number(product.price))}
             </p>
+
 
             <div className="buy-payments">
               <div className="apple-pay">

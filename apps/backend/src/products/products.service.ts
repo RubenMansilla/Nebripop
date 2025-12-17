@@ -204,8 +204,13 @@ export class ProductsService {
     async getProductById(productId: number, userId: number | null) {
         const product = await this.productRepo.findOne({
             where: { id: productId },
-            relations: ["images"],
+            relations: [
+                "images",
+                "category",
+                "subcategory",
+            ],
         });
+
 
         if (!product) throw new Error("Producto no encontrado");
         if (product.owner_id === userId)
