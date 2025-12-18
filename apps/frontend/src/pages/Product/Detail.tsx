@@ -7,7 +7,11 @@ import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
 import { Link } from "react-router-dom";
+
+// Íconos de categoría y subcategoría //
 import { getCategoryIcon } from "../../utils/categoryIcons";
+import { getSubcategoryIcon } from "../../utils/subcategoryIcons";
+
 
 
 export default function Detail() {
@@ -100,7 +104,7 @@ export default function Detail() {
           <div className="breadcrumb">
             <Link to="/">Inicio</Link>
 
-            {product.category && (
+            {categoryName && (
               <>
                 <span>/</span>
                 <Link to={`/filtros?categoryId=${product.category_id}`}>
@@ -109,7 +113,7 @@ export default function Detail() {
               </>
             )}
 
-            {product.subcategory && (
+            {subcategoryName && (
               <>
                 <span>/</span>
                 <Link
@@ -123,6 +127,7 @@ export default function Detail() {
             <span>/</span>
             <span className="breadcrumb-current">{product.name}</span>
           </div>
+
 
           <div className="product-images">
             <div className="image-wrapper">
@@ -169,36 +174,24 @@ export default function Detail() {
           </div>
 
           <div className="product-tags">
-            {/* Categoría */}
-            {product.category && (
+            {categoryName && (
               <div className="product-tag">
-                <img
-                  src={getCategoryIcon(
-                    typeof product.category === "object"
-                      ? product.category.name
-                      : product.category
-                  )}
-                  alt="icon"
-                />
-                <span>
-                  {typeof product.category === "object"
-                    ? product.category.name
-                    : product.category}
-                </span>
+                <img src={getCategoryIcon(categoryName)} alt={categoryName} />
+                <span>{categoryName}</span>
               </div>
             )}
 
-            {/* Subcategoría */}
-            {product.subcategory && (
+            {subcategoryName && (
               <div className="product-tag sub">
-                <span>
-                  {typeof product.subcategory === "object"
-                    ? product.subcategory.name
-                    : product.subcategory}
-                </span>
+                <img
+                  src={getSubcategoryIcon(categoryName, subcategoryName)}
+                  alt={subcategoryName}
+                />
+                <span>{subcategoryName}</span>
               </div>
             )}
           </div>
+
 
 
           <div className="product-details">

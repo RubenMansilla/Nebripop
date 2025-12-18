@@ -188,39 +188,53 @@
 
 
   /* -------- Tags de envío -------- */
+
   .product-tags {
     display: flex;
-    gap: 12px;
-    margin-top: 14px;
+    gap: 14px;
+    margin: 10px 0;
     flex-wrap: wrap;
   }
 
+  /* Tag base */
   .product-tag {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    border: 2px solid #e2d4bd;
-    border-radius: 20px;
-    background: white;
-    font-size: 14px;
+    gap: 10px;
+
+    padding: 8px 12px;
+    border-radius: 14px;
+
+    border: 2px solid #d6c9b4;
+    background: #fff;
+
     font-weight: 600;
+    font-size: 15px;
     color: #b4976b;
+
+    transition: all 0.2s ease;
   }
 
+  /* Icono */
   .product-tag img {
-    width: 16px;
-    height: 16px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
+    flex-shrink: 0;
+    filter: brightness(0) saturate(100%) invert(69%) sepia(15%) saturate(635%) hue-rotate(357deg) brightness(92%) contrast(90%);
   }
 
+  /* Subcategoría (más ligera, punteada) */
   .product-tag.sub {
-    border-style: dashed;
-    opacity: 0.85;
+    background: #faf7f2;
+    color: #c4ae8b;
   }
 
-
-
+  /* Hover sutil */
+  .product-tag:hover {
+    transform: translateY(-1px);
+    background: #f7f3ec;
+  }
 
   .product-details {
     padding: 20px 0;
