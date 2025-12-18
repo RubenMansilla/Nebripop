@@ -9,18 +9,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FavoritesModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const favorite_product_entity_1 = require("./favorite-product.entity");
 const favorites_service_1 = require("./favorites.service");
 const favorites_controller_1 = require("./favorites.controller");
+const favorite_product_entity_1 = require("./favorite-product.entity");
+const favorite_user_entity_1 = require("./favorite-user.entity");
 let FavoritesModule = class FavoritesModule {
 };
 exports.FavoritesModule = FavoritesModule;
 exports.FavoritesModule = FavoritesModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([favorite_product_entity_1.FavoriteProduct])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([
+                favorite_product_entity_1.FavoriteProduct,
+                favorite_user_entity_1.FavoriteUser,
+            ]),
+        ],
         controllers: [favorites_controller_1.FavoritesController],
         providers: [favorites_service_1.FavoritesService],
-        exports: [favorites_service_1.FavoritesService]
+        exports: [favorites_service_1.FavoritesService],
     })
 ], FavoritesModule);
 //# sourceMappingURL=favorites.module.js.map

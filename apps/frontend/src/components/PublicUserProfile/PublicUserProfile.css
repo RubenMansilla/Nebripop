@@ -210,3 +210,38 @@
   border-radius: 2px;
 }
 
+
+/* ================= BOTÓN FAVORITO USUARIO ================= */
+
+.fav-user-btn {
+  margin-top: 6px;
+  align-self: flex-start;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #333;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.fav-user-btn:hover {
+  background: #f7f7f7;
+}
+
+/* Estado activo (usuario ya favorito) */
+.fav-user-btn.active {
+  background: #ffecec;
+  border-color: #f5b5b5;
+  color: #b42318;
+}
+
+.fav-user-btn.active:hover {
+  background: #ffdede;
+}

@@ -21,14 +21,26 @@ let FavoritesController = class FavoritesController {
     constructor(favoritesService) {
         this.favoritesService = favoritesService;
     }
-    async addFavorite(req, productId) {
+    addFavorite(req, productId) {
         return this.favoritesService.addFavorite(req.user.id, productId);
     }
-    async removeFavorite(req, productId) {
+    removeFavorite(req, productId) {
         return this.favoritesService.removeFavorite(req.user.id, productId);
     }
-    async getFavoriteProducts(req) {
+    getFavoriteProducts(req) {
         return this.favoritesService.getFavoriteProducts(req.user.id);
+    }
+    addFavoriteUser(req, userId) {
+        return this.favoritesService.addFavoriteUser(req.user.id, userId);
+    }
+    removeFavoriteUser(req, userId) {
+        return this.favoritesService.removeFavoriteUser(req.user.id, userId);
+    }
+    getFavoriteUsers(req) {
+        return this.favoritesService.getFavoriteUsers(req.user.id);
+    }
+    isFavoriteUser(req, userId) {
+        return this.favoritesService.isFavoriteUser(req.user.id, userId);
     }
 };
 exports.FavoritesController = FavoritesController;
@@ -39,7 +51,7 @@ __decorate([
     __param(1, (0, common_1.Param)("productId")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "addFavorite", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
@@ -48,7 +60,7 @@ __decorate([
     __param(1, (0, common_1.Param)("productId")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "removeFavorite", null);
 __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
@@ -56,8 +68,43 @@ __decorate([
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "getFavoriteProducts", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
+    (0, common_1.Post)("users/:userId"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("userId")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", void 0)
+], FavoritesController.prototype, "addFavoriteUser", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
+    (0, common_1.Delete)("users/:userId"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("userId")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", void 0)
+], FavoritesController.prototype, "removeFavoriteUser", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
+    (0, common_1.Get)("users"),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], FavoritesController.prototype, "getFavoriteUsers", null);
+__decorate([
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)("jwt")),
+    (0, common_1.Get)("users/:userId/is-favorite"),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Param)("userId")),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Number]),
+    __metadata("design:returntype", void 0)
+], FavoritesController.prototype, "isFavoriteUser", null);
 exports.FavoritesController = FavoritesController = __decorate([
     (0, common_1.Controller)("favorites"),
     __metadata("design:paramtypes", [favorites_service_1.FavoritesService])

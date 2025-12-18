@@ -2,64 +2,48 @@
 > @nebripop/backend@0.0.1 dev
 > nest start --watch
 
-[2J[3J[H[[90m19:26:01[0m] Starting compilation in watch mode...
+[2J[3J[H[[90m17:49:19[0m] Starting compilation in watch mode...
 
-[[90m19:26:06[0m] Found 0 errors. Watching for file changes.
+[[90m17:49:22[0m] Found 0 errors. Watching for file changes.
 
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +13ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMulterModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:08 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +42ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +777ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mReviewsModule dependencies initialized[39m[38;5;3m +4ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCategoriesModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubcategoriesModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductsModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFavoritesModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPurchasesModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUsersController {/users}:[39m[38;5;3m +7ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/update, PATCH} route[39m[38;5;3m +4ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/profile-picture, PATCH} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/users/public/:id, GET} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductsController {/products}:[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products, POST} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/my-products/active, GET} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/my-products/sold, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products, GET} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/public/user/:userId, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/:id, DELETE} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/top-success, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/:productId, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/my-products/purchased, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/my-products/buying-process, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/my-products/selling-process, GET} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/:id/view, POST} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/products/stats/financial, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mReviewsController {/reviews}:[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reviews/user/:id, GET} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/reviews/user/:id/summary, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFavoritesController {/favorites}:[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/favorites/favorite/:productId, POST} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/favorites/favorite/:productId, DELETE} route[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/favorites/products, GET} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPurchasesController {/purchases}:[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchases/buy/:id, DELETE} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/purchases/sell/:id, DELETE} route[39m[38;5;3m +0ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCategoriesController {/categories}:[39m[38;5;3m +1ms[39m
-[32m[Nest] 11480  - [39m17/12/2025, 19:26:09 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/categories, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 25552  - [39m18/12/2025, 17:49:23 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 25552  - [39m18/12/2025, 17:49:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +14ms[39m
+[32m[Nest] 25552  - [39m18/12/2025, 17:49:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 25552  - [39m18/12/2025, 17:49:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMulterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[31m[Nest] 25552  - [39m18/12/2025, 17:49:23 [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the FavoritesService (FavoriteProductRepository, ?). Please make sure that the argument "FavoriteUserRepository" at index [1] is available in the FavoritesModule context.
+
+Potential solutions:
+- Is FavoritesModule a valid NestJS module?
+- If "FavoriteUserRepository" is a provider, is it part of the current FavoritesModule?
+- If "FavoriteUserRepository" is exported from a separate @Module, is that module imported within FavoritesModule?
+  @Module({
+    imports: [ /* the Module containing "FavoriteUserRepository" */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+    at Injector.lookupComponentInParentModules (C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\injector.js:286:19)
+    at async resolveParam (C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\injector.js:140:38)
+    at async Promise.all (index 1)
+    at async Injector.resolveConstructorParams (C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\injector.js:169:27)
+    at async Injector.loadInstance (C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\injector.js:75:13)
+    at async Injector.loadProvider (C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\injector.js:103:9)
+    at async C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\instance-loader.js:56:13
+    at async Promise.all (index 3)
+    at async InstanceLoader.createInstancesOfProviders (C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\instance-loader.js:55:9)
+    at async C:\Users\Usuario\Desktop\Nebripop\node_modules\[4m@nestjs[24m\core\injector\instance-loader.js:40:13 {
+  type: [32m'FavoritesService'[39m,
+  context: {
+    index: [33m1[39m,
+    dependencies: [
+      [32m'FavoriteProductRepository'[39m,
+      [32m'FavoriteUserRepository'[39m
+    ],
+    name: [32m'FavoriteUserRepository'[39m
+  },
+  metadata: {
+    id: [32m'039e0a43f3c2ce5d0d37e'[39m
+  },
+  moduleRef: {
+    id: [32m'd62226a68ed22abf73214'[39m
+  }
+}
