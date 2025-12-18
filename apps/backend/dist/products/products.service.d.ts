@@ -23,6 +23,7 @@ export declare class ProductsService {
         isFavorite: boolean;
         id: number;
         owner_id: number;
+        seller: import("../users/users.entity").User;
         summary: string;
         name: string;
         description: string;
@@ -64,6 +65,7 @@ export declare class ProductsService {
         soldDate: Date;
         id: number;
         owner_id: number;
+        seller: import("../users/users.entity").User;
         summary: string;
         name: string;
         description: string;
@@ -101,6 +103,7 @@ export declare class ProductsService {
         soldDate: Date;
         id: number;
         owner_id: number;
+        seller: import("../users/users.entity").User;
         summary: string;
         name: string;
         description: string;

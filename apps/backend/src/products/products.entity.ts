@@ -14,6 +14,7 @@ import { Category } from "../categories/categories.entity";
 import { Subcategory } from "../subcategories/subcategories.entity";
 import { FavoriteProduct } from "../favorites/favorite-product.entity";
 import { Chat } from "../chat/chat.entity";
+import { User } from "../users/users.entity";
 
 @Entity("products")
 export class Product {
@@ -22,6 +23,11 @@ export class Product {
 
   @Column()
   owner_id: number;
+
+  @ManyToOne(() => User, { eager: false })
+  @JoinColumn({ name: "owner_id" })
+  seller: User;
+
 
   @Column({ nullable: true })
   summary: string;

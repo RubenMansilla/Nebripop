@@ -16,9 +16,11 @@ const categories_entity_1 = require("../categories/categories.entity");
 const subcategories_entity_1 = require("../subcategories/subcategories.entity");
 const favorite_product_entity_1 = require("../favorites/favorite-product.entity");
 const chat_entity_1 = require("../chat/chat.entity");
+const users_entity_1 = require("../users/users.entity");
 let Product = class Product {
     id;
     owner_id;
+    seller;
     summary;
     name;
     description;
@@ -57,6 +59,11 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Product.prototype, "owner_id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => users_entity_1.User, { eager: false }),
+    (0, typeorm_1.JoinColumn)({ name: "owner_id" }),
+    __metadata("design:type", users_entity_1.User)
+], Product.prototype, "seller", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

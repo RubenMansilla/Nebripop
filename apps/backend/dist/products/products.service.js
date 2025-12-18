@@ -139,18 +139,25 @@ let ProductsService = class ProductsService {
         });
     }
     async getProductById(productId, userId) {
-        const product = await this.productRepo.findOne({
-            where: { id: productId },
-            relations: [
-                "images",
-                "category",
-                "subcategory",
-            ],
-        });
-        if (!product)
-            throw new Error("Producto no encontrado");
-        if (product.owner_id === userId)
-            throw new Error("No puedes ver tus propios productos");
+        const product = await this.productRepo
+            .createQueryBuilder("product")
+            .leftJoinAndSelect("product.images", "images")
+            .leftJoinAndSelect("product.category", "category")
+            .leftJoinAndSelect("product.subcategory", "subcategory")
+            .leftJoin("product.seller", "seller")
+            .addSelect([
+            "seller.id",
+            "seller.full_name",
+            "seller.full_name",
+        ])
+            .where("product.id = :productId", { productId })
+            .getOne();
+        if (!product) {
+            throw new common_1.NotFoundException("Producto no encontrado");
+        }
+        if (product.owner_id === userId) {
+            throw new common_1.BadRequestException("No puedes ver tus propios productos");
+        }
         return product;
     }
     async deleteProduct(productId, userId) {

@@ -202,22 +202,31 @@ export class ProductsService {
     // DETALLE PRODUCTO
     // ============================
     async getProductById(productId: number, userId: number | null) {
-        const product = await this.productRepo.findOne({
-            where: { id: productId },
-            relations: [
-                "images",
-                "category",
-                "subcategory",
-            ],
-        });
+        const product = await this.productRepo
+            .createQueryBuilder("product")
+            .leftJoinAndSelect("product.images", "images")
+            .leftJoinAndSelect("product.category", "category")
+            .leftJoinAndSelect("product.subcategory", "subcategory")
+            .leftJoin("product.seller", "seller")
+            .addSelect([
+                "seller.id",
+                "seller.full_name",
+                "seller.full_name",
+            ])
+            .where("product.id = :productId", { productId })
+            .getOne();
 
+        if (!product) {
+            throw new NotFoundException("Producto no encontrado");
+        }
 
-        if (!product) throw new Error("Producto no encontrado");
-        if (product.owner_id === userId)
-            throw new Error("No puedes ver tus propios productos");
+        if (product.owner_id === userId) {
+            throw new BadRequestException("No puedes ver tus propios productos");
+        }
 
         return product;
     }
+
 
     // ============================
     // ELIMINAR PRODUCTO

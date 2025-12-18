@@ -8,9 +8,10 @@ import { FavoriteProduct } from "../favorites/favorite-product.entity";
 import { Chat } from "../chat/chat.entity";
 import { Purchase } from "../purchases/purchase.entity";
 import { Review } from "../reviews/review.entity";
+import { User } from "../users/users.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, ProductImage, FavoriteProduct, Chat, Purchase, Review])],
+  imports: [TypeOrmModule.forFeature([Product, ProductImage, FavoriteProduct, Chat, Purchase, Review, User])],
   controllers: [ProductsController],
   providers: [ProductsService],
 })

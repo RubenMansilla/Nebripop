@@ -7,6 +7,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
 import { Link } from "react-router-dom";
+import { getReviews, getUserReviewSummary } from "../../api/reviews.api";
 
 // Íconos de categoría y subcategoría //
 import { getCategoryIcon } from "../../utils/categoryIcons";
@@ -22,6 +23,20 @@ export default function Detail() {
   const [currentImage, setCurrentImage] = useState(0);
   const images = product?.images ?? [];
   const hasMultipleImages = images.length > 1;
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviewSummary, setReviewSummary] = useState<{
+    average: number;
+    total: number;
+  }>({ average: 0, total: 0 });
+  const renderStars = (rating: number) =>
+    "⭐".repeat(Math.round(rating));
+
+  const seller = product?.seller;
+
+  const sellerAvatar =
+    seller?.profile_picture && seller.profile_picture !== ""
+      ? seller.profile_picture
+      : "/default-avatar.png";
 
 
 
@@ -55,6 +70,27 @@ export default function Detail() {
         });
     }
   }, [productId]); // Solo se vuelve a ejecutar cuando cambia el productId
+
+  useEffect(() => {
+    if (product?.seller?.id) {
+      getReviews(product.seller.id, "newest")
+        .then(setReviews)
+        .catch(console.error);
+
+      getUserReviewSummary(product.seller.id)
+        .then(setReviewSummary)
+        .catch(console.error);
+    }
+  }, [product?.seller?.id]);
+
+  useEffect(() => {
+    if (product) {
+      console.log("SELLER:", product.seller);
+    }
+  }, [product]);
+
+
+
 
   if (loading) {
     return <div>Cargando...</div>; // Indicador de carga
@@ -241,28 +277,53 @@ export default function Detail() {
               </div>
             )}
             <div className="seller-reviews">
+              <h3 className="section-title">
+                ⭐ {reviewSummary.average.toFixed(1)} · {product.seller?.name} –{" "}
+                {reviewSummary.total} valoraciones
+              </h3>
 
-              {product.seller && (
-                <h3 className="section-title">
-                  ⭐ {product.seller.rating} · {product.seller.name} – Valoraciones
-                </h3>
+              {reviews.length === 0 && (
+                <p className="no-reviews">
+                  Este vendedor aún no tiene valoraciones
+                </p>
               )}
 
+              {reviews.map((review) => (
+                <div className="review-item" key={review.id}>
+                  <img
+                    src={review.reviewer?.profile_picture ?? "/default-avatar.png"}
+                    alt={review.reviewer?.full_name}
+                    className="review-avatar"
+                    loading="lazy"
+                  />
 
-              <div className="review-item">
-                <img
-                  src="/default-avatar.webp"
-                  className="review-avatar"
-                />
 
-                <div>
-                  <strong>Lucas Salazar Márquez</strong>
-                  <p className="review-date">25 dic 2025</p>
-                  <div className="review-stars">⭐⭐⭐⭐⭐</div>
+
+                  <div>
+                    <strong>{review.reviewer?.full_name}</strong>
+
+                    <p className="review-date">
+                      {new Date(review.created_at).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+
+                    <div className="review-stars">
+                      {renderStars(review.rating)}
+                    </div>
+
+                    {review.comment && (
+                      <p className="review-comment">
+                        {review.comment}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-
+              ))}
             </div>
+
 
 
           </div>
@@ -314,26 +375,41 @@ export default function Detail() {
           </div>
 
           <div className="seller-card">
-            <div className="seller-left">
-              {product.seller && (
-                <img
-                  src={product.seller.avatar || "/default-avatar.webp"}
-                  className="seller-avatar"
-                  alt={product.seller.name}
-                />
-              )}
+            <div className="seller-main">
+              <img
+                src={sellerAvatar}
+                alt={seller?.full_name}
+                className="seller-avatar"
+                loading="lazy"
+              />
 
 
-              <div>
-                <p className="seller-name">{product.seller?.name}</p>
-                <p className="seller-rating">⭐ {product.seller?.rating}</p>
-                <p className="seller-meta">
-                  {product.seller?.totalSales} ventas · {product.seller?.totalReviews} valoraciones
+
+              <div className="seller-info">
+                <p className="seller-name">
+                  {product.seller?.full_name}
                 </p>
+
+                <div className="seller-rating-row">
+                  <span className="star">⭐</span>
+                  <span className="rating">
+                    {reviewSummary.average.toFixed(1)}
+                  </span>
+                </div>
+
+                <p className="seller-meta">
+                  {product.seller?.totalSales} ventas · {reviewSummary.total} valoraciones
+                </p>
+
               </div>
             </div>
-            <button className="seller-chat">Chat</button>
+
+            <div className="seller-actions">
+              <button className="seller-profile-btn">Ver perfil</button>
+              <button className="seller-chat-btn">Chat</button>
+            </div>
           </div>
+
 
           <div className="shipping-card">
 

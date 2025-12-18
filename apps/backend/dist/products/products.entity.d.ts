@@ -3,9 +3,11 @@ import { Category } from "../categories/categories.entity";
 import { Subcategory } from "../subcategories/subcategories.entity";
 import { FavoriteProduct } from "../favorites/favorite-product.entity";
 import { Chat } from "../chat/chat.entity";
+import { User } from "../users/users.entity";
 export declare class Product {
     id: number;
     owner_id: number;
+    seller: User;
     summary: string;
     name: string;
     description: string;

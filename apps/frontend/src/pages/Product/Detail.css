@@ -526,73 +526,85 @@
     6. TARJETA VENDEDOR
   ====================================================== */
   .seller-card {
-    border: 2px solid #e6d8c3;
-    border-radius: 18px;
-    padding: 16px;
-    display: flex;
-    gap: 14px;
-    background-color: #fff;
-    align-items: center;
-  }
+  background: #fff;
+  border: 2px solid #e8e2d9;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
-  .seller-avatar {
-    width: 54px;
-    height: 54px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
+.seller-main {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
 
-  .seller-data {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+.seller-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f2f2f2;
+}
 
-  .seller-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.seller-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-  .seller-name {
-    font-size: 16px;
-    font-weight: 600;
-    color: #4b4b4b;
-  }
+.seller-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
 
-  .seller-chat {
-    padding: 6px 14px;
-    border-radius: 10px;
-    border: 2px solid #e6d8c3;
-    background: transparent;
-    font-size: 14px;
-    font-weight: 500;
-    color: #6f6f6f;
-    cursor: pointer;
-  }
+.seller-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #1f1f1f;
+}
 
-  .seller-rating {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
+.seller-rating-row .star {
+  color: #f5b400;
+}
 
-  .star {
-    color: #f4c430;
-    font-size: 18px;
-  }
+.seller-meta {
+  font-size: 12px;
+  color: #7a7a7a;
+}
 
-  .rating-number {
-    font-size: 15px;
-    font-weight: 600;
-    color: #4b4b4b;
-  }
+.seller-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
 
-  .seller-meta {
-    font-size: 13px;
-    color: #9a9a9a;
-  }
+.seller-profile-btn {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e0d8cd;
+  border-radius: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.seller-chat-btn {
+  flex: 1;
+  background: #d9cbb3;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+}
 
 
   /* ======================================================

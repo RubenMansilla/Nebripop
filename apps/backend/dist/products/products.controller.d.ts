@@ -10,6 +10,7 @@ export declare class ProductsController {
         isFavorite: boolean;
         id: number;
         owner_id: number;
+        seller: import("../users/users.entity").User;
         summary: string;
         name: string;
         description: string;
@@ -45,6 +46,7 @@ export declare class ProductsController {
         soldDate: Date;
         id: number;
         owner_id: number;
+        seller: import("../users/users.entity").User;
         summary: string;
         name: string;
         description: string;
@@ -96,6 +98,7 @@ export declare class ProductsController {
         soldDate: Date;
         id: number;
         owner_id: number;
+        seller: import("../users/users.entity").User;
         summary: string;
         name: string;
         description: string;
