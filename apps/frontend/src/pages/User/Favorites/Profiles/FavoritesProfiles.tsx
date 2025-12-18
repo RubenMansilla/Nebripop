@@ -6,6 +6,8 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../context/AuthContext";
 import { getMyFavoriteUsers } from "../../../../api/favorites.api";
+import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
+import noReviewsImg from "../../../../assets/profile/pop-no-favorite-products.svg";
 
 interface FavoriteUser {
   id: number;
@@ -17,23 +19,52 @@ export default function FavoritesProfiles() {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  /* selector */
   const [selected, setSelected] = useState("profiles");
+
+  /* data */
   const [users, setUsers] = useState<FavoriteUser[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(false);
 
+  /* paginación */
+  const [visibleCount, setVisibleCount] = useState(25);
+  const visibleUsers = users.slice(0, visibleCount);
+  const hasMore = visibleCount < users.length;
+
+  const showMore = () => {
+    setVisibleCount((prev) => prev + 25);
+  };
+
+  /* navegación selector */
   useEffect(() => {
     if (selected === "products") {
       navigate("/favorites/products");
     }
   }, [selected, navigate]);
 
+  /* cargar favoritos */
   useEffect(() => {
     if (!token) return;
 
+    setLoading(true);
+    setShowSkeleton(false);
+
+    const skeletonTimer = setTimeout(() => {
+      setShowSkeleton(true);
+    }, 300);
+
     getMyFavoriteUsers(token)
-      .then(setUsers)
+      .then((data) => {
+        setUsers(data);
+      })
       .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        clearTimeout(skeletonTimer);
+        setLoading(false);
+      });
+
+    return () => clearTimeout(skeletonTimer);
   }, [token]);
 
   return (
@@ -64,18 +95,14 @@ export default function FavoritesProfiles() {
           <div className="info-selector">
             <div className="info-items">
               <div
-                className={`info-item ${
-                  selected === "products" ? "active" : ""
-                }`}
+                className={`info-item ${selected === "products" ? "active" : ""}`}
                 onClick={() => setSelected("products")}
               >
                 <p>Productos</p>
               </div>
 
               <div
-                className={`info-item ${
-                  selected === "profiles" ? "active" : ""
-                }`}
+                className={`info-item ${selected === "profiles" ? "active" : ""}`}
                 onClick={() => setSelected("profiles")}
               >
                 <p>Perfiles</p>
@@ -83,37 +110,68 @@ export default function FavoritesProfiles() {
             </div>
           </div>
 
-          {/* LISTA DE USUARIOS */}
-          <div className="favorites-users-wrapper">
-            {loading ? (
-              <p>Cargando perfiles...</p>
-            ) : users.length === 0 ? (
-              <p className="empty-text">
-                Aún no has añadido usuarios a favoritos
-              </p>
-            ) : (
-              users.map((user) => (
-                <div
-                  key={user.id}
-                  className="favorite-user-row"
-                  onClick={() => navigate(`/users/${user.id}`)}
-                >
+          {/* LOADING + SKELETON */}
+          {loading && showSkeleton ? (
+            <ul className="product-container users-container">
+              {[...Array(5)].map((_, i) => (
+                <ProductSkeleton key={i} />
+              ))}
+            </ul>
+          ) : (
+            <>
+              {/* VACÍO */}
+              {!loading && users.length === 0 && (
+                <div className="no-reviews">
                   <img
-                    src={user.profile_picture}
-                    alt={user.full_name}
-                    className="favorite-user-avatar"
+                    src={noReviewsImg}
+                    alt="Sin favoritos"
+                    className="no-reviews-img"
                   />
-
-                  <div className="favorite-user-info">
-                    <p className="favorite-user-name">{user.full_name}</p>
-                    <p className="favorite-user-sub">
-                      Ver perfil público
-                    </p>
-                  </div>
+                  <h3>Perfiles que te gustan</h3>
+                  <p>Para guardar un perfil, pulsa “Añadir a favoritos” en su página.</p>
                 </div>
-              ))
-            )}
-          </div>
+              )}
+
+              {/* LISTA */}
+              {users.length > 0 && (
+                <>
+                  <ul className="product-container users-container">
+                    {visibleUsers.map((user) => (
+                      <li
+                        key={user.id}
+                        className="favorite-user-row"
+                        onClick={() => navigate(`/users/${user.id}`)}
+                      >
+                        <img
+                          src={user.profile_picture}
+                          alt={user.full_name}
+                          className="favorite-user-avatar"
+                        />
+
+                        <div className="favorite-user-info">
+                          <p className="favorite-user-name">{user.full_name}</p>
+                          <p className="favorite-user-sub">
+                            Ver perfil público
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {hasMore && (
+                    <div
+                      className="btn-more-reviews-container"
+                      onClick={showMore}
+                    >
+                      <div className="btn-more-reviews">
+                        Ver más perfiles
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </div>
       </section>
     </>
