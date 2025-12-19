@@ -284,3 +284,63 @@
         font-size: 13px;
     }
 }
+
+.favorite-icon-container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease;
+}
+
+.favorite-icon-container:active {
+    transform: scale(0.98);
+}
+
+@keyframes bounce {
+    0% {
+        transform: scale(0.98);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+.favorite-icon-container.liked {
+    animation: subtle-pulse 0.3s ease-out;
+}
+
+.heart-svg {
+    width: 28px;
+    height: 28px;
+    display: block;
+    overflow: visible;
+}
+
+.heart-outline-path {
+    fill: #29363d;
+    transition: fill 0.3s ease;
+}
+
+.favorite-icon-container.liked .heart-outline-path {
+    fill: #ce3528;
+}
+
+.heart-fill-circle {
+    fill: #ce3528;
+    r: 0;
+    transition: r 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* El círculo crece */
+.favorite-icon-container.liked .heart-fill-circle {
+    r: 20px;
+}

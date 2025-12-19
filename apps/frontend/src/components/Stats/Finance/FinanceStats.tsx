@@ -1,9 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
 import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { AuthContext } from "../../../context/AuthContext";
-import { getFinancialStats } from "../../../api/products.api";
 import './FinanceStats.css';
 import type { FinancialDataPoint } from '../../../types/financialDataPoint';
 
@@ -61,12 +58,9 @@ export default function FinanceStats({ data, globalViews, range, setRange }: Fin
                         <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#999' }} />
                         <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
 
-                        {/* PINTAMOS INGRESOS Y GASTOS */}
                         <Area type="monotone" dataKey="ingresos" stroke="#4caf50" strokeWidth={3} fillOpacity={1} fill="url(#colorIngresos)" name="Ingresos" />
                         <Area type="monotone" dataKey="gastos" stroke="#f44336" strokeWidth={3} fillOpacity={1} fill="url(#colorGastos)" name="Gastos" />
 
-                        {/* OPCIONAL: Si quieres pintar reseñas en el gráfico como línea pequeña */}
-                        {/* <Area type="monotone" dataKey="reviews" stroke="#8884d8" fill="none" name="Reseñas" /> */}
                     </AreaChart>
                 </ResponsiveContainer>
             </div>

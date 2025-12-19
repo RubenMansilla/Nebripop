@@ -10,7 +10,7 @@ import { hideSoldTransaction, hidePurchasedTransaction } from '../../api/purchas
 
 export default function Product({ product, mode, onUnfavorite, onDelete }: { product: ProductType, mode: "public" | "active" | "sold" | "purchased", onUnfavorite?: (id: number) => void; onDelete?: (id: number) => void }) {
 
-    const { token } = useContext(AuthContext);
+    const { token, user } = useContext(AuthContext);
 
     // Popup eliminar
     const [showPopup, setShowPopup] = useState(false);
@@ -20,6 +20,8 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
 
     // Favoritos
     const [isFavorite, setIsFavorite] = useState(product.isFavorite ?? false);
+
+    const isOwner = user && user.id === product.owner_id;
 
     /* ================= ELIMINAR PRODUCTO ================= */
 
@@ -48,17 +50,16 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
             }
             else if (mode === "sold") {
                 // CASO 2: Producto vendido -> Ocultar del historial
-                // NOTA: 'product.purchaseId' debe venir del backend en la lista de vendidos
                 if (!product.purchaseId) {
                     throw new Error("No se encontró el ID de la transacción para ocultar.");
                 }
                 await hideSoldTransaction(product.purchaseId, token);
                 toast.success("Venta ocultada del historial.");
-            } else if (mode === "purchased") { // O el nombre que uses para la pestaña compras
+            } else if (mode === "purchased") {
                 // Ocultar Compra
                 if (!product.purchaseId) throw new Error("Falta ID de transacción");
 
-                // Llamamos al endpoint de /buy/:id
+                // Llamar al endpoint de /buy/:id
                 await hidePurchasedTransaction(product.purchaseId, token);
                 toast.success("Compra ocultada del historial.");
             }
@@ -86,20 +87,26 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
 
     const toggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!token) return;
+        if (!token) {
+            toast.error("Inicia sesión para guardar favoritos");
+            return;
+        }
+
+        const previousState = isFavorite;
+
+        setIsFavorite(!previousState);
 
         try {
-            if (isFavorite) {
+            if (previousState) {
                 await removeFavorite(product.id, token);
-                setIsFavorite(false);
-
                 if (onUnfavorite) onUnfavorite(product.id);
             } else {
                 await addFavorite(product.id, token);
-                setIsFavorite(true);
             }
         } catch (err) {
             console.error("Error toggling favorite:", err);
+            setIsFavorite(previousState);
+            toast.error("Error al actualizar favoritos");
         }
     };
 
@@ -181,42 +188,45 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                         <p>{product.price} €</p>
 
                         <div className="product-actions">
-                            {mode === "public" && (
-                                <div className="favorite" onClick={toggleFavorite}>
-                                    {isFavorite ? (
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="28"
-                                            height="28"
-                                            fill="#ce3528"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M12 21s-5.9-3.1-9-7.5S3 3 7.5 3C9.6 3 12 5 12 5s2.4-2 4.5-2C21 3 24 7.5 21 13.5S12 21 12 21z" />
-                                        </svg>
-                                    ) : (
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="28"
-                                            height="28"
-                                            fill="#29363d"
-                                            viewBox="0 0 23 24"
-                                        >
-                                            <path d="M8.411 3.75c1.216.004 2.4.385 3.373 1.09..." />
-                                        </svg>
-                                    )}
-                                </div>
-                            )}
-
-                            {(mode === "active" || mode === "sold") && (
-                                <div className="delete-btn" onClick={() => handleDeleteClick(product.id)}>
+                            {mode === "public" && !isOwner && (
+                                <div
+                                    className={`favorite favorite-icon-container ${isFavorite ? "liked" : ""}`}
+                                    onClick={toggleFavorite}
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        width="32"
-                                        height="32"
+                                        width="28"
+                                        height="28"
                                         viewBox="0 0 24 24"
+                                        className="heart-svg"
                                     >
-                                        <g fill="none" stroke="#000" strokeWidth="1.5">
-                                            <path d="M3.04 4.294..." />
+                                        {/* 1. MÁSCARA (CLIP PATH) */}
+                                        <defs>
+                                            <clipPath id={`heart-clip-${product.id}`}>
+                                                <path d="M12 21s-5.9-3.1-9-7.5S3 3 7.5 3C9.6 3 12 5 12 5s2.4-2 4.5-2C21 3 24 7.5 21 13.5S12 21 12 21z" />
+                                            </clipPath>
+                                        </defs>
+
+                                        {/* 2. EL BORDE (FONDO) */}
+                                        {/* Se pinta de rojo cuando está activo gracias al CSS, mejorando la fusión */}
+                                        <g transform="translate(0.5, 0)">
+                                            <path
+                                                className="heart-outline-path"
+                                                fillRule="evenodd"
+                                                clipRule="evenodd"
+                                                d="M8.411 3.75c1.216.004 2.4.385 3.373 1.09l.005.004q.093.069.211.072a.4.4 0 0 0 .225-.072l.005-.004a5.8 5.8 0 0 1 3.39-1.09h.011a6.37 6.37 0 0 1 4.304 1.737c1.148 1.096 1.804 2.581 1.815 4.142v.005c0 3.182-1.948 5.652-3.974 7.362-2.037 1.72-4.277 2.777-5.144 3.135l-.012.005a1.7 1.7 0 0 1-.609.113 1.6 1.6 0 0 1-.657-.124c-.838-.366-3.077-1.419-5.118-3.133-2.029-1.704-3.986-4.168-3.986-7.358v-.005c.01-1.566.672-3.056 1.827-4.152A6.38 6.38 0 0 1 8.4 3.75zm4.702 2.303c-.323.238-.719.36-1.108.363h-.01c-.4-.003-.778-.13-1.094-.363a4.3 4.3 0 0 0-2.49-.803A4.88 4.88 0 0 0 5.11 6.565a4.28 4.28 0 0 0-1.36 3.071c.001 2.536 1.56 4.619 3.45 6.207 1.868 1.569 3.94 2.551 4.738 2.9l.019.006h.048a.3.3 0 0 0 .066-.009c.793-.328 2.87-1.314 4.738-2.89 1.887-1.594 3.44-3.683 3.441-6.214a4.28 4.28 0 0 0-1.35-3.063 4.88 4.88 0 0 0-3.285-1.323 4.3 4.3 0 0 0-2.502.803"
+                                            />
+                                        </g>
+
+                                        {/* 3. EL RELLENO (CÍRCULO QUE SE EXPANDE) */}
+                                        {/* Aplicamos la máscara al grupo para que el círculo solo se vea DENTRO del corazón */}
+                                        <g clipPath={`url(#heart-clip-${product.id})`}>
+                                            <circle
+                                                className="heart-fill-circle"
+                                                cx="12"
+                                                cy="12"
+                                                r="0"
+                                            />
                                         </g>
                                     </svg>
                                 </div>
@@ -272,7 +282,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                 </div >
             </li >
 
-            {/* ================= POPUP ================= */}
+            {/* ================= POPUP Eliminar Producto ================= */}
             {showPopup && (
                 <div className="popup-backdrop">
                     <div className="unsaved-changes-popup">

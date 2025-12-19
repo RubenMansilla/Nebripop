@@ -7,6 +7,19 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
+/* Eliminar outline del contenedor y del SVG interno */
+.finance-stats-container .recharts-wrapper,
+.finance-stats-container .recharts-surface,
+.finance-stats-container svg {
+    outline: none !important;
+    border: none !important;
+}
+
+/* Regla "nuclear" solo para este componente: nada dentro debe tener outline al hacer focus */
+.finance-stats-container *:focus {
+    outline: none !important;
+}
+
 /* HEADER Y BOTONES */
 .finance-header {
     display: flex;

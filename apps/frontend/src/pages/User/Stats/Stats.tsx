@@ -12,21 +12,24 @@ import ProductStatsSkeleton from '../../../components/Stats/Product/Skeleton/Pro
 import FinanceStatsSkeleton from '../../../components/Stats/Finance/Skeleton/FinanceSkeleton';
 import type { FinancialDataPoint } from '../../../types/financialDataPoint';
 
-
 export default function Stats() {
 
     const { token } = useContext(AuthContext);
 
+    // Estado de carga global (para la primera vez que entras)
     const [loading, setLoading] = useState(true);
     const [showSkeleton, setShowSkeleton] = useState(false);
-    const [products, setProducts] = useState([]);
 
+    // Estado de carga específico solo para cuando cambias el rango
+    const [isUpdatingFinance, setIsUpdatingFinance] = useState(false);
+
+    const [products, setProducts] = useState([]);
     const [financeRange, setFinanceRange] = useState('year');
     const [financeData, setFinanceData] = useState<FinancialDataPoint[]>([]);
     const [globalViews, setGlobalViews] = useState(0);
 
+    // 1. EFECTO DE CARGA INICIAL (Productos y configuración inicial)
     useEffect(() => {
-
         if (!token) return;
 
         setLoading(true);
@@ -36,14 +39,14 @@ export default function Stats() {
             setShowSkeleton(true);
         }, 400);
 
-        const loadAllStats = async () => {
+        const loadInitialData = async () => {
             try {
-                const [productsRes, financeRes] = await Promise.all([
-                    getMostViewedProducts(token),
-                    getFinancialStats(token, financeRange)
-                ]);
-
+                // Cargamos productos solo una vez al inicio
+                const productsRes = await getMostViewedProducts(token);
                 setProducts(productsRes || []);
+
+                // También cargamos las finanzas iniciales aquí para que todo aparezca junto
+                const financeRes = await getFinancialStats(token, financeRange);
                 setFinanceData(financeRes.chartData || []);
                 setGlobalViews(financeRes.meta?.totalViews || 0);
 
@@ -55,23 +58,42 @@ export default function Stats() {
             }
         };
 
-        loadAllStats();
+        loadInitialData();
 
-        // Limpieza si el componente se desmonta antes de terminar
         return () => clearTimeout(skeletonTimer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token]); // Quitamos 'financeRange' de aquí para que no recargue todo
 
-    }, [token, financeRange]);
+
+    // 2. EFECTO SOLO PARA FINANZAS (Cuando cambia el rango)
+    useEffect(() => {
+        if (!token || loading) return; // Si está cargando el inicial, no hacemos nada
+
+        const updateFinance = async () => {
+            setIsUpdatingFinance(true); // Opcional: podrías usar esto para poner un spinner pequeño en la gráfica
+            try {
+                const financeRes = await getFinancialStats(token, financeRange);
+                setFinanceData(financeRes.chartData || []);
+                setGlobalViews(financeRes.meta?.totalViews || 0);
+            } catch (error) {
+                console.error("Error actualizando finanzas:", error);
+            } finally {
+                setIsUpdatingFinance(false);
+            }
+        };
+
+        updateFinance();
+
+    }, [financeRange, token]); // Este sí depende del rango
+
 
     // LÓGICA PARA SABER SI ESTÁ VACÍO
     const hasProducts = products.length > 0;
-
-    // Para finanzas, comprobar si hay algún ingreso, gasto o venta en el array
     const hasFinanceActivity = financeData.some(item =>
         (item.ingresos > 0) || (item.gastos > 0) || (item.ventas > 0) || (item.reviews > 0)
     ) || globalViews > 0;
 
     const isEmpty = !hasProducts && !hasFinanceActivity;
-
     return (
         <>
             <Navbar />
@@ -117,7 +139,7 @@ export default function Stats() {
                         <>
                             <div className="stats-container">
                                 <ProductStats data={products} />
-                                <div className="finance-stats">
+                                <div className="finance-stats" style={{ opacity: isUpdatingFinance ? 0.6 : 1, transition: 'opacity 0.2s' }}>
                                     <FinanceStats
                                         data={financeData}
                                         globalViews={globalViews}

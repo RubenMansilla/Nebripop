@@ -7,13 +7,25 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../context/AuthContext";
 import { getMyFavoriteUsers } from "../../../../api/favorites.api";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
-import noReviewsImg from "../../../../assets/profile/pop-no-favorite-products.svg";
+import noReviewsImg from "../../../../assets/profile/pop-no-favorite-users.svg";
 
 interface FavoriteUser {
   id: number;
   full_name: string;
   profile_picture: string;
 }
+
+
+const createSlug = (name: string) => {
+  return name
+    .toString()
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar tildes
+    .trim()
+    .replace(/\s+/g, '-') // Espacios a guiones
+    .replace(/[^\w-]+/g, '') // Borrar caracteres raros
+    .replace(/--+/g, '-'); // Quitar guiones dobles
+};
 
 export default function FavoritesProfiles() {
   const { token } = useContext(AuthContext);
@@ -127,8 +139,8 @@ export default function FavoritesProfiles() {
                     alt="Sin favoritos"
                     className="no-reviews-img"
                   />
-                  <h3>Perfiles que te gustan</h3>
-                  <p>Para guardar un perfil, pulsa “Añadir a favoritos” en su página.</p>
+                  <h3>Perfiles que te interesan</h3>
+                  <p>Para guardar un perfil de usuario, pulsa el icono de perfil favorito.</p>
                 </div>
               )}
 
@@ -140,7 +152,10 @@ export default function FavoritesProfiles() {
                       <li
                         key={user.id}
                         className="favorite-user-row"
-                        onClick={() => navigate(`/users/${user.id}`)}
+                        onClick={() => {
+                          const slug = createSlug(user.full_name);
+                          navigate(`/users/${slug}-${user.id}`);
+                        }}
                       >
                         <img
                           src={user.profile_picture}

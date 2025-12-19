@@ -15,6 +15,7 @@ import type { ReviewType } from "../../types/review";
 import type { UserType } from "../../types/user";
 
 export default function PublicUser() {
+
   const { userId } = useParams();
 
   const [user, setUser] = useState<UserType | null>(null);
@@ -28,7 +29,9 @@ export default function PublicUser() {
   useEffect(() => {
     if (!userId) return;
 
-    const id = Number(userId);
+    const rawId = userId.split("-").pop();
+    const id = Number(rawId);
+
     if (Number.isNaN(id)) {
       setNotFound(true);
       setLoading(false);

@@ -34,7 +34,7 @@ export default function FavoritesProducts() {
         if (!token) return;
 
         setLoading(true);
-        setShowSkeleton(false); // Reseteamos al iniciar
+        setShowSkeleton(false);
 
         // Solo mostramos el skeleton si tarda más de 300ms
         const skeletonTimer = setTimeout(() => {
@@ -152,24 +152,6 @@ export default function FavoritesProducts() {
                                             <div className='btn-more-reviews'>Ver más productos</div>
                                         </div>
                                     )}
-                                    {/* < ul className="product-container">
-                                        {FavoriteProducts.length === 0 ? (
-                                            [...Array(5)].map((_, i) => <ProductSkeleton key={i} />)
-                                        ) : (
-                                            visibleProducts.map((p) => (
-                                                <Product
-                                                    key={p.id}
-                                                    product={p}
-                                                    mode="public"
-                                                    onUnfavorite={(id) =>
-                                                        setFavoriteProducts((prev) =>
-                                                            prev.filter((prod) => prod.id !== id)
-                                                        )
-                                                    }
-                                                />
-                                            ))
-                                        )}
-                                    </ul> */}
                                 </>
                             )}
                         </>
