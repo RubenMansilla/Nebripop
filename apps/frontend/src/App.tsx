@@ -8,10 +8,13 @@ import Home from "./pages/Home/Home";
 import Detail from "./pages/Product/Detail";
 
 // USER PROFILE PAGES (NUEVA RUTA)
+import ProfileLayout from "./components/Profile/Layout/ProfileLayout";
 import User from "./pages/User/Me/Me";
 import Published from "./pages/User/Catalog/Published/Published";
 import Solds from "./pages/User/Catalog/Sold/Solds";
-import Wallet from "./pages/User/Wallet/Wallet";
+import Balance from "./pages/User/Wallet/Balance/Balance";
+import BankDetails from "./pages/User/Wallet/BankDetails/BankDetails";
+import History from "./pages/User/Wallet/History/History";
 import Chat from "./pages/User/Chat/Chat";
 import FavoritesProducts from "./pages/User/Favorites/Products/FavoritesProducts";
 import FavoritesProfiles from "./pages/User/Favorites/Profiles/FavoritesProfiles";
@@ -72,132 +75,35 @@ export default function App() {
             <Route path="/filtros" element={<Filtro />} />
             <Route path="/product/:productId" element={<Detail />} />
 
-            {/* PROTECTED ROUTES */}
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <User />
-                </ProtectedRoute>
-              }
-            />
+            <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
-            <Route
-              path="/profile/info"
-              element={
-                <ProtectedRoute>
-                  <Info />
-                </ProtectedRoute>
-              }
-            />
+              {/* Perfil */}
+              <Route path="/profile" element={<User />} />
+              <Route path="/profile/info" element={<Info />} />
+              <Route path="/profile/reviews" element={<ReviewProfile />} />
+              <Route path="/profile/chat" element={<Chat />} />
+              <Route path="/profile/stats" element={<Stats />} />
 
-            <Route
-              path="/profile/reviews"
-              element={
-                <ProtectedRoute>
-                  <ReviewProfile />
-                </ProtectedRoute>
-              }
-            />
+              {/* Catálogo */}
+              <Route path="/catalog/published" element={<Published />} />
+              <Route path="/catalog/sold" element={<Solds />} />
 
-            <Route
-              path="/catalog/published"
-              element={
-                <ProtectedRoute>
-                  <Published />
-                </ProtectedRoute>
-              }
-            />
+              {/* Monedero */}
+              <Route path="/wallet/balance" element={<Balance />} />
+              <Route path="/wallet/bank-details" element={<BankDetails />} />
+              <Route path="/wallet/history" element={<History />} />
 
-            <Route
-              path="/catalog/sold"
-              element={
-                <ProtectedRoute>
-                  <Solds />
-                </ProtectedRoute>
-              }
-            />
+              {/* Favoritos */}
+              <Route path="/favorites/products" element={<FavoritesProducts />} />
+              <Route path="/favorites/profiles" element={<FavoritesProfiles />} />
 
-            <Route
-              path="/profile/wallet"
-              element={
-                <ProtectedRoute>
-                  <Wallet />
-                </ProtectedRoute>
-              }
-            />
+              {/* Compras y Ventas */}
+              <Route path="/purchases/ongoing" element={<PurchasesOngoing />} />
+              <Route path="/purchases/completed" element={<PurchasesCompleted />} />
+              <Route path="/sales/ongoing" element={<SalesOngoing />} />
+              <Route path="/sales/completed" element={<SalesCompleted />} />
 
-            <Route
-              path="/profile/chat"
-              element={
-                <ProtectedRoute>
-                  <Chat />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/favorites/products"
-              element={
-                <ProtectedRoute>
-                  <FavoritesProducts />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/favorites/profiles"
-              element={
-                <ProtectedRoute>
-                  <FavoritesProfiles />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/purchases/ongoing"
-              element={
-                <ProtectedRoute>
-                  <PurchasesOngoing />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/purchases/completed"
-              element={
-                <ProtectedRoute>
-                  <PurchasesCompleted />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/sales/ongoing"
-              element={
-                <ProtectedRoute>
-                  <SalesOngoing />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/sales/completed"
-              element={
-                <ProtectedRoute>
-                  <SalesCompleted />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/profile/stats"
-              element={
-                <ProtectedRoute>
-                  <Stats />
-                </ProtectedRoute>
-              }
-            />
+            </Route>
 
             <Route
               path="/sell-product"

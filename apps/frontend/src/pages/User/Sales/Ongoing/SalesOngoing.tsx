@@ -68,80 +68,70 @@ export default function SalesOngoing() {
 
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
-            <section className='sidebar-container'>
-                <div className='hide-left-sidebar'>
-                    <ProfileSideBar />
+            <div className="info-section">
+                <div className="info-container">
+                    <div className="title">
+                        <h1>Tus ventas</h1>
+                    </div>
+                    <div className="description">
+                        <p>Estos son los productos de Nebripop que estan en proceso de venta</p>
+                    </div>
                 </div>
-                <div className='sidebar-right'>
-                    <div className="info-section">
-                        <div className="info-container">
-                            <div className="title">
-                                <h1>Tus ventas</h1>
-                            </div>
-                            <div className="description">
-                                <p>Estos son los productos de Nebripop que estan en proceso de venta</p>
-                            </div>
-                        </div>
+            </div>
+            <div className="info-selector">
+                <div className="info-items">
+                    <div
+                        className={`info-item ${selected === "ongoing" ? "active" : ""}`}
+                        onClick={() => setSelected("ongoing")}
+                    >
+                        <p>En curso</p>
                     </div>
-                    <div className="info-selector">
-                        <div className="info-items">
-                            <div
-                                className={`info-item ${selected === "ongoing" ? "active" : ""}`}
-                                onClick={() => setSelected("ongoing")}
-                            >
-                                <p>En curso</p>
-                            </div>
-                            <div
-                                className={`info-item ${selected === "completed" ? "active" : ""}`}
-                                onClick={() => setSelected("completed")}
-                            >
-                                <p>Finalizadas</p>
-                            </div>
-                        </div>
+                    <div
+                        className={`info-item ${selected === "completed" ? "active" : ""}`}
+                        onClick={() => setSelected("completed")}
+                    >
+                        <p>Finalizadas</p>
                     </div>
-                    {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
-                    {loading && showSkeleton ? (
-                        <ul className="product-container">
-                            {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
-                        </ul>
-                    ) : (
-                        /* Ya cargó (o cargó tan rápido que no salió skeleton) */
-                        <>
-                            {/* No hay productos */}
-                            {sellingProcessProducts.length === 0 && !loading && (
-                                <div className="no-reviews">
-                                    <img
-                                        src={noReviewsImg}
-                                        alt="Sin valoraciones"
-                                        className="no-reviews-img"
-                                    />
-                                    <h3>Sin ventas en curso todavía</h3>
-                                    <p>Empieza a vender en Nebripop. ¡Ya verás qué bien te sienta!</p>
-                                </div>
-                            )}
+                </div>
+            </div>
+            {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
+            {loading && showSkeleton ? (
+                <ul className="product-container">
+                    {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                </ul>
+            ) : (
+                /* Ya cargó (o cargó tan rápido que no salió skeleton) */
+                <>
+                    {/* No hay productos */}
+                    {sellingProcessProducts.length === 0 && !loading && (
+                        <div className="no-reviews">
+                            <img
+                                src={noReviewsImg}
+                                alt="Sin valoraciones"
+                                className="no-reviews-img"
+                            />
+                            <h3>Sin ventas en curso todavía</h3>
+                            <p>Empieza a vender en Nebripop. ¡Ya verás qué bien te sienta!</p>
+                        </div>
+                    )}
 
-                            {/* Hay productos */}
-                            {sellingProcessProducts.length > 0 && (
-                                <>
-                                    <ul className="product-container">
-                                        {visibleProducts.map((p) => (
-                                            <Product key={p.id} product={p} mode="active" />
-                                        ))}
-                                    </ul>
-                                    {hasMore && (
-                                        <div className="btn-more-reviews-container" onClick={showMore}>
-                                            <div className='btn-more-reviews'>Ver más productos</div>
-                                        </div>
-                                    )}
-                                </>
+                    {/* Hay productos */}
+                    {sellingProcessProducts.length > 0 && (
+                        <>
+                            <ul className="product-container">
+                                {visibleProducts.map((p) => (
+                                    <Product key={p.id} product={p} mode="active" />
+                                ))}
+                            </ul>
+                            {hasMore && (
+                                <div className="btn-more-reviews-container" onClick={showMore}>
+                                    <div className='btn-more-reviews'>Ver más productos</div>
+                                </div>
                             )}
                         </>
                     )}
-                </div>
-            </section>
+                </>
+            )}
         </>
     )
 }

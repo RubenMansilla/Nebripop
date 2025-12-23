@@ -1,0 +1,38 @@
+/* Scrollbar */
+*::-webkit-scrollbar {
+    width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #b7bec3;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #9aa1a6;
+}
+
+.sidebar-container {
+    width: 100%;
+    margin: auto;
+    height: calc(100vh - 82px - 72px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    border-top: 1.3px solid #e7ebed;
+}
+
+@media (max-width: 990px) {
+
+    .sidebar-container {
+        height: calc(100vh - 70px - 72px);
+    }
+
+    .sidebar-container {
+        width: 100%;
+    }
+}

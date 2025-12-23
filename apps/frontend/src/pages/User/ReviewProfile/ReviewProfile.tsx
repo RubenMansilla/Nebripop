@@ -47,8 +47,6 @@ export default function ReviewProfile() {
         setVisibleCount(prev => prev + 35);
     };
 
-    // --- Lógica de Carga con Debounce (Anti-parpadeo) ---
-    // --- Lógica de Carga con Debounce (Anti-parpadeo) ---
     useEffect(() => {
         if (!user) return;
 
@@ -104,118 +102,108 @@ export default function ReviewProfile() {
 
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
-            <section className='sidebar-container'>
-                <div className='hide-left-sidebar'>
-                    <ProfileSideBar />
+            <div className="info-section">
+                <div className="info-container">
+                    <div className="title">
+                        <h1>Tu perfil</h1>
+                    </div>
+                    <div className="description">
+                        <p>Aquí podrás ver y editar los datos de tu perfil</p>
+                    </div>
                 </div>
-                <div className='sidebar-right'>
-                    <div className="info-section">
-                        <div className="info-container">
-                            <div className="title">
-                                <h1>Tu perfil</h1>
-                            </div>
-                            <div className="description">
-                                <p>Aquí podrás ver y editar los datos de tu perfil</p>
-                            </div>
-                        </div>
-                        <div className="logout" onClick={logout}>
-                            <p>Cerrar sesión</p>
-                        </div>
+                <div className="logout" onClick={logout}>
+                    <p>Cerrar sesión</p>
+                </div>
+            </div>
+            <div className="info-selector">
+                <div className="info-items">
+                    <div
+                        className={`info-item ${selected === "perfil" ? "active" : ""}`}
+                        onClick={() => setSelected("perfil")}
+                    >
+                        <p>Perfil</p>
                     </div>
-                    <div className="info-selector">
-                        <div className="info-items">
-                            <div
-                                className={`info-item ${selected === "perfil" ? "active" : ""}`}
-                                onClick={() => setSelected("perfil")}
-                            >
-                                <p>Perfil</p>
-                            </div>
-                            <div
-                                className={`info-item ${selected === "valoraciones" ? "active" : ""}`}
-                                onClick={() => setSelected("valoraciones")}
-                            >
-                                <p>Valoraciones</p>
-                            </div>
-                        </div>
+                    <div
+                        className={`info-item ${selected === "valoraciones" ? "active" : ""}`}
+                        onClick={() => setSelected("valoraciones")}
+                    >
+                        <p>Valoraciones</p>
                     </div>
+                </div>
+            </div>
 
-                    <div className="sort-by-container">
-                        <div
-                            className={`sort-by ${(!loading && reviews.length === 0) ? "disabled" : ""}`}
-                            ref={sortRef}
-                            onClick={() => {
-                                if (!loading && reviews.length === 0) return;
-                                setOpen(!open);
-                            }}
-                        >
-                            <p>Ordenar por: {selectedLabel}</p>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
-                                <path fill="none" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m7 10l5 5m0 0l5-5" />
-                            </svg>
-                        </div>
-                        {open && (
-                            <div className="sort-dropdown" ref={dropdownRef}>
-                                <p className={sortOption === "newest" ? "active" : ""} onClick={() => selectOption("newest")}>Más recientes</p>
-                                <p className={sortOption === "oldest" ? "active" : ""} onClick={() => selectOption("oldest")}>Más antiguas</p>
-                                <p className={sortOption === "low-rating" ? "active" : ""} onClick={() => selectOption("low-rating")}>Valoración: menor a mayor</p>
-                                <p className={sortOption === "high-rating" ? "active" : ""} onClick={() => selectOption("high-rating")}>Valoración: mayor a menor</p>
-                            </div>
-                        )}
+            <div className="sort-by-container">
+                <div
+                    className={`sort-by ${(!loading && reviews.length === 0) ? "disabled" : ""}`}
+                    ref={sortRef}
+                    onClick={() => {
+                        if (!loading && reviews.length === 0) return;
+                        setOpen(!open);
+                    }}
+                >
+                    <p>Ordenar por: {selectedLabel}</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                        <path fill="none" stroke="#000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m7 10l5 5m0 0l5-5" />
+                    </svg>
+                </div>
+                {open && (
+                    <div className="sort-dropdown" ref={dropdownRef}>
+                        <p className={sortOption === "newest" ? "active" : ""} onClick={() => selectOption("newest")}>Más recientes</p>
+                        <p className={sortOption === "oldest" ? "active" : ""} onClick={() => selectOption("oldest")}>Más antiguas</p>
+                        <p className={sortOption === "low-rating" ? "active" : ""} onClick={() => selectOption("low-rating")}>Valoración: menor a mayor</p>
+                        <p className={sortOption === "high-rating" ? "active" : ""} onClick={() => selectOption("high-rating")}>Valoración: mayor a menor</p>
                     </div>
+                )}
+            </div>
 
-                    {/* --- RENDERIZADO CONDICIONAL LIMPIO --- */}
+            {/* --- RENDERIZADO CONDICIONAL LIMPIO --- */}
 
-                    {/* CASO 1: Cargando Lento -> Skeleton */}
-                    {loading && showSkeleton ? (
-                        <div className="review-container">
-                            <ReviewSkeleton />
-                            <ReviewSkeleton />
-                            <ReviewSkeleton />
+            {/* CASO 1: Cargando Lento -> Skeleton */}
+            {loading && showSkeleton ? (
+                <div className="review-container">
+                    <ReviewSkeleton />
+                    <ReviewSkeleton />
+                    <ReviewSkeleton />
+                </div>
+            ) : (
+                /* CASO 2: Carga terminada (o muy rápida) */
+                <>
+                    {/* Sub-caso: No hay reviews */}
+                    {reviews.length === 0 && !loading && (
+                        <div className="no-reviews">
+                            <img
+                                src={noReviewsImg}
+                                alt="Sin valoraciones"
+                                className="no-reviews-img"
+                            />
+                            <h3>Nadie ha opinado todavía</h3>
+                            <p>
+                                Después de una transacción pide que te valoren.
+                                Las opiniones inspiran confianza.
+                            </p>
                         </div>
-                    ) : (
-                        /* CASO 2: Carga terminada (o muy rápida) */
+                    )}
+
+                    {/* Sub-caso: Hay reviews */}
+                    {reviews.length > 0 && (
                         <>
-                            {/* Sub-caso: No hay reviews */}
-                            {reviews.length === 0 && !loading && (
-                                <div className="no-reviews">
-                                    <img
-                                        src={noReviewsImg}
-                                        alt="Sin valoraciones"
-                                        className="no-reviews-img"
-                                    />
-                                    <h3>Nadie ha opinado todavía</h3>
-                                    <p>
-                                        Después de una transacción pide que te valoren.
-                                        Las opiniones inspiran confianza.
-                                    </p>
-                                </div>
-                            )}
+                            <div className="review-container">
+                                {reviews.slice(0, visibleCount).map((rev) => (
+                                    <Review review={rev} key={rev.id} />
+                                ))}
+                            </div>
 
-                            {/* Sub-caso: Hay reviews */}
-                            {reviews.length > 0 && (
-                                <>
-                                    <div className="review-container">
-                                        {reviews.slice(0, visibleCount).map((rev) => (
-                                            <Review review={rev} key={rev.id} />
-                                        ))}
+                            {reviews.length > visibleCount && (
+                                <div className="btn-more-reviews-container">
+                                    <div className='btn-more-reviews' onClick={loadMore}>
+                                        Ver más valoraciones
                                     </div>
-
-                                    {reviews.length > visibleCount && (
-                                        <div className="btn-more-reviews-container">
-                                            <div className='btn-more-reviews' onClick={loadMore}>
-                                                Ver más valoraciones
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
+                                </div>
                             )}
                         </>
                     )}
-                </div>
-            </section>
+                </>
+            )}
         </>
     )
 }

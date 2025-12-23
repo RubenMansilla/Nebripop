@@ -96,62 +96,53 @@ export default function Stats() {
     const isEmpty = !hasProducts && !hasFinanceActivity;
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
-            <section className='sidebar-container'>
-                <div className='hide-left-sidebar'>
-                    <ProfileSideBar />
+
+            <div className="info-section">
+                <div className="info-container">
+                    <div className="title">
+                        <h1>Estadísticas</h1>
+                    </div>
+                    <div className="description">
+                        <p>Echemos cuentas... Controla cuáles de tus productos tienen más éxito para mejorar tus ventas</p>
+                    </div>
                 </div>
-                <div className='sidebar-right'>
-                    <div className="info-section">
-                        <div className="info-container">
-                            <div className="title">
-                                <h1>Estadísticas</h1>
-                            </div>
-                            <div className="description">
-                                <p>Echemos cuentas... Controla cuáles de tus productos tienen más éxito para mejorar tus ventas</p>
-                            </div>
+            </div>
+            {loading && showSkeleton ? (
+                <div className="stats-container">
+                    <ProductStatsSkeleton />
+                    <div className="finance-stats">
+                        <FinanceStatsSkeleton />
+                    </div>
+                </div>
+            ) : loading && !showSkeleton ? (
+                <div style={{ minHeight: '600px' }}></div>
+            ) : isEmpty ? (
+                <div className="no-stats">
+                    <img
+                        src={noReviewsImg}
+                        alt="Sin valoraciones"
+                        className="no-reviews-img"
+                    />
+                    <h3>Sin estadísticas todavía</h3>
+                    <p>
+                        Para ver estadísticas, primero dale vidilla a tu catálogo: sube, destaca... ¡esas cosas que hacemos aquí en Nebripop!
+                    </p>
+                </div>
+            ) : (
+                <>
+                    <div className="stats-container">
+                        <ProductStats data={products} />
+                        <div className="finance-stats" style={{ opacity: isUpdatingFinance ? 0.6 : 1, transition: 'opacity 0.2s' }}>
+                            <FinanceStats
+                                data={financeData}
+                                globalViews={globalViews}
+                                range={financeRange}
+                                setRange={setFinanceRange}
+                            />
                         </div>
                     </div>
-                    {loading && showSkeleton ? (
-                        <div className="stats-container">
-                            <ProductStatsSkeleton />
-                            <div className="finance-stats">
-                                <FinanceStatsSkeleton />
-                            </div>
-                        </div>
-                    ) : loading && !showSkeleton ? (
-                        <div style={{ minHeight: '600px' }}></div>
-                    ) : isEmpty ? (
-                        <div className="no-stats">
-                            <img
-                                src={noReviewsImg}
-                                alt="Sin valoraciones"
-                                className="no-reviews-img"
-                            />
-                            <h3>Sin estadísticas todavía</h3>
-                            <p>
-                                Para ver estadísticas, primero dale vidilla a tu catálogo: sube, destaca... ¡esas cosas que hacemos aquí en Nebripop!
-                            </p>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="stats-container">
-                                <ProductStats data={products} />
-                                <div className="finance-stats" style={{ opacity: isUpdatingFinance ? 0.6 : 1, transition: 'opacity 0.2s' }}>
-                                    <FinanceStats
-                                        data={financeData}
-                                        globalViews={globalViews}
-                                        range={financeRange}
-                                        setRange={setFinanceRange}
-                                    />
-                                </div>
-                            </div>
-                        </>
-                    )}
-                </div>
-            </section>
+                </>
+            )}
         </>
     )
 }

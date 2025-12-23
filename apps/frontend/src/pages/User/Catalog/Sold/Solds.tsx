@@ -73,80 +73,70 @@ export default function Solds() {
 
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
-            <section className='sidebar-container'>
-                <div className='hide-left-sidebar'>
-                    <ProfileSideBar />
+            <div className="info-section">
+                <div className="info-container">
+                    <div className="title">
+                        <h1>Tus productos</h1>
+                    </div>
+                    <div className="description">
+                        <p>Aquí podrás subir productos, gestionar los que ya tienes y eliminar los que ya no quieras vender</p>
+                    </div>
                 </div>
-                <div className='sidebar-right'>
-                    <div className="info-section">
-                        <div className="info-container">
-                            <div className="title">
-                                <h1>Tus productos</h1>
-                            </div>
-                            <div className="description">
-                                <p>Aquí podrás subir productos, gestionar los que ya tienes y eliminar los que ya no quieras vender</p>
-                            </div>
-                        </div>
+            </div>
+            <div className="info-selector">
+                <div className="info-items">
+                    <div
+                        className={`info-item ${selected === "published" ? "active" : ""}`}
+                        onClick={() => setSelected("published")}
+                    >
+                        <p>En venta</p>
                     </div>
-                    <div className="info-selector">
-                        <div className="info-items">
-                            <div
-                                className={`info-item ${selected === "published" ? "active" : ""}`}
-                                onClick={() => setSelected("published")}
-                            >
-                                <p>En venta</p>
-                            </div>
-                            <div
-                                className={`info-item ${selected === "sold" ? "active" : ""}`}
-                                onClick={() => setSelected("sold")}
-                            >
-                                <p>Vendidos</p>
-                            </div>
-                        </div>
+                    <div
+                        className={`info-item ${selected === "sold" ? "active" : ""}`}
+                        onClick={() => setSelected("sold")}
+                    >
+                        <p>Vendidos</p>
                     </div>
-                    {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
-                    {loading && showSkeleton ? (
-                        <ul className="product-container">
-                            {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
-                        </ul>
-                    ) : (
-                        /* Ya cargó (o cargó tan rápido que no salió skeleton) */
-                        <>
-                            {/* No hay productos */}
-                            {Soldproducts.length === 0 && !loading && (
-                                <div className="no-reviews">
-                                    <img
-                                        src={noReviewsImg}
-                                        alt="Sin valoraciones"
-                                        className="no-reviews-img"
-                                    />
-                                    <h3>Sin ventas finalizadas todavía</h3>
-                                    <p>Si quieres vender algo, simplemente súbelo.</p>
-                                </div>
-                            )}
+                </div>
+            </div>
+            {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
+            {loading && showSkeleton ? (
+                <ul className="product-container">
+                    {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                </ul>
+            ) : (
+                /* Ya cargó (o cargó tan rápido que no salió skeleton) */
+                <>
+                    {/* No hay productos */}
+                    {Soldproducts.length === 0 && !loading && (
+                        <div className="no-reviews">
+                            <img
+                                src={noReviewsImg}
+                                alt="Sin valoraciones"
+                                className="no-reviews-img"
+                            />
+                            <h3>Sin ventas finalizadas todavía</h3>
+                            <p>Si quieres vender algo, simplemente súbelo.</p>
+                        </div>
+                    )}
 
-                            {/* Hay productos */}
-                            {Soldproducts.length > 0 && (
-                                <>
-                                    <ul className="product-container">
-                                        {visibleProducts.map((p) => (
-                                            <Product key={p.id} product={p} mode="sold" onDelete={handleRemoveFromList} />
-                                        ))}
-                                    </ul>
-                                    {hasMore && (
-                                        <div className="btn-more-reviews-container" onClick={showMore}>
-                                            <div className='btn-more-reviews'>Ver más productos</div>
-                                        </div>
-                                    )}
-                                </>
+                    {/* Hay productos */}
+                    {Soldproducts.length > 0 && (
+                        <>
+                            <ul className="product-container">
+                                {visibleProducts.map((p) => (
+                                    <Product key={p.id} product={p} mode="sold" onDelete={handleRemoveFromList} />
+                                ))}
+                            </ul>
+                            {hasMore && (
+                                <div className="btn-more-reviews-container" onClick={showMore}>
+                                    <div className='btn-more-reviews'>Ver más productos</div>
+                                </div>
                             )}
                         </>
                     )}
-                </div>
-            </section>
+                </>
+            )}
         </>
     )
 }

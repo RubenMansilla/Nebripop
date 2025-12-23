@@ -71,93 +71,80 @@ export default function FavoritesProducts() {
 
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
-
-            <section className="sidebar-container">
-                <div className="hide-left-sidebar">
-                    <ProfileSideBar />
+            {/* CABECERA */}
+            <div className="info-section">
+                <div className="info-container">
+                    <div className="title">
+                        <h1>Tus favoritos</h1>
+                    </div>
+                    <div className="description">
+                        <p>Estos son los productos de Nebripop que más te gustan</p>
+                    </div>
                 </div>
+            </div>
 
-                <div className="sidebar-right">
-
-                    {/* CABECERA */}
-                    <div className="info-section">
-                        <div className="info-container">
-                            <div className="title">
-                                <h1>Tus favoritos</h1>
-                            </div>
-                            <div className="description">
-                                <p>Estos son los productos de Nebripop que más te gustan</p>
-                            </div>
-                        </div>
+            {/* SELECTOR */}
+            <div className="info-selector">
+                <div className="info-items">
+                    <div
+                        className={`info-item ${selected === "products" ? "active" : ""
+                            }`}
+                        onClick={() => setSelected("products")}
+                    >
+                        <p>Productos</p>
                     </div>
 
-                    {/* SELECTOR */}
-                    <div className="info-selector">
-                        <div className="info-items">
-                            <div
-                                className={`info-item ${selected === "products" ? "active" : ""
-                                    }`}
-                                onClick={() => setSelected("products")}
-                            >
-                                <p>Productos</p>
-                            </div>
-
-                            <div
-                                className={`info-item ${selected === "profiles" ? "active" : ""
-                                    }`}
-                                onClick={() => setSelected("profiles")}
-                            >
-                                <p>Perfiles</p>
-                            </div>
-                        </div>
+                    <div
+                        className={`info-item ${selected === "profiles" ? "active" : ""
+                            }`}
+                        onClick={() => setSelected("profiles")}
+                    >
+                        <p>Perfiles</p>
                     </div>
+                </div>
+            </div>
 
-                    {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
-                    {loading && showSkeleton ? (
-                        <ul className="product-container">
-                            {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
-                        </ul>
-                    ) : (
+            {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
+            {loading && showSkeleton ? (
+                <ul className="product-container">
+                    {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                </ul>
+            ) : (
+                <>
+                    {/* No hay productos */}
+                    {FavoriteProducts.length === 0 && !loading && (
+                        <div className="no-reviews">
+                            <img
+                                src={noReviewsImg}
+                                alt="Sin valoraciones"
+                                className="no-reviews-img"
+                            />
+                            <h3>Productos que te gustan</h3>
+                            <p>Para guardar un producto, pulsa el icono de producto favorito (❤️).</p>
+                        </div>
+                    )}
+
+                    {/* LISTA DE PRODUCTOS */}
+                    {FavoriteProducts.length > 0 && (
                         <>
-                            {/* No hay productos */}
-                            {FavoriteProducts.length === 0 && !loading && (
-                                <div className="no-reviews">
-                                    <img
-                                        src={noReviewsImg}
-                                        alt="Sin valoraciones"
-                                        className="no-reviews-img"
-                                    />
-                                    <h3>Productos que te gustan</h3>
-                                    <p>Para guardar un producto, pulsa el icono de producto favorito (❤️).</p>
+                            <ul className="product-container">
+                                {visibleProducts.map((p) => (
+                                    <Product key={p.id} product={p} mode="public" onUnfavorite={(id) =>
+                                        setFavoriteProducts((prev) =>
+                                            prev.filter((prod) => prod.id !== id)
+                                        )
+                                    } />
+                                ))}
+                            </ul>
+                            {hasMore && (
+                                <div className="btn-more-reviews-container" onClick={showMore}>
+                                    <div className='btn-more-reviews'>Ver más productos</div>
                                 </div>
-                            )}
-
-                            {/* LISTA DE PRODUCTOS */}
-                            {FavoriteProducts.length > 0 && (
-                                <>
-                                    <ul className="product-container">
-                                        {visibleProducts.map((p) => (
-                                            <Product key={p.id} product={p} mode="public" onUnfavorite={(id) =>
-                                                setFavoriteProducts((prev) =>
-                                                    prev.filter((prod) => prod.id !== id)
-                                                )
-                                            } />
-                                        ))}
-                                    </ul>
-                                    {hasMore && (
-                                        <div className="btn-more-reviews-container" onClick={showMore}>
-                                            <div className='btn-more-reviews'>Ver más productos</div>
-                                        </div>
-                                    )}
-                                </>
                             )}
                         </>
                     )}
-                </div >
-            </section >
+                </>
+            )}
         </>
     );
 }

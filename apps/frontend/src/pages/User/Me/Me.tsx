@@ -7,16 +7,7 @@ export default function Me() {
 
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
-            <section className='sidebar-container'>
-                <div className='show-left-sidebar'>
-                    <ProfileSideBar />
-                </div>
-                <div className='sidebar-right-me'>
-                </div>
-            </section>
+
         </>
     )
 }
