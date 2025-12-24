@@ -131,6 +131,10 @@
         display: none;
     }
 
+    .info-selector {
+        padding-top: 10px;
+    }
+
     .info-item {
         justify-content: center;
         width: 115px;

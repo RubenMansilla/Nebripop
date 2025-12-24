@@ -28,25 +28,10 @@ export default function History() {
                 </div>
             </div>
             <div className="info-selector">
-                <div className="info-items">
-                    <div
-                        className={`info-item ${selected === "monedero" ? "active" : ""}`}
-                        onClick={() => setSelected("monedero")}
-                    >
-                        <p>Monedero</p>
-                    </div>
-                    <div
-                        className={`info-item ${selected === "datos" ? "active" : ""}`}
-                        onClick={() => setSelected("datos")}
-                    >
-                        <p>Datos</p>
-                    </div>
-                    <div
-                        className={`info-item ${selected === "historial" ? "active" : ""}`}
-                        onClick={() => setSelected("historial")}
-                    >
-                        <p>Historial</p>
-                    </div>
+                <div className="info-items-wallet">
+                    <div className={`info-item-wallet ${selected === "monedero" ? "active" : ""}`} onClick={() => setSelected("monedero")}><p>Monedero</p></div>
+                    <div className={`info-item-wallet ${selected === "datos" ? "active" : ""}`} onClick={() => setSelected("datos")}><p>Datos</p></div>
+                    <div className={`info-item-wallet ${selected === "historial" ? "active" : ""}`} onClick={() => setSelected("historial")}><p>Historial</p></div>
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef, useLayoutEffect } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import type { ReviewSummary } from "../../../types/review";
 import { reviewSummaryStore } from "../../../store/reviewSummaryStore";
@@ -7,6 +7,8 @@ import { getReviews } from "../../../api/reviews.api"; // <--- IMPORTANTE: Impor
 import './ProfileSideBar.css';
 
 export default function ProfileSideBar() {
+
+    const sidebarRef = useRef<HTMLDivElement>(null);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -18,49 +20,38 @@ export default function ProfileSideBar() {
 
     const year = new Date(user.createdAt).getFullYear();
 
-    // Foto del usuario o por defecto en caso de no tener
     const imageSrc = user.profilePicture || defaultPic;
 
-    // Resumen de valoraciones del usuario
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
 
     useEffect(() => {
         if (!user) return;
 
-        // 1. COMPROBAR DATOS EN CACHÉ (STORE)
         const cachedData = reviewSummaryStore.value;
         const hasValidData = cachedData && cachedData._userId === user.id;
 
         if (hasValidData) {
-            // A: Si tenemos datos válidos del usuario actual, los usamos ya.
             setSummary(cachedData);
         } else {
-            // B: Si NO hay datos o son de otro usuario, reseteamos a 0 visualmente...
             setSummary({ average: 0, total: 0 });
 
-            // ... Y HACEMOS EL FETCH AQUÍ MISMO PARA CALCULARLOS
-            getReviews(user.id, "newest") // O el filtro que uses por defecto
+            getReviews(user.id, "newest")
                 .then((data) => {
                     const total = data.length;
-                    // Evitar división por cero
                     const avg = total > 0
                         ? data.reduce((acc: any, r: any) => acc + r.rating, 0) / total
                         : 0;
 
                     const newSummary = { average: avg, total };
 
-                    // Actualizamos el estado local
                     setSummary(newSummary);
 
-                    // Actualizamos el store global para que otras partes (y la caché) se enteren
                     reviewSummaryStore.set(newSummary, user.id);
                 })
                 .catch(err => console.error("Error cargando resumen de reviews:", err));
         }
 
-        // 2. SUSCRIPCIÓN (Para que si ReviewProfile actualiza algo, la barra lateral se entere)
         const unsub = reviewSummaryStore.subscribe((v) => {
-            // Solo actualizamos si el ID coincide (o si el store maneja eso internamente)
             if (reviewSummaryStore.value?._userId === user.id) {
                 setSummary(v);
             }
@@ -73,10 +64,28 @@ export default function ProfileSideBar() {
         return n <= summary.average ? "filled" : "";
     };
 
+    useLayoutEffect(() => {
+        const sidebar = sidebarRef.current;
+        if (!sidebar) return;
+
+        // A. Recuperar posición al cargar el componente
+        const savedPosition = sessionStorage.getItem("sidebarScrollPos");
+        if (savedPosition) {
+            sidebar.scrollTop = parseInt(savedPosition, 10);
+        }
+
+        // B. Guardar posición cada vez que se hace scroll
+        const handleScroll = () => {
+            sessionStorage.setItem("sidebarScrollPos", sidebar.scrollTop.toString());
+        };
+
+        sidebar.addEventListener("scroll", handleScroll);
+        return () => sidebar.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
         <>
-            <div className='sidebar-left'>
+            <div className='sidebar-left' ref={sidebarRef} style={{ overflowY: 'auto', height: '100%' }}>
                 <div className={`sidebar-profile ${(location.pathname === "/profile/info" || location.pathname === "/profile/reviews") ? "active" : ""}`} onClick={() => navigate("/profile/info")}>
                     <div className="profile-pic">
                         <img src={imageSrc} alt="Foto de perfil" />
