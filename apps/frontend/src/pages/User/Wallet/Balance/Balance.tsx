@@ -1,45 +1,113 @@
 import "./Balance.css";
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { BiPlus, BiQrScan, BiBuildingHouse } from "react-icons/bi";
 import RechargeModal from "../../../../components/RechargeModal/RechargeModal";
 import ATMWithdraw from "../../../../components/ATMWithdraw/ATMWithdraw";
+import ReceiveModal from "../../../../components/ReceiveModal/ReceiveModal";
+import { getWalletBalance, depositMoney, withdrawMoney } from "../../../../api/wallet.api";
+import { AuthContext } from "../../../../context/AuthContext";
+import { toast } from "react-toastify";
+
+const toastStyles = {
+    success: {
+        style: {
+            borderRadius: "14px",
+            padding: "14px 18px",
+            backgroundColor: "#f6fff8",
+            color: "#114b2c",
+            border: "1px solid #d5f3df",
+            fontWeight: 500,
+            boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
+        },
+        iconTheme: { primary: "#28c76f", secondary: "#fff" }
+    },
+    error: {
+        style: {
+            borderRadius: "14px",
+            padding: "14px 18px",
+            backgroundColor: "#fff5f5", // Fondo rojizo suave
+            color: "#b91c1c", // Rojo oscuro
+            border: "1px solid #fecaca",
+            fontWeight: 500,
+            boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
+        },
+        iconTheme: { primary: "#ef4444", secondary: "#fff" }
+    }
+};
 
 export default function Balance() {
 
-    const [balance, setBalance] = useState(1000);
+    const [balance, setBalance] = useState(0);
+
+    const { token } = useContext(AuthContext);
 
     const navigate = useNavigate();
     const [selected, setSelected] = useState("monedero");
+
     const [showModal, setShowModal] = useState(false);
     const [showWithdraw, setShowWithdraw] = useState(false);
+    const [showReceive, setShowReceive] = useState(false);
+
+    useEffect(() => {
+        if (token) {
+            getWalletBalance(token)
+                .then((data) => {
+                    setBalance(Number(data.balance));
+                })
+                .catch((err) => console.error("Error cargando saldo:", err));
+        }
+    }, [token]);
 
     useEffect(() => {
         if (selected === "datos") navigate("/wallet/bank-details");
         if (selected === "historial") navigate("/wallet/history");
     }, [selected, navigate]);
 
-    const handleRechargeConfirm = (amount: number) => {
-        console.log(`Procesando recarga de: ${amount}€`);
-        setBalance(prev => prev + amount);
+
+    // LÓGICA DE RECARGA
+    const handleRechargeConfirm = async (amount: number) => {
+        if (!token) return toast.error("Error de sesión", toastStyles.error);
+        try {
+            const updatedWallet = await depositMoney(amount, token);
+            setBalance(Number(updatedWallet.balance));
+
+            // Notificación de Éxito
+            toast.success(`¡Has recargado ${amount.toFixed(2)}€ correctamente!`, toastStyles.success);
+        } catch (error) {
+            console.error(error);
+            // Notificación de Error
+            toast.error("Error al recargar el monedero", toastStyles.error);
+        }
     };
 
-    // Función que actualiza el estado principal
-    const handleWithdraw = (amountToWithdraw: number) => {
-        setBalance(prevBalance => prevBalance - amountToWithdraw);
+    // LÓGICA DE RETIRO (CONECTADA AL BACK)
+    const handleWithdraw = async (amountToWithdraw: number) => {
+        if (!token) return alert("Error de autenticación");
+        try {
+            const updatedWallet = await withdrawMoney(amountToWithdraw, token);
+            setBalance(Number(updatedWallet.balance));
+
+            // Notificación de Éxito
+            toast.success(`Has retirado ${amountToWithdraw.toFixed(2)}€ exitosamente`, toastStyles.success);
+
+            // Cerramos el modal de retiro (pasamos esto como prop o dejamos que ATMWithdraw se cierre solo)
+            setShowWithdraw(false);
+
+        } catch (error: any) {
+            console.error(error);
+            // Notificación de Error (Muestra el mensaje del backend si existe, ej: "Fondos insuficientes")
+            toast.error(error.message || "Error al retirar el dinero", toastStyles.error);
+        }
     };
 
-    // 1. Convertimos el número a string con 2 decimales fijos (ej: "1000.00" o "1000.50")
     const balanceFixed = balance.toFixed(2);
-
-    // 2. Separamos por el punto (JavaScript usa punto internamente)
     const [integerPart, decimalPart] = balanceFixed.split('.');
-
-    // 3. Formateamos la parte entera para que tenga puntos de miles (ej: 1.000)
     const integerFormatted = Number(integerPart).toLocaleString('es-ES');
 
     return (
         <>
+
             <div className="info-section">
                 <div className="info-container">
                     <div className="title"><h1>Monedero</h1></div>
@@ -68,7 +136,7 @@ export default function Balance() {
                         <button className="circle-btn"><BiPlus size={32} /></button>
                         <span className="action-label">Recargar</span>
                     </div>
-                    <div className="action-btn-container">
+                    <div className="action-btn-container" onClick={() => setShowReceive(true)}>
                         <button className="circle-btn"><BiQrScan size={28} /></button>
                         <span className="action-label">Cobrar</span>
                     </div>
@@ -90,6 +158,11 @@ export default function Balance() {
                 onClose={() => setShowWithdraw(false)}
                 balance={balance}
                 onWithdraw={handleWithdraw}
+            />
+
+            <ReceiveModal
+                isOpen={showReceive}
+                onClose={() => setShowReceive(false)}
             />
         </>
     )

@@ -10,6 +10,8 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
+import { Wallet } from './wallet/wallet.entity';
+import { WalletModule } from './wallet/wallet.module';
 
 
 @Module({
@@ -44,6 +46,7 @@ import { SubcategoriesModule } from './subcategories/subcategories.module';
         PurchasesModule,
         CategoriesModule,
         SubcategoriesModule,
+        WalletModule,
     ],
 })
 export class AppModule { }

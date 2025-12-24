@@ -10,15 +10,14 @@ interface ATMWithdrawProps {
 }
 
 export default function ATMWithdraw({ isOpen, onClose, balance, onWithdraw }: ATMWithdrawProps) {
+
     const [amount, setAmount] = useState<string>('');
-    const [status, setStatus] = useState<string>('');
-    const [isError, setIsError] = useState<boolean>(false);
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     useEffect(() => {
         if (isOpen) {
             setAmount('');
-            setStatus('');
-            setIsError(false);
+            setErrorMsg('');
         }
     }, [isOpen]);
 
@@ -37,29 +36,20 @@ export default function ATMWithdraw({ isOpen, onClose, balance, onWithdraw }: AT
 
         const normalizedAmount = amount.replace(',', '.');
         const withdrawValue = Number(normalizedAmount);
-
         if (!withdrawValue || withdrawValue <= 0) {
-            setIsError(true);
-            setStatus('El monto debe ser mayor a 0');
+            setErrorMsg('El monto debe ser mayor a 0');
             return;
         }
 
         if (withdrawValue > balance) {
-            setIsError(true);
-            setStatus('Fondos insuficientes');
+            setErrorMsg('Fondos insuficientes');
             return;
         }
 
         onWithdraw(withdrawValue);
 
-        setIsError(false);
-        setStatus(`¡Retiro de ${withdrawValue.toFixed(2)}€ exitoso!`);
         setAmount('');
-
-        setTimeout(() => {
-            onClose();
-            setStatus('');
-        }, 1500);
+        onClose();
     };
 
     if (!isOpen) return null;
@@ -89,7 +79,7 @@ export default function ATMWithdraw({ isOpen, onClose, balance, onWithdraw }: AT
                             className="atm-input"
                             value={amount}
                             onChange={handleChange}
-                            placeholder="0,00" // Placeholder con formato local
+                            placeholder="0,00"
                             autoFocus
                             autoComplete="off"
                         />
@@ -105,9 +95,9 @@ export default function ATMWithdraw({ isOpen, onClose, balance, onWithdraw }: AT
                     </button>
                 </form>
 
-                {status && (
-                    <div className={`atm-status ${isError ? 'error' : 'success'}`}>
-                        {isError ? '⚠️ ' : '✅ '} {status}
+                {errorMsg && (
+                    <div className="atm-status error">
+                        {errorMsg}
                     </div>
                 )}
             </div>

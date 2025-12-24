@@ -9,6 +9,7 @@ interface RechargeModalProps {
 }
 
 export default function RechargeModal({ isOpen, onClose, onConfirm }: RechargeModalProps) {
+
     const [amount, setAmount] = useState("");
     const quickAmounts = ["20", "50", "100"];
 
@@ -50,7 +51,7 @@ export default function RechargeModal({ isOpen, onClose, onConfirm }: RechargeMo
                 <div className="modal-header">
                     <h3>Recargar saldo</h3>
                     <button className="close-btn-simple" onClick={onClose}>
-                        <BiX size={24} />
+                        <BiX size={26} />
                     </button>
                 </div>
 
