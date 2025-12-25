@@ -8,8 +8,8 @@ import "./Home.css";
 
 import bolsa from "../../assets/iconos/bolsa.png";
 
-import { HOME_CATEGORIES} from "../../data/homeCategories.ts";
-import type {HomeCategoryBlock} from "../../data/homeCategories.ts";  
+import { HOME_CATEGORIES } from "../../data/homeCategories.ts";
+import type { HomeCategoryBlock } from "../../data/homeCategories.ts";
 
 /* 🔀 función helper FUERA del componente */
 function shuffleArray<T>(array: T[]): T[] {
@@ -53,7 +53,7 @@ export default function Home() {
         <section className="home-categories" key={block.categoryId}>
           <div className="categories-wrapper">
             <h2 className="section-title">{block.categoryName}</h2>
-
+            <br />
             <div className="categories-grid">
               {block.subcategories.map((sub) => (
                 <Link
@@ -74,6 +74,50 @@ export default function Home() {
           </div>
         </section>
       ))}
+
+      {/* ===================== QUIÉNES SOMOS ===================== */}
+      <section className="about-wrapper">
+        {/* BLOQUE IZQUIERDO */}
+        <div className="about-stats">
+          <span className="stats-subtitle">Wallastock Experience</span>
+
+          <h2 className="stats-year">2025</h2>
+
+          <div className="stats-row">
+            <span className="stats-number">+150</span>
+            <span className="stats-mil">mil</span>
+            <img src="/src/assets/home/user-icon.png" alt="" className="img-icon-stats" />
+          </div>
+
+          <div className="stats-divider"></div>
+          <p className="stats-users">Usuarios activos</p>
+        </div>
+
+        {/* BLOQUE DERECHO */}
+        <div className="about-card">
+          <div className="about-text">
+            <h2 className="about-title">
+              <span>¿</span>Quienes somos<span>?</span>
+            </h2>
+
+            <p className="about-description">
+              Somos una aplicación creada para conectar personas que buscan vender y
+              comprar artículos de segunda mano de forma rápida, segura y cercana.
+              Nuestra misión es dar una segunda vida a los productos, fomentar el
+              ahorro y contribuir a un consumo más sostenible, facilitando el
+              encuentro entre quienes quieren vender y quienes necesitan comprar.
+            </p>
+          </div>
+
+          <div className="about-image-wrapper">
+            <img
+              src="/src/assets/home/about-work.jpg"
+              alt="About us"
+              className="about-image"
+            />
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </>

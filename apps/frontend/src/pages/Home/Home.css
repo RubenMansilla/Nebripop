@@ -4,7 +4,17 @@
   --blanco: #FFFFFF;
 }
 
-html, body {
+/* Quitar subrayado a todos los links del home */
+.home-categories a,
+.home-categories a:hover,
+.home-categories a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+html,
+body {
   margin: 0;
   padding: 0;
   overflow-x: hidden !important;
@@ -79,8 +89,10 @@ h1 {
 
 .cta {
   display: inline-block;
-  background: #ffffff;         /* blanco normal */
-  color: #D2B990;              /* beige del texto */
+  background: #ffffff;
+  /* blanco normal */
+  color: #D2B990;
+  /* beige del texto */
   padding: 16px 28px;
   border-radius: 12px;
   text-decoration: none;
@@ -88,16 +100,20 @@ h1 {
   font-weight: 800;
   letter-spacing: .8px;
   transition: all .25s ease;
-  border: 2px solid #ffffff;   /* borde blanco */
+  border: 2px solid #ffffff;
+  /* borde blanco */
 }
 
 /* 🔥 Hover invertido */
 .cta:hover {
-  background: var(--beige);        /* beige */
-  color: #ffffff;             /* texto blanco */
-  border-color: #ffffff;      /* bordes blanco */
+  background: var(--beige);
+  /* beige */
+  color: #ffffff;
+  /* texto blanco */
+  border-color: #ffffff;
+  /* bordes blanco */
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
 }
 
 
@@ -290,16 +306,20 @@ h1 {
    SECCIÓN QUIÉNES SOMOS
 =========================== */
 
+/* ===========================
+   SECCIÓN QUIÉNES SOMOS (FINAL)
+=========================== */
+
 .about-wrapper {
   width: min(1200px, 92vw);
   margin: 80px auto;
   display: grid;
-  grid-template-columns: 1fr 1.6fr;
+  grid-template-columns: 1fr 1.7fr;
   gap: 40px;
   font-family: "Inter", sans-serif;
 }
 
-/* BLOQUE IZQUIERDO (2025, estadísticas) */
+/* ---------- IZQUIERDA ---------- */
 .about-stats {
   background: #d6c9b4;
   padding: 32px 28px;
@@ -314,7 +334,8 @@ h1 {
 }
 
 .stats-year {
-  font-size: 70px;
+  font-size: 130px;
+  text-align: center;
   font-weight: 700;
   margin: 0 0 20px 0;
 }
@@ -335,17 +356,23 @@ h1 {
   opacity: 0.9;
 }
 
+.img-icon-stats {
+  width: 40px;
+  height: auto;
+  margin-left: 6px;
+}
+
 .stats-users {
   margin-top: 8px;
   font-size: 15px;
   opacity: 0.9;
 }
 
-/* BLOQUE DERECHO */
+
+/* ---------- DERECHA ---------- */
 .about-card {
   background: #f3ebdf;
-  border-radius: 20px;
-  padding: 28px;
+  border-radius: 24px;
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   align-items: center;
@@ -353,14 +380,15 @@ h1 {
 }
 
 .about-text {
-  padding-right: 12px;
+  padding-right: 18px;
 }
 
 .about-title {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 800;
   color: #3e3e3e;
   margin-bottom: 18px;
+  margin-left: 24px;
 }
 
 .about-title span {
@@ -369,14 +397,20 @@ h1 {
 
 .about-description {
   font-size: 15px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: #4a4a4a;
+  margin-left: 24px;
+}
+
+/* Imagen curva */
+.about-image-wrapper {
+  position: relative;
+  height: 100%;
 }
 
 .about-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 0 20px 20px 120px;
 }
-
