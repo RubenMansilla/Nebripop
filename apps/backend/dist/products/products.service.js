@@ -155,9 +155,6 @@ let ProductsService = class ProductsService {
         if (!product) {
             throw new common_1.NotFoundException("Producto no encontrado");
         }
-        if (product.owner_id === userId) {
-            throw new common_1.BadRequestException("No puedes ver tus propios productos");
-        }
         return product;
     }
     async deleteProduct(productId, userId) {
@@ -203,7 +200,7 @@ let ProductsService = class ProductsService {
         }));
     }
     async getBuyingProcessProducts(userId) {
-        return this.productRepo
+        const products = await this.productRepo
             .createQueryBuilder("product")
             .innerJoin("chats", "chat", "chat.product_id = product.id")
             .leftJoinAndSelect("product.images", "images")
@@ -211,6 +208,16 @@ let ProductsService = class ProductsService {
             .andWhere("product.sold = false")
             .distinct(true)
             .getMany();
+        if (products.length === 0)
+            return [];
+        const favorites = await this.favoritesRepo.find({
+            where: { user_id: userId },
+        });
+        const favoriteIds = favorites.map((f) => f.product_id);
+        return products.map((p) => ({
+            ...p,
+            isFavorite: favoriteIds.includes(p.id),
+        }));
     }
     async getSellingProcessProducts(userId) {
         return this.productRepo

@@ -2,7 +2,7 @@ import './ReviewSkeleton.css';
 
 export default function ReviewSkeleton() {
     return (
-        <div className="review skeleton">
+        <div className="review-skeleton">
             <div className="review-header">
                 <div className="reviewer-pic skeleton-circle"></div>
                 <div className="reviewer-info">

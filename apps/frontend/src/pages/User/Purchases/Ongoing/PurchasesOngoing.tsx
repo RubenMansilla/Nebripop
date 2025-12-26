@@ -1,6 +1,3 @@
-import Navbar from '../../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../../components/Profile/ProfileSideBar/ProfileSideBar';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "../../../../context/AuthContext";
@@ -27,7 +24,6 @@ export default function PurchasesOngoing() {
 
     const hasMore = visibleCount < buyingProcessProducts.length;
     const navigate = useNavigate();
-    /* info item active */
     const [selected, setSelected] = useState("ongoing");
 
     useEffect(() => {
@@ -40,30 +36,24 @@ export default function PurchasesOngoing() {
         if (!token) return;
 
         setLoading(true);
-        setShowSkeleton(false); // Reseteamos al iniciar
+        setShowSkeleton(false);
 
-        // Solo mostramos el skeleton si tarda más de 300ms
         const skeletonTimer = setTimeout(() => {
             setShowSkeleton(true);
         }, 300);
 
-        // CAMBIO AQUÍ: Llamamos a la función de "En proceso de venta"
         getMyBuyingProcessProducts(token)
             .then((data) => {
-                // CAMBIO AQUÍ: Guarda los datos en el estado correcto
-                // Asumo que tienes un state como: const [sellingProcessProducts, setSellingProcessProducts] = useState([]);
                 setBuyingProcessProducts(data);
             })
             .catch((err) => {
                 console.error(err);
             })
             .finally(() => {
-                // Si la carga fue rápida (menos de 300ms), cancelamos el timer
                 clearTimeout(skeletonTimer);
                 setLoading(false);
             });
 
-        // Cleanup function por si el componente se desmonta
         return () => clearTimeout(skeletonTimer);
 
     }, [token]);
@@ -96,15 +86,12 @@ export default function PurchasesOngoing() {
                     </div>
                 </div>
             </div>
-            {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
             {loading && showSkeleton ? (
                 <ul className="product-container">
                     {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
                 </ul>
             ) : (
-                /* Ya cargó (o cargó tan rápido que no salió skeleton) */
                 <>
-                    {/* No hay productos */}
                     {buyingProcessProducts.length === 0 && !loading && (
                         <div className="no-reviews">
                             <img
@@ -116,13 +103,11 @@ export default function PurchasesOngoing() {
                             <p>Cuando compres algo, aquí podrás estar al día del estado de la compra.</p>
                         </div>
                     )}
-
-                    {/* Hay productos */}
                     {buyingProcessProducts.length > 0 && (
                         <>
                             <ul className="product-container">
                                 {visibleProducts.map((p) => (
-                                    <Product key={p.id} product={p} mode="active" />
+                                    <Product key={p.id} product={p} mode="public" />
                                 ))}
                             </ul>
                             {hasMore && (

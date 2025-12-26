@@ -4,13 +4,9 @@ import Review from '../../../components/Review/Review';
 import { getReviews } from "../../../api/reviews.api";
 import type { ReviewType } from '../../../types/review';
 import ReviewSkeleton from '../../../components/ReviewSkeleton/ReviewSkeleton';
-import { reviewSummaryStore } from '../../../store/reviewSummaryStore';
 import { AuthContext } from '../../../context/AuthContext';
 import noReviewsImg from '../../../assets/profile/pop-no-reviews.svg';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../components/Profile/ProfileSideBar/ProfileSideBar';
 
 export default function ReviewProfile() {
 
@@ -66,12 +62,6 @@ export default function ReviewProfile() {
                     : 0;
 
                 setVisibleCount(35);
-
-                // --- CAMBIO AQUÍ ---
-                // Ahora pasamos el user.id para firmar los datos
-                if (user) {
-                    reviewSummaryStore.set({ average: avg, total }, user.id);
-                }
             })
             .catch(err => console.error(err))
             .finally(() => {

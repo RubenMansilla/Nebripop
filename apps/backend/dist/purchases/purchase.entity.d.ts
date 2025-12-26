@@ -1,8 +1,8 @@
 import { Product } from '../products/products.entity';
 export declare class Purchase {
     id: number;
-    buyerId: number;
-    sellerId: number;
+    buyerId: string;
+    sellerId: string;
     productId: number;
     price: number;
     deletedByBuyer: boolean;

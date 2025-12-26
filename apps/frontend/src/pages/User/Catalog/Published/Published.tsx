@@ -28,7 +28,6 @@ export default function Published() {
     const [visibleCount, setVisibleCount] = useState(25);
     const visibleProducts = Activeproducts.slice(0, visibleCount);
 
-    /* info item active */
     const [selected, setSelected] = useState("published");
 
     const showMore = () => {
@@ -38,11 +37,10 @@ export default function Published() {
     const hasMore = visibleCount < Activeproducts.length;
 
     const handleRemoveFromList = (deletedId: number) => {
-        // Actualiza el estado local quitando el ID eliminado
         setActiveProducts(current => current.filter(p => p.id !== deletedId));
     };
 
-    // Lógica del Toast (sin cambios)
+
     useEffect(() => {
         if (location.state?.success && !hasShownToast.current) {
             hasShownToast.current = true;
@@ -64,21 +62,16 @@ export default function Published() {
         }
     }, [location.state, navigate, location.pathname]);
 
-    // Lógica de navegación de pestañas
     useEffect(() => {
         if (selected === "sold") {
             navigate("/catalog/sold");
         }
     }, [selected, navigate]);
-
-    // --- Lógica de Carga con Debounce (Anti-parpadeo) ---
     useEffect(() => {
         if (!token) return;
 
         setLoading(true);
-        setShowSkeleton(false); // Reseteamos para que no salga de inmediato
-
-        // Solo mostramos el skeleton si la petición tarda más de 300ms
+        setShowSkeleton(false);
         const skeletonTimer = setTimeout(() => {
             setShowSkeleton(true);
         }, 300);
@@ -91,8 +84,6 @@ export default function Published() {
                 console.error(err);
             })
             .finally(() => {
-                // Si la API responde antes de 300ms, cancelamos el timer.
-                // El skeleton NUNCA habrá aparecido.
                 clearTimeout(skeletonTimer);
                 setLoading(false);
             });
@@ -129,15 +120,12 @@ export default function Published() {
                     </div>
                 </div>
             </div>
-            {/* CASO 1: Cargando lento -> Muestra Skeleton */}
             {loading && showSkeleton ? (
                 <ul className="product-container">
                     {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
                 </ul>
             ) : (
-                /* CASO 2: Ya cargó (o cargó rápido) */
                 <>
-                    {/* Lista vacía */}
                     {Activeproducts.length === 0 && !loading && (
                         <div className="no-reviews">
                             <img
@@ -151,8 +139,6 @@ export default function Published() {
                             </p>
                         </div>
                     )}
-
-                    {/* Hay productos */}
                     {Activeproducts.length > 0 && (
                         <>
                             <ul className="product-container">

@@ -44,6 +44,29 @@ let PurchasesService = class PurchasesService {
         }
         throw new common_1.UnauthorizedException('No eres el vendedor en esta transacción');
     }
+    async findAllUserTransactions(userId, filter) {
+        const query = this.purchaseRepo.createQueryBuilder('purchase');
+        query.leftJoinAndSelect('purchase.product', 'product');
+        query.leftJoinAndSelect('product.images', 'images');
+        query.where(new typeorm_2.Brackets((qb) => {
+            if (filter === 'out' || filter === 'all') {
+                qb.orWhere('(purchase.buyerId = :userId AND purchase.deletedByBuyer = :false)', { userId, false: false });
+            }
+            if (filter === 'in' || filter === 'all') {
+                qb.orWhere('(purchase.sellerId = :userId AND purchase.deletedBySeller = :false)', { userId, false: false });
+            }
+        }));
+        query.orderBy('purchase.purchasedAt', 'DESC');
+        const transactions = await query.getMany();
+        return transactions.map(t => {
+            const isMyExpense = String(t.buyerId) === String(userId);
+            return {
+                ...t,
+                transaction_type: isMyExpense ? 'expense' : 'income',
+                display_sign: isMyExpense ? '-' : '+'
+            };
+        });
+    }
 };
 exports.PurchasesService = PurchasesService;
 exports.PurchasesService = PurchasesService = __decorate([

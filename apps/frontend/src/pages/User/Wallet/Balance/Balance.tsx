@@ -39,6 +39,7 @@ const toastStyles = {
 export default function Balance() {
 
     const [balance, setBalance] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     const { token } = useContext(AuthContext);
 
@@ -51,11 +52,18 @@ export default function Balance() {
 
     useEffect(() => {
         if (token) {
+            setLoading(true);
             getWalletBalance(token)
                 .then((data) => {
                     setBalance(Number(data.balance));
                 })
-                .catch((err) => console.error("Error cargando saldo:", err));
+                .catch((err) => {
+                    console.error("Error cargando saldo:", err);
+                    toast.error("Error al cargar el saldo", toastStyles.error);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
     }, [token]);
 
@@ -81,7 +89,7 @@ export default function Balance() {
         }
     };
 
-    // LÓGICA DE RETIRO (CONECTADA AL BACK)
+    // LÓGICA DE RETIRO
     const handleWithdraw = async (amountToWithdraw: number) => {
         if (!token) return alert("Error de autenticación");
         try {
@@ -91,12 +99,11 @@ export default function Balance() {
             // Notificación de Éxito
             toast.success(`Has retirado ${amountToWithdraw.toFixed(2)}€ exitosamente`, toastStyles.success);
 
-            // Cerramos el modal de retiro (pasamos esto como prop o dejamos que ATMWithdraw se cierre solo)
             setShowWithdraw(false);
 
         } catch (error: any) {
             console.error(error);
-            // Notificación de Error (Muestra el mensaje del backend si existe, ej: "Fondos insuficientes")
+            // Notificación de Error
             toast.error(error.message || "Error al retirar el dinero", toastStyles.error);
         }
     };
@@ -104,6 +111,9 @@ export default function Balance() {
     const balanceFixed = balance.toFixed(2);
     const [integerPart, decimalPart] = balanceFixed.split('.');
     const integerFormatted = Number(integerPart).toLocaleString('es-ES');
+
+    const displayInteger = loading ? "---" : integerFormatted;
+    const displayDecimal = loading ? ",--" : `,${decimalPart}`;
 
     return (
         <>
@@ -126,9 +136,9 @@ export default function Balance() {
             </div>
 
             <div className="balance-content">
-                <div className="balance-total">
-                    <span className="amount-integer">{integerFormatted}</span>
-                    <span className="amount-decimal">,{decimalPart}€</span>
+                <div className={`balance-total ${loading ? 'balance-loading' : 'balance-visible'}`}>
+                    <span className="amount-integer">{displayInteger}</span>
+                    <span className="amount-decimal">{displayDecimal}€</span>
                 </div>
 
                 <div className="balance-actions">

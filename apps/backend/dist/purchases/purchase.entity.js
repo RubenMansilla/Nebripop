@@ -29,12 +29,12 @@ __decorate([
     __metadata("design:type", Number)
 ], Purchase.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'buyer_id' }),
-    __metadata("design:type", Number)
+    (0, typeorm_1.Column)({ name: 'buyer_id', type: 'uuid' }),
+    __metadata("design:type", String)
 ], Purchase.prototype, "buyerId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'seller_id' }),
-    __metadata("design:type", Number)
+    (0, typeorm_1.Column)({ name: 'seller_id', type: 'uuid' }),
+    __metadata("design:type", String)
 ], Purchase.prototype, "sellerId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'product_id' }),

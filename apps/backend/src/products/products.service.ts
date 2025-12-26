@@ -220,10 +220,6 @@ export class ProductsService {
             throw new NotFoundException("Producto no encontrado");
         }
 
-        if (product.owner_id === userId) {
-            throw new BadRequestException("No puedes ver tus propios productos");
-        }
-
         return product;
     }
 
@@ -271,7 +267,7 @@ export class ProductsService {
     // ============================
     // COMPRAS FINALIZADAS
     // ============================
-    async getPurchasedProductsByUser(userId: number) {
+    async getPurchasedProductsByUser(userId: string) {
         const purchases = await this.purchaseRepo.find({
             where: { buyerId: userId, deletedByBuyer: false },
             relations: ["product", "product.images"],
@@ -290,14 +286,31 @@ export class ProductsService {
     // PROCESOS
     // ============================
     async getBuyingProcessProducts(userId: number) {
-        return this.productRepo
+        // Obtener los productos en proceso de compra
+        const products = await this.productRepo
             .createQueryBuilder("product")
             .innerJoin("chats", "chat", "chat.product_id = product.id")
             .leftJoinAndSelect("product.images", "images")
             .where("chat.buyer_id = :userId", { userId })
             .andWhere("product.sold = false")
-            .distinct(true)
+            .distinct(true) // Evitar duplicados si hay múltiples chats
             .getMany();
+
+        // Si no hay productos, devolver array vacío
+        if (products.length === 0) return [];
+
+        // Obtener los favoritos de ESTE usuario
+        const favorites = await this.favoritesRepo.find({
+            where: { user_id: userId },
+        });
+
+        const favoriteIds = favorites.map((f) => f.product_id);
+
+        // Mapear y añadir la propiedad "isFavorite"
+        return products.map((p) => ({
+            ...p,
+            isFavorite: favoriteIds.includes(p.id),
+        }));
     }
 
     async getSellingProcessProducts(userId: number) {
@@ -313,7 +326,7 @@ export class ProductsService {
     // ============================
     // MIS PRODUCTOS VENDIDOS
     // ============================
-    async getSoldProductsByUser(userId: number) {
+    async getSoldProductsByUser(userId: string) {
         const purchases = await this.purchaseRepo.find({
             where: {
                 sellerId: userId,
@@ -340,7 +353,6 @@ export class ProductsService {
         );
     }
 
-    // CAMBIO 1: Recibimos el userId como argumento
     async getTopSuccessfulProducts(userId: number) {
 
         const products = await this.productRepo.createQueryBuilder('product')

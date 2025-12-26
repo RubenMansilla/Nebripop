@@ -30,7 +30,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s, transform 0.1s;
@@ -48,12 +48,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .profile-pic img {
-    width: 42px;
-    height: 42px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .profile-info {
@@ -97,8 +99,8 @@
 }
 
 .stars-summary svg {
-    width: 16px !important;
-    height: 16px !important;
+    width: 14px !important;
+    height: 14px !important;
 }
 
 .profile-creation {

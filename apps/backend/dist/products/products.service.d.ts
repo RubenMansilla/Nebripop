@@ -59,7 +59,7 @@ export declare class ProductsService {
     deleteProduct(productId: number, userId: number): Promise<{
         message: string;
     }>;
-    getPurchasedProductsByUser(userId: number): Promise<{
+    getPurchasedProductsByUser(userId: string): Promise<{
         purchaseId: number;
         soldPrice: number;
         soldDate: Date;
@@ -95,9 +95,42 @@ export declare class ProductsService {
         favorites: FavoriteProduct[];
         chats: Chat[];
     }[]>;
-    getBuyingProcessProducts(userId: number): Promise<Product[]>;
+    getBuyingProcessProducts(userId: number): Promise<{
+        isFavorite: boolean;
+        id: number;
+        owner_id: number;
+        seller: import("../users/users.entity").User;
+        summary: string;
+        name: string;
+        description: string;
+        price: number;
+        condition: string;
+        brand: string;
+        color: string;
+        material: string;
+        width_cm: number;
+        height_cm: number;
+        depth_cm: number;
+        category_id: number;
+        subcategory_id: number;
+        category: import("../categories/categories.entity").Category;
+        subcategory: import("../subcategories/subcategories.entity").Subcategory;
+        shipping_active: boolean;
+        shipping_size: string;
+        shipping_weight: string;
+        postal_code: string;
+        latitude: number;
+        longitude: number;
+        sold: boolean;
+        deletedAt: Date;
+        images: ProductImage[];
+        createdAt: Date;
+        views_count: number;
+        favorites: FavoriteProduct[];
+        chats: Chat[];
+    }[]>;
     getSellingProcessProducts(userId: number): Promise<Product[]>;
-    getSoldProductsByUser(userId: number): Promise<{
+    getSoldProductsByUser(userId: string): Promise<{
         purchaseId: number;
         soldPrice: number;
         soldDate: Date;

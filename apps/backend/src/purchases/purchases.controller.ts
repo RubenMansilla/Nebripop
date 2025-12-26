@@ -1,6 +1,9 @@
 import {
     Controller,
     Delete,
+    Get,
+    Query,
+    BadRequestException,
     Req,
     UseGuards,
     Param,
@@ -31,5 +34,17 @@ export class PurchasesController {
         @Req() req
     ) {
         return this.purchasesService.hideSale(id, req.user.id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('history')
+    async getMyTransactions(
+        @Req() req,
+        @Query('type') type: string = 'all'
+    ) {
+        if (!['all', 'in', 'out'].includes(type)) {
+            throw new BadRequestException('Invalid filter type');
+        }
+        return this.purchasesService.findAllUserTransactions(req.user.id, type as any);
     }
 }

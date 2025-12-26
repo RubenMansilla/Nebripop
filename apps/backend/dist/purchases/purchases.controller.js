@@ -27,6 +27,12 @@ let PurchasesController = class PurchasesController {
     async hideSale(id, req) {
         return this.purchasesService.hideSale(id, req.user.id);
     }
+    async getMyTransactions(req, type = 'all') {
+        if (!['all', 'in', 'out'].includes(type)) {
+            throw new common_1.BadRequestException('Invalid filter type');
+        }
+        return this.purchasesService.findAllUserTransactions(req.user.id, type);
+    }
 };
 exports.PurchasesController = PurchasesController;
 __decorate([
@@ -47,6 +53,15 @@ __decorate([
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
 ], PurchasesController.prototype, "hideSale", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)('history'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)('type')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], PurchasesController.prototype, "getMyTransactions", null);
 exports.PurchasesController = PurchasesController = __decorate([
     (0, common_1.Controller)("purchases"),
     __metadata("design:paramtypes", [purchases_service_1.PurchasesService])

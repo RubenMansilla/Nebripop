@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Purchase } from "./purchase.entity"; // Asegúrate de que la ruta es correcta
+import { Purchase } from "./purchase.entity";
 import { PurchasesController } from "./purchases.controller";
 import { PurchasesService } from "./purchases.service";
 

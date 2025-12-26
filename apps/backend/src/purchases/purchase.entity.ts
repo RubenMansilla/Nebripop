@@ -6,11 +6,11 @@ export class Purchase {
     @PrimaryGeneratedColumn('increment')
     id: number;
 
-    @Column({ name: 'buyer_id' })
-    buyerId: number;
+    @Column({ name: 'buyer_id', type: 'uuid' })
+    buyerId: string;
 
-    @Column({ name: 'seller_id' })
-    sellerId: number;
+    @Column({ name: 'seller_id', type: 'uuid' })
+    sellerId: string;
 
     @Column({ name: 'product_id' })
     productId: number;

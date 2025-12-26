@@ -1,30 +1,61 @@
 import "./Product.css";
 import './Product.css'
 import type { ProductType } from '../../types/product';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { addFavorite, removeFavorite } from '../../api/favorites.api';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 import { deleteProduct } from '../../api/products.api';
 import { hideSoldTransaction, hidePurchasedTransaction } from '../../api/purchases.api';
+import { useNavigate } from 'react-router-dom';
 
-export default function Product({ product, mode, onUnfavorite, onDelete }: { product: ProductType, mode: "public" | "active" | "sold" | "purchased", onUnfavorite?: (id: number) => void; onDelete?: (id: number) => void }) {
+export default function Product({ product, mode, onUnfavorite, onDelete }: { product: ProductType, mode: "public" | "active" | "sold" | "purchased" | "", onUnfavorite?: (id: number) => void; onDelete?: (id: number) => void }) {
 
     const { token, user } = useContext(AuthContext);
 
-    // Popup eliminar
     const [showPopup, setShowPopup] = useState(false);
 
-    // Slider imágenes
+    const [isAnimating, setIsAnimating] = useState(false);
+
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
 
-    // Favoritos
     const [isFavorite, setIsFavorite] = useState(product.isFavorite ?? false);
 
     const isOwner = user && user.id === product.owner_id;
 
-    /* ================= ELIMINAR PRODUCTO ================= */
+    const navigate = useNavigate();
 
+    const handleCardClick = () => {
+        navigate(`/product/${product.id}`);
+    };
+
+    const handleDeleteClickWrapper = (e: React.MouseEvent, id: number) => {
+        e.stopPropagation();
+        handleDeleteClick(id);
+    };
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigate(`/product/edit/${product.id}`);
+    };
+
+    useEffect(() => {
+        if (isAnimating) {
+            const timer = setTimeout(() => {
+                setIsAnimating(false);
+            }, 400);
+            return () => clearTimeout(timer);
+        }
+    }, [isAnimating]);
+
+    const handleFavoriteClick = (e: React.MouseEvent) => {
+        if (!isFavorite) {
+            setIsAnimating(true);
+        }
+        toggleFavorite(e);
+    };
+
+    /* ================= ELIMINAR PRODUCTO ================= */
     const handleDeleteClick = (productId: number) => {
         setShowPopup(true);
     };
@@ -46,22 +77,22 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
             if (mode === "active") {
                 // CASO 1: Producto en venta -> Borrado real (Soft/Hard Delete)
                 await deleteProduct(product.id, token);
-                toast.success("Producto eliminado correctamente.");
+                toast.success("Producto eliminado correctamente");
             }
             else if (mode === "sold") {
                 // CASO 2: Producto vendido -> Ocultar del historial
                 if (!product.purchaseId) {
-                    throw new Error("No se encontró el ID de la transacción para ocultar.");
+                    throw new Error("No se encontró el ID de la transacción para ocultar");
                 }
                 await hideSoldTransaction(product.purchaseId, token);
-                toast.success("Venta ocultada del historial.");
+                toast.success("Producto eliminado correctamente");
             } else if (mode === "purchased") {
                 // Ocultar Compra
                 if (!product.purchaseId) throw new Error("Falta ID de transacción");
 
                 // Llamar al endpoint de /buy/:id
                 await hidePurchasedTransaction(product.purchaseId, token);
-                toast.success("Compra ocultada del historial.");
+                toast.success("Producto eliminado correctamente");
             }
 
             // Actualizar la UI inmediatamente
@@ -71,11 +102,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
 
         } catch (err: any) {
             console.error("Error en la acción:", err);
-            // Mostramos el mensaje exacto que viene del backend o de la API
             toast.error(err.message || "Hubo un problema al procesar la solicitud.");
-
-            // Opcional: Recargar si es un error crítico, pero mejor evitarlo si podemos manejar el estado
-            // window.location.reload();
         }
     };
 
@@ -131,8 +158,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
 
     return (
         <>
-            <li className="product">
-                {/* ================= IMAGEN ================= */}
+            <li className="product" onClick={handleCardClick}>
                 <div className="product-img">
                     <div
                         className="slider-track"
@@ -150,7 +176,6 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                             <img src="/placeholder-image.png" alt="Sin imagen" />
                         )}
                     </div>
-                    {/* MOSTRAR FRANJA SIEMPRE QUE ESTÉ VENDIDO */}
                     {product.sold && (
                         <div className="sold-banner">VENDIDO</div>
                     )}
@@ -181,17 +206,14 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                         )
                     }
                 </div >
-
-                {/* ================= INFO ================= */}
                 < div className="product-info" >
                     <div className="product-price">
                         <p>{product.price} €</p>
-
                         <div className="product-actions">
-                            {mode === "public" && !isOwner && (
+                            {(mode === "public") && !isOwner && (
                                 <div
-                                    className={`favorite favorite-icon-container ${isFavorite ? "liked" : ""}`}
-                                    onClick={toggleFavorite}
+                                    className={`favorite favorite-icon-container ${isFavorite ? "liked" : ""} ${isAnimating ? "animating" : ""}`}
+                                    onClick={handleFavoriteClick}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -200,15 +222,11 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                                         viewBox="0 0 24 24"
                                         className="heart-svg"
                                     >
-                                        {/* 1. MÁSCARA (CLIP PATH) */}
                                         <defs>
                                             <clipPath id={`heart-clip-${product.id}`}>
                                                 <path d="M12 21s-5.9-3.1-9-7.5S3 3 7.5 3C9.6 3 12 5 12 5s2.4-2 4.5-2C21 3 24 7.5 21 13.5S12 21 12 21z" />
                                             </clipPath>
                                         </defs>
-
-                                        {/* 2. EL BORDE (FONDO) */}
-                                        {/* Se pinta de rojo cuando está activo gracias al CSS, mejorando la fusión */}
                                         <g transform="translate(0.5, 0)">
                                             <path
                                                 className="heart-outline-path"
@@ -217,9 +235,6 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                                                 d="M8.411 3.75c1.216.004 2.4.385 3.373 1.09l.005.004q.093.069.211.072a.4.4 0 0 0 .225-.072l.005-.004a5.8 5.8 0 0 1 3.39-1.09h.011a6.37 6.37 0 0 1 4.304 1.737c1.148 1.096 1.804 2.581 1.815 4.142v.005c0 3.182-1.948 5.652-3.974 7.362-2.037 1.72-4.277 2.777-5.144 3.135l-.012.005a1.7 1.7 0 0 1-.609.113 1.6 1.6 0 0 1-.657-.124c-.838-.366-3.077-1.419-5.118-3.133-2.029-1.704-3.986-4.168-3.986-7.358v-.005c.01-1.566.672-3.056 1.827-4.152A6.38 6.38 0 0 1 8.4 3.75zm4.702 2.303c-.323.238-.719.36-1.108.363h-.01c-.4-.003-.778-.13-1.094-.363a4.3 4.3 0 0 0-2.49-.803A4.88 4.88 0 0 0 5.11 6.565a4.28 4.28 0 0 0-1.36 3.071c.001 2.536 1.56 4.619 3.45 6.207 1.868 1.569 3.94 2.551 4.738 2.9l.019.006h.048a.3.3 0 0 0 .066-.009c.793-.328 2.87-1.314 4.738-2.89 1.887-1.594 3.44-3.683 3.441-6.214a4.28 4.28 0 0 0-1.35-3.063 4.88 4.88 0 0 0-3.285-1.323 4.3 4.3 0 0 0-2.502.803"
                                             />
                                         </g>
-
-                                        {/* 3. EL RELLENO (CÍRCULO QUE SE EXPANDE) */}
-                                        {/* Aplicamos la máscara al grupo para que el círculo solo se vea DENTRO del corazón */}
                                         <g clipPath={`url(#heart-clip-${product.id})`}>
                                             <circle
                                                 className="heart-fill-circle"
@@ -231,58 +246,59 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                                     </svg>
                                 </div>
                             )}
-
-                            {/* ELIMINAR SOLO EN ACTIVE, SOLD y PURCHASED */}
-                            {(mode === "active" || mode === "sold" || mode === "purchased") && (
-                                <div className="delete-btn" onClick={() => handleDeleteClick(product.id)}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="#000000" stroke-width="1.5"><path d="M3.04 4.294a.5.5 0 0 1 .191-.479C3.927 3.32 6.314 2 12 2s8.073 1.32 8.769 1.815a.5.5 0 0 1 .192.479l-1.7 12.744a4 4 0 0 1-1.98 2.944l-.32.183a10 10 0 0 1-9.922 0l-.32-.183a4 4 0 0 1-1.98-2.944z" /><path d="M3 5c2.571 2.667 15.429 2.667 18 0" /></g></svg>                                </div>
-                            )}
-
+                            <div className="product-delete-container">
+                                {(mode === "active") && (
+                                    <div className="edit-btn" onClick={handleEditClick}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="#000000" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.333 16.048L16.57 3.81a2.56 2.56 0 0 1 3.62 3.619L7.951 19.667a2 2 0 0 1-1.022.547L3 21l.786-3.93a2 2 0 0 1 .547-1.022" /><path d="m14.5 6.5l3 3" /></g></svg>
+                                    </div>
+                                )}
+                                {(mode === "active" || mode === "sold" || mode === "purchased") && (
+                                    <div className="delete-btn" onClick={(e) => handleDeleteClickWrapper(e, product.id)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="#000000" stroke-width="1.5"><path d="M3.04 4.294a.5.5 0 0 1 .191-.479C3.927 3.32 6.314 2 12 2s8.073 1.32 8.769 1.815a.5.5 0 0 1 .192.479l-1.7 12.744a4 4 0 0 1-1.98 2.944l-.32.183a10 10 0 0 1-9.922 0l-.32-.183a4 4 0 0 1-1.98-2.944z" /><path d="M3 5c2.571 2.667 15.429 2.667 18 0" /></g></svg>
+                                    </div>
+                                )}
+                            </div>
                         </div >
                     </div >
-
                     <div className="product-title">
                         <p>{product.name}</p>
                     </div>
 
-                    {(mode === "public" || mode === "active") && (
-                        <div className="product-delivery">
-                            {product.shipping_active ? (
-                                <>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="#86418a"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        focusable="false">
-                                        <path fill-rule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 .75.75V12H.75a.75.75 0 0 0 0 1.5h1.5v3a2.25 2.25 0 0 0 2.25 2.25h.02a3.375 3.375 0 0 0 6.71 0h3.79a3.375 3.375 0 0 0 6.71 0h.02A2.25 2.25 0 0 0 24 16.5v-2.062a2.25 2.25 0 0 0-.556-1.48l-1.924-2.202-.032-.034-.206-.235-1.093-3.006A2.25 2.25 0 0 0 18.074 6H16.5v-.75A2.25 2.25 0 0 0 14.25 3H4.5a2.25 2.25 0 0 0-2.25 2.25V9a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-6zm16.463 13.5a1.876 1.876 0 1 1-3.676-.751 1.876 1.876 0 0 1 3.675.751m-12.338 1.5a1.876 1.876 0 1 1 0-3.751 1.876 1.876 0 0 1 0 3.751M16.5 10.5h3.19l-.91-2.506a.75.75 0 0 0-.706-.494H16.5z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    <p className="delivery-available">Envío disponible</p>
-                                </>
-                            ) : (
-                                <>
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
-                                        fill="#5c7a89"
-                                        viewBox="0 0 24 24"
-                                        aria-hidden="true"
-                                        focusable="false">
-                                        <path fill-rule="evenodd" d="M15 7.496a3 3 0 0 1-1.323 2.488A6.004 6.004 0 0 1 18 15.748a.75.75 0 1 1-1.5 0 4.5 4.5 0 1 0-9 0 .75.75 0 1 1-1.5 0 6.004 6.004 0 0 1 4.323-5.764A3 3 0 1 1 15 7.496m-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" clip-rule="evenodd"></path><path fill-rule="evenodd" d="m12.54 23.816.075-.039C15 22.5 22.5 18 22.498 10.497 22.498 4.495 18 0 12 0S1.5 4.495 1.5 10.495C1.5 18 9 22.5 11.382 23.78l.016.008c.187.1.396.213.602.213.186 0 .367-.094.54-.184m-5.92-5.394c1.964 2.01 4.212 3.351 5.377 3.984 1.165-.63 3.416-1.973 5.382-3.984 2.018-2.064 3.62-4.709 3.62-7.925C20.996 5.324 17.171 1.5 12 1.5s-9 3.825-9 8.995c0 3.218 1.603 5.863 3.62 7.927" clip-rule="evenodd"></path></svg>
-                                    <p className="delivery-unavailable">
-                                        Solo venta en persona
-                                    </p>
-                                </>
-                            )}
-                        </div>
-                    )}
+                    <div className="product-delivery">
+                        {product.shipping_active ? (
+                            <>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="#86418a"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    focusable="false">
+                                    <path fill-rule="evenodd" d="M3.75 5.25a.75.75 0 0 1 .75-.75h9.75a.75.75 0 0 1 .75.75V12H.75a.75.75 0 0 0 0 1.5h1.5v3a2.25 2.25 0 0 0 2.25 2.25h.02a3.375 3.375 0 0 0 6.71 0h3.79a3.375 3.375 0 0 0 6.71 0h.02A2.25 2.25 0 0 0 24 16.5v-2.062a2.25 2.25 0 0 0-.556-1.48l-1.924-2.202-.032-.034-.206-.235-1.093-3.006A2.25 2.25 0 0 0 18.074 6H16.5v-.75A2.25 2.25 0 0 0 14.25 3H4.5a2.25 2.25 0 0 0-2.25 2.25V9a.75.75 0 0 0 0 1.5h7.5a.75.75 0 0 0 0-1.5h-6zm16.463 13.5a1.876 1.876 0 1 1-3.676-.751 1.876 1.876 0 0 1 3.675.751m-12.338 1.5a1.876 1.876 0 1 1 0-3.751 1.876 1.876 0 0 1 0 3.751M16.5 10.5h3.19l-.91-2.506a.75.75 0 0 0-.706-.494H16.5z" clip-rule="evenodd"></path>
+                                </svg>
+                                <p className="delivery-available">Envío disponible</p>
+                            </>
+                        ) : (
+                            <>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    fill="#5c7a89"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                    focusable="false">
+                                    <path fill-rule="evenodd" d="M15 7.496a3 3 0 0 1-1.323 2.488A6.004 6.004 0 0 1 18 15.748a.75.75 0 1 1-1.5 0 4.5 4.5 0 1 0-9 0 .75.75 0 1 1-1.5 0 6.004 6.004 0 0 1 4.323-5.764A3 3 0 1 1 15 7.496m-3 1.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" clip-rule="evenodd"></path><path fill-rule="evenodd" d="m12.54 23.816.075-.039C15 22.5 22.5 18 22.498 10.497 22.498 4.495 18 0 12 0S1.5 4.495 1.5 10.495C1.5 18 9 22.5 11.382 23.78l.016.008c.187.1.396.213.602.213.186 0 .367-.094.54-.184m-5.92-5.394c1.964 2.01 4.212 3.351 5.377 3.984 1.165-.63 3.416-1.973 5.382-3.984 2.018-2.064 3.62-4.709 3.62-7.925C20.996 5.324 17.171 1.5 12 1.5s-9 3.825-9 8.995c0 3.218 1.603 5.863 3.62 7.927" clip-rule="evenodd"></path></svg>
+                                <p className="delivery-unavailable">
+                                    Solo venta en persona
+                                </p>
+                            </>
+                        )}
+                    </div>
+
                 </div >
             </li >
-
-            {/* ================= POPUP Eliminar Producto ================= */}
             {showPopup && (
                 <div className="popup-backdrop">
                     <div className="unsaved-changes-popup">

@@ -2,63 +2,51 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import type { ReviewSummary } from "../../../types/review";
-import { reviewSummaryStore } from "../../../store/reviewSummaryStore";
-import { getReviews } from "../../../api/reviews.api"; // <--- IMPORTANTE: Importa tu API aquí
+import { getUserReviewSummary } from "../../../api/reviews.api";
 import './ProfileSideBar.css';
 
 export default function ProfileSideBar() {
 
     const sidebarRef = useRef<HTMLDivElement>(null);
-
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useContext(AuthContext);
+
+    const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
+    const [loadingReviews, setLoadingReviews] = useState(false);
 
     const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
     if (!user) return null;
 
     const year = new Date(user.createdAt).getFullYear();
-
     const imageSrc = user.profilePicture || defaultPic;
 
-    const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
-
     useEffect(() => {
-        if (!user) return;
+        if (!user?.id) return;
 
-        const cachedData = reviewSummaryStore.value;
-        const hasValidData = cachedData && cachedData._userId === user.id;
+        let isMounted = true;
+        setLoadingReviews(true);
 
-        if (hasValidData) {
-            setSummary(cachedData);
-        } else {
-            setSummary({ average: 0, total: 0 });
+        // CAMBIO 3: Usamos el endpoint ligero de resumen
+        getUserReviewSummary(user.id)
+            .then((data) => {
+                if (!isMounted) return;
+                setSummary({
+                    average: Number(data.average || 0),
+                    total: Number(data.total || 0)
+                });
+            })
+            .catch(err => {
+                console.error("Error reviews summary:", err);
+                if (isMounted) setSummary({ average: 0, total: 0 });
+            })
+            .finally(() => {
+                if (isMounted) setLoadingReviews(false);
+            });
 
-            getReviews(user.id, "newest")
-                .then((data) => {
-                    const total = data.length;
-                    const avg = total > 0
-                        ? data.reduce((acc: any, r: any) => acc + r.rating, 0) / total
-                        : 0;
-
-                    const newSummary = { average: avg, total };
-
-                    setSummary(newSummary);
-
-                    reviewSummaryStore.set(newSummary, user.id);
-                })
-                .catch(err => console.error("Error cargando resumen de reviews:", err));
-        }
-
-        const unsub = reviewSummaryStore.subscribe((v) => {
-            if (reviewSummaryStore.value?._userId === user.id) {
-                setSummary(v);
-            }
-        });
-
-        return () => unsub();
-    }, [user]);
+        return () => { isMounted = false; };
+    }, [user?.id]);
 
     const starClass = (n: number) => {
         return n <= summary.average ? "filled" : "";
@@ -68,13 +56,13 @@ export default function ProfileSideBar() {
         const sidebar = sidebarRef.current;
         if (!sidebar) return;
 
-        // A. Recuperar posición al cargar el componente
+        // Recuperar posición al cargar el componente
         const savedPosition = sessionStorage.getItem("sidebarScrollPos");
         if (savedPosition) {
             sidebar.scrollTop = parseInt(savedPosition, 10);
         }
 
-        // B. Guardar posición cada vez que se hace scroll
+        // Guardar posición cada vez que se hace scroll
         const handleScroll = () => {
             sessionStorage.setItem("sidebarScrollPos", sidebar.scrollTop.toString());
         };
