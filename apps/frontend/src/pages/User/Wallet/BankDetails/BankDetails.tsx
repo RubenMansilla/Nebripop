@@ -1,3 +1,4 @@
+import './BankDetails.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
@@ -34,7 +35,29 @@ export default function BankDetails() {
                     <div className={`info-item-wallet ${selected === "historial" ? "active" : ""}`} onClick={() => setSelected("historial")}><p>Historial</p></div>
                 </div>
             </div>
-
+            <div className='details-content'>
+                <div className='details-header'>
+                    <h3>Datos bancarios</h3>
+                </div>
+                <div className='details-body'>
+                    <div className='details-form'>
+                        <div className='details-label'>
+                            <p>Tarjeta bancaria</p>
+                        </div>
+                        <div className='details-box'>
+                            <p>Añadir tarjeta</p>
+                        </div>
+                    </div>
+                    <div className='details-form'>
+                        <div className='details-label'>
+                            <p>Cuenta bancaria</p>
+                        </div>
+                        <div className='details-box'>
+                            <p>Añadir cuenta bancaria</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </>
     )
 }

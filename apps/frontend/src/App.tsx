@@ -75,10 +75,11 @@ export default function App() {
             <Route path="/filtros" element={<Filtro />} />
             <Route path="/product/:productId" element={<Detail />} />
 
+            <Route path="/you" element={<User />} />
+
             <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
               {/* Perfil */}
-              <Route path="/profile" element={<User />} />
               <Route path="/profile/info" element={<Info />} />
               <Route path="/profile/reviews" element={<ReviewProfile />} />
               <Route path="/profile/chat" element={<Chat />} />

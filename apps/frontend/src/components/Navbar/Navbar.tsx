@@ -143,30 +143,30 @@ export default function Navbar() {
           </div>
 
           {userMenuOpen && (
-  <div className="mobile-popover">
-    {!user && (
-      <p className="mobile-popover-item" onClick={openLogin}>
-        Registrarte o iniciar sesión
-      </p>
-    )}
+            <div className="mobile-popover">
+              {!user && (
+                <p className="mobile-popover-item" onClick={openLogin}>
+                  Registrarte o iniciar sesión
+                </p>
+              )}
 
-    {user && (
-      <p
-        className="mobile-popover-item"
-        onClick={() => navigate("/profile/info")}
-      >
-        Mi perfil
-      </p>
-    )}
+              {user && (
+                <p
+                  className="mobile-popover-item"
+                  onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
+                >
+                  Mi perfil
+                </p>
+              )}
 
-    <p
-      className="mobile-popover-item"
-      onClick={() => navigate("/sell-product")}
-    >
-      Vender artículos
-    </p>
-  </div>
-)}
+              <p
+                className="mobile-popover-item"
+                onClick={() => navigate("/sell-product")}
+              >
+                Vender artículos
+              </p>
+            </div>
+          )}
 
 
         </nav>
@@ -204,7 +204,8 @@ export default function Navbar() {
 
             {user && (
               <>
-                <button className="btn-registro" onClick={() => navigate(`/profile/info`)}>
+                <button className="btn-registro"
+                  onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}>
                   {user.fullName.split(" ")[0]}
                 </button>
 
@@ -254,7 +255,8 @@ export default function Navbar() {
 
             {user && (
               <>
-                <button className="btn-registro" onClick={() => navigate(`/profile/info`)}>
+                <button className="btn-registro"
+                  onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}>
                   Bienvenido {user.fullName.split(" ")[0]}
                 </button>
                 <button className="btn-vender" onClick={() => navigate("/sell-product")}>
@@ -264,7 +266,7 @@ export default function Navbar() {
             )}
 
           </div>
-          
+
 
         </nav>
       )}
