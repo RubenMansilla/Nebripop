@@ -152,7 +152,7 @@
 }
 
 .save-card-btn {
-    background-color: var(--beige, #dbe2e5);
+    background-color: var(--beige);
     border: none;
     padding: 15px;
     border-radius: 30px;
@@ -167,7 +167,7 @@
 }
 
 .save-card-btn:hover {
-    filter: brightness(0.95);
+    background-color: #b0a18c;
 }
 
 .material-input.error {

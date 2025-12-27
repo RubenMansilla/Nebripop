@@ -24,6 +24,7 @@ import SalesOngoing from "./pages/User/Sales/Ongoing/SalesOngoing";
 import SalesCompleted from "./pages/User/Sales/Completed/SalesCompleted";
 import Stats from "./pages/User/Stats/Stats";
 import Info from "./pages/User/Info/Info";
+import Settings from "./pages/User/Settings/Settings";
 import ReviewProfile from "./pages/User/ReviewProfile/ReviewProfile";
 import FormularioProducto from "./pages/SellProduct";
 
@@ -103,6 +104,9 @@ export default function App() {
               <Route path="/purchases/completed" element={<PurchasesCompleted />} />
               <Route path="/sales/ongoing" element={<SalesOngoing />} />
               <Route path="/sales/completed" element={<SalesCompleted />} />
+
+              {/* Configuración */}
+              <Route path="/settings" element={<Settings />} />
 
             </Route>
 

@@ -66,7 +66,6 @@ export default function BankDetails() {
                 )}
                 {view === "add-card" && (
                     <CardForm onBack={() => setView("menu")} />
-
                 )}
             </div>
         </>
