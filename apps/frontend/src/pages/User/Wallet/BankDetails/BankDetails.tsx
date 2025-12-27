@@ -1,10 +1,13 @@
 import './BankDetails.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import CardForm from '../../../../components/CardForm/CardForm';
 
 export default function BankDetails() {
+
     const navigate = useNavigate();
     const [selected, setSelected] = useState("datos");
+    const [view, setView] = useState("menu");
 
     useEffect(() => {
         if (selected === "monedero") {
@@ -36,27 +39,35 @@ export default function BankDetails() {
                 </div>
             </div>
             <div className='details-content'>
-                <div className='details-header'>
-                    <h3>Datos bancarios</h3>
-                </div>
-                <div className='details-body'>
-                    <div className='details-form'>
-                        <div className='details-label'>
-                            <p>Tarjeta bancaria</p>
+                {view === "menu" && (
+                    <div className='details-card'>
+                        <div className='details-header'>
+                            <h3>Datos bancarios</h3>
                         </div>
-                        <div className='details-box'>
-                            <p>Añadir tarjeta</p>
+                        <div className='details-body'>
+                            <div className='details-form'>
+                                <div className='details-label'>
+                                    <p>Tarjeta bancaria</p>
+                                </div>
+                                <div className='details-box' onClick={() => setView("add-card")}>
+                                    <p>Añadir tarjeta</p>
+                                </div>
+                            </div>
+                            <div className='details-form'>
+                                <div className='details-label'>
+                                    <p>Cuenta bancaria</p>
+                                </div>
+                                <div className='details-box'>
+                                    <p>Añadir cuenta bancaria</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className='details-form'>
-                        <div className='details-label'>
-                            <p>Cuenta bancaria</p>
-                        </div>
-                        <div className='details-box'>
-                            <p>Añadir cuenta bancaria</p>
-                        </div>
-                    </div>
-                </div>
+                )}
+                {view === "add-card" && (
+                    <CardForm onBack={() => setView("menu")} />
+
+                )}
             </div>
         </>
     )

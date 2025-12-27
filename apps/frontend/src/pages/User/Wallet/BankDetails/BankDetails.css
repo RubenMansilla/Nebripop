@@ -5,11 +5,16 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    /* Asegura que header y body estén uno sobre otro */
     align-items: center;
-    /* Centra el contenido horizontalmente */
     padding-block: 20px;
     box-sizing: border-box;
+}
+
+.details-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .details-header {
@@ -20,43 +25,32 @@
 
 .details-header h3 {
     color: #212529;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 400;
     margin: 0;
 }
 
 .details-body {
     width: 76%;
-    /* Usamos el 100% pero controlamos el ancho con el padding o max-width interno */
-    /* Margen de seguridad lateral */
     box-sizing: border-box;
     display: flex;
     justify-content: space-around;
-    /* Centra las tarjetas cuando sobran espacios */
     flex-wrap: wrap;
-    /* Permite que caigan abajo */
     gap: 20px;
 }
 
 .details-form {
     flex: 1 1 200px;
-    /* Grow: 1, Shrink: 1, Basis: 200px */
-
-    /* Límites */
     max-width: 380px;
     min-width: 200px;
-    /* Asegura que nunca sea menor a 200px antes de romper */
-
-    /* Estilos internos */
     display: flex;
     flex-direction: column;
-    /* Para que label y box estén uno sobre otro */
-    gap: 8px;
+    gap: 10px;
 }
 
 .details-label {
     width: 100%;
-    font-size: 15px;
+    font-size: 16px;
     color: #90a4ae;
 }
 
@@ -66,7 +60,7 @@
 
 .details-box {
     width: 100%;
-    height: 150px;
+    height: 160px;
     border: 1.3px solid #eceff1;
     border-radius: 6px;
     display: flex;
