@@ -307,19 +307,22 @@ export default function Filtro() {
         <main className="filtro-results">
           <h2 className="results-title">Resultados</h2>
 
-          <ul className="products-grid">
+          <ul className="products-grid products-grid--filters">
             {loading ? (
               <p>Cargando productos...</p>
             ) : filteredProducts.length === 0 ? (
               <p>No se encontraron productos</p>
             ) : (
               filteredProducts.map((p) => (
-                <Link key={p.id} to={`/product/${p.id}`}>
-                  <Product product={p} mode="public" />
-                </Link>
+                <li key={p.id} className="products-grid-item">
+                  <Link to={`/product/${p.id}`} className="product-link">
+                    <Product product={p} mode="public" />
+                  </Link>
+                </li>
               ))
             )}
           </ul>
+
         </main>
       </div>
 

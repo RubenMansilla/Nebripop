@@ -355,28 +355,236 @@
   padding-top: 10px;
 }
 
+/* ✅ grid correcto: UL -> LI */
+.products-grid {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.products-grid-item {
+  min-width: 0; /* 🔑 evita que el contenido “empuje” la columna */
+}
+
+.product-link {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 🔒 Encierra el slider dentro de su celda */
+.products-grid--filters .slider-track {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.products-grid--filters .slider-track img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
 
 
-/* ============================================
-   RESPONSIVE
-============================================ */
-@media (max-width: 900px) {
+/* ===========================
+   RESPONSIVE · TABLET
+=========================== */
+@media (max-width: 1024px) {
+  .filtro-container {
+    max-width: 100%;
+    gap: 28px;
+    padding: 0 16px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+}
+
+/* ===========================
+   RESPONSIVE · MOBILE
+=========================== */
+@media (max-width: 768px) {
+  /* Layout: resultados arriba + filtros abajo */
+  .filtro-container {
+    flex-direction: column;
+    margin: 18px auto;
+    gap: 18px;
+    padding: 0 12px;
+  }
+
+  .filtro-results {
+    order: 1;
+  }
+
+  .filtro-sidebar {
+    order: 2;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  /* Títulos más compactos */
+  .results-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .filtro-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .filtro-subtitle {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  /* Sidebar como tarjeta */
+  .filtro-sidebar {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .filtro-block {
+    margin-bottom: 18px;
+  }
+
+  .filtro-block:not(:last-child) {
+    padding-bottom: 16px;
+  }
+
+  /* Listas: 2 columnas para ahorrar altura */
+  .filtro-list {
+    padding-left: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+
+  .filtro-list li {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .ver-todo {
+    grid-column: 1 / -1; /* ocupa ancho completo */
+    margin-top: 6px;
+  }
+
+  /* Toggle envío: ancho completo y centrado */
+  .envio-toggle {
+    height: 36px;
+    border-radius: 999px;
+  }
+
+  .envio-option {
+    width: 50%;
+    padding: 10px 0;
+    font-size: 12px;
+  }
+
+  /* Estado (checkbox): más compacto */
+  .estado-item {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .estado-checkbox {
+    width: 26px;
+    height: 26px;
+  }
+
+  .estado-title {
+    font-size: 14px;
+  }
+
+  .estado-desc {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  /* Precio inputs: que no se rompa */
+  .precio-inputs {
+    gap: 8px;
+  }
+
+  .precio-inputs input {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .precio-separador {
+    font-size: 14px;
+  }
+
+  /* Grid productos en móvil */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-top: 6px;
+  }
+
+  .products-grid-item {
+    min-width: 0;
+  }
+
+  .product-link {
+    width: 100%;
+  }
+}
+
+/* Móviles pequeños: 1 columna para que respire */
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filtro-list {
+    grid-template-columns: 1fr; /* filtros en 1 col para no apretar */
+  }
+  }
+  @media (max-width: 900px) {
   .filtro-container {
     flex-direction: column;
   }
 
+  /* 🔥 FILTROS ARRIBA */
   .filtro-sidebar {
-    width: 100%;
+    order: 1;
+  }
+
+  /* 🔥 PRODUCTOS DEBAJO */
+  .filtro-results {
     order: 2;
   }
-
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
 }
-
 @media (max-width: 600px) {
-  .products-grid {
-    grid-template-columns: 1fr;
+
+  .envio-toggle {
+    height: 42px;                 /* más cómodo táctil */
+    border-radius: 14px;
+  }
+
+  .envio-option {
+    flex: 1;                      /* 🔑 cada uno 50% */
+    padding: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    white-space: nowrap;          /* evita saltos raros */
+  }
+
+  .envio-option.active {
+    border-radius: 12px;
   }
 }

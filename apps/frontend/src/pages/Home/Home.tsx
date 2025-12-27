@@ -79,7 +79,7 @@ export default function Home() {
       <section className="about-wrapper">
         {/* BLOQUE IZQUIERDO */}
         <div className="about-stats">
-          <span className="stats-subtitle">Wallastock Experience</span>
+          <span className="stats-subtitle">Nebripop Experience</span>
 
           <h2 className="stats-year">2025</h2>
 
