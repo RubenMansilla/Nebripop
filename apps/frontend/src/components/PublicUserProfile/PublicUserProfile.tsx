@@ -7,180 +7,188 @@ import Product from "../Product/Product";
 import Review from "../Review/Review";
 import { AuthContext } from "../../context/AuthContext";
 import {
-  addFavoriteUser,
-  removeFavoriteUser,
-  isFavoriteUser,
+    addFavoriteUser,
+    removeFavoriteUser,
+    isFavoriteUser,
 } from "../../api/favorites.api";
+import { toast } from "react-toastify";
+import { useNotificationSettings } from '../../context/NotificationContext';
 
 interface PublicUserProfileProps {
-  user: UserType | null;
-  products: ProductType[];
-  reviews: ReviewType[];
-  rating: {
-    average: number;
-    total: number;
-  } | null;
+    user: UserType | null;
+    products: ProductType[];
+    reviews: ReviewType[];
+    rating: {
+        average: number;
+        total: number;
+    } | null;
 }
 
 export default function PublicUserProfile({
-  user,
-  products,
-  reviews,
-  rating,
+    user,
+    products,
+    reviews,
+    rating,
 }: PublicUserProfileProps) {
-  const { token, user: loggedUser } = useContext(AuthContext);
 
-  const [activeTab, setActiveTab] = useState<"products" | "reviews">("products");
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [checkingFavorite, setCheckingFavorite] = useState(true);
+    const { notify } = useNotificationSettings();
 
-  // 🔒 PROTECCIÓN
-  if (!user) {
-    return <div className="public-user-loading">Cargando perfil...</div>;
-  }
+    const { token, user: loggedUser } = useContext(AuthContext);
 
-  const isOwnProfile = loggedUser?.id === user.id;
+    const [activeTab, setActiveTab] = useState<"products" | "reviews">("products");
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [checkingFavorite, setCheckingFavorite] = useState(true);
 
-  /* =============================
-     COMPROBAR SI YA ES FAVORITO
-     ============================= */
-  useEffect(() => {
-    if (!token || isOwnProfile) {
-      setCheckingFavorite(false);
-      return;
+    // 🔒 PROTECCIÓN
+    if (!user) {
+        return <div className="public-user-loading">Cargando perfil...</div>;
     }
 
-    isFavoriteUser(user.id, token)
-      .then((res) => {
-        setIsFavorite(Boolean(res));
-      })
-      .catch((err) => {
-        console.error("Error comprobando favorito:", err);
-      })
-      .finally(() => {
-        setCheckingFavorite(false);
-      });
-  }, [user.id, token, isOwnProfile]);
+    const isOwnProfile = loggedUser?.id === user.id;
 
-  /* =============================
-     TOGGLE FAVORITO
-     ============================= */
-  const toggleFavoriteUser = async () => {
-    if (!token || isOwnProfile) return;
+    /* =============================
+       COMPROBAR SI YA ES FAVORITO
+       ============================= */
+    useEffect(() => {
+        if (!token || isOwnProfile) {
+            setCheckingFavorite(false);
+            return;
+        }
 
-    try {
-      if (isFavorite) {
-        await removeFavoriteUser(user.id, token);
-        setIsFavorite(false);
-      } else {
-        await addFavoriteUser(user.id, token);
-        setIsFavorite(true);
-      }
-    } catch (err) {
-      console.error("Error toggling favorite user:", err);
-    }
-  };
+        isFavoriteUser(user.id, token)
+            .then((res) => {
+                setIsFavorite(Boolean(res));
+            })
+            .catch((err) => {
+                console.error("Error comprobando favorito:", err);
+            })
+            .finally(() => {
+                setCheckingFavorite(false);
+            });
+    }, [user.id, token, isOwnProfile]);
 
-  return (
-    <section className="public-user-profile">
-      {/* ===== HEADER ===== */}
-      <div className="public-user-header">
-        <div className="public-user-avatar">
-          <img src={user.profilePicture} alt={user.fullName} />
-        </div>
+    /* =============================
+       TOGGLE FAVORITO
+       ============================= */
+    const toggleFavoriteUser = async () => {
+        if (!token || isOwnProfile) return;
 
-        <div className="public-user-info">
-          <div className="user-name-row">
-            <h1>{user.fullName}</h1>
+        try {
+            if (isFavorite) {
+                await removeFavoriteUser(user.id, token);
+                setIsFavorite(false);
+                notify('addedToFavorites', `Has eliminado a ${user.fullName} de tus usuarios favoritos.`, 'info');
+            } else {
+                await addFavoriteUser(user.id, token);
+                notify('addedToFavorites', `Has añadido a ${user.fullName} a tus usuarios favoritos.`, 'success');
+                setIsFavorite(true);
+            }
+        } catch (err) {
+            console.error("Error toggling favorite user:", err);
+            toast.error("Error al actualizar usuario favorito");
+        }
+    };
 
-            {rating && (
-              <div className="public-user-rating">
-                <span>⭐ {rating.average.toFixed(1)}</span>
-                <span className="rating-total">({rating.total})</span>
-              </div>
-            )}
-          </div>
+    return (
+        <section className="public-user-profile">
+            {/* ===== HEADER ===== */}
+            <div className="public-user-header">
+                <div className="public-user-avatar">
+                    <img src={user.profilePicture} alt={user.fullName} />
+                </div>
 
-          {/* BOTÓN FAVORITO */}
-          {!isOwnProfile && token && !checkingFavorite && (
-            <button
-              className={`fav-user-btn ${isFavorite ? "active" : ""}`}
-              onClick={toggleFavoriteUser}
-            >
-              {isFavorite
-                ? "❤️ Usuario favorito"
-                : "🤍 Añadir a favoritos"}
-            </button>
-          )}
-        </div>
-      </div>
+                <div className="public-user-info">
+                    <div className="user-name-row">
+                        <h1>{user.fullName}</h1>
 
-      {/* ===== STATS ===== */}
-      <div className="public-user-stats">
-        <div className="stat">
-          <span className="stat-value">{products.length}</span>
-          <span className="stat-label">Productos</span>
-        </div>
+                        {rating && (
+                            <div className="public-user-rating">
+                                <span>⭐ {rating.average.toFixed(1)}</span>
+                                <span className="rating-total">({rating.total})</span>
+                            </div>
+                        )}
+                    </div>
 
-        <div className="stat">
-          <span className="stat-value">{reviews.length}</span>
-          <span className="stat-label">Opiniones</span>
-        </div>
-      </div>
-
-      {/* ===== TABS ===== */}
-      <div className="public-user-tabs">
-        <button
-          className={`tab-btn ${activeTab === "products" ? "active" : ""}`}
-          onClick={() => setActiveTab("products")}
-        >
-          Productos
-        </button>
-
-        <button
-          className={`tab-btn ${activeTab === "reviews" ? "active" : ""}`}
-          onClick={() => setActiveTab("reviews")}
-        >
-          Valoraciones
-        </button>
-      </div>
-
-      {/* ===== CONTENT ===== */}
-      {activeTab === "products" && (
-        <div className="public-user-section">
-          {products.length === 0 ? (
-            <p className="empty-text">
-              Este usuario no tiene productos publicados
-            </p>
-          ) : (
-            <ul className="public-user-products">
-              {products.map((product) => (
-                <Product
-                  key={product.id}
-                  product={product}
-                  mode="public"
-                />
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {activeTab === "reviews" && (
-        <div className="public-user-section">
-          {reviews.length === 0 ? (
-            <p className="empty-text">
-              Este usuario aún no tiene valoraciones
-            </p>
-          ) : (
-            <div className="public-user-reviews">
-              {reviews.map((review) => (
-                <Review key={review.id} review={review} />
-              ))}
+                    {/* BOTÓN FAVORITO */}
+                    {!isOwnProfile && token && !checkingFavorite && (
+                        <button
+                            className={`fav-user-btn ${isFavorite ? "active" : ""}`}
+                            onClick={toggleFavoriteUser}
+                        >
+                            {isFavorite
+                                ? "❤️ Usuario favorito"
+                                : "🤍 Añadir a favoritos"}
+                        </button>
+                    )}
+                </div>
             </div>
-          )}
-        </div>
-      )}
-    </section>
-  );
+
+            {/* ===== STATS ===== */}
+            <div className="public-user-stats">
+                <div className="stat">
+                    <span className="stat-value">{products.length}</span>
+                    <span className="stat-label">Productos</span>
+                </div>
+
+                <div className="stat">
+                    <span className="stat-value">{reviews.length}</span>
+                    <span className="stat-label">Opiniones</span>
+                </div>
+            </div>
+
+            {/* ===== TABS ===== */}
+            <div className="public-user-tabs">
+                <button
+                    className={`tab-btn ${activeTab === "products" ? "active" : ""}`}
+                    onClick={() => setActiveTab("products")}
+                >
+                    Productos
+                </button>
+
+                <button
+                    className={`tab-btn ${activeTab === "reviews" ? "active" : ""}`}
+                    onClick={() => setActiveTab("reviews")}
+                >
+                    Valoraciones
+                </button>
+            </div>
+
+            {/* ===== CONTENT ===== */}
+            {activeTab === "products" && (
+                <div className="public-user-section">
+                    {products.length === 0 ? (
+                        <p className="empty-text">
+                            Este usuario no tiene productos publicados
+                        </p>
+                    ) : (
+                        <ul className="public-user-products">
+                            {products.map((product) => (
+                                <Product
+                                    key={product.id}
+                                    product={product}
+                                    mode="public"
+                                />
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            )}
+
+            {activeTab === "reviews" && (
+                <div className="public-user-section">
+                    {reviews.length === 0 ? (
+                        <p className="empty-text">
+                            Este usuario aún no tiene valoraciones
+                        </p>
+                    ) : (
+                        <div className="public-user-reviews">
+                            {reviews.map((review) => (
+                                <Review key={review.id} review={review} />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
+        </section>
+    );
 }

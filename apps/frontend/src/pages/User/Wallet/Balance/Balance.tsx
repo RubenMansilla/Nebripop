@@ -8,35 +8,11 @@ import ReceiveModal from "../../../../components/ReceiveModal/ReceiveModal";
 import { getWalletBalance, depositMoney, withdrawMoney } from "../../../../api/wallet.api";
 import { AuthContext } from "../../../../context/AuthContext";
 import { toast } from "react-toastify";
-
-const toastStyles = {
-    success: {
-        style: {
-            borderRadius: "14px",
-            padding: "14px 18px",
-            backgroundColor: "#f6fff8",
-            color: "#114b2c",
-            border: "1px solid #d5f3df",
-            fontWeight: 500,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
-        },
-        iconTheme: { primary: "#28c76f", secondary: "#fff" }
-    },
-    error: {
-        style: {
-            borderRadius: "14px",
-            padding: "14px 18px",
-            backgroundColor: "#fff5f5", // Fondo rojizo suave
-            color: "#b91c1c", // Rojo oscuro
-            border: "1px solid #fecaca",
-            fontWeight: 500,
-            boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
-        },
-        iconTheme: { primary: "#ef4444", secondary: "#fff" }
-    }
-};
+import { useNotificationSettings } from '../../../../context/NotificationContext';
 
 export default function Balance() {
+
+    const { notify } = useNotificationSettings();
 
     const [balance, setBalance] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -59,7 +35,7 @@ export default function Balance() {
                 })
                 .catch((err) => {
                     console.error("Error cargando saldo:", err);
-                    toast.error("Error al cargar el saldo", toastStyles.error);
+                    toast.error("Error al cargar el saldo del monedero");
                 })
                 .finally(() => {
                     setLoading(false);
@@ -75,17 +51,16 @@ export default function Balance() {
 
     // LÓGICA DE RECARGA
     const handleRechargeConfirm = async (amount: number) => {
-        if (!token) return toast.error("Error de sesión", toastStyles.error);
+        if (!token) return toast.error("Error de sesión");
         try {
             const updatedWallet = await depositMoney(amount, token);
             setBalance(Number(updatedWallet.balance));
 
             // Notificación de Éxito
-            toast.success(`¡Has recargado ${amount.toFixed(2)}€ correctamente!`, toastStyles.success);
+            notify('accountUpdates', `Has recargado ${amount.toFixed(2)}€ en tu monedero.`, 'success');
         } catch (error) {
-            console.error(error);
             // Notificación de Error
-            toast.error("Error al recargar el monedero", toastStyles.error);
+            toast.error("Error al recargar el monedero");
         }
     };
 
@@ -97,14 +72,13 @@ export default function Balance() {
             setBalance(Number(updatedWallet.balance));
 
             // Notificación de Éxito
-            toast.success(`Has retirado ${amountToWithdraw.toFixed(2)}€ exitosamente`, toastStyles.success);
+            notify('accountUpdates', `Has retirado ${amountToWithdraw.toFixed(2)}€ de tu monedero.`, 'success');
 
             setShowWithdraw(false);
 
         } catch (error: any) {
-            console.error(error);
             // Notificación de Error
-            toast.error(error.message || "Error al retirar el dinero", toastStyles.error);
+            toast.error("Error al retirar el dinero");
         }
     };
 

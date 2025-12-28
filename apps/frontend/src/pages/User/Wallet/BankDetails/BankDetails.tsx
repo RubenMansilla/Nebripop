@@ -2,6 +2,7 @@ import './BankDetails.css';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import CardForm from '../../../../components/CardForm/CardForm';
+import BankAccountForm from '../../../../components/BankAccountForm/BankAccountForm';
 
 export default function BankDetails() {
 
@@ -57,7 +58,7 @@ export default function BankDetails() {
                                 <div className='details-label'>
                                     <p>Cuenta bancaria</p>
                                 </div>
-                                <div className='details-box'>
+                                <div className='details-box' onClick={() => setView("add-bank")}>
                                     <p>Añadir cuenta bancaria</p>
                                 </div>
                             </div>
@@ -66,6 +67,9 @@ export default function BankDetails() {
                 )}
                 {view === "add-card" && (
                     <CardForm onBack={() => setView("menu")} />
+                )}
+                {view === "add-bank" && (
+                    <BankAccountForm onBack={() => setView("menu")} />
                 )}
             </div>
         </>

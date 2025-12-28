@@ -26,6 +26,7 @@ import Stats from "./pages/User/Stats/Stats";
 import Info from "./pages/User/Info/Info";
 import Settings from "./pages/User/Settings/Settings";
 import ReviewProfile from "./pages/User/ReviewProfile/ReviewProfile";
+import HelpPage from "./pages/User/Help/Help";
 import FormularioProducto from "./pages/SellProduct";
 
 // FOOTER SCREENS
@@ -108,7 +109,10 @@ export default function App() {
               {/* Configuración */}
               <Route path="/settings" element={<Settings />} />
 
+              {/* Ayuda */}
+
             </Route>
+            <Route path="/help" element={<HelpPage />} />
 
             <Route
               path="/sell-product"

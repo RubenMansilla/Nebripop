@@ -16,91 +16,91 @@ import type { UserType } from "../../types/user";
 
 export default function PublicUser() {
 
-  const { userId } = useParams();
+    const { userId } = useParams();
 
-  const [user, setUser] = useState<UserType | null>(null);
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [reviews, setReviews] = useState<ReviewType[]>([]);
-  const [rating, setRating] = useState<{ average: number; total: number } | null>(null);
+    const [user, setUser] = useState<UserType | null>(null);
+    const [products, setProducts] = useState<ProductType[]>([]);
+    const [reviews, setReviews] = useState<ReviewType[]>([]);
+    const [rating, setRating] = useState<{ average: number; total: number } | null>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [notFound, setNotFound] = useState(false);
 
-  useEffect(() => {
-    if (!userId) return;
+    useEffect(() => {
+        if (!userId) return;
 
-    const rawId = userId.split("-").pop();
-    const id = Number(rawId);
+        const rawId = userId.split("-").pop();
+        const id = Number(rawId);
 
-    if (Number.isNaN(id)) {
-      setNotFound(true);
-      setLoading(false);
-      return;
+        if (Number.isNaN(id)) {
+            setNotFound(true);
+            setLoading(false);
+            return;
+        }
+
+        setLoading(true);
+        setNotFound(false);
+
+        Promise.all([
+            getPublicUser(id),
+            getPublicProductsByUser(id),
+            getReviews(id, "newest"),
+            getUserReviewSummary(id),
+        ])
+            .then(([userData, productsData, reviewsData, ratingData]) => {
+                setUser(userData);
+                setProducts(productsData);
+                setReviews(reviewsData);
+                setRating(ratingData);
+            })
+            .catch((err) => {
+                console.error("Error cargando perfil público:", err);
+                setNotFound(true);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [userId]);
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="navbar-line"></div>
+                <CategoriesBar />
+                <div style={{ padding: "40px", textAlign: "center" }}>
+                    <p>Cargando perfil...</p>
+                </div>
+            </>
+        );
     }
 
-    setLoading(true);
-    setNotFound(false);
+    if (notFound || !user) {
+        return (
+            <>
+                <Navbar />
+                <div className="navbar-line"></div>
+                <CategoriesBar />
+                <div style={{ padding: "40px", textAlign: "center" }}>
+                    <h2>Usuario no encontrado</h2>
+                    <p>Este usuario no existe o ha sido eliminado.</p>
+                </div>
+            </>
+        );
+    }
 
-    Promise.all([
-      getPublicUser(id),
-      getPublicProductsByUser(id),
-      getReviews(id, "newest"),
-      getUserReviewSummary(id),
-    ])
-      .then(([userData, productsData, reviewsData, ratingData]) => {
-        setUser(userData);
-        setProducts(productsData);
-        setReviews(reviewsData);
-        setRating(ratingData);
-      })
-      .catch((err) => {
-        console.error("Error cargando perfil público:", err);
-        setNotFound(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [userId]);
-
-  if (loading) {
     return (
-      <>
-        <Navbar />
-        <div className="navbar-line"></div>
-        <CategoriesBar />
-        <div style={{ padding: "40px", textAlign: "center" }}>
-          <p>Cargando perfil...</p>
-        </div>
-      </>
+        <>
+            <Navbar />
+            <div className="navbar-line"></div>
+            <CategoriesBar />
+
+            <PublicUserProfile
+                user={user}
+                products={products}
+                reviews={reviews}
+                rating={rating}
+            />
+        </>
     );
-  }
-
-  if (notFound || !user) {
-    return (
-      <>
-        <Navbar />
-        <div className="navbar-line"></div>
-        <CategoriesBar />
-        <div style={{ padding: "40px", textAlign: "center" }}>
-          <h2>Usuario no encontrado</h2>
-          <p>Este usuario no existe o ha sido eliminado.</p>
-        </div>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Navbar />
-      <div className="navbar-line"></div>
-      <CategoriesBar />
-
-      <PublicUserProfile
-        user={user}
-        products={products}
-        reviews={reviews}
-        rating={rating}
-      />
-    </>
-  );
 }
