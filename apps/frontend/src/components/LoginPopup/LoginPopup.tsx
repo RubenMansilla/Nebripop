@@ -58,7 +58,7 @@ export default function LoginPopup({
                     />
 
                     <ReCAPTCHA
-                        sitekey="6Lc7xBEsAAAAABor08U8tHoFYX0v4FgTDZEWpYBZ"
+                        sitekey="6Lc8ADksAAAAAASu-cd5qVoh8_wW_IceZNtCgFYr"
                         onChange={(value: string | null) => setCaptchaValue(value)}
                     />
 
