@@ -1,33 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './NotificationsSection.css';
-
-interface NotificationsState {
-    priceDrops: boolean;
-    favoritesSold: boolean;
-    newProducts: boolean;
-    productUploaded: boolean;
-    productDeleted: boolean;
-    addedToFavorites: boolean;
-}
+import { useNotificationSettings } from '../../../context/NotificationContext';
 
 export default function NotificationsSection() {
 
-    const [notifications, setNotifications] = useState<NotificationsState>({
-        priceDrops: true,
-        favoritesSold: true,
-        newProducts: false,
-        productUploaded: true,
-        productDeleted: false,
-        addedToFavorites: true
-    });
-
-    const handleNotifToggle = (key: keyof NotificationsState) => {
-        setNotifications({ ...notifications, [key]: !notifications[key] });
-    };
+    const { settings, updateSetting } = useNotificationSettings();
 
     return (
         <div className='notifications-section'>
             <h2>Notificaciones</h2>
+
+            <div className="notif-group">
+                <h3>Cuenta y Seguridad</h3>
+                <p className="group-desc">Avisos sobre cambios en tu perfil, contraseña o datos personales.</p>
+                <ToggleItem
+                    label="Cambios en la cuenta"
+                    checked={settings.accountUpdates}
+                    onChange={() => updateSetting('accountUpdates')}
+                />
+            </div>
 
             <div className="notif-group">
                 <h3>Mis Favoritos</h3>
@@ -35,44 +26,73 @@ export default function NotificationsSection() {
 
                 <ToggleItem
                     label="Bajadas de precio"
-                    checked={notifications.priceDrops}
-                    onChange={() => handleNotifToggle('priceDrops')}
+                    checked={settings.priceDrops}
+                    onChange={() => updateSetting('priceDrops')}
                 />
                 <ToggleItem
                     label="Favoritos vendidos"
-                    checked={notifications.favoritesSold}
-                    onChange={() => handleNotifToggle('favoritesSold')}
+                    checked={settings.favoritesSold}
+                    onChange={() => updateSetting('favoritesSold')}
                 />
                 <ToggleItem
                     label="Nuevos productos"
-                    checked={notifications.newProducts}
-                    onChange={() => handleNotifToggle('newProducts')}
+                    checked={settings.newProducts}
+                    onChange={() => updateSetting('newProducts')}
                 />
             </div>
 
             <div className="notif-group">
-                <h3>Actividad General</h3>
-                <p className="group-desc">Avisos relacionados con la actividad general de tu cuenta.</p>
+                <h3>Mis acciones</h3>
+                <p className="group-desc">Avisos relacionados con los productos que publicas en NebriPop.</p>
                 <ToggleItem
-                    label="Al subir un producto"
-                    checked={notifications.productUploaded}
-                    onChange={() => handleNotifToggle('productUploaded')}
+                    label="Al publicar un producto"
+                    checked={settings.productUploaded}
+                    onChange={() => updateSetting('productUploaded')}
+                />
+                <ToggleItem
+                    label="Al editar un producto"
+                    checked={settings.productEdited}
+                    onChange={() => updateSetting('productEdited')}
                 />
                 <ToggleItem
                     label="Al eliminar un producto"
-                    checked={notifications.productDeleted}
-                    onChange={() => handleNotifToggle('productDeleted')}
+                    checked={settings.productDeleted}
+                    onChange={() => updateSetting('productDeleted')}
                 />
                 <ToggleItem
-                    label="Al añadir un producto a favoritos"
-                    checked={notifications.addedToFavorites}
-                    onChange={() => handleNotifToggle('addedToFavorites')}
+                    label="Al añadir a favoritos un producto o perfil"
+                    checked={settings.addedToFavorites}
+                    onChange={() => updateSetting('addedToFavorites')}
+                />
+            </div>
+
+            <div className="notif-group">
+                <h3>Interacciones</h3>
+                <p className="group-desc">Avisos cuando otros usuarios interactúan contigo.</p>
+                <ToggleItem
+                    label="Nuevo mensaje recibido"
+                    checked={settings.newMessage}
+                    onChange={() => updateSetting('newMessage')}
+                />
+            </div>
+
+            <div className="notif-group">
+                <h3>Recomendaciones y promociones</h3>
+                <p className="group-desc">Recibe avisos sobre promociones y otros contenidos.</p>
+                <ToggleItem
+                    label="Consejos y sugerencias"
+                    checked={settings.tips}
+                    onChange={() => updateSetting('tips')}
+                />
+                <ToggleItem
+                    label="Promociones y novedades"
+                    checked={settings.promotions}
+                    onChange={() => updateSetting('promotions')}
                 />
             </div>
         </div>
     );
 }
-
 
 interface ToggleItemProps {
     label: string;
@@ -80,12 +100,11 @@ interface ToggleItemProps {
     onChange: () => void;
 }
 
-
 function ToggleItem({ label, checked, onChange }: ToggleItemProps) {
     return (
         <div className="toggle-item">
             <span>{label}</span>
-            <label className="switch">
+            <label className="notif-switch">
                 <input type="checkbox" checked={checked} onChange={onChange} />
                 <span className="slider round"></span>
             </label>

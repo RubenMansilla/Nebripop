@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { deleteProduct } from '../../api/products.api';
 import { hideSoldTransaction, hidePurchasedTransaction } from '../../api/purchases.api';
 import { useNavigate } from 'react-router-dom';
+import { useNotificationSettings } from '../../context/NotificationContext';
 
 export default function Product({ product, mode, onUnfavorite, onDelete }: { product: ProductType, mode: "public" | "active" | "sold" | "purchased" | "", onUnfavorite?: (id: number) => void; onDelete?: (id: number) => void }) {
 
@@ -22,6 +23,8 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
     const [isFavorite, setIsFavorite] = useState(product.isFavorite ?? false);
 
     const isOwner = user && user.id === product.owner_id;
+
+    const { notify } = useNotificationSettings();
 
     const navigate = useNavigate();
 
@@ -61,6 +64,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
     };
 
     const handleConfirmDelete = async () => {
+
         if (!token) {
             toast.error("Error de autenticación. Inicia sesión de nuevo.");
             return;
@@ -77,7 +81,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
             if (mode === "active") {
                 // CASO 1: Producto en venta -> Borrado real (Soft/Hard Delete)
                 await deleteProduct(product.id, token);
-                toast.success("Producto eliminado correctamente");
+                notify('productDeleted', "Producto eliminado correctamente", 'success');
             }
             else if (mode === "sold") {
                 // CASO 2: Producto vendido -> Ocultar del historial
@@ -85,14 +89,14 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                     throw new Error("No se encontró el ID de la transacción para ocultar");
                 }
                 await hideSoldTransaction(product.purchaseId, token);
-                toast.success("Producto eliminado correctamente");
+                notify('productDeleted', "Producto eliminado correctamente", 'success');
             } else if (mode === "purchased") {
                 // Ocultar Compra
                 if (!product.purchaseId) throw new Error("Falta ID de transacción");
 
                 // Llamar al endpoint de /buy/:id
                 await hidePurchasedTransaction(product.purchaseId, token);
-                toast.success("Producto eliminado correctamente");
+                notify('productDeleted', "Producto eliminado correctamente", 'success');
             }
 
             // Actualizar la UI inmediatamente
@@ -129,6 +133,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                 if (onUnfavorite) onUnfavorite(product.id);
             } else {
                 await addFavorite(product.id, token);
+                notify('addedToFavorites', "Producto añadido a favoritos", 'success');
             }
         } catch (err) {
             console.error("Error toggling favorite:", err);

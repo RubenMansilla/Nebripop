@@ -13,13 +13,16 @@ export class PurchasesService {
 
     // Ocultar compra (Lógica de Comprador)
     async hidePurchase(purchaseId: number, userId: string) {
+
+        console.log("Hiding purchase:", purchaseId, "for user:", userId);
+
         const purchase = await this.purchaseRepo.findOne({ where: { id: purchaseId } });
 
         if (!purchase) {
             throw new NotFoundException('Transacción no encontrada');
         }
 
-        if (purchase.buyerId === userId) {
+        if (String(purchase.buyerId) === String(userId)) {
             purchase.deletedByBuyer = true;
             return this.purchaseRepo.save(purchase);
         }
@@ -29,13 +32,14 @@ export class PurchasesService {
 
     // Ocultar venta (Lógica de Vendedor)
     async hideSale(purchaseId: number, userId: string) {
+
         const purchase = await this.purchaseRepo.findOne({ where: { id: purchaseId } });
 
         if (!purchase) {
             throw new NotFoundException('Transacción no encontrada');
         }
 
-        if (purchase.sellerId === userId) {
+        if (String(purchase.sellerId) === String(userId)) {
             purchase.deletedBySeller = true;
             return this.purchaseRepo.save(purchase);
         }

@@ -1,7 +1,4 @@
-import './Published.css'
-import Navbar from '../../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../../components/Profile/ProfileSideBar/ProfileSideBar';
+import './Published.css';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState, useContext, useRef } from 'react';
 import Product from '../../../../components/Product/Product';
@@ -11,6 +8,7 @@ import { AuthContext } from "../../../../context/AuthContext";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
 import { toast } from "react-toastify";
 import noReviewsImg from '../../../../assets/profile/pop-nothing-for-sale.svg';
+import { useNotificationSettings } from '../../../../context/NotificationContext';
 
 export default function Published() {
 
@@ -40,24 +38,19 @@ export default function Published() {
         setActiveProducts(current => current.filter(p => p.id !== deletedId));
     };
 
+    const { notify } = useNotificationSettings();
 
     useEffect(() => {
+
         if (location.state?.success && !hasShownToast.current) {
             hasShownToast.current = true;
-            toast.success("Producto publicado correctamente", {
-                style: {
-                    borderRadius: "14px",
-                    padding: "14px 18px",
-                    backgroundColor: "#f6fff8",
-                    color: "#114b2c",
-                    border: "1px solid #d5f3df",
-                    fontWeight: 500,
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.08)"
-                },
-                progressStyle: {
-                    background: "#28c76f",
-                }
-            });
+
+            notify(
+                'productUploaded',
+                "Producto publicado correctamente",
+                'success'
+            );
+
             navigate(location.pathname, { replace: true });
         }
     }, [location.state, navigate, location.pathname]);
