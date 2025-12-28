@@ -1,8 +1,7 @@
 import './CardForm.css';
 import { useState } from 'react';
 import VisaLogo from '../../assets/logos/Visa_Inc._logo.svg.png';
-import MasterCardLogo from '../../assets/logos/Mastercard-logo.png';
-import { on } from 'events';
+import MasterCardLogo from '../../assets/logos/Mastercard-Logo.png';
 
 interface CardFormProps {
     onBack: () => void;
