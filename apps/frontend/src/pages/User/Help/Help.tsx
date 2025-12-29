@@ -62,7 +62,7 @@ export default function Help() {
                     </div>
                 </section>
 
-                <div className="categories-grid">
+                <div className="categories-grid-help">
                     <div className="category-column">
                         <div className="cat-header">
                             <Truck size={32} className="cat-icon" />
