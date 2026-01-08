@@ -1,0 +1,44 @@
+/* reutiliza product-container */
+.users-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* fila usuario */
+.favorite-user-row {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.favorite-user-row:hover {
+  background: #f2f4f5;
+}
+
+.favorite-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.favorite-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.favorite-user-name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.favorite-user-sub {
+  font-size: 13px;
+  color: #666;
+}

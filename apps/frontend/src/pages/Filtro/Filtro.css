@@ -1,0 +1,590 @@
+/* ============================================
+   CONTENEDOR GENERAL
+============================================ */
+.filtro-container {
+  display: flex;
+  width: 100%;
+  max-width: 1300px;
+  margin: 40px auto; /* ✔ centrado sin espacio lateral */
+  gap: 50px;
+  padding: 0 20px;  /* ✔ margen suave responsivo */
+}
+
+
+/* ============================================
+   SIDEBAR IZQUIERDO
+============================================ */
+.filtro-sidebar {
+  width: 260px;
+  padding-right: 16px;
+}
+
+.filtro-title {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 28px;
+  color: #3a3a3a;
+}
+
+.filtro-block {
+  margin-bottom: 32px;
+}
+
+.filtro-subtitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #3a3a3a;
+  margin-bottom: 12px;
+}
+
+.filtro-list li {
+  list-style: none;
+  margin: 6px 0;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3a3a3a;
+}
+
+.filtro-list li:hover {
+  color: #b9a48a;
+}
+
+.ver-todo {
+  color: #d2b990;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* ============================================
+   OPCIONES DE ENVÍO
+============================================ */
+.envio-toggle {
+  display: flex;
+  width: 100%;
+  background: #ece6de;
+  border-radius: 50px;
+  height: 30px;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.envio-option {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a766f;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.envio-option.active {
+  background: #d1c1a7;
+  border-radius: 50px;
+  color: white;
+}
+
+/* ============================================
+   ESTADO (CHECKBOXES)
+============================================ */
+.estado-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 26px;
+  cursor: pointer;
+}
+
+.estado-checkbox {
+  width: 30px;
+  height: 30px;
+  appearance: none;
+  border-radius: 5px;
+  border: 3px solid #d6c9b4;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.estado-checkbox:checked {
+  background-color: #d6c9b4;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.estado-textos {
+  display: flex;
+  flex-direction: column;
+}
+
+.estado-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #d2b990;
+}
+
+.estado-desc {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #898989;
+}
+
+/* ============================================
+   PRECIO (SLIDER)
+============================================ */
+.filtro-precio .range-labels {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.np-slider-wrapper {
+  position: relative;
+  margin-top: 10px;
+  height: 6px;
+}
+
+/* TRACK inferior */
+.np-range-min::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #c8c4c4;
+  border-radius: 10px;
+}
+
+.np-range-min::-moz-range-track {
+  height: 6px;
+  background: #c8c4c4;
+  border-radius: 10px;
+}
+
+/* MAX no pinta nada */
+.np-range-max::-webkit-slider-runnable-track,
+.np-range-max::-moz-range-track {
+  background: transparent !important;
+}
+
+/* INPUT RANGE */
+.np-range-min,
+.np-range-max {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  width: 100%;
+  height: 6px;
+  background: none;
+  border: none;
+  top: 0;
+  left: 0;
+  margin: 0;
+  z-index: 5;
+}
+
+/* THUMB */
+.np-range-min::-webkit-slider-thumb,
+.np-range-max::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #d6c9b4;
+  border-radius: 50%;
+  border: 3px solid white;
+  cursor: pointer;
+  margin-top: -8px;
+}
+
+.np-selected-range {
+  position: absolute;
+  top: 0;
+  height: 6px;
+  background: #d2b990;
+  border-radius: 10px;
+  z-index: 2;
+}
+
+/* ============================================
+   FECHA (RADIOS)
+============================================ */
+.np-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 12px 0;
+}
+
+.np-radio-item input[type="radio"] {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  border: 3px solid #d6c9b4;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+}
+
+.np-radio-item input[type="radio"]:checked {
+  border-color: #d2b990;
+}
+
+.np-radio-item input[type="radio"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  background: #d2b990;
+  border-radius: 50%;
+}
+
+.np-radio-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d2b990;
+}
+
+/* ============================================
+   RESULTADOS DERECHA
+============================================ */
+.filtro-results {
+  flex: 1;
+}
+
+/* Filtro categoria activa */
+.filtro-list li.active {
+  color: #d2b990;
+  font-weight: 700;
+}
+
+.filtro-list li {
+  transition: color 0.2s ease;
+}
+
+
+.filtro-block:not(:last-child) {
+  padding-bottom: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.price-inputs input::placeholder {
+  color: #bbb;
+}
+
+/* ============================================
+   PRECIO (INPUTS MIN / MAX)
+============================================ */
+.filtro-precio-inputs {
+  margin-top: 30px;
+}
+
+.precio-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.precio-inputs input {
+  width: 100%;
+  height: 100%;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 2px solid #e5dccf;
+  font-size: 16px;
+  font-weight: 600;
+  color: #3a3a3a;
+  background: white;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+/* Hover elegante */
+.precio-inputs input:hover {
+  border-color: #d2b990;
+}
+
+/* Focus estilo Wallapop */
+.precio-inputs input:focus {
+  border-color: #d2b990;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* Quitar flechas del number */
+.precio-inputs input::-webkit-outer-spin-button,
+.precio-inputs input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Separador € */
+.precio-separador {
+  font-size: 16px;
+  font-weight: 700;
+  color: #b7a184;
+}
+
+
+/* Flecha ↓ personalizada */
+.order-select {
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%236f6f6f' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><polygon points='0,0 20,0 10,12'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 12px;
+  background-position: right 14px center;
+}
+
+
+/* Títulos */
+.results-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.results-subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* GRID PRODUCTOS */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-top: 10px;
+}
+
+/* ✅ grid correcto: UL -> LI */
+.products-grid {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.products-grid-item {
+  min-width: 0; /* 🔑 evita que el contenido “empuje” la columna */
+}
+
+.product-link {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 🔒 Encierra el slider dentro de su celda */
+.products-grid--filters .slider-track {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.products-grid--filters .slider-track img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+
+/* ===========================
+   RESPONSIVE · TABLET
+=========================== */
+@media (max-width: 1024px) {
+  .filtro-container {
+    max-width: 100%;
+    gap: 28px;
+    padding: 0 16px;
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+}
+
+/* ===========================
+   RESPONSIVE · MOBILE
+=========================== */
+@media (max-width: 768px) {
+  /* Layout: resultados arriba + filtros abajo */
+  .filtro-container {
+    flex-direction: column;
+    margin: 18px auto;
+    gap: 18px;
+    padding: 0 12px;
+  }
+
+  .filtro-results {
+    order: 1;
+  }
+
+  .filtro-sidebar {
+    order: 2;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  /* Títulos más compactos */
+  .results-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .filtro-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .filtro-subtitle {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+
+  /* Sidebar como tarjeta */
+  .filtro-sidebar {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 16px;
+  }
+
+  .filtro-block {
+    margin-bottom: 18px;
+  }
+
+  .filtro-block:not(:last-child) {
+    padding-bottom: 16px;
+  }
+
+  /* Listas: 2 columnas para ahorrar altura */
+  .filtro-list {
+    padding-left: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    row-gap: 8px;
+  }
+
+  .filtro-list li {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .ver-todo {
+    grid-column: 1 / -1; /* ocupa ancho completo */
+    margin-top: 6px;
+  }
+
+  /* Toggle envío: ancho completo y centrado */
+  .envio-toggle {
+    height: 36px;
+    border-radius: 999px;
+  }
+
+  .envio-option {
+    width: 50%;
+    padding: 10px 0;
+    font-size: 12px;
+  }
+
+  /* Estado (checkbox): más compacto */
+  .estado-item {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .estado-checkbox {
+    width: 26px;
+    height: 26px;
+  }
+
+  .estado-title {
+    font-size: 14px;
+  }
+
+  .estado-desc {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+
+  /* Precio inputs: que no se rompa */
+  .precio-inputs {
+    gap: 8px;
+  }
+
+  .precio-inputs input {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .precio-separador {
+    font-size: 14px;
+  }
+
+  /* Grid productos en móvil */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-top: 6px;
+  }
+
+  .products-grid-item {
+    min-width: 0;
+  }
+
+  .product-link {
+    width: 100%;
+  }
+}
+
+/* Móviles pequeños: 1 columna para que respire */
+@media (max-width: 600px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filtro-list {
+    grid-template-columns: 1fr; /* filtros en 1 col para no apretar */
+  }
+  }
+  @media (max-width: 900px) {
+  .filtro-container {
+    flex-direction: column;
+  }
+
+  /* 🔥 FILTROS ARRIBA */
+  .filtro-sidebar {
+    order: 1;
+  }
+
+  /* 🔥 PRODUCTOS DEBAJO */
+  .filtro-results {
+    order: 2;
+  }
+}
+@media (max-width: 600px) {
+
+  .envio-toggle {
+    height: 42px;                 /* más cómodo táctil */
+    border-radius: 14px;
+  }
+
+  .envio-option {
+    flex: 1;                      /* 🔑 cada uno 50% */
+    padding: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    white-space: nowrap;          /* evita saltos raros */
+  }
+
+  .envio-option.active {
+    border-radius: 12px;
+  }
+}

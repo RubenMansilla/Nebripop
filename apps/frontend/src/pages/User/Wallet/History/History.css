@@ -1,0 +1,82 @@
+.history-content {
+    background-color: white;
+    width: 100%;
+    border: 1.5px solid var(--beige);
+    border-radius: 12px;
+    display: flex;
+    gap: 35px;
+    padding-block: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.history-filters {
+    width: 95%;
+    display: flex;
+    gap: 24px;
+}
+
+.filter {
+    padding: 8px 13px;
+    cursor: pointer;
+    border-radius: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.filter.active {
+    background-color: #d6c9b4;
+    color: black;
+    font-weight: 600;
+}
+
+.history-list {
+    width: 95%;
+}
+
+.no-history-content {
+    color: #90a4ae;
+}
+
+/* Títulos de agrupación */
+.year-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #333;
+    margin-bottom: 15px;
+    margin-top: 38px;
+}
+
+.year-group:first-child .year-title {
+    margin-top: 0;
+}
+
+.month-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 6px;
+    margin-top: 18px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 6px;
+}
+
+.loading-text,
+.no-history-content {
+    text-align: center;
+    color: #888;
+}
+
+@media (max-width: 480px) {
+    .history-content {
+        padding: 15px;
+    }
+
+    .history-filters {
+        width: 100%;
+        justify-content: center;
+        gap: 10px;
+    }
+}

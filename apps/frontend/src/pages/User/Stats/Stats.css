@@ -1,0 +1,92 @@
+/* CONTAINER */
+.stats-container {
+    width: 100%;
+    background-color: white;
+    border: 1px solid var(--beige);
+    border-radius: 12px;
+    margin-top: 10px;
+    overflow: hidden;
+    padding-bottom: 10px;
+    padding-top: 15px;
+}
+
+.finance-stats {
+    width: 95%;
+    border-radius: 10px;
+    margin: auto;
+    margin-top: 30px;
+}
+
+.no-stats {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 0px;
+    color: #29363d;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.no-stats img {
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Título */
+.no-stats h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    color: #000000;
+}
+
+/* Descripción */
+.no-stats p {
+    font-size: 16px;
+    line-height: 20px;
+    color: #607d8b;
+    line-height: 24px;
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+    .no-stats {
+        padding: 30px 10px;
+    }
+
+    .no-stats h3 {
+        font-size: 17px;
+    }
+
+    .no-stats p {
+        font-size: 13px;
+        max-width: 260px;
+    }
+
+    .no-stats img {
+        width: 280px;
+    }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+    .no-stats {
+        padding: 25px 8px;
+        gap: 4px;
+    }
+
+    .no-stats h3 {
+        font-size: 16px;
+    }
+
+    .no-stats p {
+        font-size: 12.5px;
+        max-width: 220px;
+    }
+}

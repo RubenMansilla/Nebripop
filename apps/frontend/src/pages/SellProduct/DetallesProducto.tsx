@@ -84,11 +84,33 @@ export default function DetallesProducto({ onChange }: Props) {
 
       <h3 className="detalles-subtitle">Medidas</h3>
 
-      <div className="detalles-row-3">
-        <input placeholder="Ancho (cm)" value={width} onChange={(e) => setWidth(e.target.value)} />
-        <input placeholder="Fondo (cm)" value={depth} onChange={(e) => setDepth(e.target.value)} />
-        <input placeholder="Alto (cm)" value={height} onChange={(e) => setHeight(e.target.value)} />
-      </div>
+     <div className="detalles-row-3">
+  <input
+    type="number"
+    min={0}
+    step="any"
+    placeholder="Ancho (cm)"
+    value={width}
+    onChange={(e) => setWidth(e.target.value)}
+  />
+  <input
+    type="number"
+    min={0}
+    step="any"
+    placeholder="Fondo (cm)"
+    value={depth}
+    onChange={(e) => setDepth(e.target.value)}
+  />
+  <input
+    type="number"
+    min={0}
+    step="any"
+    placeholder="Alto (cm)"
+    value={height}
+    onChange={(e) => setHeight(e.target.value)}
+  />
+</div>
+
     </div>
   );
 }

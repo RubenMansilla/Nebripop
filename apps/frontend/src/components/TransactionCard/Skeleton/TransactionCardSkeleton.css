@@ -1,0 +1,62 @@
+@keyframes skeleton-loading {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+
+.skeleton-pulse {
+    background: linear-gradient(90deg,
+            #f0f2f5 25%,
+            #e6e8eb 37%,
+            #f0f2f5 63%);
+    background-size: 400% 100%;
+    animation: skeleton-loading 1.4s ease infinite;
+}
+
+.transaction-card.skeleton-wrapper {
+    pointer-events: none;
+    user-select: none;
+}
+
+.transaction-card .t-icon.skeleton-pulse {
+    border-radius: 12px;
+}
+
+.skeleton-card-line {
+    border-radius: 4px;
+}
+
+.skeleton-card-line.name {
+    width: 140px;
+    height: 15px;
+    margin-bottom: 4px;
+}
+
+.skeleton-card-line.date {
+    width: 90px;
+    height: 12px;
+}
+
+.skeleton-card-line.amount {
+    width: 70px;
+    height: 15px;
+    margin-left: auto;
+}
+
+@media (max-width: 480px) {
+    .skeleton-card-line.name {
+        width: 110px;
+    }
+
+    .skeleton-card-line.date {
+        width: 70px;
+    }
+
+    .skeleton-card-line.amount {
+        width: 60px;
+    }
+}

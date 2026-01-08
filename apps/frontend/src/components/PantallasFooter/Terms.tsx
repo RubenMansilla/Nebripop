@@ -1,6 +1,6 @@
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
-import "./terms.css";
+import "./Terms.css";
 
 export default function Terms() {
   return (

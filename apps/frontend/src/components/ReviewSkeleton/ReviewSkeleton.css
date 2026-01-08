@@ -9,6 +9,15 @@
     }
 }
 
+.review-skeleton {
+    background-color: none;
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    padding-bottom: 25px;
+    gap: 100px;
+}
+
 .skeleton {
     pointer-events: none;
 }

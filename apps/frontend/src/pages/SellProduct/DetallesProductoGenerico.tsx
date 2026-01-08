@@ -65,24 +65,17 @@ export default function DetallesProductoGenerico({ onChange }: Props) {
       </div>
 
       {/* PRECIO */}
-      <div className="detalles-precio">
-        <label>Precio*</label>
+<div className="detalles-input">
+  <label>Precio (€)*</label>
+  <input
+    type="number"
+    min={0}
+    value={precio}
+    onChange={(e) => setPrecio(e.target.value)}
+  />
+</div>
 
-        <div className={`precio-box ${precio === "" ? "error" : ""}`}>
-          <span>€</span>
-          <input
-            type="number"
-            min={0}
-            value={precio}
-            onChange={(e) => setPrecio(e.target.value)}
-          />
-          {precio === "" && <span className="error-icon">!</span>}
-        </div>
 
-        {precio === "" && (
-          <small className="obligatorio-texto">Campo obligatorio</small>
-        )}
-      </div>
     </div>
   );
 }

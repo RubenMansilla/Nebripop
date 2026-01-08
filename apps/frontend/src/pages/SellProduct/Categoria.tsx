@@ -1,41 +1,112 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./FormularioProducto.css";
+import { getCategories } from "../../api/categories.api";
+import { getSubcategoriesByCategory } from "../../api/subcategories.api";
+
+/* =========================
+   TIPOS
+========================= */
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface Subcategory {
+  id: number;
+  name: string;
+}
 
 interface Props {
   onSelect: (data: {
-    categoria: string;
-    subcategoria: string;
+    categoryId: number;
+    subcategoryId: number;
     tipoFormulario: "hogar" | "generico";
   }) => void;
 }
 
+/* =========================
+   COMPONENTE
+========================= */
 export default function Categoria({ onSelect }: Props) {
-  const categorias: Record<string, string[]> = {
-    "Hogar y jardín": ["Muebles", "Decoración", "Cocina", "Baño", "Jardín"],
-    "Bricolaje": ["Taladros", "Pintura", "Tornillería", "Sierras", "Herramientas"],
-    "Deporte y ocio": ["Fitness", "Ciclismo", "Fútbol", "Running", "Otros deportes"],
-    "Industria y agricultura": ["Maquinaria", "Suministros", "Materiales", "Seguridad", "Otros"],
-    "Motos": ["Casco", "Piezas", "Accesorios", "Ropa Moto", "Scooters"],
-    "Motor y accesorios": ["Piezas", "Neumáticos", "Audio coche", "Luces", "Averías"],
-    "Moda y accesorios": ["Hombre", "Mujer", "Calzado", "Bolsos", "Accesorios"],
-    "Tecnología y electrónica": ["Móviles", "Portátiles", "Auriculares", "Consolas", "Televisores"],
-    "Mascotas": ["Perros", "Gatos", "Aves", "Reptiles", "Roedores"],
-    "Electrodomésticos": ["Cocina", "Limpieza", "Climatización", "Baño", "Pequeños"],
-  };
-
   const [isOpen, setIsOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [selected, setSelected] = useState<{ cat: string; sub: string } | null>(null);
 
-  const selectFinal = (cat: string, sub: string) => {
-    setSelected({ cat, sub });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [subcategories, setSubcategories] = useState<Subcategory[]>([]);
+
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
+
+  // ⬇️ YA EXISTÍA (lo dejamos)
+  const [selected, setSelected] = useState<{
+    categoryName: string;
+    subcategoryName: string;
+  } | null>(null);
+
+  // ✅ AÑADIDO: estado REAL con IDs (NO BORRA NADA)
+  const [selectedIds, setSelectedIds] = useState<{
+    categoryId: number;
+    subcategoryId: number;
+    tipoFormulario: "hogar" | "generico";
+  } | null>(null);
+
+  /* =========================
+     CARGAR CATEGORÍAS
+  ========================= */
+  useEffect(() => {
+    getCategories()
+      .then(setCategories)
+      .catch((err) => {
+        console.error("Error cargando categorías:", err);
+      });
+  }, []);
+
+  /* =========================
+     CARGAR SUBCATEGORÍAS
+  ========================= */
+  useEffect(() => {
+    if (!activeCategory) {
+      setSubcategories([]);
+      return;
+    }
+
+    getSubcategoriesByCategory(activeCategory.id)
+      .then(setSubcategories)
+      .catch((err) => {
+        console.error("Error cargando subcategorías:", err);
+      });
+  }, [activeCategory]);
+
+  /* =========================
+     EMITIR SELECCIÓN AL PADRE (A PRUEBA DE ERRORES)
+     🔥 ESTO ES LO QUE TE FALTABA
+  ========================= */
+  useEffect(() => {
+    if (selectedIds) {
+      onSelect(selectedIds);
+    }
+  }, [selectedIds, onSelect]);
+
+  /* =========================
+     SELECCIÓN FINAL
+  ========================= */
+  const selectFinal = (sub: Subcategory) => {
+    if (!activeCategory) return;
 
     const tipoFormulario =
-      cat === "Hogar y jardín" || cat === "Bricolaje" ? "hogar" : "generico";
+      activeCategory.name === "Hogar y jardín" ||
+      activeCategory.name === "Bricolaje"
+        ? "hogar"
+        : "generico";
 
-    onSelect({
-      categoria: cat,
-      subcategoria: sub,
+    // ⬇️ VISUAL (YA EXISTÍA)
+    setSelected({
+      categoryName: activeCategory.name,
+      subcategoryName: sub.name,
+    });
+
+    // ✅ ESTADO REAL CON IDS (NUEVO)
+    setSelectedIds({
+      categoryId: activeCategory.id,
+      subcategoryId: sub.id,
       tipoFormulario,
     });
 
@@ -43,32 +114,48 @@ export default function Categoria({ onSelect }: Props) {
     setActiveCategory(null);
   };
 
+  /* =========================
+     RENDER
+  ========================= */
   return (
     <div className="categoria-container">
       <label className="input-label">Categoría y subcategoría</label>
 
-      <div className="categoria-selector" onClick={() => setIsOpen(!isOpen)}>
+      {/* SELECTOR */}
+      <div
+        className="categoria-selector"
+        onClick={() => setIsOpen(true)}
+      >
         <div className="categoria-selector-text">
-          {selected ? `${selected.cat} · ${selected.sub}` : "Selecciona una categoría..."}
+          {selected
+            ? `${selected.categoryName} · ${selected.subcategoryName}`
+            : "Selecciona una categoría..."}
         </div>
         <span className={`categoria-selector-arrow ${isOpen ? "open" : ""}`}>
           ▾
         </span>
       </div>
 
+      {/* PANEL */}
       {isOpen && (
-        <div className="categoria-panel">
+        <div className="categoria-panel" onClick={(e) => e.stopPropagation()}>
           {!activeCategory && (
             <>
-              <div className="categoria-panel-section-title">Todas las categorías</div>
+              <div className="categoria-panel-section-title">
+                Todas las categorías
+              </div>
 
-              {Object.keys(categorias).map((cat) => (
+              {categories.map((cat) => (
                 <button
-                  key={cat}
+                  key={cat.id}
+                  type="button"
                   className="categoria-item"
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveCategory(cat);
+                  }}
                 >
-                  <span className="categoria-text">{cat}</span>
+                  <span className="categoria-text">{cat.name}</span>
                   <span className="categoria-arrow">›</span>
                 </button>
               ))}
@@ -77,19 +164,32 @@ export default function Categoria({ onSelect }: Props) {
 
           {activeCategory && (
             <>
-              <button className="categoria-back" onClick={() => setActiveCategory(null)}>
+              <button
+                type="button"
+                className="categoria-back"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveCategory(null);
+                }}
+              >
                 ← Volver
               </button>
 
-              <div className="categoria-panel-section-title">{activeCategory}</div>
+              <div className="categoria-panel-section-title">
+                {activeCategory.name}
+              </div>
 
-              {categorias[activeCategory].map((sub) => (
+              {subcategories.map((sub) => (
                 <button
-                  key={sub}
+                  key={sub.id}
+                  type="button"
                   className="categoria-item"
-                  onClick={() => selectFinal(activeCategory, sub)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    selectFinal(sub);
+                  }}
                 >
-                  <span className="categoria-text">{sub}</span>
+                  <span className="categoria-text">{sub.name}</span>
                   <span className="categoria-arrow">›</span>
                 </button>
               ))}

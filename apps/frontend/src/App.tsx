@@ -5,19 +5,28 @@ import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
 // HOME
 import Home from "./pages/Home/Home";
+import Detail from "./pages/Product/Detail";
 
 // USER PROFILE PAGES (NUEVA RUTA)
+import ProfileLayout from "./components/Profile/Layout/ProfileLayout";
 import User from "./pages/User/Me/Me";
 import Published from "./pages/User/Catalog/Published/Published";
 import Solds from "./pages/User/Catalog/Sold/Solds";
-import Wallet from "./pages/User/Wallet/Wallet";
+import Balance from "./pages/User/Wallet/Balance/Balance";
+import BankDetails from "./pages/User/Wallet/BankDetails/BankDetails";
+import History from "./pages/User/Wallet/History/History";
 import Chat from "./pages/User/Chat/Chat";
-import Favorites from "./pages/User/Favorites/Favorites";
-import Purchases from "./pages/User/Purchases/Purchases";
-import Sales from "./pages/User/Sales/Sales";
+import FavoritesProducts from "./pages/User/Favorites/Products/FavoritesProducts";
+import FavoritesProfiles from "./pages/User/Favorites/Profiles/FavoritesProfiles";
+import PurchasesOngoing from "./pages/User/Purchases/Ongoing/PurchasesOngoing";
+import PurchasesCompleted from "./pages/User/Purchases/Completed/PurchasesCompleted";
+import SalesOngoing from "./pages/User/Sales/Ongoing/SalesOngoing";
+import SalesCompleted from "./pages/User/Sales/Completed/SalesCompleted";
 import Stats from "./pages/User/Stats/Stats";
 import Info from "./pages/User/Info/Info";
+import Settings from "./pages/User/Settings/Settings";
 import ReviewProfile from "./pages/User/ReviewProfile/ReviewProfile";
+import HelpPage from "./pages/User/Help/Help";
 import FormularioProducto from "./pages/SellProduct";
 
 // FOOTER SCREENS
@@ -30,6 +39,16 @@ import Safety from "./components/PantallasFooter/Safety";
 import Community from "./components/PantallasFooter/Community";
 import Privacy from "./components/PantallasFooter/Privacy";
 import Terms from "./components/PantallasFooter/Terms";
+import Filtro from "./pages/Filtro/Filtro";
+
+
+// PERFIL PÚBLICO
+import PublicUser from "./pages/PublicUser/PublicUser";
+
+
+
+
+
 
 export default function App() {
   return (
@@ -55,105 +74,45 @@ export default function App() {
             <Route path="/privacidad" element={<Privacy />} />
             <Route path="/condiciones" element={<Terms />} />
 
-            {/* PROTECTED ROUTES */}
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <User />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/filtros" element={<Filtro />} />
+            <Route path="/product/:productId" element={<Detail />} />
 
-            <Route
-              path="/profile/info"
-              element={
-                <ProtectedRoute>
-                  <Info />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/you" element={<User />} />
 
-            <Route
-              path="/profile/reviews"
-              element={
-                <ProtectedRoute>
-                  <ReviewProfile />
-                </ProtectedRoute>
-              }
-            />
+            <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
-            <Route
-              path="/catalog/published"
-              element={
-                <ProtectedRoute>
-                  <Published />
-                </ProtectedRoute>
-              }
-            />
+              {/* Perfil */}
+              <Route path="/profile/info" element={<Info />} />
+              <Route path="/profile/reviews" element={<ReviewProfile />} />
+              <Route path="/profile/chat" element={<Chat />} />
+              <Route path="/profile/stats" element={<Stats />} />
 
-            <Route
-              path="/catalog/sold"
-              element={
-                <ProtectedRoute>
-                  <Solds />
-                </ProtectedRoute>
-              }
-            />
+              {/* Catálogo */}
+              <Route path="/catalog/published" element={<Published />} />
+              <Route path="/catalog/sold" element={<Solds />} />
 
-            <Route
-              path="/profile/wallet"
-              element={
-                <ProtectedRoute>
-                  <Wallet />
-                </ProtectedRoute>
-              }
-            />
+              {/* Monedero */}
+              <Route path="/wallet/balance" element={<Balance />} />
+              <Route path="/wallet/bank-details" element={<BankDetails />} />
+              <Route path="/wallet/history" element={<History />} />
 
-            <Route
-              path="/profile/chat"
-              element={
-                <ProtectedRoute>
-                  <Chat />
-                </ProtectedRoute>
-              }
-            />
+              {/* Favoritos */}
+              <Route path="/favorites/products" element={<FavoritesProducts />} />
+              <Route path="/favorites/profiles" element={<FavoritesProfiles />} />
 
-            <Route
-              path="/profile/favorites"
-              element={
-                <ProtectedRoute>
-                  <Favorites />
-                </ProtectedRoute>
-              }
-            />
+              {/* Compras y Ventas */}
+              <Route path="/purchases/ongoing" element={<PurchasesOngoing />} />
+              <Route path="/purchases/completed" element={<PurchasesCompleted />} />
+              <Route path="/sales/ongoing" element={<SalesOngoing />} />
+              <Route path="/sales/completed" element={<SalesCompleted />} />
 
-            <Route
-              path="/profile/purchases"
-              element={
-                <ProtectedRoute>
-                  <Purchases />
-                </ProtectedRoute>
-              }
-            />
+              {/* Configuración */}
+              <Route path="/settings" element={<Settings />} />
 
-            <Route
-              path="/profile/sales"
-              element={
-                <ProtectedRoute>
-                  <Sales />
-                </ProtectedRoute>
-              }
-            />
+              {/* Ayuda */}
 
-            <Route
-              path="/profile/stats"
-              element={
-                <ProtectedRoute>
-                  <Stats />
-                </ProtectedRoute>
-              }
-            />
+            </Route>
+            <Route path="/help" element={<HelpPage />} />
 
             <Route
               path="/sell-product"
@@ -163,6 +122,11 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
+
+            <Route path="/users/:userId" element={<PublicUser />} />
+
+
 
           </Routes>
         </BrowserRouter>

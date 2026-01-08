@@ -5,6 +5,7 @@
     flex-direction: column;
     cursor: pointer;
     gap: 8px;
+    min-width: 0;
 }
 
 .product-img {
@@ -15,6 +16,22 @@
     user-select: none;
     position: relative;
     background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+.slider-track {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.slider-track img {
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
 }
 
 .product-img img {
@@ -29,7 +46,7 @@
     position: absolute;
     top: 10px;
     left: 10px;
-    background: #ffffff;
+    background-color: rgba(255, 255, 255, 0.9);
     color: black;
     padding: 5px 10px;
     font-size: 13px;
@@ -37,6 +54,7 @@
     border-radius: 16px;
     border: 1.5px solid #ced4da;
     z-index: 2;
+
 }
 
 /* Estilo para el esqueleto de carga */
@@ -127,6 +145,8 @@
     gap: 4px;
     padding-inline: 0px;
     justify-content: space-between;
+    width: 100%;
+    min-width: 0;
 }
 
 .product-price {
@@ -181,7 +201,18 @@
 .favorite.liked svg {
     fill: #ff3c55;
     stroke: none;
+    animation: none;
+}
+
+.favorite.animating svg {
     animation: heart-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.product-delete-container {
+    width: fit-content;
+    display: flex;
+    margin-bottom: 2px;
+    gap: 8px;
 }
 
 .edit-btn {
@@ -210,7 +241,6 @@
     height: 20px;
 }
 
-/* Definición del rebote estilo Wallapop */
 @keyframes heart-bounce {
     0% {
         transform: scale(1);
@@ -218,46 +248,116 @@
 
     50% {
         transform: scale(1.35);
-        /* Crece un poco más de lo normal */
     }
 
     100% {
         transform: scale(1);
-        /* Vuelve a su tamaño */
     }
 }
 
 .product-title {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-title p {
     color: #212529;
     font-size: 14px;
     font-weight: 400;
     line-height: 20px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .product-delivery {
     width: 100%;
-
     margin-top: 2px;
     display: flex;
     gap: 4px;
     align-items: center;
 }
 
-.product-delivery p {
+.delivery-available {
     font-size: 12px;
     color: #86418a;
+    font-weight: 600;
+}
+
+.delivery-unavailable {
+    font-size: 12px;
+    color: #5c7a89;
     font-weight: 600;
 }
 
 @media (max-width: 600px) {
     .product-title p {
         font-size: 13px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
     }
 
     .product-price p {
         font-size: 13px;
     }
+}
+
+.favorite-icon-container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease;
+}
+
+.favorite-icon-container:active {
+    transform: scale(0.98);
+}
+
+@keyframes bounce {
+    0% {
+        transform: scale(0.98);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+.favorite-icon-container.liked {
+    animation: subtle-pulse 0.3s ease-out;
+}
+
+.heart-svg {
+    width: 28px;
+    height: 28px;
+    display: block;
+    overflow: visible;
+}
+
+.heart-outline-path {
+    fill: #29363d;
+    transition: fill 0.3s ease;
+}
+
+.favorite-icon-container.liked .heart-outline-path {
+    fill: #ce3528;
+}
+
+.heart-fill-circle {
+    fill: #ce3528;
+    r: 0;
+    transition: r 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* El círculo crece */
+.favorite-icon-container.liked .heart-fill-circle {
+    r: 20px;
 }

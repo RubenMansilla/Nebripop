@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
 import "./FormularioProducto.css";
+import shippingToggleOn from "../../assets/logos/shipping-toggle-on.png";
+import shirtIcon from "../../assets/iconos/shirt.svg";
+import bikeIcon from "../../assets/iconos/bike.svg";
+
+
 
 interface Props {
   onChange: (data: any) => void;
@@ -42,12 +47,12 @@ export default function OpcionesEnvio({ onChange }: Props) {
             <a href="#" className="envio-link">Protección Wallapop</a>.
           </li>
         </ul>
+<img
+  src={shippingToggleOn}
+  className="envio-img"
+  alt="envio"
+/>
 
-        <img 
-         /* src="https://img.wallapop.com/home-send.png"*/
-          className="envio-img"
-          alt="envio"
-        />
       </div>
 
       <a className="envio-faq" href="#">¿Dudas? Consulta las preguntas frecuentes</a>
@@ -80,10 +85,12 @@ export default function OpcionesEnvio({ onChange }: Props) {
           {/* Estándar */}
           <label className="envio-option">
             <div className="envio-option-left">
-              <img 
-                /*src="https://cdn-icons-png.flaticon.com/512/1071/1071140.png"*/
-                className="option-icon"
-              />
+             <img
+  src={shirtIcon}
+  className="option-icon"
+  alt="estándar"
+/>
+
               <span>
                 <strong>Estándar:</strong> productos pequeños y medianos.
               </span>
@@ -101,10 +108,12 @@ export default function OpcionesEnvio({ onChange }: Props) {
           {/* Voluminoso */}
           <label className="envio-option">
             <div className="envio-option-left">
-              <img 
-                /*src="https://cdn-icons-png.flaticon.com/512/5181/5181076.png"*/
-                className="option-icon"
-              />
+              <img
+  src={bikeIcon}
+  className="option-icon"
+  alt="voluminoso"
+/>
+
               <span>
                 <strong>Voluminoso:</strong> productos grandes o pesados.
                 <span className="nuevo-badge">NUEVO</span>

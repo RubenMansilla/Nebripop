@@ -1,0 +1,136 @@
+.info-items-wallet {
+    width: fit-content;
+    display: flex;
+    gap: 32px;
+}
+
+.info-item-wallet {
+    color: #4b626d;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 21px;
+    height: fit-content;
+    padding: 7px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.info-item-wallet.active {
+    color: #b0a18c;
+    transition: 0.2s ease;
+    border-bottom: 2px solid #b0a18c;
+}
+
+/* Estilos tablet y móvil */
+@media (max-width: 990px) {
+
+    .info-items-wallet {
+        padding-top: 10px;
+        padding-bottom: 18px;
+        gap: 16px;
+    }
+
+    .info-item-wallet {
+        justify-content: center;
+        padding: 7px 0px;
+    }
+}
+
+.balance-content {
+    background-color: white;
+    width: 100%;
+    border: 1.5px solid var(--beige);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding-block: 20px;
+}
+
+.balance-total {
+    color: #1a2b34;
+    font-family: sans-serif;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1;
+}
+
+.amount-integer {
+    font-size: 80px;
+    font-weight: 700;
+}
+
+.amount-decimal {
+    font-size: 30px;
+    font-weight: 600;
+    margin-top: 10px;
+    color: #37474f;
+}
+
+.balance-actions {
+    display: flex;
+    gap: 20px;
+}
+
+.action-btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.circle-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #d6c9b4;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: transform 0.2s ease, background-color 0.2s;
+}
+
+.circle-btn:hover {
+    background-color: #b0a18c;
+    cursor: pointer;
+}
+
+.action-label {
+    color: #d6c9b4;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+@media (max-width: 480px) {
+
+    .amount-integer {
+        font-size: 50px;
+    }
+
+    .amount-decimal {
+        font-size: 22px;
+        margin-top: 4px;
+    }
+}
+
+.balance-loading {
+    filter: blur(6px);
+    opacity: 0.5;
+    transition: all 0.4s ease-out;
+    /* Suaviza el cambio */
+    user-select: none;
+    cursor: default;
+}
+
+.balance-visible {
+    filter: blur(0);
+    opacity: 1;
+    transition: all 0.4s ease-out;
+}

@@ -1,0 +1,690 @@
+  /* ======================================================
+    1. CONTENEDOR PRINCIPAL DE LA PÁGINA
+  ====================================================== */
+  .detail-container {
+    display: flex;
+    gap: 24px;
+    margin: 24px auto;
+    max-width: 1280px;
+    padding: 0 20px;
+    align-items: flex-start;
+  }
+
+
+  /* ======================================================
+    2. SIDEBAR IZQUIERDO (PUBLICIDAD)
+  ====================================================== */
+  .left-sidebar {
+    width: 22%;
+    min-width: 220px;
+  }
+
+  .ad-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+  }
+
+
+  /* ======================================================
+    3. CONTENIDO CENTRAL (DETALLE DEL PRODUCTO)
+  ====================================================== */
+  .detail-main {
+    width: 56%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+
+  /* -------- Breadcrumb / Categoría -------- */
+  .product-category {
+    font-size: 14px;
+    color: #c3b8a8;
+  }
+
+  .breadcrumb {
+    font-size: 14px;
+    color: #b9a48a;
+    margin: 12px auto 22px;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 900px;
+  }
+
+  .breadcrumb a {
+    color: #d2b990;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+
+  .breadcrumb span {
+    color: #b9a48a;
+  }
+
+  .breadcrumb-current {
+    color: #7a766f;
+    font-weight: 600;
+  }
+
+
+
+  /* -------- Galería de imágenes -------- */
+  .product-images {
+    display: flex;
+    gap: 12px;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    /* 🔥 como Wallapop */
+    border-radius: 18px;
+    overflow: hidden;
+    background-color: #f3eee7;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+  }
+
+  .image-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 42px;
+    height: 42px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 10px;
+    /* cuadrado suave */
+    font-size: 26px;
+    cursor: pointer;
+    color: #4b4b4b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+  }
+
+  .image-arrow.left {
+    left: 12px;
+  }
+
+  .image-arrow.right {
+    right: 12px;
+  }
+
+  .image-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 3;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+  }
+
+  .dot.active {
+    background-color: #ffffff;
+  }
+
+
+  /* -------- Info principal -------- */
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .product-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4b4b4b;
+  }
+
+  .product-price {
+    font-size: 22px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .product-condition {
+    font-size: 14px;
+    color: #9a9a9a;
+  }
+
+  .product-description {
+    font-size: 15px;
+    color: #6f6f6f;
+    line-height: 1.5;
+  }
+
+
+  /* -------- Tags de envío -------- */
+
+  .product-tags {
+    display: flex;
+    gap: 14px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+  }
+
+  /* Tag base */
+  .product-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 8px 12px;
+    border-radius: 14px;
+
+    border: 2px solid #d6c9b4;
+    background: #fff;
+
+    font-weight: 600;
+    font-size: 15px;
+    color: #b4976b;
+
+    transition: all 0.2s ease;
+  }
+
+  /* Icono */
+  .product-tag img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    flex-shrink: 0;
+    filter: brightness(0) saturate(100%) invert(69%) sepia(15%) saturate(635%) hue-rotate(357deg) brightness(92%) contrast(90%);
+  }
+
+  /* Subcategoría (más ligera, punteada) */
+  .product-tag.sub {
+    background: #faf7f2;
+    color: #c4ae8b;
+  }
+
+  /* Hover sutil */
+  .product-tag:hover {
+    transform: translateY(-1px);
+    background: #f7f3ec;
+  }
+
+  .product-details {
+    padding: 20px 0;
+    border-bottom: 1.5px solid #e6d8c3;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #4b4b4b;
+  }
+
+  .details-description {
+    font-size: 14px;
+    color: #6f6f6f;
+    margin-bottom: 10px;
+  }
+
+  .details-list {
+    font-size: 14px;
+    color: #6f6f6f;
+    margin-bottom: 14px;
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    font-size: 14px;
+  }
+
+  .details-grid span {
+    color: #9a9a9a;
+  }
+
+  .details-grid strong {
+    display: block;
+    color: #4b4b4b;
+  }
+
+  .bundle-card {
+    margin: 20px 0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background-color: #f3eee7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #6f6f6f;
+  }
+
+  .bundle-btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    background-color: #d8cfbf;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .product-location {
+    padding: 16px 0;
+    border-top: 1.5px solid #e6d8c3;
+    border-bottom: 1.5px solid #e6d8c3;
+    font-size: 15px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .seller-reviews {
+    padding: 20px 0;
+  }
+
+  .reviews-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e6d8c3;
+  }
+
+  .review-item {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .review-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .review-author {
+    font-weight: 600;
+  }
+
+  .review-stars {
+    color: #f4c430;
+    font-size: 16px;
+  }
+
+  .review-comment {
+    font-size: 14px;
+    color: #6f6f6f;
+  }
+
+  .review-date {
+    font-size: 12px;
+    color: #9a9a9a;
+  }
+
+
+
+  /* ======================================================
+    4. SIDEBAR DERECHO (COMPRA + VENDEDOR)
+  ====================================================== */
+  .right-sidebar {
+    width: 22%;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Título */
+  .buy-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+    font-weight: 700;
+    color: #4b4b4b;
+  }
+
+  /* Subtítulo */
+  .buy-subtitle {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #9a9a9a;
+  }
+
+  /* CARD derecha (precio / comprar) */
+  .detail-buy-card {
+    border: 2px solid #e8dece;
+    /* borde beige suave */
+    border-radius: 18px;
+    padding: 18px;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Precio grande */
+  .buy-price {
+    font-size: 44px;
+    font-weight: 800;
+    margin: 6px 0 10px;
+    color: #2e2e2e;
+  }
+
+  /* Separador */
+  .buy-divider {
+    height: 1px;
+    background: #eee4d6;
+    margin: 14px 0;
+  }
+
+  /* Botones */
+  .buy-main-btn {
+    width: 100%;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: #d6c9b4;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .buy-main-btn:hover {
+    filter: brightness(0.97);
+  }
+
+  .buy-offer-btn {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 2px solid #d6c9b4;
+    color: #3a3a3a;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .buy-offer-btn:hover {
+    background: #fbf8f3;
+  }
+
+
+
+  /* Apple Pay */
+  .buy-payments {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .apple-pay {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #e6d8c3;
+    background-color: #f8f6f3;
+    font-size: 14px;
+    color: #c1b7a6;
+    white-space: nowrap;
+  }
+
+  .apple-info {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    color: #9a9a9a;
+  }
+
+  .apple-info a {
+    margin-top: 4px;
+    text-decoration: underline;
+    color: #6f6f6f;
+  }
+
+  /* Separador */
+  .buy-divider {
+    height: 1px;
+    background-color: #ede6da;
+    margin: 8px 0;
+    margin-bottom: 16px;
+  }
+
+
+  /* Envío */
+  .buy-shipping {
+    font-size: 14px;
+    color: #c1b7a6;
+    margin-bottom: 16px;
+  }
+
+  /* Botones */
+  .buy-main-btn {
+    padding: 8px;
+    width: 100%;
+    border-radius: 12px;
+    background-color: #d8cfbf;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .buy-main-btn:hover {
+    background-color: #cfc5b3;
+  }
+
+
+  .buy-offer-btn {
+    width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+    border: 2px solid #d8cfbf;
+    background: transparent;
+    font-size: 16px;
+    font-weight: 600;
+    color: #5a5a5a;
+    cursor: pointer;
+  }
+
+  .buy-offer-btn:hover {
+    background-color: #f3eee7;
+  }
+
+
+
+  /* ======================================================
+    6. TARJETA VENDEDOR
+  ====================================================== */
+  .seller-card {
+  background: #fff;
+  border: 2px solid #e8e2d9;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.seller-main {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.seller-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f2f2f2;
+}
+
+.seller-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.seller-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.seller-rating-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #1f1f1f;
+}
+
+.seller-rating-row .star {
+  color: #f5b400;
+}
+
+.seller-meta {
+  font-size: 12px;
+  color: #7a7a7a;
+}
+
+.seller-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.seller-profile-btn {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #e0d8cd;
+  border-radius: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.seller-chat-btn {
+  flex: 1;
+  background: #d9cbb3;
+  border: none;
+  border-radius: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+}
+
+
+  /* ======================================================
+    7. TARJETA ENVÍO / PROTECCIÓN
+  ====================================================== */
+  .shipping-card {
+    border: 2px solid #e6d8c3;
+    border-radius: 18px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background-color: #fff;
+  }
+
+  /* Pills */
+  .shipping-tabs {
+    display: flex;
+    background-color: #f3eee7;
+    border-radius: 20px;
+    width: fit-content;
+  }
+
+  .shipping-tab {
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 16px;
+    color: #9a9a9a;
+    font-weight: 500;
+  }
+
+  .shipping-tab.active {
+    background-color: #d8cfbf;
+    color: white;
+  }
+
+  /* Row */
+  .shipping-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  /* Icon */
+  .shipping-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background-color: #f3eee7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  /* Info */
+  .shipping-info {
+    flex: 1;
+  }
+
+  .shipping-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4b4b4b;
+  }
+
+  .shipping-desc {
+    font-size: 13px;
+    color: #8b8b8b;
+    margin-top: 2px;
+  }
+
+  /* Price */
+  .shipping-price {
+    font-size: 13px;
+    color: #6f6f6f;
+    white-space: nowrap;
+  }
+
+  .shipping-tab {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }

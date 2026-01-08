@@ -1,0 +1,60 @@
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton {
+    background: #f0f0f0;
+    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.skeleton-text {
+    height: 14px;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.skeleton-text.short {
+    width: 60%;
+}
+
+.skeleton-text.price {
+    height: 18px;
+    width: 40px;
+    margin-top: 4px;
+}
+
+.skeleton-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    /* Mismo que tu imagen real */
+    flex-shrink: 0;
+}
+
+.skeleton-stat {
+    width: 30px;
+    height: 20px;
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+    .stats-row .skeleton-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .stats-row .skeleton-stat {
+        width: 100%;
+        height: 24px;
+    }
+}

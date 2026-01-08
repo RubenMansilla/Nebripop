@@ -1,6 +1,7 @@
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { updateUser, uploadProfilePicture } from "../../../api/users.api";
+import imageCompression from "browser-image-compression";
 import "./ProfileData.css";
 
 interface ProfileDataProps {
@@ -29,15 +30,38 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const selectedFileRef = useRef<File | null>(null);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        selectedFileRef.current = file;
-        const tempUrl = URL.createObjectURL(file);
-        setPreview(tempUrl);
-        setHasUnsavedChanges(true);
+        try {
+            // Opciones de compresión
+            const options = {
+                maxSizeMB: 1,               // Máx. 1 MB por imagen
+                maxWidthOrHeight: 1024,     // Suficiente para avatares
+                useWebWorker: true,
+            };
+
+            // COMPRESIÓN
+            const compressedFile = await imageCompression(file, options);
+
+            // Guardamos el file comprimido para subir al backend
+            selectedFileRef.current = new File(
+                [compressedFile],
+                file.name,
+                { type: file.type }
+            );
+
+            // Previsualización sigue siendo igual
+            const tempUrl = URL.createObjectURL(compressedFile);
+            setPreview(tempUrl);
+
+            setHasUnsavedChanges(true);
+        } catch (err) {
+            console.error("Error al comprimir imagen:", err);
+        }
     };
+
 
     useEffect(() => {
         if (!isUploading) {
