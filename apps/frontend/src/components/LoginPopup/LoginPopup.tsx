@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useLoginModal } from "../../context/LoginModalContext";
-import { loginUser } from "../../api/auth.api";
+import { loginUser } from "../../api/auth.api"; // Asegúrate de actualizar este archivo también (ver abajo)
 import { AuthContext } from "../../context/AuthContext";
 import "./LoginPopup.css";
 
@@ -14,16 +14,44 @@ export default function LoginPopup({
 }) {
     const [captchaValue, setCaptchaValue] = useState<string | null>(null);
     const { openRegister } = useLoginModal();
+
+    // Aquí obtenemos la función login actualizada
     const { login } = useContext(AuthContext);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false); // Añadí un estado de carga opcional
 
     if (!open) return null;
 
     const goRegister = () => {
         onClose();
         openRegister();
+    };
+
+    const handleLogin = async () => {
+        setLoading(true);
+        try {
+            // 1. Llamada a la API
+            const res = await loginUser({
+                email,
+                password,
+            });
+
+            console.log("Respuesta Login:", res);
+
+            // 2. USAR LA NUEVA FIRMA DEL CONTEXTO
+            // El backend ahora devuelve: { user, accessToken, refreshToken }
+            login(res.user, res.accessToken, res.refreshToken);
+
+            // alert("Inicio de sesión correcto"); // Opcional, a veces molesta al usuario
+            onClose();
+
+        } catch (err: any) {
+            alert(err.message || "Error al iniciar sesión");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -66,32 +94,14 @@ export default function LoginPopup({
 
                     <button
                         className="login-btn"
-                        disabled={!captchaValue || !email || !password}
-                        onClick={async () => {
-                            try {
-                                const res = await loginUser({
-                                    email,
-                                    password,
-                                });
-
-                                console.log("Usuario logueado:", res);
-
-                                // GUARDAR SESIÓN GLOBAL
-                                login(res.user, res.token);
-
-                                alert("Inicio de sesión correcto");
-                                onClose();
-
-                            } catch (err: any) {
-                                alert(err.message);
-                            }
-                        }}
+                        disabled={!captchaValue || !email || !password || loading}
+                        onClick={handleLogin}
                         style={{
-                            opacity: captchaValue ? 1 : 0.6,
-                            cursor: captchaValue ? "pointer" : "not-allowed",
+                            opacity: (captchaValue && email && password) ? 1 : 0.6,
+                            cursor: (captchaValue && email && password) ? "pointer" : "not-allowed",
                         }}
                     >
-                        Acceder a Wallastock
+                        {loading ? "Entrando..." : "Acceder a Wallastock"}
                     </button>
 
                     <p className="register-text">

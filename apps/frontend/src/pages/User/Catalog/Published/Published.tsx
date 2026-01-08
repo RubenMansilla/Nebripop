@@ -69,7 +69,7 @@ export default function Published() {
             setShowSkeleton(true);
         }, 300);
 
-        getMyActiveProducts(token)
+        getMyActiveProducts()
             .then((data) => {
                 setActiveProducts(data);
             })

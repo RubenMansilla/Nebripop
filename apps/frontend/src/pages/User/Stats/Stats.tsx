@@ -42,11 +42,11 @@ export default function Stats() {
         const loadInitialData = async () => {
             try {
                 // Cargamos productos solo una vez al inicio
-                const productsRes = await getMostViewedProducts(token);
+                const productsRes = await getMostViewedProducts();
                 setProducts(productsRes || []);
 
                 // También cargamos las finanzas iniciales aquí para que todo aparezca junto
-                const financeRes = await getFinancialStats(token, financeRange);
+                const financeRes = await getFinancialStats(financeRange);
                 setFinanceData(financeRes.chartData || []);
                 setGlobalViews(financeRes.meta?.totalViews || 0);
 
@@ -72,7 +72,7 @@ export default function Stats() {
         const updateFinance = async () => {
             setIsUpdatingFinance(true); // Opcional: podrías usar esto para poner un spinner pequeño en la gráfica
             try {
-                const financeRes = await getFinancialStats(token, financeRange);
+                const financeRes = await getFinancialStats(financeRange);
                 setFinanceData(financeRes.chartData || []);
                 setGlobalViews(financeRes.meta?.totalViews || 0);
             } catch (error) {

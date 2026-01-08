@@ -1,5 +1,6 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { AuthGuard } from '@nestjs/passport';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -17,4 +18,18 @@ export class AuthController {
         return this.authService.login(data);
     }
 
+    // Endpoint para renovar sesión
+    @UseGuards(AuthGuard('jwt-refresh'))
+    @Post('refresh')
+    refresh(@Req() req) {
+        const userId = req.user['sub'];
+        const refreshToken = req.user['refreshToken'];
+        return this.authService.refreshTokens(userId, refreshToken);
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post('logout')
+    logout(@Req() req) {
+        this.authService.logout(req.user['sub']);
+    }
 }

@@ -135,7 +135,7 @@ export class ProductsService {
     }
 
     // ============================
-    // TODOS LOS PRODUCTOS + FILTROS
+    // TODOS LOS PRODUCTOS + FILTROS + FAVORITOS
     // ============================
     async getAllProducts(
         userId?: number | null,
@@ -147,10 +147,14 @@ export class ProductsService {
     ) {
         const where: any = {};
 
-        // Excluir productos propios
+        // Excluir productos propios (si hay usuario logueado)
         if (userId) {
             where.owner_id = Not(userId);
         }
+
+        // Solo mostrar productos NO vendidos en el feed general
+        // (Añado esto porque normalmente no quieres ver cosas vendidas en el home)
+        where.sold = false;
 
         // Categoría
         if (categoryId) {
@@ -163,14 +167,12 @@ export class ProductsService {
         }
 
         // Precio
-        // Precio (CORRECTO, acepta 0)
         if (minPrice !== undefined && maxPrice !== undefined) {
             where.price = Between(
                 Number(minPrice),
                 Number(maxPrice)
             );
         }
-
 
         // Fecha de publicación
         if (dateFilter) {
@@ -189,11 +191,30 @@ export class ProductsService {
             where.createdAt = MoreThan(from);
         }
 
-        return this.productRepo.find({
+        // 1. OBTENEMOS LOS PRODUCTOS BASE
+        const products = await this.productRepo.find({
             where,
             relations: ["images"],
             order: { createdAt: "DESC" },
         });
+
+        // GESTIÓN DE FAVORITOS
+        let favoriteIds: number[] = [];
+
+        if (userId) {
+            // Si el usuario está logueado, buscar sus favoritos
+            const favorites = await this.favoritesRepo.find({
+                where: { user_id: userId },
+                select: ["product_id"],
+            });
+            favoriteIds = favorites.map((f) => f.product_id);
+        }
+
+        // Mapeo final (Añadir isFavorite)
+        return products.map((p) => ({
+            ...p,
+            isFavorite: favoriteIds.includes(p.id),
+        }));
     }
 
 

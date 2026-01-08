@@ -29,7 +29,7 @@ export default function Balance() {
     useEffect(() => {
         if (token) {
             setLoading(true);
-            getWalletBalance(token)
+            getWalletBalance()
                 .then((data) => {
                     setBalance(Number(data.balance));
                 })
@@ -53,7 +53,7 @@ export default function Balance() {
     const handleRechargeConfirm = async (amount: number) => {
         if (!token) return toast.error("Error de sesión");
         try {
-            const updatedWallet = await depositMoney(amount, token);
+            const updatedWallet = await depositMoney(amount);
             setBalance(Number(updatedWallet.balance));
 
             // Notificación de Éxito
@@ -68,7 +68,7 @@ export default function Balance() {
     const handleWithdraw = async (amountToWithdraw: number) => {
         if (!token) return alert("Error de autenticación");
         try {
-            const updatedWallet = await withdrawMoney(amountToWithdraw, token);
+            const updatedWallet = await withdrawMoney(amountToWithdraw);
             setBalance(Number(updatedWallet.balance));
 
             // Notificación de Éxito

@@ -55,7 +55,7 @@ export default function PublicUserProfile({
             return;
         }
 
-        isFavoriteUser(user.id, token)
+        isFavoriteUser(user.id)
             .then((res) => {
                 setIsFavorite(Boolean(res));
             })
@@ -68,18 +68,18 @@ export default function PublicUserProfile({
     }, [user.id, token, isOwnProfile]);
 
     /* =============================
-       TOGGLE FAVORITO
+        TOGGLE FAVORITO
        ============================= */
     const toggleFavoriteUser = async () => {
         if (!token || isOwnProfile) return;
 
         try {
             if (isFavorite) {
-                await removeFavoriteUser(user.id, token);
+                await removeFavoriteUser(user.id);
                 setIsFavorite(false);
                 notify('addedToFavorites', `Has eliminado a ${user.fullName} de tus usuarios favoritos.`, 'info');
             } else {
-                await addFavoriteUser(user.id, token);
+                await addFavoriteUser(user.id);
                 notify('addedToFavorites', `Has añadido a ${user.fullName} a tus usuarios favoritos.`, 'success');
                 setIsFavorite(true);
             }

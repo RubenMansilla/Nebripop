@@ -142,8 +142,9 @@
     line-height: 21px;
 }
 
-.popup-buttons {
+.popup-buttons-product {
     width: 95%;
+    height: 50px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -151,17 +152,19 @@
     margin-top: 10px;
 }
 
-.popup-buttons span {
+.popup-buttons-product span {
     font-size: 16px;
     cursor: pointer;
 }
 
 .popup-no {
     color: #253238;
+    height: fit-content;
 }
 
 .popup-yes {
     color: rgb(253, 108, 103);
+    height: fit-content;
 }
 
 .divider {

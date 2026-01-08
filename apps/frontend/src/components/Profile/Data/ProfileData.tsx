@@ -134,7 +134,7 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                 gender,
             };
 
-            const updatedUser = await updateUser(body, token!);
+            const updatedUser = await updateUser(body);
             setUser(updatedUser);
 
             // Subir foto si existe
@@ -142,8 +142,7 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                 setIsUploading(true);
 
                 const updatedPicUser = await uploadProfilePicture(
-                    selectedFileRef.current,
-                    token!
+                    selectedFileRef.current
                 );
                 setUser(updatedPicUser);
                 setPreview(updatedPicUser.profilePicture);

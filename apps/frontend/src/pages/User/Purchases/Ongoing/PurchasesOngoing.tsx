@@ -42,7 +42,7 @@ export default function PurchasesOngoing() {
             setShowSkeleton(true);
         }, 300);
 
-        getMyBuyingProcessProducts(token)
+        getMyBuyingProcessProducts()
             .then((data) => {
                 setBuyingProcessProducts(data);
             })

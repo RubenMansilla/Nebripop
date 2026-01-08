@@ -5,6 +5,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
+import { RtStrategy } from './jwt-refresh.strategy';
 
 @Module({
     imports: [
@@ -15,11 +16,12 @@ import { JwtStrategy } from './jwt.strategy';
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
                 secret: config.get<string>('JWT_SECRET'),
-                signOptions: { expiresIn: '7d' },
+                signOptions: { expiresIn: '15m' },
             }),
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtStrategy],
+    // 👇 2. AÑADE RtStrategy AQUÍ
+    providers: [AuthService, JwtStrategy, RtStrategy],
 })
 export class AuthModule { }

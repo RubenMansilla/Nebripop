@@ -48,7 +48,7 @@ export default function SalesOngoing() {
         }, 300);
 
         // CAMBIO AQUÍ: Llamamos a la función de "En proceso de venta"
-        getMySellingProcessProducts(token)
+        getMySellingProcessProducts()
             .then((data) => {
                 setSellingProcessProducts(data);
             })

@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
+import api from "../utils/axiosConfig";
 
 interface User {
     id: number;
@@ -15,9 +16,9 @@ interface User {
 interface AuthContextType {
     user: User | null;
     token: string | null;
-    login: (user: User, token: string) => void;
+    login: (user: User, accessToken: string, refreshToken: string) => void;
     logout: () => void;
-    setUser: (user: User | null) => void;  // ← usamos esta API
+    setUser: (user: User | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -35,38 +36,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         const savedUser = localStorage.getItem("user");
-        const savedToken = localStorage.getItem("token");
+        const savedAccessToken = localStorage.getItem("token");
+        // No necesitamos cargar el refreshToken en el estado de React, 
+        // basta con que esté en localStorage para que Axios lo lea.
 
-        if (savedUser && savedToken) {
+        if (savedUser && savedAccessToken) {
             setUserState(JSON.parse(savedUser));
-            setTokenState(savedToken);
+            setTokenState(savedAccessToken);
         }
-
         setLoading(false);
     }, []);
 
+    // --- FUNCIÓN LOGIN ACTUALIZADA ---
+    const login = (u: User, accessToken: string, refreshToken: string) => {
+        setUserState(u);
+        setTokenState(accessToken);
+
+        localStorage.setItem("user", JSON.stringify(u));
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("refreshToken", refreshToken); // <--- Guardamos el segundo token
+    };
+
+    const logout = () => {
+        setUserState(null);
+        setTokenState(null);
+
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken"); // <--- Borramos ambos
+
+    };
+
     const updateUserState = (newUser: User | null) => {
         setUserState(newUser);
-
         if (newUser) {
             localStorage.setItem("user", JSON.stringify(newUser));
         } else {
             localStorage.removeItem("user");
         }
-    };
-
-    const login = (u: User, t: string) => {
-        updateUserState(u);
-        setTokenState(t);
-
-        localStorage.setItem("token", t);
-    };
-
-    const logout = () => {
-        updateUserState(null);
-        setTokenState(null);
-
-        localStorage.removeItem("token");
     };
 
     if (loading) return null;
@@ -78,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 token: tokenState,
                 login,
                 logout,
-                setUser: updateUserState, // ← exportamos la función correcta
+                setUser: updateUserState,
             }}
         >
             {children}
