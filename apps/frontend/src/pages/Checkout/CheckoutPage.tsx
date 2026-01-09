@@ -203,8 +203,8 @@ const CheckoutPage: React.FC = () => {
     <div className="checkout-page">
       {/* HEADER */}
       <header className="checkout-header">
-        <div className="logo-mark" />
-        <span className="logo-text">Checkify</span>
+        
+        <span className="logo-text">NebripPay</span>
       </header>
 
       {/* CONTENEDOR PRINCIPAL */}
@@ -242,7 +242,7 @@ const CheckoutPage: React.FC = () => {
             <div className="divider">
               <span className="divider-line" />
               <span className="divider-text">
-                O paga de otra forma más abajo
+                O paga con tu monedero NebriPop
               </span>
               <span className="divider-line" />
             </div>
@@ -292,19 +292,7 @@ const CheckoutPage: React.FC = () => {
                 />
               </div>
 
-              <div className="form-field">
-                <label>País</label>
-                <div className="select-wrapper">
-                  <span className="flag-emoji">🇪🇸</span>
-                  <select
-                    name="country"
-                    value={form.country}
-                    onChange={handleChange}
-                  >
-                    <option>España</option>
-                  </select>
-                </div>
-              </div>
+              
 
               <div className="form-row">
                 <div className="form-field">
@@ -396,7 +384,7 @@ const CheckoutPage: React.FC = () => {
               <div className="form-field">
                 <label>Teléfono (opcional)</label>
                 <div className="phone-wrapper">
-                  <span className="flag-emoji">🇪🇸</span>
+                  
                   <input
                     type="tel"
                     name="phone"
@@ -488,12 +476,7 @@ const CheckoutPage: React.FC = () => {
             </div>
           </section>
 
-          <section className="tip-section">
-            <h3 className="tip-title">Añadir propina</h3>
-            <p className="tip-text">
-              Muestra tu apoyo al equipo <span>❤️</span>
-            </p>
-          </section>
+          
         </aside>
       </main>
     </div>

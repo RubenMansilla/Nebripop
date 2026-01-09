@@ -18,7 +18,6 @@
   z-index: -1;
 }
 
-
 .checkout-header {
   max-width: 1100px;
   margin: 0 auto;
@@ -238,8 +237,9 @@
   color: #4b5563;
 }
 
-input,
-select {
+/* SOLO inputs/selects dentro de la página de checkout */
+.checkout-page input,
+.checkout-page select {
   width: 100%;
   padding: 12px 14px;
   border-radius: 12px;
@@ -252,17 +252,45 @@ select {
   box-sizing: border-box;
 }
 
-input::placeholder {
+.checkout-page input::placeholder {
   color: #b8b8b8;
 }
 
-input:hover,
-select:hover {
+.checkout-page input:hover,
+.checkout-page select:hover {
   border-color: #d3d3d3;
 }
 
-input:focus,
-select:focus {
+.checkout-page input:focus,
+.checkout-page select:focus {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* TELÉFONO */
+.checkout-page .phone-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb; /* borde del contenedor */
+  padding: 0 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.checkout-page .phone-wrapper input {
+  border: none;
+  padding: 10px 0;
+  width: 100%;
+}
+
+.checkout-page .phone-wrapper:hover {
+  border-color: #d3d3d3;
+}
+
+.checkout-page .phone-wrapper:has(input:focus) {
   border-color: #c2b28a;
   box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
 }
@@ -276,37 +304,32 @@ select:focus {
   flex: 1;
 }
 
+/* PROVINCIA (select-wrapper) */
 .select-wrapper {
   display: flex;
   align-items: center;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e5e7eb;  /* 👈 añadido para que se vea el borde */
   padding: 0 8px;
   background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .select-wrapper select {
   border: none;
   padding: 10px 8px;
+  width: 100%;
+  background: transparent;
 }
 
-.flag-emoji {
-  font-size: 18px;
-  margin-right: 6px;
+.select-wrapper:hover {
+  border-color: #d3d3d3;
 }
 
-.phone-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  padding: 0 8px;
-}
-
-.phone-wrapper input {
-  border: none;
-  padding: 10px 0;
+.select-wrapper:has(select:focus) {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
 }
 
 /* Columna derecha: resumen */
@@ -332,7 +355,7 @@ select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 18px; /* más espacio vertical */
 }
 
 .summary-product-left {
@@ -373,8 +396,9 @@ select:focus {
 }
 
 .summary-price {
-  font-weight: 600;
-  font-size: 15px;
+  margin-left: 14px;
+  min-width: 70px;
+  text-align: right;
 }
 
 /* Líneas de resumen */
@@ -421,24 +445,7 @@ select:focus {
   font-weight: 700;
 }
 
-/* Tip section */
-.tip-section {
-  background: #ffffff;
-  border-radius: 20px;
-  border: 1px solid #e3e4e6;
-  padding: 14px 18px;
-}
-
-.tip-title {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-
-.tip-text {
-  font-size: 13px;
-  color: #6b7280;
-}
+/* (Tip section eliminada del diseño, por eso no hay estilos aquí) */
 
 /* Responsive */
 @media (max-width: 900px) {
@@ -449,4 +456,14 @@ select:focus {
   .checkout-right {
     order: -1;
   }
+}
+/* Evitar borde/halo doble en el teléfono */
+.checkout-page .phone-wrapper input:focus {
+  box-shadow: none;
+}
+
+/* Evitar borde/halo doble en la provincia (select) */
+.checkout-page .select-wrapper select:focus {
+  box-shadow: none;
+  outline: none;
 }
