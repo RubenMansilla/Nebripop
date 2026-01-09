@@ -3,6 +3,12 @@ import { LoginModalProvider } from "./context/LoginModalContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
+// IMPORTS PARA NOTIFICACIONES
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { NotificationProvider } from "./context/NotificationContext";
+import NotificationListener from "./components/Notification/NotificationListener";
+
 // HOME
 import Home from "./pages/Home/Home";
 import Detail from "./pages/Product/Detail";
@@ -48,88 +54,87 @@ import PublicUser from "./pages/PublicUser/PublicUser";
 import Checkout from "./pages/Checkout/CheckoutPage";
 
 export default function App() {
-  return (
-    <AuthProvider>
-      <LoginModalProvider>
-        <BrowserRouter>
+    return (
+        <AuthProvider>
+            <LoginModalProvider>
+                <BrowserRouter>
 
-          <Routes>
+                    <NotificationListener />
 
-            {/* PUBLIC ROUTES */}
-            <Route path="/" element={<Home />} />
+                    <Routes>
 
-            {/* Footer pages */}
-            <Route path="/quienes-somos" element={<About />} />
-            <Route path="/como-funciona" element={<HowItWorks />} />
-            <Route path="/empleo" element={<Jobs />} />
-            <Route path="/sostenibilidad" element={<Sustainability />} />
+                        {/* PUBLIC ROUTES */}
+                        <Route path="/" element={<Home />} />
 
-            <Route path="/ayuda" element={<Help />} />
-            <Route path="/seguridad" element={<Safety />} />
-            <Route path="/normas" element={<Community />} />
+                        {/* Footer pages */}
+                        <Route path="/quienes-somos" element={<About />} />
+                        <Route path="/como-funciona" element={<HowItWorks />} />
+                        <Route path="/empleo" element={<Jobs />} />
+                        <Route path="/sostenibilidad" element={<Sustainability />} />
 
-            <Route path="/privacidad" element={<Privacy />} />
-            <Route path="/condiciones" element={<Terms />} />
+                        <Route path="/ayuda" element={<Help />} />
+                        <Route path="/seguridad" element={<Safety />} />
+                        <Route path="/normas" element={<Community />} />
 
-            <Route path="/filtros" element={<Filtro />} />
-            <Route path="/product/:productId" element={<Detail />} />
+                        <Route path="/privacidad" element={<Privacy />} />
+                        <Route path="/condiciones" element={<Terms />} />
 
-            <Route path="/you" element={<User />} />
+                        <Route path="/filtros" element={<Filtro />} />
+                        <Route path="/product/:productId" element={<Detail />} />
 
-            <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
+                        <Route path="/you" element={<User />} />
 
-              {/* Perfil */}
-              <Route path="/profile/info" element={<Info />} />
-              <Route path="/profile/reviews" element={<ReviewProfile />} />
-              <Route path="/profile/chat" element={<Chat />} />
-              <Route path="/profile/stats" element={<Stats />} />
+                        <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
-              {/* Catálogo */}
-              <Route path="/catalog/published" element={<Published />} />
-              <Route path="/catalog/sold" element={<Solds />} />
+                            {/* Perfil */}
+                            <Route path="/profile/info" element={<Info />} />
+                            <Route path="/profile/reviews" element={<ReviewProfile />} />
+                            <Route path="/profile/chat" element={<Chat />} />
+                            <Route path="/profile/stats" element={<Stats />} />
 
-              {/* Monedero */}
-              <Route path="/wallet/balance" element={<Balance />} />
-              <Route path="/wallet/bank-details" element={<BankDetails />} />
-              <Route path="/wallet/history" element={<History />} />
+                            {/* Catálogo */}
+                            <Route path="/catalog/published" element={<Published />} />
+                            <Route path="/catalog/sold" element={<Solds />} />
 
-              {/* Favoritos */}
-              <Route path="/favorites/products" element={<FavoritesProducts />} />
-              <Route path="/favorites/profiles" element={<FavoritesProfiles />} />
+                            {/* Monedero */}
+                            <Route path="/wallet/balance" element={<Balance />} />
+                            <Route path="/wallet/bank-details" element={<BankDetails />} />
+                            <Route path="/wallet/history" element={<History />} />
 
-              {/* Compras y Ventas */}
-              <Route path="/purchases/ongoing" element={<PurchasesOngoing />} />
-              <Route path="/purchases/completed" element={<PurchasesCompleted />} />
-              <Route path="/sales/ongoing" element={<SalesOngoing />} />
-              <Route path="/sales/completed" element={<SalesCompleted />} />
+                            {/* Favoritos */}
+                            <Route path="/favorites/products" element={<FavoritesProducts />} />
+                            <Route path="/favorites/profiles" element={<FavoritesProfiles />} />
 
-              {/* Configuración */}
-              <Route path="/settings" element={<Settings />} />
+                            {/* Compras y Ventas */}
+                            <Route path="/purchases/ongoing" element={<PurchasesOngoing />} />
+                            <Route path="/purchases/completed" element={<PurchasesCompleted />} />
+                            <Route path="/sales/ongoing" element={<SalesOngoing />} />
+                            <Route path="/sales/completed" element={<SalesCompleted />} />
 
+                            {/* Configuración */}
+                            <Route path="/settings" element={<Settings />} />
 
-              {/* Ayuda */}
+                            {/* Ayuda */}
 
-            </Route>
-            <Route path="/help" element={<HelpPage />} />
+                        </Route>
+                        <Route path="/help" element={<HelpPage />} />
 
-            <Route
-              path="/sell-product"
-              element={
-                <ProtectedRoute>
-                  <FormularioProducto />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/checkout" element={<Checkout />} />
+                        <Route
+                            path="/sell-product"
+                            element={
+                                <ProtectedRoute>
+                                    <FormularioProducto />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route path="/checkout" element={<Checkout />} />
 
+                        <Route path="/users/:userId" element={<PublicUser />} />
 
-            <Route path="/users/:userId" element={<PublicUser />} />
+                    </Routes>
 
-
-
-          </Routes>
-        </BrowserRouter>
-      </LoginModalProvider>
-    </AuthProvider>
-  );
+                </BrowserRouter>
+            </LoginModalProvider>
+        </AuthProvider>
+    );
 }

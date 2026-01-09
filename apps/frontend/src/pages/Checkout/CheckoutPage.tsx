@@ -4,6 +4,8 @@ import "./CheckoutPage.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPurchase } from "../../api/purchases.api";
 import { getProductById } from "../../api/products.api";
+import { useNotificationSettings } from '../../context/NotificationContext';
+import { toast } from "react-toastify";
 
 interface CheckoutProduct {
   id: number;
@@ -19,6 +21,9 @@ const formatPrice = (value: number) =>
   })} €`;
 
 export default function CheckoutPage() {
+
+  const { notify } = useNotificationSettings();
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -155,9 +160,11 @@ export default function CheckoutPage() {
     try {
       setIsPayingExternal(true);
       await createPurchase(payload);
+      notify('transactions', "Compra realizada con éxito");
       navigate("/purchases/completed");
     } catch (err: any) {
       setErrorMsg(err.message || "Error al procesar la compra.");
+      toast.error("Error al procesar la compra");
     } finally {
       setIsPayingExternal(false);
     }
@@ -175,9 +182,11 @@ export default function CheckoutPage() {
     try {
       setIsPayingWallet(true);
       await createPurchase(payload);
+      notify('transactions', "Compra realizada con éxito");
       navigate("/purchases/completed");
     } catch (err: any) {
       setErrorMsg(err.message || "Error al procesar la compra con monedero.");
+      toast.error("Error al procesar la compra");
     } finally {
       setIsPayingWallet(false);
     }

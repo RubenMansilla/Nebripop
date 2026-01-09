@@ -12,6 +12,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { Wallet } from './wallet/wallet.entity';
 import { WalletModule } from './wallet/wallet.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 
 @Module({
@@ -47,6 +48,7 @@ import { WalletModule } from './wallet/wallet.module';
         CategoriesModule,
         SubcategoriesModule,
         WalletModule,
+        NotificationsModule,
     ],
 })
 export class AppModule { }

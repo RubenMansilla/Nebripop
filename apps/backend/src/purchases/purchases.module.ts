@@ -6,13 +6,15 @@ import { PurchasesController } from "./purchases.controller";
 import { PurchasesService } from "./purchases.service";
 import { Product } from "../products/products.entity";
 import { WalletModule } from "../wallet/wallet.module";
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Purchase, Product]),
-    WalletModule, // para usar WalletService
+    WalletModule,
+    NotificationsModule,
   ],
   controllers: [PurchasesController],
   providers: [PurchasesService],
 })
-export class PurchasesModule {}
+export class PurchasesModule { }

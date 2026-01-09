@@ -81,7 +81,7 @@ export default function SecuritySection() {
             await changePassword({
                 oldPassword: passwords.current,
                 newPassword: passwords.new
-            }, token);
+            });
 
             // Éxito
             notify('accountUpdates', "Contraseña actualizada correctamente");
