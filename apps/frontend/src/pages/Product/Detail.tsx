@@ -364,9 +364,13 @@ export default function Detail() {
               🚚 Envío disponible
             </div>
 
-            <button className="buy-main-btn">
-              Comprar
-            </button>
+     <Link to={`/checkout?productId=${product.id}`}>
+  <button className="buy-main-btn" type="button">
+    Comprar
+  </button>
+</Link>
+
+
 
             <button className="buy-offer-btn">
               Hacer oferta

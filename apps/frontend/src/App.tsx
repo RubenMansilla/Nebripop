@@ -45,7 +45,7 @@ import Filtro from "./pages/Filtro/Filtro";
 // PERFIL PÚBLICO
 import PublicUser from "./pages/PublicUser/PublicUser";
 
-
+import Checkout from "./pages/Checkout/CheckOutPage";
 
 
 
@@ -109,6 +109,7 @@ export default function App() {
               {/* Configuración */}
               <Route path="/settings" element={<Settings />} />
 
+
               {/* Ayuda */}
 
             </Route>
@@ -122,6 +123,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/checkout" element={<Checkout />} />
 
 
             <Route path="/users/:userId" element={<PublicUser />} />
