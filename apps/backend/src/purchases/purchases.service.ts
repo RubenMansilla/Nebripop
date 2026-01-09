@@ -21,7 +21,7 @@ export class PurchasesService {
     private productRepo: Repository<Product>,
 
     private walletService: WalletService,
-  ) {}
+  ) { }
 
   // =========================
   // CREAR COMPRA (PayPal / Monedero)
@@ -66,12 +66,13 @@ export class PurchasesService {
       throw new BadRequestException('No puedes comprar tu propio producto');
     }
 
+    const productPrice = Number(product.price);
+    const iva = productPrice * 0.21;      // 21 % de IVA
+    const shippingCost = 1.99;            // envío fijo en España
+    const totalToCharge = productPrice + iva + shippingCost;
+
     // 2) Si es monedero, comprobar saldo y retirar
     if (paymentMethod === 'wallet') {
-      const productPrice = Number(product.price);
-      const iva = productPrice * 0.21;      // 21 % de IVA
-      const shippingCost = 1.99;            // envío fijo en España
-      const totalToCharge = productPrice + iva + shippingCost;
 
       // ⬇️ aquí ahora se descuenta el TOTAL (precio + IVA + envío)
       await this.walletService.withdraw(userId, totalToCharge);
@@ -86,7 +87,7 @@ export class PurchasesService {
       buyerId: userId as any,          // según cómo tengas el tipo de columna
       sellerId: product.owner_id as any,
       productId: product.id,
-      price: product.price,            // aquí guardo solo el precio del producto
+      price: totalToCharge,            // aquí guardo solo el precio del producto
       // si más adelante quieres guardar IVA / envío,
       // habría que añadir columnas nuevas a la tabla.
     });

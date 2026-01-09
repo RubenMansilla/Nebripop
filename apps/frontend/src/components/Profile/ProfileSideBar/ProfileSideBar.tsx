@@ -17,11 +17,6 @@ export default function ProfileSideBar() {
 
     const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
-    if (!user) return null;
-
-    const year = new Date(user.createdAt).getFullYear();
-    const imageSrc = user.profilePicture || defaultPic;
-
     useEffect(() => {
         if (!user?.id) return;
 
@@ -48,10 +43,6 @@ export default function ProfileSideBar() {
         return () => { isMounted = false; };
     }, [user?.id]);
 
-    const starClass = (n: number) => {
-        return n <= summary.average ? "filled" : "";
-    };
-
     useLayoutEffect(() => {
         const sidebar = sidebarRef.current;
         if (!sidebar) return;
@@ -70,6 +61,15 @@ export default function ProfileSideBar() {
         sidebar.addEventListener("scroll", handleScroll);
         return () => sidebar.removeEventListener("scroll", handleScroll);
     }, []);
+
+    if (!user) return null;
+
+    const year = new Date(user.createdAt).getFullYear();
+    const imageSrc = user.profilePicture || defaultPic;
+
+    const starClass = (n: number) => {
+        return n <= summary.average ? "filled" : "";
+    };
 
     return (
         <>

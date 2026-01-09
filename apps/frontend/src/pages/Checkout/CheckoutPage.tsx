@@ -18,7 +18,7 @@ const formatPrice = (value: number) =>
     maximumFractionDigits: 2,
   })} €`;
 
-const CheckoutPage: React.FC = () => {
+export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -203,7 +203,7 @@ const CheckoutPage: React.FC = () => {
     <div className="checkout-page">
       {/* HEADER */}
       <header className="checkout-header">
-        
+
         <span className="logo-text">NebripPay</span>
       </header>
 
@@ -292,7 +292,7 @@ const CheckoutPage: React.FC = () => {
                 />
               </div>
 
-              
+
 
               <div className="form-row">
                 <div className="form-field">
@@ -384,7 +384,7 @@ const CheckoutPage: React.FC = () => {
               <div className="form-field">
                 <label>Teléfono (opcional)</label>
                 <div className="phone-wrapper">
-                  
+
                   <input
                     type="tel"
                     name="phone"
@@ -476,11 +476,9 @@ const CheckoutPage: React.FC = () => {
             </div>
           </section>
 
-          
+
         </aside>
       </main>
     </div>
   );
 };
-
-export default CheckoutPage;

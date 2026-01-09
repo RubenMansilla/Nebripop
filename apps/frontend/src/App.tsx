@@ -45,10 +45,7 @@ import Filtro from "./pages/Filtro/Filtro";
 // PERFIL PÚBLICO
 import PublicUser from "./pages/PublicUser/PublicUser";
 
-import Checkout from "./pages/Checkout/CheckOutPage";
-
-
-
+import Checkout from "./pages/Checkout/CheckoutPage";
 
 export default function App() {
   return (

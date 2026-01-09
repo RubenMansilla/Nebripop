@@ -1,6 +1,3 @@
-import Navbar from '../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../components/Profile/ProfileSideBar/ProfileSideBar';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import './Info.css'
@@ -28,9 +25,9 @@ export default function Info() {
     const handleTabChange = (tab: string) => {
         if (hasUnsavedChanges) {
             pendingTabRef.current = tab;
-            setShowPopup(true);          // mostrar pop up
+            setShowPopup(true);
         } else {
-            setSelected(tab);            // nada que guardar → ir directo
+            setSelected(tab);
         }
     };
 
