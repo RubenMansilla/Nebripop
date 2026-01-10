@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
-import { getProductById } from "../../api/products.api";
+import { getProductById, incrementProductView } from "../../api/products.api";
 import "./Detail.css";
 
 import Navbar from "../../components/Navbar/Navbar";
@@ -17,6 +17,12 @@ import { getPublicUser } from "../../api/users.api";
 
 export default function Detail() {
   const { productId } = useParams(); // Capturamos el productId de la URL
+
+  useEffect(() => {
+    if (productId) {
+      incrementProductView(productId);
+    }
+  }, [productId]);
 
   const [product, setProduct] = useState<any>(null); // Detalles del producto
   const [loading, setLoading] = useState(true); // Estado de carga
@@ -88,21 +94,21 @@ export default function Detail() {
 
   // Cargar datos públicos del vendedor
   // Cargar datos públicos del vendedor
-useEffect(() => {
-  const sellerId = product?.seller?.id;
-  if (!sellerId) return;
+  useEffect(() => {
+    const sellerId = product?.seller?.id;
+    if (!sellerId) return;
 
-  setSellerLoading(true);
-  getPublicUser(sellerId)
-    .then((data) => {
-      console.log("PUBLIC USER DETAIL:", data); // 👈 mira esto en la consola
-      setSellerPublic(data);
-    })
-    .catch((err) => {
-      console.error("Error obteniendo usuario público:", err);
-    })
-    .finally(() => setSellerLoading(false));
-}, [product?.seller?.id]);
+    setSellerLoading(true);
+    getPublicUser(sellerId)
+      .then((data) => {
+        console.log("PUBLIC USER DETAIL:", data); // 👈 mira esto en la consola
+        setSellerPublic(data);
+      })
+      .catch((err) => {
+        console.error("Error obteniendo usuario público:", err);
+      })
+      .finally(() => setSellerLoading(false));
+  }, [product?.seller?.id]);
 
 
   useEffect(() => {
@@ -146,32 +152,32 @@ useEffect(() => {
       ? product.subcategory?.name
       : product.subcategory;
 
- // NOMBRE DEL VENDEDOR
-const sellerName =
-  sellerPublic?.fullName ??               // <- viene del backend (User.fullName)
-  sellerPublic?.name ??                   // por si en algún momento lo cambias
-  product?.seller?.fullName ??            // backup desde el producto
-  product?.seller?.name ??                // otro backup
-  "Vendedor";
+  // NOMBRE DEL VENDEDOR
+  const sellerName =
+    sellerPublic?.fullName ??               // <- viene del backend (User.fullName)
+    sellerPublic?.name ??                   // por si en algún momento lo cambias
+    product?.seller?.fullName ??            // backup desde el producto
+    product?.seller?.name ??                // otro backup
+    "Vendedor";
 
-// AVATAR DEL VENDEDOR
-const rawAvatar =
-  sellerPublic?.profilePicture ??         // <- viene del backend (User.profilePicture)
-  sellerPublic?.profile_picture ??        // por si en algún sitio usas snake_case
-  sellerPublic?.avatar ??
-  sellerPublic?.avatarUrl ??
-  product?.seller?.profilePicture ??      // backup desde el producto
-  product?.seller?.profile_picture ??
-  "";
+  // AVATAR DEL VENDEDOR
+  const rawAvatar =
+    sellerPublic?.profilePicture ??         // <- viene del backend (User.profilePicture)
+    sellerPublic?.profile_picture ??        // por si en algún sitio usas snake_case
+    sellerPublic?.avatar ??
+    sellerPublic?.avatarUrl ??
+    product?.seller?.profilePicture ??      // backup desde el producto
+    product?.seller?.profile_picture ??
+    "";
 
-const sellerAvatar =
-  rawAvatar && rawAvatar !== "" ? rawAvatar : "/default-avatar.png";
+  const sellerAvatar =
+    rawAvatar && rawAvatar !== "" ? rawAvatar : "/default-avatar.png";
 
-// VENTAS TOTALES (si en algún momento las añades)
-const sellerTotalSales =
-  (sellerPublic as any)?.totalSales ??
-  product?.seller?.totalSales ??
-  0;
+  // VENTAS TOTALES (si en algún momento las añades)
+  const sellerTotalSales =
+    (sellerPublic as any)?.totalSales ??
+    product?.seller?.totalSales ??
+    0;
 
 
 
@@ -249,9 +255,8 @@ const sellerTotalSales =
                     {images.map((_: any, index: number) => (
                       <span
                         key={index}
-                        className={`dot ${
-                          index === currentImage ? "active" : ""
-                        }`}
+                        className={`dot ${index === currentImage ? "active" : ""
+                          }`}
                         onClick={() => setCurrentImage(index)}
                       />
                     ))}
@@ -468,18 +473,16 @@ const sellerTotalSales =
             {/* TABS */}
             <div className="shipping-tabs">
               <span
-                className={`shipping-tab ${
-                  deliveryType === "shipping" ? "active" : ""
-                }`}
+                className={`shipping-tab ${deliveryType === "shipping" ? "active" : ""
+                  }`}
                 onClick={() => setDeliveryType("shipping")}
               >
                 Con envío
               </span>
 
               <span
-                className={`shipping-tab ${
-                  deliveryType === "person" ? "active" : ""
-                }`}
+                className={`shipping-tab ${deliveryType === "person" ? "active" : ""
+                  }`}
                 onClick={() => setDeliveryType("person")}
               >
                 Venta en persona

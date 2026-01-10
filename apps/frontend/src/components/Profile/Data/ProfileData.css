@@ -85,6 +85,7 @@
     cursor: pointer;
     border: 1px solid var(--beige);
     transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+    color: #333;
 }
 
 .change-photo-btn:hover {
@@ -118,6 +119,7 @@
 
 /* INPUT NORMAL */
 .input-normal {
+    width: 100%;
     flex: 1;
     padding: 12px 12px;
     border: 1px solid #dedfe0;

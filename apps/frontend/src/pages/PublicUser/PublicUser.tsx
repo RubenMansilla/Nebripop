@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
@@ -7,7 +7,6 @@ import PublicUserProfile from "../../components/PublicUserProfile/PublicUserProf
 
 import { getPublicUser } from "../../api/users.api";
 import { getPublicProductsByUser } from "../../api/products.api";
-
 import { getReviews, getUserReviewSummary } from "../../api/reviews.api";
 
 import type { ProductType } from "../../types/product";
@@ -15,10 +14,10 @@ import type { ReviewType } from "../../types/review";
 import type { UserType } from "../../types/user";
 
 export default function PublicUser() {
-
     const { userId } = useParams();
 
-    const [user, setUser] = useState<UserType | null>(null);
+    const [publicUser, setPublicUser] = useState<UserType | null>(null);
+
     const [products, setProducts] = useState<ProductType[]>([]);
     const [reviews, setReviews] = useState<ReviewType[]>([]);
     const [rating, setRating] = useState<{ average: number; total: number } | null>(null);
@@ -48,7 +47,7 @@ export default function PublicUser() {
             getUserReviewSummary(id),
         ])
             .then(([userData, productsData, reviewsData, ratingData]) => {
-                setUser(userData);
+                setPublicUser(userData);
                 setProducts(productsData);
                 setReviews(reviewsData);
                 setRating(ratingData);
@@ -66,7 +65,6 @@ export default function PublicUser() {
         return (
             <>
                 <Navbar />
-                <div className="navbar-line"></div>
                 <CategoriesBar />
                 <div style={{ padding: "40px", textAlign: "center" }}>
                     <p>Cargando perfil...</p>
@@ -75,11 +73,11 @@ export default function PublicUser() {
         );
     }
 
-    if (notFound || !user) {
+    // Verificamos 'publicUser' en lugar de 'user'
+    if (notFound || !publicUser) {
         return (
             <>
                 <Navbar />
-                <div className="navbar-line"></div>
                 <CategoriesBar />
                 <div style={{ padding: "40px", textAlign: "center" }}>
                     <h2>Usuario no encontrado</h2>
@@ -92,11 +90,10 @@ export default function PublicUser() {
     return (
         <>
             <Navbar />
-            <div className="navbar-line"></div>
             <CategoriesBar />
 
             <PublicUserProfile
-                user={user}
+                user={publicUser} // Pasamos el perfil público al componente hijo
                 products={products}
                 reviews={reviews}
                 rating={rating}

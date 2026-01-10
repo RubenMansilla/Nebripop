@@ -27,7 +27,6 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="navbar-line"></div>
       <CategoriesBar />
 
       {/* HERO */}

@@ -170,3 +170,69 @@ footer {
     gap: 25px;
   }
 }
+
+/* footer.css - Añadir al final */
+
+/* Rango intermedio: Laptops pequeñas y Tablets en horizontal (900px a 1200px) */
+/* Footer.css - Reemplaza o añade esto al final */
+
+@media (max-width: 1200px) {
+
+  /* 1. Ajuste del contenedor principal */
+  .footer-container {
+    width: 90vw;
+    /* Margen seguro a los lados */
+    flex-wrap: wrap;
+    /* Permite que los elementos bajen si no caben */
+  }
+
+  /* 2. TOP: Estrategia de Grid 2x2 para Tablet */
+  .footer-top {
+    flex-wrap: wrap;
+    /* CRUCIAL: Permite crear filas */
+    gap: 40px 20px;
+    /* 40px vertical, 20px horizontal */
+    justify-content: flex-start;
+    /* Alinea a la izquierda ordenadamente */
+  }
+
+  .footer-column {
+    /* Esto hace que cada columna ocupe casi la mitad, forzando un 2x2 */
+    flex: 1 1 40%;
+    min-width: 250px;
+    /* Asegura que el input de email quepa bien */
+  }
+
+  /* Aseguramos que el input no desborde su propia columna */
+  .subscribe input {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 1200px) {
+  /* ... lo anterior ... */
+
+  /* 3. BOTTOM: Evitar desbordamiento en iconos */
+  .footer-bottom {
+    flex-wrap: wrap;
+    /* Si no caben, que bajen */
+    gap: 30px;
+    justify-content: center;
+    /* Centrado en tablet queda mejor */
+    text-align: center;
+  }
+
+  .stores {
+    gap: 20px;
+    /* Reducimos el hueco gigante de 50px a 20px */
+    flex-wrap: wrap;
+    /* Permitir que los botones de store bajen si es necesario */
+    justify-content: center;
+  }
+
+  .store {
+    font-size: 15px;
+    /* Reducimos un poco la fuente (de 18px a 15px) */
+  }
+}

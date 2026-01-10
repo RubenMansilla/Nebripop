@@ -24,11 +24,9 @@ export class WalletService {
     async deposit(userId: number, amount: number) {
         if (amount <= 0) throw new BadRequestException('La cantidad debe ser positiva');
 
-        const wallet = await this.getBalance(userId)
+        await this.getBalance(userId);
 
-        const newBalance = Number(wallet.balance) + Number(amount);
-
-        await this.walletRepo.update({ userId }, { balance: newBalance });
+        await this.walletRepo.increment({ userId }, 'balance', amount);
 
         return this.getBalance(userId);
     }
@@ -37,15 +35,12 @@ export class WalletService {
         if (amount <= 0) throw new BadRequestException('La cantidad debe ser positiva');
 
         const wallet = await this.getBalance(userId);
-        const currentBalance = Number(wallet.balance);
 
-        if (currentBalance < amount) {
+        if (Number(wallet.balance) < amount) {
             throw new BadRequestException('Fondos insuficientes');
         }
 
-        const newBalance = currentBalance - amount;
-
-        await this.walletRepo.update({ userId }, { balance: newBalance });
+        await this.walletRepo.decrement({ userId }, 'balance', amount);
 
         return this.getBalance(userId);
     }

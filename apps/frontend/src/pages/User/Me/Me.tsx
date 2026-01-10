@@ -30,7 +30,6 @@ export default function Me() {
     return (
         <>
             <Navbar />
-            <div className="navbar-line"></div>
             <CategoriesBar />
             <section className='sidebar-container'>
                 <div className='hide-left-sidebar'>

@@ -6,10 +6,16 @@
     overflow-y: auto;
 }
 
+.navbar-and-categoriesbar {
+    width: 100%;
+    padding-right: 7px;
+}
+
 .sidebar-container {
     width: 100%;
     margin: auto;
-    height: calc(100vh - 82px - 71px);
+    height: calc(100vh - 82px - 72px);
+    max-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -32,9 +38,9 @@
     justify-content: center;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1000px) and (min-width: 800px) {
     .sidebar-container {
-        height: calc(100vh - 80px - 63px);
+        height: calc(100vh - 153.6px);
     }
 }
 
@@ -42,7 +48,6 @@
 
     .sidebar-container {
         width: 100%;
-        height: calc(100vh - 70px - 72px);
     }
 
     .sidebar-right {
@@ -59,6 +64,6 @@
 @media (max-width: 800px) {
     .sidebar-container {
         width: 100%;
-        height: calc(100vh - 118px - 72px);
+        height: calc(100vh - 118px);
     }
 }

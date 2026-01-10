@@ -1,8 +1,5 @@
 import './ProductStats.css';
 import foto from '../../../assets/garden/conjunto.png';
-import { getMostViewedProducts } from "../../../api/products.api";
-import { useEffect, useState, useContext } from 'react';
-import { AuthContext } from "../../../context/AuthContext";
 import type { ProductStatData } from '../../../types/productStatData';
 
 export default function ProductStats({ data }: { data: ProductStatData[] }) {
@@ -32,7 +29,7 @@ export default function ProductStats({ data }: { data: ProductStatData[] }) {
 
             {/* LISTADO DE PRODUCTOS */}
             {data.map((product) => (
-                <div className="stats-row" key={product.id}>
+                <div className="product-stats-row" key={product.id}>
                     <div className="stats-product-info">
                         <div className='product-image-price'>
                             <img
@@ -46,9 +43,9 @@ export default function ProductStats({ data }: { data: ProductStatData[] }) {
                         <div className='product-stats-name'>
                             <p className="name">{product.name}</p>
                             <span className="price-mobile">{product.price}€</span>
+                            <div className="date-mobile">{formatDate(product.created_at)}</div>
                         </div>
 
-                        <div className="date-mobile">{formatDate(product.created_at)}</div>
                     </div>
 
                     <span className="date">{formatDate(product.created_at)}</span>

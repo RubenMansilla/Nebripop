@@ -17,6 +17,7 @@ import { Purchase } from "../purchases/purchase.entity";
 import sharp from "sharp";
 import { MoreThan, Between } from 'typeorm';
 import { Review } from "../reviews/review.entity";
+import { ProductView } from "./ProductView/product-view.entity";
 
 @Injectable()
 export class ProductsService {
@@ -43,6 +44,9 @@ export class ProductsService {
 
         @InjectRepository(Review)
         private reviewRepo: Repository<Review>,
+
+        @InjectRepository(ProductView) // Inyectamos el repo de vistas
+        private readonly productViewRepo: Repository<ProductView>,
     ) { }
 
     // ============================
@@ -126,12 +130,30 @@ export class ProductsService {
     // ============================
     // PERFIL PÚBLICO
     // ============================
-    async getPublicProductsByUser(userId: number) {
-        return this.productRepo.find({
-            where: { owner_id: userId, sold: false },
+
+    async getPublicProductsByUser(sellerId: number, viewerId?: number | null) {
+        // Buscar los productos del VENDEDOR
+        const products = await this.productRepo.find({
+            where: { owner_id: sellerId, sold: false },
             relations: ["images"],
             order: { id: "DESC" },
         });
+
+        let favoriteIds: number[] = [];
+
+        // Si hay un usuario logueado, buscar sus favoritos
+        if (viewerId) {
+            const favorites = await this.favoritesRepo.find({
+                where: { user_id: viewerId },
+            });
+            favoriteIds = favorites.map((f) => f.product_id);
+        }
+
+        // Cruzar la información
+        return products.map((p) => ({
+            ...p,
+            isFavorite: favoriteIds.includes(p.id),
+        }));
     }
 
     // ============================
@@ -365,15 +387,6 @@ export class ProductsService {
         }));
     }
 
-    // Visualizaciones de producto
-    async incrementViews(productId: number) {
-        return this.productRepo.increment(
-            { id: productId },
-            'views_count',
-            1
-        );
-    }
-
     async getTopSuccessfulProducts(userId: number) {
 
         const products = await this.productRepo.createQueryBuilder('product')
@@ -563,6 +576,51 @@ export class ProductsService {
                 totalViews: totalGlobalViews
             }
         };
+    }
+
+    // Visualizaciones de producto
+    async incrementViews(productId: number, userId: number | null, ip: string) {
+        // Buscar el producto para ver quién es el dueño
+        const product = await this.productRepo.findOne({ where: { id: productId } });
+
+        if (!product) return;
+
+        // El dueño no tiene cuenta
+        if (userId && product.owner_id === userId) {
+            return { message: 'Owner cannot increment views' };
+        }
+
+        // Comprobar si YA lo vio (Unicidad)
+        const query = this.productViewRepo.createQueryBuilder('view')
+            .where('view.productId = :productId', { productId });
+
+        if (userId) {
+            // Si es usuario registrado, buscar por su ID
+            query.andWhere('view.userId = :userId', { userId });
+        } else {
+            // Si es anónimo, buscar por su IP
+            query.andWhere('view.ip = :ip', { ip });
+        }
+
+        const alreadyViewed = await query.getOne();
+
+        // Si ya existe registro, no sumar
+        if (alreadyViewed) {
+            return { message: 'View already counted' };
+        }
+
+        // Guardar el registro de "quién lo vio"
+        const newView = this.productViewRepo.create({
+            productId,
+            userId,
+            ip
+        });
+        await this.productViewRepo.save(newView);
+
+        // Incrementar el contador del producto
+        await this.productRepo.increment({ id: productId }, 'views_count', 1);
+
+        return { success: true };
     }
 
 }

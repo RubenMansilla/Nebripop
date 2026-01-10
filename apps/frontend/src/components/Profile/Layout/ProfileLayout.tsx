@@ -7,9 +7,10 @@ import ProfileSideBar from "../ProfileSideBar/ProfileSideBar";
 export default function ProfileLayout() {
     return (
         <>
-            <Navbar />
-            <div className="navbar-line"></div>
-            <CategoriesBar />
+            <div className='navbar-and-categoriesbar'>
+                <Navbar />
+                <CategoriesBar />
+            </div>
             <section className='sidebar-container'>
                 <div className='hide-left-sidebar'>
                     <ProfileSideBar />

@@ -28,7 +28,6 @@ export class Product {
   @JoinColumn({ name: "owner_id" })
   seller: User;
 
-
   @Column({ nullable: true })
   summary: string;
 
@@ -124,7 +123,7 @@ export class Product {
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @Column({ default: 0 })
+  @Column({ type: 'int', default: 0 })
   views_count: number;
 
   @OneToMany(() => FavoriteProduct, (fav) => fav.product)

@@ -1,9 +1,5 @@
 import api from "../utils/axiosConfig";
 
-// =========================
-// PRODUCTS API
-// =========================
-
 // ---------- CREAR PRODUCTO ----------
 export async function createProduct(
     data: any,
@@ -160,5 +156,14 @@ export async function getFinancialStats(range: string) {
         return res.data;
     } catch (error: any) {
         throw new Error(error.response?.data?.message || "Error al obtener las estadísticas financieras");
+    }
+}
+
+// ---------- ACTUALIZAR VISTAS DE PRODUCTO ----------
+export async function incrementProductView(productId: string | number) {
+    try {
+        await api.post(`/products/${productId}/view`);
+    } catch (error: any) {
+        console.error("No se pudo registrar la visita:", error);
     }
 }
