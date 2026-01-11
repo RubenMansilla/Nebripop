@@ -73,6 +73,7 @@
   position: relative;
   width: 100%;
   max-width: 800px;
+  min-width: 200px;
 }
 
 .search {
@@ -250,7 +251,7 @@
   .header-block-container {
     position: sticky;
     top: 0;
-    z-index: 1003;
+    z-index: 1000;
     background-color: white;
     width: 100%;
     justify-content: center;
@@ -283,16 +284,28 @@
     background: none;
     border: none;
     cursor: pointer;
+    color: black;
   }
 
   .mobile-search {
-    max-width: 200px;
+    width: fit-content;
   }
 
-  .mobile-search .search-wrap {
+  .mobile-search {
     width: 100%;
     margin: 0;
     padding-right: 0;
+    max-width: none;
+  }
+
+  .fake-placeholder {
+    left: 40px;
+    font-size: 16px;
+  }
+
+  .search-wrap {
+    width: 10px;
+    margin: auto;
     max-width: none;
   }
 
@@ -303,7 +316,7 @@
   }
 
   .icon {
-    width: 18px;
+    width: 16px;
     left: 12px;
   }
 
@@ -332,7 +345,7 @@
   position: absolute;
   top: 60px;
   right: 16px;
-  width: 200px;
+  width: 150px;
 
   background: white;
   border: 1px solid var(--beige);

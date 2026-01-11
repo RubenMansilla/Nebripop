@@ -5,11 +5,9 @@ import FormularioProducto from "./FormularioProducto";
 export default function SellProduct() {
   return (
     <>
-      <div className='navbar-and-categoriesbar'>
 
-        <Navbar />
-        <CategoriesBar />
-      </div>
+      <Navbar />
+      <CategoriesBar />
 
       <div style={{ paddingTop: "30px", paddingBottom: "50px" }}>
         <FormularioProducto />
