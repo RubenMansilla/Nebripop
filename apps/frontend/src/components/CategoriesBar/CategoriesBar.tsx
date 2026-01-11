@@ -40,8 +40,8 @@ export default function CategoriesBar() {
           </div>
         </div>
 
-        <CategoriesPanel open={open} setOpen={setOpen} />
       </div>
+      <CategoriesPanel open={open} setOpen={setOpen} />
     </>
   );
 }
