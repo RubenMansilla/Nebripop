@@ -101,6 +101,16 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
         }
     };
 
+    const handleDateChange = (value: string) => {
+        setBirthDate(value);
+        setHasUnsavedChanges(true);
+    };
+
+    const handleGenderChange = (value: string) => {
+        setGender(value);
+        setHasUnsavedChanges(true);
+    };
+
     const validate = () => {
         const newErrors: { name?: string; email?: string } = {};
 
@@ -221,8 +231,9 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                         <input
                             type="date"
                             value={birthDate}
-                            onChange={(e) => setBirthDate(e.target.value)}
+                            onChange={(e) => handleDateChange(e.target.value)}
                             className="input-normal"
+                            max={new Date().toISOString().split("T")[0]}
                         />
                     </div>
 
@@ -232,13 +243,13 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                         <div className="gender-options">
                             <div
                                 className={`gender-option ${gender === "Hombre" ? "active" : ""}`}
-                                onClick={() => setGender("Hombre")}
+                                onClick={() => handleGenderChange("Hombre")}
                             >
                                 Hombre
                             </div>
                             <div
                                 className={`gender-option ${gender === "Mujer" ? "active" : ""}`}
-                                onClick={() => setGender("Mujer")}
+                                onClick={() => handleGenderChange("Mujer")}
                             >
                                 Mujer
                             </div>
