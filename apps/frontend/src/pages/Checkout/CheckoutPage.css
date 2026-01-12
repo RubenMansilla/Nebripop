@@ -194,12 +194,24 @@
   text-align: center;
 }
 
-/* Mensaje de error */
-.checkout-error-msg {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #b91c1c;
+
+/* Mensajes de error */
+.checkout-error-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fef2f2;      /* rojo clarito */
+  border: 1px solid #fecaca;
+  text-align: center;
 }
+
+.checkout-error-msg {
+  margin: 0;
+  font-size: 13px;
+  color: #b91c1c;           /* rojo más intenso para el texto */
+  font-weight: 500;
+}
+
 
 /* Sección datos de envío */
 .shipping-section {

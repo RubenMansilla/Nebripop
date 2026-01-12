@@ -186,6 +186,13 @@ export default function CheckoutPage() {
       return false;
     }
 
+    // ✅ Validación de estructura de correo
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setErrorMsg("Introduce un correo electrónico válido (ej: nombre@dominio.com).");
+      return false;
+    }
+
     if (form.postcode.length !== 5) {
       setErrorMsg("Introduce un código postal válido de 5 dígitos.");
       return false;
@@ -291,8 +298,6 @@ export default function CheckoutPage() {
         <section className="checkout-left">
           {/* Botones de pago rápido */}
           <div className="payment-buttons-card">
-           
-         
             <button
               className="payment-btn payment-btn-paypal"
               type="button"
@@ -336,24 +341,29 @@ export default function CheckoutPage() {
               )}
             </button>
 
-            {walletBalance !== null && (
-              <p className="wallet-balance-text">
-                Saldo actual en tu monedero: {formatPrice(walletBalance)}
-              </p>
-            )}
+           {walletBalance !== null && (
+  <p className="wallet-balance-text">
+    Saldo actual en tu monedero: {formatPrice(walletBalance)}
+  </p>
+)}
 
-            {walletError && (
-              <p className="checkout-error-msg">{walletError}</p>
-            )}
+{walletError && (
+  <div className="checkout-error-box">
+    <p className="checkout-error-msg">{walletError}</p>
+  </div>
+)}
 
-            {errorMsg && <p className="checkout-error-msg">{errorMsg}</p>}
+{errorMsg && (
+  <div className="checkout-error-box">
+    <p className="checkout-error-msg">{errorMsg}</p>
+  </div>
+)}
+
           </div>
 
           {/* Detalles de envío */}
           <section className="shipping-section">
             <h2 className="section-title">Datos de envío</h2>
-
-            
 
             <form
               className="shipping-form"
@@ -368,6 +378,8 @@ export default function CheckoutPage() {
                   value={form.email}
                   onChange={handleChange}
                   maxLength={80}
+                  pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+                  title="Introduce un correo válido, por ejemplo: nombre@dominio.com"
                 />
               </div>
 
@@ -487,8 +499,6 @@ export default function CheckoutPage() {
         <aside className="checkout-right">
           <section className="summary-card">
             <h2 className="section-title">Resumen del pedido</h2>
-
-           
 
             {/* Producto principal */}
             <div className="summary-product">
