@@ -6,7 +6,7 @@
   background: #f3f4f6;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: #111827;
-  position: relative; /* nuevo */
+  position: relative;
 }
 
 /* Fondo gris solo para esta página, cubriendo toda la ventana */
@@ -86,6 +86,7 @@
   gap: 6px;
   margin-bottom: 10px;
   transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, opacity 0.1s;
+  
 }
 
 .payment-btn:disabled {
@@ -109,7 +110,7 @@
 }
 
 .payment-btn-paypal {
-  background: #fbbf24;
+  background: #F5E9D9;
   color: #111827;
 }
 
@@ -143,8 +144,8 @@
 .divider-text {
   font-size: 12px;
   color: #9ca3af;
-  flex: 0 0 auto;          /* evita que se quede ultra estrecho */
-  white-space: nowrap;     /* que no baje cada letra a una línea */
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 /* BOTÓN MONEDERO */
@@ -183,6 +184,14 @@
 .wallet-pay-sub {
   font-size: 12px;
   color: #6b7280;
+}
+
+/* Texto de saldo del monedero */
+.wallet-balance-text {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #4b5563;
+  text-align: center;
 }
 
 /* Mensaje de error */
@@ -273,7 +282,7 @@
   align-items: center;
   gap: 6px;
   border-radius: 12px;
-  border: 1px solid #e5e7eb; /* borde del contenedor */
+  border: 1px solid #e5e7eb;
   padding: 0 8px;
   background: #ffffff;
   box-sizing: border-box;
@@ -295,6 +304,12 @@
   box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
 }
 
+/* Evitar halo extra en el input interno del teléfono */
+.checkout-page .phone-wrapper input:focus {
+  box-shadow: none;
+}
+
+/* Fila de campos */
 .form-row {
   display: flex;
   gap: 10px;
@@ -309,7 +324,7 @@
   display: flex;
   align-items: center;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;  /* 👈 añadido para que se vea el borde */
+  border: 1px solid #e5e7eb;
   padding: 0 8px;
   background: #ffffff;
   box-sizing: border-box;
@@ -330,6 +345,12 @@
 .select-wrapper:has(select:focus) {
   border-color: #c2b28a;
   box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* Evitar halo extra en el select interno */
+.checkout-page .select-wrapper select:focus {
+  box-shadow: none;
+  outline: none;
 }
 
 /* Columna derecha: resumen */
@@ -355,7 +376,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 18px; /* más espacio vertical */
+  margin-bottom: 18px;
 }
 
 .summary-product-left {
@@ -445,8 +466,6 @@
   font-weight: 700;
 }
 
-/* (Tip section eliminada del diseño, por eso no hay estilos aquí) */
-
 /* Responsive */
 @media (max-width: 900px) {
   .checkout-main {
@@ -456,14 +475,4 @@
   .checkout-right {
     order: -1;
   }
-}
-/* Evitar borde/halo doble en el teléfono */
-.checkout-page .phone-wrapper input:focus {
-  box-shadow: none;
-}
-
-/* Evitar borde/halo doble en la provincia (select) */
-.checkout-page .select-wrapper select:focus {
-  box-shadow: none;
-  outline: none;
 }

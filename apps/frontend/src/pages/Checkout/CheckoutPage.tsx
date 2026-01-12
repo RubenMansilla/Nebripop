@@ -4,8 +4,9 @@ import "./CheckoutPage.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPurchase } from "../../api/purchases.api";
 import { getProductById } from "../../api/products.api";
-import { useNotificationSettings } from '../../context/NotificationContext';
+import { useNotificationSettings } from "../../context/NotificationContext";
 import { toast } from "react-toastify";
+import api from "../../utils/axiosConfig";
 
 interface CheckoutProduct {
   id: number;
@@ -21,7 +22,6 @@ const formatPrice = (value: number) =>
   })} €`;
 
 export default function CheckoutPage() {
-
   const { notify } = useNotificationSettings();
 
   const [searchParams] = useSearchParams();
@@ -52,13 +52,54 @@ export default function CheckoutPage() {
     phone: "",
   });
 
+  // =========================
+  // WALLET
+  // =========================
+  const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [walletError, setWalletError] = useState<string | null>(null);
+
+  // Manejo genérico de campos
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
+
+    // Campos SOLO texto (no números): nombre, apellidos, ciudad
+    if (name === "firstName" || name === "lastName" || name === "city") {
+      const cleaned = value.replace(
+        /[^a-zA-ZÁÉÍÓÚáéíóúÜüÑñ\s'-]/g,
+        "",
+      );
+      setForm((prev) => ({
+        ...prev,
+        [name]: cleaned,
+      }));
+      return;
+    }
+
+    // El resto de campos de texto normales
     setForm((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+
+  // Campos numéricos específicos
+  const handlePostcodeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 5);
+    setForm((prev) => ({
+      ...prev,
+      postcode: digits,
+    }));
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 9);
+    setForm((prev) => ({
+      ...prev,
+      phone: digits,
     }));
   };
 
@@ -100,6 +141,23 @@ export default function CheckoutPage() {
   }, [productIdParam]);
 
   // =========================
+  // Cargar saldo del monedero
+  // =========================
+  useEffect(() => {
+    const fetchWalletBalance = async () => {
+      try {
+        const res = await api.get("/wallet/balance");
+        setWalletBalance(Number(res.data.balance));
+      } catch (err) {
+        console.error("Error obteniendo saldo del monedero", err);
+        setWalletError("No se pudo obtener el saldo del monedero.");
+      }
+    };
+
+    fetchWalletBalance();
+  }, []);
+
+  // =========================
   // Validar datos comunes
   // =========================
   const validateCommon = () => {
@@ -125,6 +183,16 @@ export default function CheckoutPage() {
       !form.country
     ) {
       setErrorMsg("Por favor, rellena todos los campos obligatorios.");
+      return false;
+    }
+
+    if (form.postcode.length !== 5) {
+      setErrorMsg("Introduce un código postal válido de 5 dígitos.");
+      return false;
+    }
+
+    if (form.phone && form.phone.length < 9) {
+      setErrorMsg("Introduce un teléfono válido de 9 dígitos.");
       return false;
     }
 
@@ -160,7 +228,7 @@ export default function CheckoutPage() {
     try {
       setIsPayingExternal(true);
       await createPurchase(payload);
-      notify('transactions', "Compra realizada con éxito");
+      notify("transactions", "Compra realizada con éxito");
       navigate("/purchases/completed");
     } catch (err: any) {
       setErrorMsg(err.message || "Error al procesar la compra.");
@@ -182,10 +250,12 @@ export default function CheckoutPage() {
     try {
       setIsPayingWallet(true);
       await createPurchase(payload);
-      notify('transactions', "Compra realizada con éxito");
+      notify("transactions", "Compra realizada con éxito");
       navigate("/purchases/completed");
     } catch (err: any) {
-      setErrorMsg(err.message || "Error al procesar la compra con monedero.");
+      setErrorMsg(
+        err.message || "Error al procesar la compra con monedero.",
+      );
       toast.error("Error al procesar la compra");
     } finally {
       setIsPayingWallet(false);
@@ -212,7 +282,6 @@ export default function CheckoutPage() {
     <div className="checkout-page">
       {/* HEADER */}
       <header className="checkout-header">
-
         <span className="logo-text">NebripPay</span>
       </header>
 
@@ -222,16 +291,8 @@ export default function CheckoutPage() {
         <section className="checkout-left">
           {/* Botones de pago rápido */}
           <div className="payment-buttons-card">
-            <button className="payment-btn payment-btn-link" type="button">
-              <span className="payment-btn-main">Pagar con Link</span>
-              <span className="payment-btn-extra">VISA •••• 4242</span>
-            </button>
-
-            <button className="payment-btn payment-btn-gpay" type="button">
-              <span>Pagar con</span>
-              <span className="payment-btn-bold">Google Pay</span>
-            </button>
-
+           
+         
             <button
               className="payment-btn payment-btn-paypal"
               type="button"
@@ -275,6 +336,16 @@ export default function CheckoutPage() {
               )}
             </button>
 
+            {walletBalance !== null && (
+              <p className="wallet-balance-text">
+                Saldo actual en tu monedero: {formatPrice(walletBalance)}
+              </p>
+            )}
+
+            {walletError && (
+              <p className="checkout-error-msg">{walletError}</p>
+            )}
+
             {errorMsg && <p className="checkout-error-msg">{errorMsg}</p>}
           </div>
 
@@ -282,14 +353,12 @@ export default function CheckoutPage() {
           <section className="shipping-section">
             <h2 className="section-title">Datos de envío</h2>
 
-            <div className="shipping-alert">
-              <span role="img" aria-label="fire">
-                🔥
-              </span>
-              ¡Alta demanda! Completa tu pedido antes de que se agote.
-            </div>
+            
 
-            <form className="shipping-form" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="shipping-form"
+              onSubmit={(e) => e.preventDefault()}
+            >
               <div className="form-field">
                 <label>Correo electrónico</label>
                 <input
@@ -298,10 +367,9 @@ export default function CheckoutPage() {
                   placeholder="Correo electrónico"
                   value={form.email}
                   onChange={handleChange}
+                  maxLength={80}
                 />
               </div>
-
-
 
               <div className="form-row">
                 <div className="form-field">
@@ -312,6 +380,7 @@ export default function CheckoutPage() {
                     placeholder="Nombre"
                     value={form.firstName}
                     onChange={handleChange}
+                    maxLength={50}
                   />
                 </div>
                 <div className="form-field">
@@ -322,6 +391,7 @@ export default function CheckoutPage() {
                     placeholder="Apellidos"
                     value={form.lastName}
                     onChange={handleChange}
+                    maxLength={50}
                   />
                 </div>
               </div>
@@ -334,6 +404,7 @@ export default function CheckoutPage() {
                   placeholder="Calle, número, piso…"
                   value={form.address}
                   onChange={handleChange}
+                  maxLength={120}
                 />
               </div>
 
@@ -345,6 +416,7 @@ export default function CheckoutPage() {
                   placeholder="Portal, escalera, puerta…"
                   value={form.complement}
                   onChange={handleChange}
+                  maxLength={80}
                 />
               </div>
 
@@ -357,6 +429,7 @@ export default function CheckoutPage() {
                     placeholder="Ciudad"
                     value={form.city}
                     onChange={handleChange}
+                    maxLength={60}
                   />
                 </div>
                 <div className="form-field">
@@ -385,7 +458,9 @@ export default function CheckoutPage() {
                     name="postcode"
                     placeholder="28001"
                     value={form.postcode}
-                    onChange={handleChange}
+                    onChange={handlePostcodeChange}
+                    maxLength={5}
+                    inputMode="numeric"
                   />
                 </div>
               </div>
@@ -393,13 +468,14 @@ export default function CheckoutPage() {
               <div className="form-field">
                 <label>Teléfono (opcional)</label>
                 <div className="phone-wrapper">
-
                   <input
                     type="tel"
                     name="phone"
                     placeholder="612345678"
                     value={form.phone}
-                    onChange={handleChange}
+                    onChange={handlePhoneChange}
+                    maxLength={9}
+                    inputMode="numeric"
                   />
                 </div>
               </div>
@@ -412,9 +488,7 @@ export default function CheckoutPage() {
           <section className="summary-card">
             <h2 className="section-title">Resumen del pedido</h2>
 
-            <div className="cart-reserved-banner">
-              Tu carrito está reservado durante 10:07
-            </div>
+           
 
             {/* Producto principal */}
             <div className="summary-product">
@@ -484,10 +558,8 @@ export default function CheckoutPage() {
               </div>
             </div>
           </section>
-
-
         </aside>
       </main>
     </div>
   );
-};
+}

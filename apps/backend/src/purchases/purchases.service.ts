@@ -6,7 +6,7 @@ import {
     BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Brackets } from 'typeorm';
+    import { Repository, Brackets } from 'typeorm';
 import { Purchase } from './purchase.entity';
 import { Product } from '../products/products.entity';
 import { WalletService } from '../wallet/wallet.service';
@@ -76,8 +76,7 @@ export class PurchasesService {
 
         // 2) Si es monedero, comprobar saldo y retirar
         if (paymentMethod === 'wallet') {
-
-            // ⬇️ aquí ahora se descuenta el TOTAL (precio + IVA + envío)
+            // se descuenta el TOTAL (precio + IVA + envío)
             await this.walletService.withdraw(userId, totalToCharge);
         }
 
@@ -85,26 +84,35 @@ export class PurchasesService {
         product.sold = true;
         await this.productRepo.save(product);
 
-        // 4) Crear registro de compra
+        // 4) Crear registro de compra (incluyendo método de pago y datos de envío)
         const purchase = this.purchaseRepo.create({
-            buyerId: userId as any,          // según cómo tengas el tipo de columna
-            sellerId: product.owner_id as any,
+            buyerId: String(userId) as any,
+            sellerId: String(product.owner_id) as any,
             productId: product.id,
-            price: totalToCharge,            // aquí guardo solo el precio del producto
-            // si más adelante quieres guardar IVA / envío,
-            // habría que añadir columnas nuevas a la tabla.
+            price: totalToCharge,
+
+            paymentMethod,
+
+            shippingEmail: shippingEmail || null,
+            shippingFullName: shippingFullName || null,
+            shippingAddress: shippingAddress || null,
+            shippingComplement: shippingComplement || null,
+            shippingCity: shippingCity || null,
+            shippingProvince: shippingProvince || null,
+            shippingPostcode: shippingPostcode || null,
+            shippingPhone: shippingPhone || null,
+            shippingCountry: shippingCountry || null,
         });
 
         const saved = await this.purchaseRepo.save(purchase);
 
         try {
-
             const productName = product.name || 'un producto';
 
             await this.notificationsService.create(
                 product.owner_id,
                 `¡Enhorabuena! Has vendido "${productName}".`,
-                'transactions'
+                'transactions',
             );
         } catch (error) {
             console.error('Error enviando notificación al vendedor:', error);
