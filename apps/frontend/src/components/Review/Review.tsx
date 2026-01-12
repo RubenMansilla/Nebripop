@@ -3,8 +3,23 @@ import type { ReviewType } from '../../types/review';
 import { formatRelativeTime } from '../../utils/date';
 import { formatAccountAge } from "../../utils/accountAge";
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Review({ review }: { review: ReviewType }) {
+
+    const createSlug = (name: string) => {
+        return name
+            .toString()
+            .toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar tildes
+            .trim()
+            .replace(/\s+/g, '-') // Espacios a guiones
+            .replace(/[^\w-]+/g, '') // Borrar caracteres raros
+            .replace(/--+/g, '-'); // Quitar guiones dobles
+    };
+
+
+    const navigate = useNavigate();
 
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -20,6 +35,10 @@ export default function Review({ review }: { review: ReviewType }) {
                         <img
                             src={review.reviewer?.profilePicture || defaultProfile}
                             alt="Foto de usuario"
+                            onClick={() => {
+                                const slug = createSlug(review.reviewer.fullName);
+                                navigate(`/users/${slug}-${review.reviewer.id}`);
+                            }}
                         />
                     </div>
                     <div className="reviewer-info">
@@ -57,7 +76,9 @@ export default function Review({ review }: { review: ReviewType }) {
                             </button>
                         )}
                     </div>
-                    <div className="review-product">
+                    <div className="review-product"
+                        onClick={() => { navigate(`/product/${review.product.id}`); }}
+                    >
                         <div className="review-product-img">
                             <img
                                 src={review.product.images[0]?.image_url || defaultProfile}

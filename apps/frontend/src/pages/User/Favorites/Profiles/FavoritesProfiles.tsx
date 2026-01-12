@@ -66,7 +66,7 @@ export default function FavoritesProfiles() {
             setShowSkeleton(true);
         }, 300);
 
-        getMyFavoriteUsers(token)
+        getMyFavoriteUsers()
             .then((data) => {
                 setUsers(data);
             })

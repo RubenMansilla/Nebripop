@@ -15,6 +15,8 @@
     display: flex;
     gap: 14px;
     width: 210px;
+    height: fit-content;
+    cursor: pointer;
 }
 
 .reviewer-pic {
@@ -65,7 +67,7 @@
 
 .review-date {
     font-size: 13px;
-    color: #212529;
+    color: #5c7a89;
     line-height: 16px;
 }
 
@@ -108,6 +110,7 @@
     align-items: center;
     gap: 12px;
     padding: 8px;
+    cursor: pointer;
 }
 
 .review-product-img {
@@ -173,5 +176,9 @@
 
     .review-product {
         margin-top: 2px;
+    }
+
+    .review-text {
+        font-size: 14px;
     }
 }

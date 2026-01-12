@@ -1,14 +1,18 @@
+import "./ProfileData.css";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { updateUser, uploadProfilePicture } from "../../../api/users.api";
 import imageCompression from "browser-image-compression";
-import "./ProfileData.css";
+import { useNotificationSettings } from "../../../context/NotificationContext";
+import { toast } from 'react-toastify';
 
 interface ProfileDataProps {
     setHasUnsavedChanges: (value: boolean) => void;
 }
 
 export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) {
+
+    const { notify } = useNotificationSettings();
 
     const { user, token, setUser } = useContext(AuthContext);
 
@@ -149,8 +153,10 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                 setIsUploading(false);
             }
             setHasUnsavedChanges(false);
+            notify('accountUpdates', 'Perfil actualizado con éxito', 'success');
         } catch (err) {
             console.error("Error guardando datos:", err);
+            notify('accountUpdates', 'Error al actualizar el perfil', 'error');
         }
     };
 
@@ -196,6 +202,7 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                         <label>Nombre</label>
                         <input
                             type="text"
+                            maxLength={40}
                             value={name}
                             onChange={(e) => handleNameChange(e.target.value)}
                             className={errors.name ? "input-error" : "input-normal"}
