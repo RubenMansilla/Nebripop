@@ -1,0 +1,92 @@
+/* ===== BASE BOX ===== */
+
+.skeleton-box {
+    background: #e9ecef;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* shimmer animation */
+.skeleton-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.6) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ===== PRODUCT SKELETON PIECES ===== */
+
+.skeleton .product-img {
+    width: 100%;
+    aspect-ratio: 0.8;
+}
+
+.skeleton .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton .small {
+    height: 14px;
+    width: 40%;
+}
+
+.skeleton .medium {
+    height: 14px;
+    width: 70%;
+}
+
+/* ===== PROFILE SKELETON PIECES ===== */
+
+.skeleton-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+}
+
+.skeleton-line-lg {
+    height: 18px;
+    width: 180px;
+    margin-bottom: 8px;
+}
+
+.skeleton-line-md {
+    height: 14px;
+    width: 120px;
+    margin-bottom: 6px;
+}
+
+.skeleton-line-xs {
+    height: 10px;
+    width: 70px;
+}
+
+.skeleton-tab {
+    width: 80px;
+    height: 16px;
+    border-radius: 999px;
+}
+
+/* Layout matching normal profile */
+.skeleton-profile .public-user-header,
+.skeleton-profile .public-user-stats,
+.skeleton-profile .public-user-tabs,
+.skeleton-profile .public-user-section {
+    max-width: 1100px;
+    margin: 0 auto;
+}

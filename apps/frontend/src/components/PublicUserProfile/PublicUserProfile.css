@@ -9,7 +9,7 @@
   gap: 24px;
 }
 
-/* ================= LOADING ================= */
+/* ================= LOADING / SKELETON ================= */
 
 .public-user-loading {
   text-align: center;
@@ -18,7 +18,76 @@
   color: #666;
 }
 
-/* ================= HEADER ================= */
+/* Base skeleton */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: #e5e7eb;
+  border-radius: 6px;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: skeleton-loading 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-loading {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+}
+
+.skeleton-line {
+  height: 10px;
+  margin-bottom: 6px;
+}
+
+.skeleton-line-lg {
+  width: 160px;
+  height: 18px;
+}
+
+.skeleton-line-md {
+  width: 120px;
+}
+
+.skeleton-line-sm {
+  width: 80px;
+}
+
+.skeleton-line-xs {
+  width: 60px;
+  height: 8px;
+}
+
+.skeleton-line-tab {
+  width: 70px;
+  height: 14px;
+}
+
+.skeleton-card {
+  height: 220px;
+  border-radius: 14px;
+}
+
+.skeleton-tab {
+  cursor: default;
+}
 
 /* ================= HEADER ================= */
 
@@ -49,6 +118,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .user-name-row h1 {
@@ -57,18 +127,41 @@
   margin: 0;
 }
 
+/* ================= RATING (ESTRELLAS) ================= */
+
 .public-user-rating {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 14px;
   color: #444;
 }
 
+.public-user-rating .stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
 
+.public-user-rating .star {
+  width: 16px;
+  height: 16px;
+  fill: #d1d5db; /* gris por defecto (coincide con Review.css si lo tienes igual) */
+}
 
+.public-user-rating .star.filled {
+  fill: #facc15; /* amarillo (mismo estilo que Review) */
+}
 
+.rating-average {
+  font-weight: 600;
+  margin-left: 4px;
+}
 
+.rating-total {
+  color: #777;
+  font-size: 13px;
+}
 
 /* ================= STATS ================= */
 
@@ -128,9 +221,16 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  width: 100%;
+
+  /* Estilo basado en product-container de Published.css (sin borde) */
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 10px;
 
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
 }
 
@@ -140,10 +240,7 @@
   border-radius: 14px;
   overflow: hidden;
   transition: box-shadow 0.2s ease;
-}
-
-.public-user-products .product:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  /* SIN hover extra en el perfil público */
 }
 
 /* ================= REVIEWS ================= */
@@ -162,7 +259,7 @@
   }
 
   .public-user-info h1 {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .public-user-stats {
@@ -173,6 +270,23 @@
     padding: 20px;
   }
 }
+
+/* Grid responsive como Published.css */
+
+@media (max-width: 600px) {
+  .public-user-products {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 787px) {
+  .public-user-products {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* ================= TABS ================= */
 
 .public-user-tabs {
@@ -206,33 +320,69 @@
   bottom: -1px;
   width: 100%;
   height: 3px;
-  background-color: #E0C9A4; /* verde Wallapop-like */
+  background-color: #E0C9A4;
   border-radius: 2px;
 }
-
 
 /* ================= BOTÓN FAVORITO USUARIO ================= */
 
 .fav-user-btn {
-  margin-top: 6px;
-  align-self: flex-start;
-
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 999px;
-
-  padding: 8px 14px;
-  font-size: 13px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
   font-weight: 600;
-
-  color: #333;
+  color: #111; /* texto SIEMPRE igual */
   cursor: pointer;
-
-  transition: all 0.2s ease;
 }
 
 .fav-user-btn:hover {
-  background: #f7f7f7;
+  opacity: 0.8;
+}
+
+/* SVG NORMAL (outline) */
+.fav-icon-svg {
+  width: 18px;
+  height: 18px;
+  stroke: #e67b7b; /* rosita fino */
+  fill: transparent;
+  transition: fill 0.2s ease;
+}
+
+/* SVG FAVORITO (relleno) */
+.fav-icon-svg.filled {
+  fill: #e67b7b;
+  stroke: #e67b7b;
+}
+
+/* OCULTAMOS EL ACTIVE PARA QUE NO CAMBIE TEXTO */
+.fav-user-btn.active {
+  color: #111 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+
+.fav-icon-svg.filled {
+  fill: #e67b7b;  /* rosita relleno */
+  stroke: #e67b7b;
+}
+
+.fav-user-btn:hover {
+  opacity: 0.85;
+}
+
+
+.fav-user-btn .fav-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.fav-user-btn .fav-label {
+  white-space: nowrap;
 }
 
 /* Estado activo (usuario ya favorito) */

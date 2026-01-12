@@ -1,9 +1,10 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import PublicUserProfile from "../../components/PublicUserProfile/PublicUserProfile";
+import PublicUserProfileSkeleton from "../../components/PublicUserProfileSkeleton/PublicUserProfileSkeleton";
 
 import { getPublicUser } from "../../api/users.api";
 import { getPublicProductsByUser } from "../../api/products.api";
@@ -17,7 +18,6 @@ export default function PublicUser() {
     const { userId } = useParams();
 
     const [publicUser, setPublicUser] = useState<UserType | null>(null);
-
     const [products, setProducts] = useState<ProductType[]>([]);
     const [reviews, setReviews] = useState<ReviewType[]>([]);
     const [rating, setRating] = useState<{ average: number; total: number } | null>(null);
@@ -66,9 +66,7 @@ export default function PublicUser() {
             <>
                 <Navbar />
                 <CategoriesBar />
-                <div style={{ padding: "40px", textAlign: "center" }}>
-                    <p>Cargando perfil...</p>
-                </div>
+                <PublicUserProfileSkeleton />
             </>
         );
     }
@@ -93,7 +91,7 @@ export default function PublicUser() {
             <CategoriesBar />
 
             <PublicUserProfile
-                user={publicUser} // Pasamos el perfil público al componente hijo
+                user={publicUser}
                 products={products}
                 reviews={reviews}
                 rating={rating}
