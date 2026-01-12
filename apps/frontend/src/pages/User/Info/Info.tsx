@@ -69,7 +69,7 @@ export default function Info() {
                     <div className="unsaved-changes-popup">
                         <h3>¿Estás seguro que quieres abandonar esta página?</h3>
                         <p>Hay información que no has guardado. Si te vas sin guardar perderás los cambios que has hecho.</p>
-                        <div className="popup-buttons">
+                        <div className="popup-buttons-product">
                             <span className="popup-no" onClick={() => setShowPopup(false)}>
                                 No
                             </span>
