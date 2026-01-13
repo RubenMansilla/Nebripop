@@ -1,25 +1,44 @@
-/* ===== BASE BOX ===== */
-
-.skeleton-box {
-    background: #e9ecef;
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
+.public-user-section {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 24px 28px;
 }
 
-/* shimmer animation */
+.public-user-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    width: 100%
+}
+
+.skeleton-profile {
+    pointer-events: none;
+}
+
+.skeleton-box {
+    background-color: #e0e0e0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
 .skeleton-box::after {
     content: "";
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent);
     transform: translateX(-100%);
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.6) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    animation: shimmer 1.4s infinite;
+    animation: shimmer 1.5s infinite;
 }
 
 @keyframes shimmer {
@@ -28,31 +47,6 @@
     }
 }
 
-/* ===== PRODUCT SKELETON PIECES ===== */
-
-.skeleton .product-img {
-    width: 100%;
-    aspect-ratio: 0.8;
-}
-
-.skeleton .product-info {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.skeleton .small {
-    height: 14px;
-    width: 40%;
-}
-
-.skeleton .medium {
-    height: 14px;
-    width: 70%;
-}
-
-/* ===== PROFILE SKELETON PIECES ===== */
-
 .skeleton-circle {
     width: 72px;
     height: 72px;
@@ -60,33 +54,59 @@
 }
 
 .skeleton-line-lg {
-    height: 18px;
-    width: 180px;
+    width: 200px;
+    height: 24px;
     margin-bottom: 8px;
+    border-radius: 4px;
 }
 
 .skeleton-line-md {
-    height: 14px;
     width: 120px;
+    height: 18px;
     margin-bottom: 6px;
+    border-radius: 4px;
 }
 
 .skeleton-line-xs {
-    height: 10px;
-    width: 70px;
+    width: 60px;
+    height: 14px;
+    border-radius: 3px;
 }
 
 .skeleton-tab {
     width: 80px;
-    height: 16px;
-    border-radius: 999px;
+    height: 30px;
+    border-radius: 6px;
 }
 
-/* Layout matching normal profile */
-.skeleton-profile .public-user-header,
-.skeleton-profile .public-user-stats,
-.skeleton-profile .public-user-tabs,
-.skeleton-profile .public-user-section {
-    max-width: 1100px;
-    margin: 0 auto;
+.public-user-avatar {
+    flex-shrink: 0;
+}
+
+.public-user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.public-user-stats .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.public-user-tabs {
+    display: flex;
+    gap: 16px;
+}
+
+.public-user-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    list-style: none;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
 }

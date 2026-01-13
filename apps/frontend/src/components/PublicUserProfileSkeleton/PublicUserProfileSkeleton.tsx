@@ -1,9 +1,10 @@
 import "./PublicUserProfileSkeleton.css";
+import ProductSkeleton from "../ProductSkeleton/ProductSkeleton";
 
 export default function PublicUserProfileSkeleton() {
     return (
         <section className="public-user-profile skeleton-profile">
-            
+
             {/* HEADER */}
             <div className="public-user-header">
                 <div className="public-user-avatar">
@@ -38,16 +39,7 @@ export default function PublicUserProfileSkeleton() {
             {/* GRID DE PRODUCTOS */}
             <div className="public-user-section">
                 <ul className="public-user-products">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <li key={i} className="product skeleton">
-                            <div className="product-img skeleton-box" />
-                            <div className="product-info">
-                                <div className="product-price skeleton-box small" />
-                                <div className="product-title skeleton-box medium" />
-                                <div className="product-delivery skeleton-box small" />
-                            </div>
-                        </li>
-                    ))}
+                    {[...Array(4)].map((_, i) => <ProductSkeleton key={i} />)}
                 </ul>
             </div>
         </section>
