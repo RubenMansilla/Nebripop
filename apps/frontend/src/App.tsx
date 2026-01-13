@@ -4,9 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
 
 // IMPORTS PARA NOTIFICACIONES
-import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { NotificationProvider } from "./context/NotificationContext";
 import NotificationListener from "./components/Notification/NotificationListener";
 
 // HOME
@@ -52,6 +50,10 @@ import Filtro from "./pages/Filtro/Filtro";
 import PublicUser from "./pages/PublicUser/PublicUser";
 
 import Checkout from "./pages/Checkout/CheckoutPage";
+import PurchaseCompleted from "./pages/PurchaseCompleted/PurchaseCompleted";
+
+// PAGINA 404
+import NotFound from "./pages/NotFound/NotFound";
 
 export default function App() {
     return (
@@ -129,7 +131,12 @@ export default function App() {
                         />
                         <Route path="/checkout" element={<Checkout />} />
 
+                        <Route path="/purchase/completed" element={<PurchaseCompleted />} />
+
                         <Route path="/users/:userId" element={<PublicUser />} />
+
+                        {/* 404 NOT FOUND */}
+                        <Route path="*" element={<NotFound />} />
 
                     </Routes>
 

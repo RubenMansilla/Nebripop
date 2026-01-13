@@ -234,9 +234,24 @@ export default function CheckoutPage() {
 
     try {
       setIsPayingExternal(true);
-      await createPurchase(payload);
+      const purchaseResponse = await createPurchase(payload);
       notify("transactions", "Compra realizada con éxito");
-      navigate("/purchases/completed");
+      navigate("/purchase/completed", {
+        replace: true,
+        state: {
+          productName: product?.name,
+          totalAmount: total,
+          orderId: purchaseResponse.id || `NP-${Date.now()}`,
+          image: firstImage,
+          customerName: `${form.firstName} ${form.lastName}`.trim(),
+          paymentMethod: isPayingWallet ? "Monedero NebriPop" : "PayPal",
+          shippingAddress: form.address,
+          shippingComplement: form.complement,
+          shippingCity: form.city,
+          shippingProvince: form.province,
+          shippingPostcode: form.postcode
+        }
+      });
     } catch (err: any) {
       setErrorMsg(err.message || "Error al procesar la compra.");
       toast.error("Error al procesar la compra");
@@ -256,9 +271,24 @@ export default function CheckoutPage() {
 
     try {
       setIsPayingWallet(true);
-      await createPurchase(payload);
+      const purchaseResponse = await createPurchase(payload);
       notify("transactions", "Compra realizada con éxito");
-      navigate("/purchases/completed");
+      navigate("/purchase/completed", {
+        replace: true,
+        state: {
+          productName: product?.name,
+          totalAmount: total,
+          orderId: purchaseResponse.id || `NP-${Date.now()}`,
+          image: firstImage,
+          customerName: `${form.firstName} ${form.lastName}`.trim(),
+          paymentMethod: isPayingWallet ? "Monedero NebriPop" : "PayPal",
+          shippingAddress: form.address,
+          shippingComplement: form.complement,
+          shippingCity: form.city,
+          shippingProvince: form.province,
+          shippingPostcode: form.postcode
+        }
+      });
     } catch (err: any) {
       setErrorMsg(
         err.message || "Error al procesar la compra con monedero.",
@@ -341,23 +371,23 @@ export default function CheckoutPage() {
               )}
             </button>
 
-           {walletBalance !== null && (
-  <p className="wallet-balance-text">
-    Saldo actual en tu monedero: {formatPrice(walletBalance)}
-  </p>
-)}
+            {walletBalance !== null && (
+              <p className="wallet-balance-text">
+                Saldo actual en tu monedero: {formatPrice(walletBalance)}
+              </p>
+            )}
 
-{walletError && (
-  <div className="checkout-error-box">
-    <p className="checkout-error-msg">{walletError}</p>
-  </div>
-)}
+            {walletError && (
+              <div className="checkout-error-box">
+                <p className="checkout-error-msg">{walletError}</p>
+              </div>
+            )}
 
-{errorMsg && (
-  <div className="checkout-error-box">
-    <p className="checkout-error-msg">{errorMsg}</p>
-  </div>
-)}
+            {errorMsg && (
+              <div className="checkout-error-box">
+                <p className="checkout-error-msg">{errorMsg}</p>
+              </div>
+            )}
 
           </div>
 
