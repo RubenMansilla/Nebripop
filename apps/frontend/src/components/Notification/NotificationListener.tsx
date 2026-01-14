@@ -1,52 +1,96 @@
-// src/components/NotificationListener.tsx
 import { useEffect, useContext } from 'react';
+import { createClient } from '@supabase/supabase-js';
 import { AuthContext } from '../../context/AuthContext';
 import { useNotificationSettings } from '../../context/NotificationContext';
 import { getUnreadNotifications, markNotificationAsRead } from '../../api/notifications.api';
 
-export default function NotificationListener() {
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
+export default function NotificationListener() {
     const { user } = useContext(AuthContext);
-    const { notify } = useNotificationSettings();
+    const { notify, settings } = useNotificationSettings();
+
+    // Ver si el componente se monta
+    console.log("1. NotificationListener montado. Usuario actual:", user);
 
     useEffect(() => {
+        if (!user) {
+            console.log("2. No hay usuario, abortando listener.");
+            return;
+        }
 
-        if (!user) return;
+        console.log("3. Iniciando lógica para usuario ID:", user.id);
 
-        const checkNotifications = async () => {
+        // Carga inicial de notificaciones pendientes
+        const checkPendingNotifications = async () => {
             try {
-                //Pedir al back las no leídas
+                console.log("4. Buscando notificaciones antiguas...");
                 const unread = await getUnreadNotifications(user.id);
+                console.log("5. Notificaciones antiguas encontradas:", unread.length);
 
-                unread.forEach(async (notification: any) => {
-
-                    await markNotificationAsRead(notification.id);
-
-                    notify(notification.type, notification.message, 'info');
+                unread.forEach(async (n: any) => {
+                    await markNotificationAsRead(n.id);
+                    notify(n.type, n.message, 'info');
                 });
-
             } catch (error) {
-                console.error("Error comprobando notificaciones", error);
+                console.error("Error cargando notificaciones pendientes", error);
             }
         };
 
-        // Chequeo inicial con retraso de 5s (para no saturar al entrar)
-        const initialTimer = setTimeout(() => {
-            checkNotifications();
-        }, 5000);
+        const initialTimer = setTimeout(checkPendingNotifications, 2000);
 
-        // Polling: Comprobar cada 60 segundos si tienes la web abierta
-        const pollingInterval = setInterval(() => {
-            checkNotifications();
-        }, 60000);
+        // Realtime subscription
+        console.log(`6. Intentando conectar Realtime con filtro: user_id=eq.${user.id}`);
 
-        // Limpieza al desmontar o cambiar de usuario
+        const channel = supabase
+            .channel('realtime:notifications')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'notifications',
+                },
+                async (payload) => {
+                    console.log("🚀 LLEGÓ ALGO:", payload);
+
+                    // Si sigue llegando error, salir
+                    if (payload.errors) {
+                        console.error("Error de permisos Supabase:", payload.errors);
+                        return;
+                    }
+
+                    const newNotif = payload.new;
+
+                    // Comparar el user_id de la notificación con el de la sesión
+                    if (Number(newNotif.user_id) === Number(user.id)) {
+
+                        await markNotificationAsRead(newNotif.id);
+
+                        // Comprobar configuración
+                        const userSettings = settings || {};
+                        const shouldShow = userSettings[newNotif.type] !== false;
+
+                        if (shouldShow) {
+                            notify(newNotif.type, newNotif.message, 'info');
+                        }
+                    }
+                }
+            )
+            .subscribe((status, err) => {
+                // LOG CRÍTICO: Ver estado de la conexión
+                console.log("7. Estado de suscripción Supabase:", status, err);
+            });
+
         return () => {
             clearTimeout(initialTimer);
-            clearInterval(pollingInterval);
+            supabase.removeChannel(channel);
+            console.log("8. Limpiando canal");
         };
 
-    }, [user, notify]); // Se ejecuta cuando cambia el usuario
+    }, [user, notify, settings]);
 
     return null;
 }

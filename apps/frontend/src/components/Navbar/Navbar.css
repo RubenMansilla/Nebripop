@@ -189,7 +189,15 @@
 /* ====================================
    NAVBAR TABLET (600px – 1000px)
 ==================================== */
-@media (max-width: 1000px) and (min-width: 800px) {
+@media (max-width: 1000px) and (min-width: 600px) {
+
+  .logo-small {
+    display: none;
+  }
+
+  .logo-pc {
+    display: block;
+  }
 
   /* Mantiene el espacio para la palabra animada */
   .fake-placeholder {
@@ -246,7 +254,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 600px) {
 
   .header-block-container {
     position: sticky;
@@ -403,4 +411,14 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+@media (max-width: 800px) and (min-width: 600px) {
+  .logo-pc {
+    display: none;
+  }
+
+  .logo-small {
+    display: block;
+  }
 }

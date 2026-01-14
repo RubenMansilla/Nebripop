@@ -171,7 +171,8 @@ export default function Navbar() {
           <nav className="navbar-tablet">
             <div className="nav-left">
               <div className="nav-logo" onClick={() => navigate("/")}>
-                <img src={logo} alt="nebripop" />
+                <img className="logo-pc" src={logo} alt="nebripop" />
+                <img className="logo-small" src={logoSmall} alt="nebripop" />
               </div>
             </div>
 

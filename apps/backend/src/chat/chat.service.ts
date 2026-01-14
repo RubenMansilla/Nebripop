@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { Chat } from "./chat.entity";
 import { ChatMessage } from "./chat-message.entity";
 import { User } from "../users/users.entity";
+import { Notification } from "../notifications/notification.entity";
 
 type UserLite = Pick<User, "id" | "fullName" | "profilePicture">;
 
@@ -17,8 +18,11 @@ export class ChatService {
     private readonly msgRepo: Repository<ChatMessage>,
 
     @InjectRepository(User)
-    private readonly userRepo: Repository<User>
-  ) {}
+    private readonly userRepo: Repository<User>,
+
+    @InjectRepository(Notification)
+    private readonly notificationRepo: Repository<Notification>
+  ) { }
 
   private getUserLite(id: number): Promise<UserLite | null> {
     return this.userRepo.findOne({
@@ -66,10 +70,10 @@ export class ChatService {
           lastMessage:
             lastMessage && typeof lastMessage === "object"
               ? {
-                  id: lastMessage.id,
-                  content: lastMessage.content,
-                  createdAt: lastMessage.createdAt,
-                }
+                id: lastMessage.id,
+                content: lastMessage.content,
+                createdAt: lastMessage.createdAt,
+              }
               : null,
         };
       })
@@ -118,10 +122,10 @@ export class ChatService {
         lastMessage:
           lastMessage && typeof lastMessage === "object"
             ? {
-                id: lastMessage.id,
-                content: lastMessage.content,
-                createdAt: lastMessage.createdAt,
-              }
+              id: lastMessage.id,
+              content: lastMessage.content,
+              createdAt: lastMessage.createdAt,
+            }
             : null,
       };
     }
@@ -157,10 +161,10 @@ export class ChatService {
       createdAt: m.createdAt,
       sender: m.sender
         ? {
-            id: m.sender.id,
-            fullName: m.sender.fullName,
-            profilePicture: m.sender.profilePicture,
-          }
+          id: m.sender.id,
+          fullName: m.sender.fullName,
+          profilePicture: m.sender.profilePicture,
+        }
         : null,
     }));
   }
@@ -182,6 +186,30 @@ export class ChatService {
       sender,
       content,
     });
+
+    // Crear notificación para el otro usuario
+    try {
+      // Asegurar que sean números
+      const buyerId = Number((chat as any).buyerId);
+      const sellerId = Number((chat as any).sellerId);
+
+      // Calcular quién recibe la notificación
+      const recipientId = (senderId === buyerId) ? sellerId : buyerId;
+
+      console.log(`Notificando: Sender=${senderId}, Buyer=${buyerId}, Seller=${sellerId} -> Recipient=${recipientId}`);
+
+      // Guardar notificación en BD
+      if (recipientId) {
+        await this.notificationRepo.save({
+          userId: recipientId.toString(),
+          type: 'newMessage',
+          message: `Nuevo mensaje de ${sender.fullName}`,
+          isRead: false,
+        });
+      }
+    } catch (error) {
+      console.error("Error creando notificación de chat:", error);
+    }
 
     return {
       id: msg.id,
