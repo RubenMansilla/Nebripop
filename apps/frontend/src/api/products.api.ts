@@ -1,13 +1,11 @@
-// =========================
-// PRODUCTS API
-// =========================
+import api from "../utils/axiosConfig";
 
 // ---------- CREAR PRODUCTO ----------
 export async function createProduct(
     data: any,
-    images: File[],
-    token: string
+    images: File[]
 ) {
+
     const formData = new FormData();
 
     Object.entries(data).forEach(([key, value]) => {
@@ -25,261 +23,147 @@ export async function createProduct(
         formData.append("images", img);
     }
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
-        method: "POST",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-    });
-
-    if (!res.ok) {
-        throw new Error("Error al crear producto");
+    try {
+        const res = await api.post('/products', formData);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al crear producto");
     }
-
-    return res.json();
 }
 
 // ---------- MIS PRODUCTOS ACTIVOS ----------
-export async function getMyActiveProducts(token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/my-products/active`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        throw new Error("Error al obtener productos activos");
+export async function getMyActiveProducts() {
+    try {
+        const res = await api.get('/products/my-products/active');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener productos activos");
     }
-
-    return res.json();
 }
 
 // ---------- MIS PRODUCTOS VENDIDOS ----------
-export async function getMySoldProducts(token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/my-products/sold`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        throw new Error("Error al obtener productos vendidos");
+export async function getMySoldProducts() {
+    try {
+        const res = await api.get('/products/my-products/sold');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener productos vendidos");
     }
-
-    return res.json();
 }
 
 // ---------- TODOS LOS PRODUCTOS (HOME) ----------
 export async function getAllProducts(
-    token?: string | null,
     categoryId?: number | null,
     subcategoryId?: number | null,
     minPrice?: number,
     maxPrice?: number,
     dateFilter?: "today" | "7days" | "30days"
 ) {
-    const headers: any = {};
-    const params = new URLSearchParams();
+    // Construimos el objeto de parámetros
+    const params: any = {};
 
-    if (token) headers.Authorization = `Bearer ${token}`;
-    if (categoryId) params.append("categoryId", String(categoryId));
-    if (subcategoryId) params.append("subcategoryId", String(subcategoryId));
-    if (minPrice !== undefined) params.append("minPrice", String(minPrice));
-    if (maxPrice !== undefined) params.append("maxPrice", String(maxPrice));
-    if (dateFilter) params.append("dateFilter", dateFilter);
+    if (categoryId) params.categoryId = categoryId;
+    if (subcategoryId) params.subcategoryId = subcategoryId;
+    if (minPrice !== undefined) params.minPrice = minPrice;
+    if (maxPrice !== undefined) params.maxPrice = maxPrice;
+    if (dateFilter) params.dateFilter = dateFilter;
 
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products?${params.toString()}`,
-        { headers }
-    );
-
-    if (!res.ok) throw new Error("Error al obtener productos");
-    return res.json();
+    try {
+        const res = await api.get('/products', { params });
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener productos");
+    }
 }
-
-
 
 // ---------- PRODUCTO POR ID ----------
 export async function getProductById(productId: string) {
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/${productId}`,
-        {
-            method: "GET",
-            headers: token
-                ? { Authorization: `Bearer ${token}` }
-                : undefined,
-        }
-    );
-
-    if (!res.ok) {
-        throw new Error("Error al obtener el producto");
+    try {
+        const res = await api.get(`/products/${productId}`);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener el producto");
     }
-
-    return res.json();
 }
 
 // ---------- ELIMINAR PRODUCTO ----------
-export async function deleteProduct(productId: number, token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/${productId}`,
-        {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+export async function deleteProduct(productId: number) {
+    try {
+        const res = await api.delete(`/products/${productId}`);
 
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || "No se pudo eliminar el producto"
-        );
-    }
-
-    if (res.status === 204) {
         return true;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "No se pudo eliminar el producto");
     }
-
-    return res.json();
 }
 
 // ---------- MIS COMPRAS FINALIZADAS ----------
-export async function getMyPurchasedProducts(token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/my-products/purchased`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || "Error al obtener productos comprados"
-        );
+export async function getMyPurchasedProducts() {
+    try {
+        const res = await api.get('/products/my-products/purchased');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener productos comprados");
     }
-
-    return res.json();
 }
 
 // ---------- PROCESO DE COMPRA ----------
-export async function getMyBuyingProcessProducts(token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/my-products/buying-process`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-            "Error al obtener productos en proceso de compra"
-        );
+export async function getMyBuyingProcessProducts() {
+    try {
+        const res = await api.get('/products/my-products/buying-process');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener productos en proceso de compra");
     }
-
-    return res.json();
 }
 
 // ---------- PROCESO DE VENTA ----------
-export async function getMySellingProcessProducts(token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/my-products/selling-process`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-            "Error al obtener productos en proceso de venta"
-        );
+export async function getMySellingProcessProducts() {
+    try {
+        const res = await api.get('/products/my-products/selling-process');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener productos en proceso de venta");
     }
-
-    return res.json();
 }
 
 // ---------- PRODUCTOS PÚBLICOS DE UN USUARIO ----------
 export async function getPublicProductsByUser(userId: number) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/public/user/${userId}`
-    );
-
-    if (!res.ok) {
-        throw new Error("Error obteniendo productos del usuario");
+    try {
+        const res = await api.get(`/products/public/user/${userId}`);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error obteniendo productos del usuario");
     }
-
-    return res.json();
 }
 
 // ---------- PRODUCTOS MÁS VISTOS ----------
-export async function getMostViewedProducts(token: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/top-success`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        // Tu manejo de errores robusto
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-            "Error al obtener los productos más vistos"
-        );
+export async function getMostViewedProducts() {
+    try {
+        const res = await api.get('/products/top-success');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener los productos más vistos");
     }
-
-    return res.json();
 }
 
 // ---------- ESTADÍSTICAS FINANCIERAS ----------
-export async function getFinancialStats(token: string, range: string) {
-    const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/products/stats/financial?range=${range}`,
-        {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-            "Error al obtener las estadísticas financieras"
-        );
+export async function getFinancialStats(range: string) {
+    try {
+        const res = await api.get('/products/stats/financial', {
+            params: { range }
+        });
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener las estadísticas financieras");
     }
+}
 
-    return res.json();
+// ---------- ACTUALIZAR VISTAS DE PRODUCTO ----------
+export async function incrementProductView(productId: string | number) {
+    try {
+        await api.post(`/products/${productId}/view`);
+    } catch (error: any) {
+        console.error("No se pudo registrar la visita:", error);
+    }
 }

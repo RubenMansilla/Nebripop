@@ -5,6 +5,7 @@ import FormularioProducto from "./FormularioProducto";
 export default function SellProduct() {
   return (
     <>
+
       <Navbar />
       <CategoriesBar />
 

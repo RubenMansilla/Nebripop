@@ -55,7 +55,6 @@ export default function Filtro() {
     setLoading(true);
 
     getAllProducts(
-      token,
       selectedCategory,
       selectedSubcategory,
       minPrice,
@@ -315,9 +314,9 @@ export default function Filtro() {
             ) : (
               filteredProducts.map((p) => (
                 <li key={p.id} className="products-grid-item">
-                  <Link to={`/product/${p.id}`} className="product-link">
-                    <Product product={p} mode="public" />
-                  </Link>
+
+                  <Product product={p} mode="public" />
+
                 </li>
               ))
             )}

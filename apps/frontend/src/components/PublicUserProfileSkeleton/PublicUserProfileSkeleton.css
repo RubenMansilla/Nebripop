@@ -1,0 +1,112 @@
+.public-user-section {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 24px 28px;
+}
+
+.public-user-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    width: 100%
+}
+
+.skeleton-profile {
+    pointer-events: none;
+}
+
+.skeleton-box {
+    background-color: #e0e0e0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.skeleton-box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent);
+    transform: translateX(-100%);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.skeleton-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+}
+
+.skeleton-line-lg {
+    width: 200px;
+    height: 24px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+}
+
+.skeleton-line-md {
+    width: 120px;
+    height: 18px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+}
+
+.skeleton-line-xs {
+    width: 60px;
+    height: 14px;
+    border-radius: 3px;
+}
+
+.skeleton-tab {
+    width: 80px;
+    height: 30px;
+    border-radius: 6px;
+}
+
+.public-user-avatar {
+    flex-shrink: 0;
+}
+
+.public-user-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.public-user-stats .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.public-user-tabs {
+    display: flex;
+    gap: 16px;
+}
+
+.public-user-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    list-style: none;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+}

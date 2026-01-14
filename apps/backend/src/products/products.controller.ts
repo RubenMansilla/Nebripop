@@ -16,8 +16,7 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ProductsService } from "./products.service";
 import { CreateProductDto } from "./create-products.dto";
 import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
-
-import { Query } from "@nestjs/common";
+import { Query, Ip } from "@nestjs/common";
 
 
 @Controller("products")
@@ -72,12 +71,17 @@ export class ProductsController {
         );
     }
 
-    // 🔓 PERFIL PÚBLICO – PRODUCTOS DE UN USUARIO
+    // PERFIL PÚBLICO – PRODUCTOS DE UN USUARIO
+    @UseGuards(OptionalJwtAuthGuard)
     @Get('public/user/:userId')
-    getPublicProductsByUser(
-        @Param('userId', ParseIntPipe) userId: number
+    async getPublicProductsByUser(
+        @Param('userId', ParseIntPipe) sellerId: number,
+        @Req() req
     ) {
-        return this.productsService.getPublicProductsByUser(userId);
+
+        const viewerId = req.user?.id || null;
+
+        return this.productsService.getPublicProductsByUser(sellerId, viewerId);
     }
 
     // Eliminar un producto
@@ -125,9 +129,18 @@ export class ProductsController {
         return this.productsService.getSellingProcessProducts(req.user.id);
     }
 
+    // Incrementar vistas de un producto
+    @UseGuards(OptionalJwtAuthGuard)
     @Post(':id/view')
-    incrementView(@Param('id') id: number) {
-        return this.productsService.incrementViews(+id);
+    async incrementView(
+        @Param('id', ParseIntPipe) productId: number,
+        @Req() req,
+        @Ip() ip: string // <--- NestJS nos da la IP aquí
+    ) {
+        // Si el usuario está logueado, req.user existirá (depende de tu Guard)
+        const userId = req.user?.id || null;
+
+        return this.productsService.incrementViews(productId, userId, ip);
     }
 
     @UseGuards(JwtAuthGuard)

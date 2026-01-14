@@ -11,7 +11,6 @@ export default function NotFound() {
     return (
         <>
             <Navbar />
-            <div className="navbar-line"></div>
             <CategoriesBar />
             <section className='not-found-container'>
                 <div className="not-found">

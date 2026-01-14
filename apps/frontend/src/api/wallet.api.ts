@@ -1,49 +1,31 @@
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../utils/axiosConfig";
 
 // OBTENER SALDO (BALANCE)
-export async function getWalletBalance(token: string) {
-    const res = await fetch(`${API_URL}/wallet/balance`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-    });
-
-    if (!res.ok) throw new Error("Error al obtener el saldo");
-    return res.json();
+export async function getWalletBalance() {
+    try {
+        const res = await api.get('/wallet/balance');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al obtener el saldo");
+    }
 }
 
 // RECARGAR (DEPOSIT)
-export async function depositMoney(amount: number, token: string) {
-    const res = await fetch(`${API_URL}/wallet/deposit`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount }),
-    });
-
-    if (!res.ok) throw new Error("Error al realizar la recarga");
-    return res.json();
+export async function depositMoney(amount: number) {
+    try {
+        const res = await api.post('/wallet/deposit', { amount });
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al realizar la recarga");
+    }
 }
 
 // RETIRAR (WITHDRAW)
-export async function withdrawMoney(amount: number, token: string) {
-    const res = await fetch(`${API_URL}/wallet/withdraw`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ amount }),
-    });
-
-    if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.message || "Error al retirar fondos");
+export async function withdrawMoney(amount: number) {
+    try {
+        const res = await api.post('/wallet/withdraw', { amount });
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al retirar fondos");
     }
-
-    return res.json();
 }

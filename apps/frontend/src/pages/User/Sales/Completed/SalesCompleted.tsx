@@ -49,7 +49,7 @@ export default function SalesCompleted() {
             setShowSkeleton(true);
         }, 300);
 
-        getMySoldProducts(token)
+        getMySoldProducts()
             .then((data) => {
                 setSoldProducts(data);
             })

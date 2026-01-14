@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import "./Navbar.css";
 
 import logo from "../../assets/logos/nebripop.png";
+import logoSmall from "../../assets/logos/nebripop-fav-icon.png";
 import searchIcon from "../../assets/iconos/buscar.png";
 
 import { AuthContext } from "../../context/AuthContext";
@@ -12,6 +13,8 @@ export default function Navbar() {
   const { openLogin } = useLoginModal();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+
+  const profilePic = user?.profilePicture || logoSmall;
 
   /* ---------------------------------------------
      PALABRAS ANIMADAS DEL BUSCADOR
@@ -38,13 +41,9 @@ export default function Navbar() {
   /* ----------------- RESPONSIVE ----------------- */
   useEffect(() => {
     const updateScreen = () => {
-      if (window.innerWidth < 600) {
-        setScreenSize("mobile");
-      } else if (window.innerWidth < 1000) {
-        setScreenSize("tablet");
-      } else {
-        setScreenSize("desktop");
-      }
+      if (window.innerWidth < 600) setScreenSize("mobile");
+      else if (window.innerWidth < 1000) setScreenSize("tablet");
+      else setScreenSize("desktop");
     };
 
     updateScreen();
@@ -111,164 +110,166 @@ export default function Navbar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ---------------------------------------------
-     🔥 RETURN COMPLETO CON 3 NAVBARS
-  --------------------------------------------- */
   return (
     <>
-      {/* ============================================================
-          📱 NAVBAR MÓVIL (<600px)
-      ============================================================ */}
-      {screenSize === "mobile" && (
-        <nav className="navbar-mobile">
-          <div className="mobile-top">
-            <div className="mobile-logo" onClick={() => navigate("/")}>
-              <img src={logo} alt="nebripop" />
+      <div className="header-block-container">
+        {/* ============================================================
+            📱 NAVBAR MÓVIL (<600px)
+        ============================================================ */}
+        {screenSize === "mobile" && (
+          <nav className="navbar-mobile">
+            <div className="mobile-top">
+              <div className="mobile-logo" onClick={() => navigate("/")}>
+                <img src={logoSmall} alt="nebripop" />
+              </div>
+
+              <div className="mobile-search">
+                <div className="search-wrap">
+                  <input ref={inputRef} className="search" type="text" placeholder=" " />
+                  <img src={searchIcon} className="icon" alt="buscar" />
+                  <div className="fake-placeholder" ref={placeholderRef}>
+                    <span className="buscar">Busca</span>
+                    <b ref={wordRef}>nintendo</b>
+                  </div>
+                </div>
+              </div>
+
+              <button className="mobile-hamb" onClick={() => setUserMenuOpen(!userMenuOpen)}>
+                ☰
+              </button>
             </div>
 
-            <button className="mobile-hamb" onClick={() => setUserMenuOpen(!userMenuOpen)}>
-              ☰
-            </button>
-          </div>
+            {userMenuOpen && (
+              <div className="mobile-popover">
+                {!user && (
+                  <p className="mobile-popover-item" onClick={openLogin}>
+                    Registrarte o iniciar sesión
+                  </p>
+                )}
 
-          <div className="mobile-search">
-            <div className="search-wrap">
-              <input ref={inputRef} className="search" type="text" placeholder=" " />
-              <img src={searchIcon} className="icon" alt="buscar" />
-              <div className="fake-placeholder" ref={placeholderRef}>
-                <span className="buscar">Busca</span>
-                <b ref={wordRef}>nintendo</b>
+                {user && (
+                  <p
+                    className="mobile-popover-item"
+                    onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
+                  >
+                    Mi perfil
+                  </p>
+                )}
+
+                <p className="mobile-popover-item" onClick={() => navigate("/sell-product")}>
+                  Vender artículos
+                </p>
+              </div>
+            )}
+          </nav>
+        )}
+
+        {/* ============================================================
+            📱 NAVBAR TABLET (600–1000px)
+        ============================================================ */}
+        {screenSize === "tablet" && (
+          <nav className="navbar-tablet">
+            <div className="nav-left">
+              <div className="nav-logo" onClick={() => navigate("/")}>
+                <img src={logo} alt="nebripop" />
               </div>
             </div>
-          </div>
 
-          {userMenuOpen && (
-            <div className="mobile-popover">
+            <div className="nav-center">
+              <div className="search-wrap">
+                <input ref={inputRef} className="search" type="text" placeholder=" " />
+                <img src={searchIcon} className="icon" alt="buscar" />
+                <div className="fake-placeholder" ref={placeholderRef}>
+                  <span className="buscar">Busca</span>
+                  <b ref={wordRef}>nintendo</b>
+                </div>
+              </div>
+            </div>
+
+            <div className="nav-right">
               {!user && (
-                <p className="mobile-popover-item" onClick={openLogin}>
-                  Registrarte o iniciar sesión
-                </p>
+                <>
+                  <button className="btn-registro" onClick={openLogin}>
+                    Registrarte o Inicia sesión
+                  </button>
+                  <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+                    Vender <span className="icon-plus">+</span>
+                  </button>
+                </>
               )}
 
               {user && (
-                <p
-                  className="mobile-popover-item"
-                  onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
-                >
-                  Mi perfil
-                </p>
+                <>
+                  <div
+                    className="profile-pic-container"
+                    onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
+                  >
+                    <img src={profilePic} alt="perfil" />
+                    <p>Tú</p>
+                  </div>
+
+                  <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+                    Vender <span className="icon-plus">+</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </nav>
+        )}
+
+        {/* ============================================================
+            🖥️ NAVBAR ESCRITORIO (>1000px)
+        ============================================================ */}
+        {screenSize === "desktop" && (
+          <nav className="navbar">
+            <div className="nav-left">
+              <div className="nav-logo" onClick={() => navigate("/")}>
+                <img src={logo} alt="nebripop" style={{ cursor: "pointer" }} />
+              </div>
+            </div>
+
+            <div className="nav-center">
+              <div className="search-wrap">
+                <input ref={inputRef} className="search" type="text" placeholder=" " />
+                <img src={searchIcon} className="icon" alt="buscar" />
+                <div className="fake-placeholder" ref={placeholderRef}>
+                  <span className="buscar">Busca</span>
+                  <b ref={wordRef}>nintendo</b>
+                </div>
+              </div>
+            </div>
+
+            <div className="nav-right">
+              {!user && (
+                <>
+                  <button className="btn-registro" onClick={openLogin}>
+                    Registrarte o Inicia sesión
+                  </button>
+                  <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+                    Vender <span className="icon-plus">+</span>
+                  </button>
+                </>
               )}
 
-              <p className="mobile-popover-item" onClick={() => navigate("/sell-product")}>
-                Vender artículos
-              </p>
+              {user && (
+                <>
+                  <div
+                    className="profile-pic-container"
+                    onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
+                  >
+                    <img src={profilePic} alt="perfil" />
+                    <p>Tú</p>
+                  </div>
+
+                  <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+                    Vender <span className="icon-plus">+</span>
+                  </button>
+                </>
+              )}
             </div>
-          )}
-        </nav>
-      )}
-
-      {/* ============================================================
-          📱 NAVBAR TABLET (600–1000px)
-      ============================================================ */}
-      {screenSize === "tablet" && (
-        <nav className="navbar-tablet">
-          <div className="nav-left">
-            <div className="nav-logo" onClick={() => navigate("/")}>
-              <img src={logo} alt="nebripop" />
-            </div>
-          </div>
-
-          <div className="nav-center">
-            <div className="search-wrap">
-              <input ref={inputRef} className="search" type="text" placeholder=" " />
-              <img src={searchIcon} className="icon" alt="buscar" />
-              <div className="fake-placeholder" ref={placeholderRef}>
-                <span className="buscar">Busca</span>
-                <b ref={wordRef}>nintendo</b>
-              </div>
-            </div>
-          </div>
-
-          <div className="nav-right">
-            {!user && (
-              <>
-                <button className="btn-registro" onClick={openLogin}>
-                  Registrarte o Inicia sesión
-                </button>
-                <button className="btn-vender" onClick={() => navigate("/sell-product")}>
-                  Vender <span className="icon-plus">+</span>
-                </button>
-              </>
-            )}
-
-            {user && (
-              <>
-                <button
-                  className="btn-registro"
-                  onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
-                >
-                  {user.fullName.split(" ")[0]}
-                </button>
-
-                <button className="btn-vender" onClick={() => navigate("/sell-product")}>
-                  Vender <span className="icon-plus">+</span>
-                </button>
-              </>
-            )}
-          </div>
-        </nav>
-      )}
-
-      {/* ============================================================
-          🖥️ NAVBAR ESCRITORIO (>1000px)
-      ============================================================ */}
-      {screenSize === "desktop" && (
-        <nav className="navbar">
-          <div className="nav-left">
-            <div className="nav-logo" onClick={() => navigate("/")}>
-              <img src={logo} alt="nebripop" style={{ cursor: "pointer" }} />
-            </div>
-          </div>
-
-          <div className="nav-center">
-            <div className="search-wrap">
-              <input ref={inputRef} className="search" type="text" placeholder=" " />
-              <img src={searchIcon} className="icon" alt="buscar" />
-              <div className="fake-placeholder" ref={placeholderRef}>
-                <span className="buscar">Busca</span>
-                <b ref={wordRef}>nintendo</b>
-              </div>
-            </div>
-          </div>
-
-          <div className="nav-right">
-            {!user && (
-              <>
-                <button className="btn-registro" onClick={openLogin}>
-                  Registrarte o Inicia sesión
-                </button>
-                <button className="btn-vender" onClick={() => navigate("/sell-product")}>
-                  Vender <span className="icon-plus">+</span>
-                </button>
-              </>
-            )}
-
-            {user && (
-              <>
-                <button
-                  className="btn-registro"
-                  onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
-                >
-                  Bienvenido {user.fullName.split(" ")[0]}
-                </button>
-                <button className="btn-vender" onClick={() => navigate("/sell-product")}>
-                  Vender <span className="icon-plus">+</span>
-                </button>
-              </>
-            )}
-          </div>
-        </nav>
-      )}
+          </nav>
+        )}
+      </div>
     </>
   );
 }

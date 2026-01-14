@@ -1,44 +1,52 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { getProductById } from "../../api/products.api"; // Asegúrate de que esta función esté correctamente importada
+import { useParams, useNavigate, Link } from "react-router-dom";
+
+import { getProductById, incrementProductView } from "../../api/products.api";
 import "./Detail.css";
 
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
-import { Link } from "react-router-dom";
 import { getReviews, getUserReviewSummary } from "../../api/reviews.api";
 
-// Íconos de categoría y subcategoría //
+// Íconos de categoría y subcategoría
 import { getCategoryIcon } from "../../utils/categoryIcons";
 import { getSubcategoryIcon } from "../../utils/subcategoryIcons";
 
-
+import { getPublicUser } from "../../api/users.api";
 
 export default function Detail() {
   const { productId } = useParams(); // Capturamos el productId de la URL
-  const [product, setProduct] = useState<any>(null); // Estado para los detalles del producto
+
+  useEffect(() => {
+    if (productId) {
+      incrementProductView(productId);
+    }
+  }, [productId]);
+
+  const [product, setProduct] = useState<any>(null); // Detalles del producto
   const [loading, setLoading] = useState(true); // Estado de carga
-  const [deliveryType, setDeliveryType] = useState<"shipping" | "person">("shipping")
+  const [deliveryType, setDeliveryType] = useState<"shipping" | "person">(
+    "shipping"
+  );
   const [currentImage, setCurrentImage] = useState(0);
-  const images = product?.images ?? [];
-  const hasMultipleImages = images.length > 1;
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewSummary, setReviewSummary] = useState<{
     average: number;
     total: number;
   }>({ average: 0, total: 0 });
+
+  // Estado para el perfil público del vendedor
+  const [sellerPublic, setSellerPublic] = useState<any | null>(null);
+  const [sellerLoading, setSellerLoading] = useState(false);
+
+  const navigate = useNavigate();
+
+  const images = product?.images ?? [];
+  const hasMultipleImages = images.length > 1;
+
   const renderStars = (rating: number) =>
     "⭐".repeat(Math.round(rating));
-
-  const seller = product?.seller;
-
-  const sellerAvatar =
-    seller?.profile_picture && seller.profile_picture !== ""
-      ? seller.profile_picture
-      : "/default-avatar.png";
-
-
 
   const nextImage = () => {
     if (images.length === 0) return;
@@ -56,21 +64,22 @@ export default function Detail() {
     );
   };
 
-
+  // Cargar producto
   useEffect(() => {
     if (productId) {
       getProductById(productId)
         .then((data: any) => {
-          setProduct(data); // Guardamos los detalles del producto
-          setLoading(false); // Terminamos el estado de carga
+          setProduct(data);
+          setLoading(false);
         })
         .catch((err: Error) => {
           console.error("Error fetching product details:", err);
-          setLoading(false); // Terminamos el estado de carga en caso de error
+          setLoading(false);
         });
     }
-  }, [productId]); // Solo se vuelve a ejecutar cuando cambia el productId
+  }, [productId]);
 
+  // Cargar reviews y resumen de valoraciones del vendedor
   useEffect(() => {
     if (product?.seller?.id) {
       getReviews(product.seller.id, "newest")
@@ -83,28 +92,50 @@ export default function Detail() {
     }
   }, [product?.seller?.id]);
 
+  // Cargar datos públicos del vendedor
+  // Cargar datos públicos del vendedor
+  useEffect(() => {
+    const sellerId = product?.seller?.id;
+    if (!sellerId) return;
+
+    setSellerLoading(true);
+    getPublicUser(sellerId)
+      .then((data) => {
+        console.log("PUBLIC USER DETAIL:", data); // 👈 mira esto en la consola
+        setSellerPublic(data);
+      })
+      .catch((err) => {
+        console.error("Error obteniendo usuario público:", err);
+      })
+      .finally(() => setSellerLoading(false));
+  }, [product?.seller?.id]);
+
+
   useEffect(() => {
     if (product) {
-      console.log("SELLER:", product.seller);
+      console.log("SELLER en product:", product.seller);
     }
   }, [product]);
 
+  const goToSellerProfile = () => {
+    const id = sellerPublic?.id ?? product?.seller?.id;
+    if (!id) return;
 
-
+    // usa la ruta que tengas para PublicUser (ej: /usuario/:userId)
+    navigate(`/users/${id}`);
+  };
 
   if (loading) {
-    return <div>Cargando...</div>; // Indicador de carga
+    return <div>Cargando...</div>;
   }
 
   if (!product) {
-    return <div>Producto no encontrado</div>; // Si no encontramos el producto
+    return <div>Producto no encontrado</div>;
   }
 
   const formatPrice = (value: number) => {
-    // Si es entero -> "24€"
     if (Number.isInteger(value)) return `${value}€`;
 
-    // Si tiene decimales -> "24,35€" (estilo ES)
     return `${value.toLocaleString("es-ES", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -121,6 +152,33 @@ export default function Detail() {
       ? product.subcategory?.name
       : product.subcategory;
 
+  // NOMBRE DEL VENDEDOR
+  const sellerName =
+    sellerPublic?.fullName ??               // <- viene del backend (User.fullName)
+    sellerPublic?.name ??                   // por si en algún momento lo cambias
+    product?.seller?.fullName ??            // backup desde el producto
+    product?.seller?.name ??                // otro backup
+    "Vendedor";
+
+  // AVATAR DEL VENDEDOR
+  const rawAvatar =
+    sellerPublic?.profilePicture ??         // <- viene del backend (User.profilePicture)
+    sellerPublic?.profile_picture ??        // por si en algún sitio usas snake_case
+    sellerPublic?.avatar ??
+    sellerPublic?.avatarUrl ??
+    product?.seller?.profilePicture ??      // backup desde el producto
+    product?.seller?.profile_picture ??
+    "";
+
+  const sellerAvatar =
+    rawAvatar && rawAvatar !== "" ? rawAvatar : "/default-avatar.png";
+
+  // VENTAS TOTALES (si en algún momento las añades)
+  const sellerTotalSales =
+    (sellerPublic as any)?.totalSales ??
+    product?.seller?.totalSales ??
+    0;
+
 
 
   return (
@@ -130,7 +188,7 @@ export default function Detail() {
       <div className="detail-container">
         <div className="left-sidebar">
           <img
-            src="https://via.placeholder.com/300x600.png?text=Publicidad" // Imagen de publicidad
+            src="https://via.placeholder.com/300x600.png?text=Publicidad"
             alt="Publicidad"
             className="ad-image"
           />
@@ -163,7 +221,6 @@ export default function Detail() {
             <span>/</span>
             <span className="breadcrumb-current">{product.name}</span>
           </div>
-
 
           <div className="product-images">
             <div className="image-wrapper">
@@ -198,14 +255,14 @@ export default function Detail() {
                     {images.map((_: any, index: number) => (
                       <span
                         key={index}
-                        className={`dot ${index === currentImage ? "active" : ""}`}
+                        className={`dot ${index === currentImage ? "active" : ""
+                          }`}
                         onClick={() => setCurrentImage(index)}
                       />
                     ))}
                   </div>
                 </>
               )}
-
             </div>
           </div>
 
@@ -228,10 +285,7 @@ export default function Detail() {
             )}
           </div>
 
-
-
           <div className="product-details">
-
             <h3 className="section-title">Detalles del producto</h3>
 
             {product.description && (
@@ -261,6 +315,7 @@ export default function Detail() {
                 </div>
               )}
             </div>
+
             <div className="bundle-card">
               <div className="bundle-left">
                 📦 Compra más productos a este vendedor y paga un solo envío
@@ -276,9 +331,10 @@ export default function Detail() {
                 📍 {product.location}
               </div>
             )}
+
             <div className="seller-reviews">
               <h3 className="section-title">
-                ⭐ {reviewSummary.average.toFixed(1)} · {product.seller?.name} –{" "}
+                ⭐ {reviewSummary.average.toFixed(1)} · {sellerName} –{" "}
                 {reviewSummary.total} valoraciones
               </h3>
 
@@ -296,8 +352,6 @@ export default function Detail() {
                     className="review-avatar"
                     loading="lazy"
                   />
-
-
 
                   <div>
                     <strong>{review.reviewer?.full_name}</strong>
@@ -323,29 +377,24 @@ export default function Detail() {
                 </div>
               ))}
             </div>
-
-
-
           </div>
-
         </div>
 
         {/* Detalles adicionales en la parte derecha */}
         <div className="right-sidebar">
           <div className="detail-buy-card">
-
             <h3 className="buy-title">
               {product.name}
             </h3>
 
             <p className="buy-subtitle">
-              {product.condition} - {product.color ?? "Beige"} - {product.material ?? "Madera"}
+              {product.condition} - {product.color ?? "Beige"} -{" "}
+              {product.material ?? "Madera"}
             </p>
 
             <p className="buy-price">
               {formatPrice(Number(product.price))}
             </p>
-
 
             <div className="buy-payments">
               <div className="apple-pay">
@@ -364,31 +413,32 @@ export default function Detail() {
               🚚 Envío disponible
             </div>
 
-            <button className="buy-main-btn">
-              Comprar
-            </button>
+            <Link to={`/checkout?productId=${product.id}`}>
+              <button className="buy-main-btn" type="button">
+                Comprar
+              </button>
+            </Link>
 
             <button className="buy-offer-btn">
               Hacer oferta
             </button>
-
           </div>
 
           <div className="seller-card">
-            <div className="seller-main">
+            <div
+              className="seller-main"
+              onClick={goToSellerProfile}
+              style={{ cursor: "pointer" }}
+            >
               <img
                 src={sellerAvatar}
-                alt={seller?.full_name}
+                alt={sellerName}
                 className="seller-avatar"
                 loading="lazy"
               />
 
-
-
               <div className="seller-info">
-                <p className="seller-name">
-                  {product.seller?.full_name}
-                </p>
+                <p className="seller-name">{sellerName}</p>
 
                 <div className="seller-rating-row">
                   <span className="star">⭐</span>
@@ -398,32 +448,41 @@ export default function Detail() {
                 </div>
 
                 <p className="seller-meta">
-                  {product.seller?.totalSales} ventas · {reviewSummary.total} valoraciones
+                  {sellerTotalSales} ventas · {reviewSummary.total} valoraciones
                 </p>
-
               </div>
             </div>
 
             <div className="seller-actions">
-              <button className="seller-profile-btn">Ver perfil</button>
-              <button className="seller-chat-btn">Chat</button>
+              <button
+                className="seller-profile-btn"
+                type="button"
+                onClick={goToSellerProfile}
+                disabled={sellerLoading}
+              >
+                {sellerLoading ? "Cargando perfil..." : "Ver perfil"}
+              </button>
+
+              <button className="seller-chat-btn" type="button">
+                Chat
+              </button>
             </div>
           </div>
 
-
           <div className="shipping-card">
-
             {/* TABS */}
             <div className="shipping-tabs">
               <span
-                className={`shipping-tab ${deliveryType === "shipping" ? "active" : ""}`}
+                className={`shipping-tab ${deliveryType === "shipping" ? "active" : ""
+                  }`}
                 onClick={() => setDeliveryType("shipping")}
               >
                 Con envío
               </span>
 
               <span
-                className={`shipping-tab ${deliveryType === "person" ? "active" : ""}`}
+                className={`shipping-tab ${deliveryType === "person" ? "active" : ""
+                  }`}
                 onClick={() => setDeliveryType("person")}
               >
                 Venta en persona
@@ -486,7 +545,6 @@ export default function Detail() {
               </>
             )}
           </div>
-
         </div>
       </div>
 

@@ -1,61 +1,69 @@
+import api from "../utils/axiosConfig";
+
 /* ================= PRODUCTOS ================= */
 
-export async function addFavorite(productId: number, token: string) {
-  return fetch(`${import.meta.env.VITE_API_URL}/favorites/favorite/${productId}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function addFavorite(productId: number) {
+    try {
+        const res = await api.post(`/favorites/favorite/${productId}`);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al añadir a favoritos");
+    }
 }
 
-export async function removeFavorite(productId: number, token: string) {
-  return fetch(`${import.meta.env.VITE_API_URL}/favorites/favorite/${productId}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function removeFavorite(productId: number) {
+    try {
+        const res = await api.delete(`/favorites/favorite/${productId}`);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al eliminar de favoritos");
+    }
 }
 
-export async function getMyFavoriteProducts(token: string) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/favorites/products`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) throw new Error("Error obteniendo productos favoritos");
-  return res.json();
+export async function getMyFavoriteProducts() {
+    try {
+        const res = await api.get('/favorites/products');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error obteniendo productos favoritos");
+    }
 }
 
 /* ================= USUARIOS ================= */
 
-export async function addFavoriteUser(userId: number, token: string) {
-  return fetch(`${import.meta.env.VITE_API_URL}/favorites/users/${userId}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function removeFavoriteUser(userId: number, token: string) {
-  return fetch(`${import.meta.env.VITE_API_URL}/favorites/users/${userId}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function getMyFavoriteUsers(token: string) {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/favorites/users`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) throw new Error("Error obteniendo usuarios favoritos");
-  return res.json();
-}
-
-export async function isFavoriteUser(userId: number, token: string) {
-  const res = await fetch(
-    `${import.meta.env.VITE_API_URL}/favorites/users/${userId}/is-favorite`,
-    {
-      headers: { Authorization: `Bearer ${token}` },
+export async function addFavoriteUser(userId: number) {
+    try {
+        const res = await api.post(`/favorites/users/${userId}`);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al añadir usuario a favoritos");
     }
-  );
+}
 
-  if (!res.ok) return false;
-  return res.json();
+export async function removeFavoriteUser(userId: number) {
+    try {
+        const res = await api.delete(`/favorites/users/${userId}`);
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error al eliminar usuario de favoritos");
+    }
+}
+
+export async function getMyFavoriteUsers() {
+    try {
+        const res = await api.get('/favorites/users');
+        return res.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Error obteniendo usuarios favoritos");
+    }
+}
+
+export async function isFavoriteUser(userId: number) {
+    try {
+        const res = await api.get(`/favorites/users/${userId}/is-favorite`);
+        return res.data;
+    } catch (error: any) {
+        console.error("Error comprobando favorito:", error);
+        return false;
+    }
 }

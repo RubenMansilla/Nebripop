@@ -12,7 +12,8 @@ import {
     isFavoriteUser,
 } from "../../api/favorites.api";
 import { toast } from "react-toastify";
-import { useNotificationSettings } from '../../context/NotificationContext';
+import { useNotificationSettings } from "../../context/NotificationContext";
+import PublicUserProfileSkeleton from "../PublicUserProfileSkeleton/PublicUserProfileSkeleton";
 
 interface PublicUserProfileProps {
     user: UserType | null;
@@ -30,32 +31,26 @@ export default function PublicUserProfile({
     reviews,
     rating,
 }: PublicUserProfileProps) {
-
     const { notify } = useNotificationSettings();
-
     const { token, user: loggedUser } = useContext(AuthContext);
 
-    const [activeTab, setActiveTab] = useState<"products" | "reviews">("products");
+    const [activeTab, setActiveTab] =
+        useState<"products" | "reviews">("products");
     const [isFavorite, setIsFavorite] = useState(false);
     const [checkingFavorite, setCheckingFavorite] = useState(true);
 
-    // 🔒 PROTECCIÓN
-    if (!user) {
-        return <div className="public-user-loading">Cargando perfil...</div>;
-    }
-
-    const isOwnProfile = loggedUser?.id === user.id;
+    const isOwnProfile = loggedUser?.id === user?.id;
 
     /* =============================
-       COMPROBAR SI YA ES FAVORITO
+         COMPROBAR SI YA ES FAVORITO
        ============================= */
     useEffect(() => {
-        if (!token || isOwnProfile) {
+        if (!user || !token || isOwnProfile) {
             setCheckingFavorite(false);
             return;
         }
 
-        isFavoriteUser(user.id, token)
+        isFavoriteUser(user.id)
             .then((res) => {
                 setIsFavorite(Boolean(res));
             })
@@ -65,22 +60,30 @@ export default function PublicUserProfile({
             .finally(() => {
                 setCheckingFavorite(false);
             });
-    }, [user.id, token, isOwnProfile]);
+    }, [user?.id, token, isOwnProfile]);
 
     /* =============================
-       TOGGLE FAVORITO
+        TOGGLE FAVORITO
        ============================= */
     const toggleFavoriteUser = async () => {
-        if (!token || isOwnProfile) return;
+        if (!token || !user || isOwnProfile) return;
 
         try {
             if (isFavorite) {
-                await removeFavoriteUser(user.id, token);
+                await removeFavoriteUser(user.id);
                 setIsFavorite(false);
-                notify('addedToFavorites', `Has eliminado a ${user.fullName} de tus usuarios favoritos.`, 'info');
+                notify(
+                    "addedToFavorites",
+                    `Has eliminado a ${user.fullName} de tus usuarios favoritos.`,
+                    "info",
+                );
             } else {
-                await addFavoriteUser(user.id, token);
-                notify('addedToFavorites', `Has añadido a ${user.fullName} a tus usuarios favoritos.`, 'success');
+                await addFavoriteUser(user.id);
+                notify(
+                    "addedToFavorites",
+                    `Has añadido a ${user.fullName} a tus usuarios favoritos.`,
+                    "success",
+                );
                 setIsFavorite(true);
             }
         } catch (err) {
@@ -89,6 +92,16 @@ export default function PublicUserProfile({
         }
     };
 
+    /* =============================
+        SKELETON PERFIL PÚBLICO
+       ============================= */
+    if (!user) {
+        return <PublicUserProfileSkeleton />;
+    }
+
+    /* =============================
+                RENDER NORMAL
+       ============================= */
     return (
         <section className="public-user-profile">
             {/* ===== HEADER ===== */}
@@ -103,7 +116,21 @@ export default function PublicUserProfile({
 
                         {rating && (
                             <div className="public-user-rating">
-                                <span>⭐ {rating.average.toFixed(1)}</span>
+                                <div className="stars">
+                                    {[1, 2, 3, 4, 5].map((n) => (
+                                        <svg
+                                            key={n}
+                                            className={`star ${n <= Math.round(rating.average) ? "filled" : ""
+                                                }`}
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path d="M11.074 2.633c.32-.844 1.531-.844 1.852 0l2.07 5.734a.99.99 0 0 0 .926.633h5.087c.94 0 1.35 1.17.611 1.743L18 14a.97.97 0 0 0-.322 1.092L19 20.695c.322.9-.72 1.673-1.508 1.119l-4.917-3.12a1 1 0 0 0-1.15 0l-4.917 3.12c-.787.554-1.83-.22-1.508-1.119l1.322-5.603A.97.97 0 0 0 6 14l-3.62-3.257C1.64 10.17 2.052 9 2.99 9h5.087a.99.99 0 0 0 .926-.633z" />
+                                        </svg>
+                                    ))}
+                                </div>
+                                <span className="rating-average">
+                                    {rating.average.toFixed(1)}
+                                </span>
                                 <span className="rating-total">({rating.total})</span>
                             </div>
                         )}
@@ -115,9 +142,24 @@ export default function PublicUserProfile({
                             className={`fav-user-btn ${isFavorite ? "active" : ""}`}
                             onClick={toggleFavoriteUser}
                         >
-                            {isFavorite
-                                ? "❤️ Usuario favorito"
-                                : "🤍 Añadir a favoritos"}
+                            <span className="fav-icon">
+                                {isFavorite ? (
+                                    <svg viewBox="0 0 24 24" className="fav-icon-svg filled">
+                                        <path d="M12 21s-6.7-4.4-9.4-8C-.1 8.8 1.2 4.8 4.6 3.3c2-.9 4.4-.3 5.9 1.3 1.5-1.6 3.9-2.2 5.9-1.3 3.3 1.5 4.7 5.5 2 9.7-2.8 3.7-9.4 8-9.4 8z" />
+                                    </svg>
+                                ) : (
+                                    <svg viewBox="0 0 24 24" className="fav-icon-svg">
+                                        <path
+                                            d="M19.3 4.3c-2.1-2-5.6-2-7.7.2L12 4.8l-.6-.4c-2.1-2.2-5.7-2.3-7.7-.2-2.4 2.2-2.5 5.9-.2 8.4l7.9 7.9 7.9-7.9c2.3-2.5 2.2-6.2-.2-8.4z"
+                                            fill="none"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                        />
+                                    </svg>
+                                )}
+                            </span>
+                            <span className="fav-label">Usuario favorito</span>
                         </button>
                     )}
                 </div>

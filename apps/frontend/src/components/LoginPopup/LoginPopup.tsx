@@ -18,6 +18,7 @@ export default function LoginPopup({
   const [captchaValue, setCaptchaValue] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   if (!open) return null; // Evita overlay fantasma
 
@@ -27,18 +28,25 @@ export default function LoginPopup({
   };
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
-      const res = await loginUser({ email, password });
+      const res: any = await loginUser({ email, password });
 
-      console.log("Usuario logueado:", res);
+      console.log("Respuesta Login:", res);
 
-      // Guardar sesión global
-      login(res.user, res.token);
+      // ✅ Compatibilidad: puede venir token antiguo o access/refresh nuevos
+      const accessToken = res?.accessToken ?? res?.token;
+      const refreshToken = res?.refreshToken;
 
-      alert("Inicio de sesión correcto");
+      // Si el AuthContext ahora espera 3 params, se los pasamos.
+      // Si todavía espera 2, JS ignora el tercero sin romper.
+      login(res.user, accessToken, refreshToken);
+
       onClose();
     } catch (err: any) {
-      alert(err.message);
+      alert(err?.message || "Error al iniciar sesión");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,14 +89,14 @@ export default function LoginPopup({
 
           <button
             className="login-btn"
-            disabled={!captchaValue || !email || !password}
+            disabled={!captchaValue || !email || !password || loading}
             onClick={handleLogin}
             style={{
-              opacity: captchaValue ? 1 : 0.6,
-              cursor: captchaValue ? "pointer" : "not-allowed",
+              opacity: captchaValue && email && password && !loading ? 1 : 0.6,
+              cursor: captchaValue && email && password && !loading ? "pointer" : "not-allowed",
             }}
           >
-            Acceder a Wallastock
+            {loading ? "Entrando..." : "Acceder a Wallastock"}
           </button>
 
           <p className="register-text">

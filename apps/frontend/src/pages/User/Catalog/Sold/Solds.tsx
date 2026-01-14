@@ -47,7 +47,7 @@ export default function Solds() {
             setShowSkeleton(true);
         }, 300);
 
-        getMySoldProducts(token)
+        getMySoldProducts()
             .then((data) => {
                 setSoldProducts(data);
             })

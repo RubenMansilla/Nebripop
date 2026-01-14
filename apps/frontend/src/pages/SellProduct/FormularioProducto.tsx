@@ -107,7 +107,7 @@ export default function FormularioProducto() {
         };
 
         try {
-            await createProduct(body, images, token!);
+            await createProduct(body, images);
             navigate("/catalog/published", { state: { success: true } });
         } catch (err) {
             console.error(err);

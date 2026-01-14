@@ -1,31 +1,34 @@
-export async function registerUser(data: {
+import api from "../utils/axiosConfig";
+
+
+interface RegisterData {
     fullName: string;
     email: string;
     password: string;
-}) {
-    const res = await fetch("http://localhost:3001/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
-
-    if (!res.ok) throw new Error("Error al registrar usuario");
-
-    return res.json();
 }
 
-export async function loginUser(data: { email: string; password: string }) {
+interface LoginData {
+    email: string;
+    password: string;
+}
 
-    const res = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-    });
+export async function registerUser(data: RegisterData) {
+    try {
 
-    if (!res.ok) {
-        const error = await res.json().catch(() => null);
-        throw new Error(error?.message || "Credenciales incorrectas");
+        const response = await api.post("/auth/register", data);
+
+        return response.data;
+    } catch (error: any) {
+
+        throw new Error(error.response?.data?.message || "Error al registrar usuario");
     }
+}
 
-    return res.json();
+export async function loginUser(data: LoginData) {
+    try {
+        const response = await api.post("/auth/login", data);
+        return response.data;
+    } catch (error: any) {
+        throw new Error(error.response?.data?.message || "Credenciales incorrectas");
+    }
 }

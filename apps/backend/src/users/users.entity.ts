@@ -33,4 +33,7 @@ export class User {
 
     @Column({ name: 'wallet_balance', type: 'numeric', precision: 10, scale: 2, default: 0 })
     walletBalance: number;
+
+    @Column({ type: 'text', nullable: true })
+    refreshToken: string | null;
 }

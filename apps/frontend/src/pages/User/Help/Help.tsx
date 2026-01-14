@@ -159,12 +159,12 @@ export default function Help() {
                 </div>
             </main>
 
-            <footer className="footer">
-                <div className="footer-content">
-                    <div className="footer-logo">
+            <footer className="footer-help">
+                <div className="footer-help-content">
+                    <div className="footer-help-logo">
                         <span className="logo-text">Nebripop</span>
                     </div>
-                    <div className="footer-links">
+                    <div className="footer-help-links">
                         <a>Centro de Ayuda Madrid</a>
                         <a>Centro de Ayuda Portugal</a>
                     </div>

@@ -1,0 +1,250 @@
+.completed-page {
+    min-height: 100vh;
+    background-color: #f4f4f5;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+.completed-header {
+    height: 70px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 800;
+    color: #d2b990;
+    /* Beige NebriPop */
+    cursor: pointer;
+    letter-spacing: -0.5px;
+}
+
+.completed-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    align-items: flex-start;
+}
+
+/* === TARJETA TIPO FACTURA === */
+.invoice-card {
+    background: white;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 2px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    padding: 40px;
+    position: relative;
+    border-top: 5px solid #d2b990;
+}
+
+/* Cabecera de estado */
+.invoice-status {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.status-icon {
+    width: 50px;
+    height: 50px;
+    background-color: #ecfdf5;
+    color: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.status-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 8px;
+}
+
+.status-subtitle {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Divisores */
+.invoice-divider {
+    border-top: 1px dashed #e5e7eb;
+    margin: 24px 0;
+}
+
+/* Grid de metadatos (Fecha, pedido...) */
+.invoice-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meta-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #888;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.meta-value {
+    font-size: 15px;
+    color: #111;
+    font-weight: 500;
+}
+
+.meta-value.text-mono {
+    font-family: monospace;
+    letter-spacing: -0.5px;
+}
+
+.meta-value.highlight {
+    color: #d2b990;
+    font-weight: 600;
+}
+
+/* Fila de producto */
+.invoice-product-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+}
+
+.product-thumb img {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+.product-purchased-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.p-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    /* Truncar texto largo */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.p-qty {
+    font-size: 13px;
+    color: #777;
+}
+
+.product-purchased-price {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+}
+
+/* Sección de totales */
+.invoice-summary {
+    background-color: #fafafa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.summary-row.total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #111;
+}
+
+.summary-tax {
+    text-align: right;
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* Botones */
+.invoice-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+.btn-invoice-download {
+    width: 100%;
+    background-color: #111;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.btn-invoice-download:hover {
+    background-color: #333;
+}
+
+.btn-invoice-home {
+    width: 100%;
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-invoice-home:hover {
+    background-color: #f9fafb;
+    border-color: #9ca3af;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .completed-main {
+        padding: 0;
+        background: white;
+    }
+
+    .invoice-card {
+        box-shadow: none;
+        padding: 30px 20px;
+        border-top: none;
+        max-width: 100%;
+    }
+}

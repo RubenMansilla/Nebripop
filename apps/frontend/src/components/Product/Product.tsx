@@ -80,7 +80,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
             // LÓGICA CONDICIONAL
             if (mode === "active") {
                 // CASO 1: Producto en venta -> Borrado real (Soft/Hard Delete)
-                await deleteProduct(product.id, token);
+                await deleteProduct(product.id);
                 notify('productDeleted', "Producto eliminado correctamente", 'success');
             }
             else if (mode === "sold") {
@@ -88,14 +88,14 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                 if (!product.purchaseId) {
                     throw new Error("No se encontró el ID de la transacción para ocultar");
                 }
-                await hideSoldTransaction(product.purchaseId, token);
+                await hideSoldTransaction(product.purchaseId);
                 notify('productDeleted', "Producto eliminado correctamente", 'success');
             } else if (mode === "purchased") {
                 // Ocultar Compra
                 if (!product.purchaseId) throw new Error("Falta ID de transacción");
 
                 // Llamar al endpoint de /buy/:id
-                await hidePurchasedTransaction(product.purchaseId, token);
+                await hidePurchasedTransaction(product.purchaseId);
                 notify('productDeleted', "Producto eliminado correctamente", 'success');
             }
 
@@ -129,10 +129,11 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
 
         try {
             if (previousState) {
-                await removeFavorite(product.id, token);
+                await removeFavorite(product.id);
                 if (onUnfavorite) onUnfavorite(product.id);
+                notify('addedToFavorites', "Producto eliminado de favoritos", 'info');
             } else {
-                await addFavorite(product.id, token);
+                await addFavorite(product.id);
                 notify('addedToFavorites', "Producto añadido a favoritos", 'success');
             }
         } catch (err) {
@@ -309,7 +310,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: { pro
                     <div className="unsaved-changes-popup">
                         <h3>¿Estás seguro que quieres eliminar este producto?</h3>
                         <p>Esta acción no se puede deshacer. Si eliminas el producto, se perderá toda la información asociada.</p>
-                        <div className="popup-buttons">
+                        <div className="popup-buttons-product">
                             <span className="popup-no" onClick={handleCancelDelete}>No</span>
                             <span className="divider"></span>
                             <span className="popup-yes" onClick={handleConfirmDelete}>Sí, eliminar</span>

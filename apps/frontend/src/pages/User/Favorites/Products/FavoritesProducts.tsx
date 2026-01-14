@@ -1,7 +1,4 @@
 import "./FavoritesProducts.css";
-import Navbar from "../../../../components/Navbar/Navbar";
-import CategoriesBar from "../../../../components/CategoriesBar/CategoriesBar";
-import ProfileSideBar from "../../../../components/Profile/ProfileSideBar/ProfileSideBar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import Product from "../../../../components/Product/Product";
@@ -41,7 +38,7 @@ export default function FavoritesProducts() {
             setShowSkeleton(true);
         }, 300);
 
-        getMyFavoriteProducts(token)
+        getMyFavoriteProducts()
             .then((data) => {
                 setFavoriteProducts(data);
             })

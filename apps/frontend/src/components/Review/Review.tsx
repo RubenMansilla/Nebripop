@@ -2,9 +2,28 @@ import './Review.css'
 import type { ReviewType } from '../../types/review';
 import { formatRelativeTime } from '../../utils/date';
 import { formatAccountAge } from "../../utils/accountAge";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-/*  Recibir sortOption para saber en que orden mostrar las reviews*/
 export default function Review({ review }: { review: ReviewType }) {
+
+    const createSlug = (name: string) => {
+        return name
+            .toString()
+            .toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar tildes
+            .trim()
+            .replace(/\s+/g, '-') // Espacios a guiones
+            .replace(/[^\w-]+/g, '') // Borrar caracteres raros
+            .replace(/--+/g, '-'); // Quitar guiones dobles
+    };
+
+
+    const navigate = useNavigate();
+
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const isLongText = review.comment.length > 150;
 
     const defaultProfile = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
@@ -16,6 +35,10 @@ export default function Review({ review }: { review: ReviewType }) {
                         <img
                             src={review.reviewer?.profilePicture || defaultProfile}
                             alt="Foto de usuario"
+                            onClick={() => {
+                                const slug = createSlug(review.reviewer.fullName);
+                                navigate(`/users/${slug}-${review.reviewer.id}`);
+                            }}
                         />
                     </div>
                     <div className="reviewer-info">
@@ -42,10 +65,20 @@ export default function Review({ review }: { review: ReviewType }) {
                         </div>
                         <p className="review-date">{formatRelativeTime(review.created_at)}</p>
                     </div>
-                    <div className="review-text">
+                    <div className={`review-text ${isExpanded ? 'expanded' : 'collapsed'}`}>
                         <p>{review.comment}</p>
+                        {isLongText && (
+                            <button
+                                className="read-more-btn"
+                                onClick={() => setIsExpanded(!isExpanded)}
+                            >
+                                {isExpanded ? 'Ver menos' : 'Ver más'}
+                            </button>
+                        )}
                     </div>
-                    <div className="review-product">
+                    <div className="review-product"
+                        onClick={() => { navigate(`/product/${review.product.id}`); }}
+                    >
                         <div className="review-product-img">
                             <img
                                 src={review.product.images[0]?.image_url || defaultProfile}
@@ -53,7 +86,7 @@ export default function Review({ review }: { review: ReviewType }) {
                             />
                         </div>
                         <div className="review-product-info">
-                            <p className="review-product-ds">Vendió por envío:</p>
+                            <p className="review-product-ds">Compró por envío:</p>
                             <p className="review-product-name">{review.product.name}</p>
                         </div>
                     </div>

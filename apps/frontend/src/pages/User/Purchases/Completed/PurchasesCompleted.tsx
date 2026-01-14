@@ -49,7 +49,7 @@ export default function PurchasesCompleted() {
             setShowSkeleton(true);
         }, 300);
 
-        getMyPurchasedProducts(token)
+        getMyPurchasedProducts()
             .then((data) => {
                 setPurchasedProducts(data);
             })

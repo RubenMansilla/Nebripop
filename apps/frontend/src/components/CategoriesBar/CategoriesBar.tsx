@@ -11,7 +11,6 @@ export default function CategoriesBar() {
     "Deportes",
     "Moda",
     "Coleccionismo",
-    "Arte",
     "Mascotas",
     "Bricolaje",
     "Electrodomésticos",
@@ -19,27 +18,29 @@ export default function CategoriesBar() {
 
   return (
     <>
-      <div className="category-bar">
-        {/* BOTÓN HAMBURGUESA */}
-        <button className="menu-btn" onClick={() => setOpen(true)}>
-            <div class="cat-hamburger">
-                <span className="hamb-line"></span>
-                <span className="hamb-line"></span>
-                <span className="hamb-line"></span>
+      <div className="category-block-container">
+        <div className="category-bar">
+          {/* BOTÓN HAMBURGUESA */}
+          <button className="menu-btn" onClick={() => setOpen(true)}>
+            <div className="cat-hamburger">
+              <span className="hamb-line"></span>
+              <span className="hamb-line"></span>
+              <span className="hamb-line"></span>
             </div>
-          <span className="menu-text">Todos los productos</span>
-        </button>
+            <span className="menu-text">Todos los productos</span>
+          </button>
 
-        {/* CATEGORÍAS */}
-        <div className="cat-links">
-          {categories.map((c) => (
-            <a key={c} href="#" className="cat-item">
-              {c}
-            </a>
-          ))}
+          {/* CATEGORÍAS */}
+          <div className="cat-links">
+            {categories.map((c) => (
+              <a key={c} href="#" className="cat-item">
+                {c}
+              </a>
+            ))}
+          </div>
         </div>
-      </div>
 
+      </div>
       <CategoriesPanel open={open} setOpen={setOpen} />
     </>
   );

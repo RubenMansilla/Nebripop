@@ -38,7 +38,7 @@ export default function History() {
             if (activeFilter === 'Entradas') apiFilter = 'in';
             if (activeFilter === 'Salidas') apiFilter = 'out';
 
-            const data = await fetchMyTransactions(token, apiFilter);
+            const data = await fetchMyTransactions(apiFilter);
             setTransactions(data);
             setLoading(false);
         };

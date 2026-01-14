@@ -12,6 +12,7 @@ import { PurchasesModule } from './purchases/purchases.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { WalletModule } from './wallet/wallet.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 // 🟩 CHAT
 import { ChatModule } from './chat/chat.module';
@@ -31,10 +32,10 @@ import { ChatModule } from './chat/chat.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.get<string>('DATABASE_URL'),
-        autoLoadEntities: true, // detecta todas las entidades
-        synchronize: false,     // NO TOCAR (Supabase)
+        autoLoadEntities: true,
+        synchronize: false, // NO TOCAR (Supabase)
         ssl: {
-          rejectUnauthorized: false,
+          rejectUnauthorized: false, // Necesario para Supabase
         },
       }),
     }),
@@ -49,6 +50,7 @@ import { ChatModule } from './chat/chat.module';
     CategoriesModule,
     SubcategoriesModule,
     WalletModule,
+    NotificationsModule,
 
     // ==== CHAT ====
     ChatModule,

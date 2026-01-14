@@ -6,8 +6,10 @@
   --ink: #1e2a32;
   --muted: #5b6b76;
   --line: #e6ecef;
-  --hover-row: #f6f9fb;
+  --hover-row: rgba(210, 185, 144, 0.14);
+  /* beige suave para hover */
   --bg: #ffffff;
+  /* fondo limpio */
 }
 
 /* ===== OVERLAY ===== */
@@ -18,7 +20,7 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
-  z-index: 20;
+  z-index: 2000;
 }
 
 .overlay.open {
@@ -38,9 +40,10 @@
   box-shadow: 3px 0 18px rgba(0, 0, 0, 0.08);
   transform: translateX(-100%);
   transition: transform 0.3s ease;
-  z-index: 30;
+  z-index: 2001;
   font-family: "Inter", sans-serif;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .side-panel.open {
@@ -83,37 +86,60 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* centra icono + texto verticalmente */
   padding: 16px 20px;
   text-decoration: none;
   color: var(--ink);
   border-bottom: 1px solid var(--line);
-  transition: background 0.15s ease;
+  transition: background 0.15s ease, transform 0.12s ease;
 }
 
 .panel-item:hover {
-  background: var(--hover-row);
+  background: rgba(210, 185, 144, 0.18);
+  /* hover más marcado */
+  transform: translateX(3px);
 }
 
+.panel-item:hover .title {
+  font-weight: 700;
+}
+
+/* bloque izq (icono + texto) */
 .left {
   display: flex;
   align-items: center;
+  /* icono + texto alineados */
   gap: 12px;
 }
 
-.icon {
-  width: 22px;
-  height: 22px;
-  color: white;
+/* CLASE ESPECÍFICA PARA ICONOS DE CATEGORÍA */
+.cat-icon {
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 5px;
-  font-size: 12px;
+  flex-shrink: 0;
+  margin-right: 4px;
+  background: rgba(210, 185, 144, 0.10);
+  /* halo beige más suave */
+  border-radius: 8px;
+  padding: 4px;
+  transform: translateY(1px);
+  /* pequeño ajuste vertical fino */
+}
+
+.cat-icon img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: block;
 }
 
 .title {
   font-size: 17px;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .right {
@@ -129,4 +155,12 @@
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Mensajes de info/error */
+.panel-info,
+.panel-error {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--muted);
 }

@@ -1,14 +1,18 @@
+import "./ProfileData.css";
 import { useContext, useState, useRef, useEffect } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { updateUser, uploadProfilePicture } from "../../../api/users.api";
 import imageCompression from "browser-image-compression";
-import "./ProfileData.css";
+import { useNotificationSettings } from "../../../context/NotificationContext";
+import { toast } from 'react-toastify';
 
 interface ProfileDataProps {
     setHasUnsavedChanges: (value: boolean) => void;
 }
 
 export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) {
+
+    const { notify } = useNotificationSettings();
 
     const { user, token, setUser } = useContext(AuthContext);
 
@@ -97,6 +101,16 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
         }
     };
 
+    const handleDateChange = (value: string) => {
+        setBirthDate(value);
+        setHasUnsavedChanges(true);
+    };
+
+    const handleGenderChange = (value: string) => {
+        setGender(value);
+        setHasUnsavedChanges(true);
+    };
+
     const validate = () => {
         const newErrors: { name?: string; email?: string } = {};
 
@@ -134,7 +148,7 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                 gender,
             };
 
-            const updatedUser = await updateUser(body, token!);
+            const updatedUser = await updateUser(body);
             setUser(updatedUser);
 
             // Subir foto si existe
@@ -142,16 +156,17 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                 setIsUploading(true);
 
                 const updatedPicUser = await uploadProfilePicture(
-                    selectedFileRef.current,
-                    token!
+                    selectedFileRef.current
                 );
                 setUser(updatedPicUser);
                 setPreview(updatedPicUser.profilePicture);
                 setIsUploading(false);
             }
             setHasUnsavedChanges(false);
+            notify('accountUpdates', 'Perfil actualizado con éxito', 'success');
         } catch (err) {
             console.error("Error guardando datos:", err);
+            notify('accountUpdates', 'Error al actualizar el perfil', 'error');
         }
     };
 
@@ -197,6 +212,7 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                         <label>Nombre</label>
                         <input
                             type="text"
+                            maxLength={40}
                             value={name}
                             onChange={(e) => handleNameChange(e.target.value)}
                             className={errors.name ? "input-error" : "input-normal"}
@@ -215,8 +231,9 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                         <input
                             type="date"
                             value={birthDate}
-                            onChange={(e) => setBirthDate(e.target.value)}
+                            onChange={(e) => handleDateChange(e.target.value)}
                             className="input-normal"
+                            max={new Date().toISOString().split("T")[0]}
                         />
                     </div>
 
@@ -226,13 +243,13 @@ export default function ProfileData({ setHasUnsavedChanges }: ProfileDataProps) 
                         <div className="gender-options">
                             <div
                                 className={`gender-option ${gender === "Hombre" ? "active" : ""}`}
-                                onClick={() => setGender("Hombre")}
+                                onClick={() => handleGenderChange("Hombre")}
                             >
                                 Hombre
                             </div>
                             <div
                                 className={`gender-option ${gender === "Mujer" ? "active" : ""}`}
-                                onClick={() => setGender("Mujer")}
+                                onClick={() => handleGenderChange("Mujer")}
                             >
                                 Mujer
                             </div>

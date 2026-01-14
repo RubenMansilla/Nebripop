@@ -13,6 +13,11 @@ createRoot(document.getElementById('root')!).render(
         <ToastContainer
             position="top-right"
             autoClose={3000}
+            limit={1}
+            newestOnTop={false}
+            closeOnClick
+            pauseOnFocusLoss
+            pauseOnHover
             theme="light"
         />
         <AuthProvider>

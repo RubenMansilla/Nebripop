@@ -45,6 +45,11 @@ export default function NotificationsSection() {
                 <h3>Mis acciones</h3>
                 <p className="group-desc">Avisos relacionados con los productos que publicas en NebriPop.</p>
                 <ToggleItem
+                    label="Transacciones"
+                    checked={settings.transactions}
+                    onChange={() => updateSetting('transactions')}
+                />
+                <ToggleItem
                     label="Al publicar un producto"
                     checked={settings.productUploaded}
                     onChange={() => updateSetting('productUploaded')}

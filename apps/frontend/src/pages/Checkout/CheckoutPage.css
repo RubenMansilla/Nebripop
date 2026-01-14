@@ -1,0 +1,490 @@
+/* apps/frontend/src/pages/CheckOut/CheckoutPage.css */
+
+/* Layout general */
+.checkout-page {
+  min-height: 100vh;
+  background: #f3f4f6;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #111827;
+  position: relative;
+}
+
+/* Fondo gris solo para esta página, cubriendo toda la ventana */
+.checkout-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: #f3f4f6;
+  z-index: -1;
+}
+
+.checkout-header {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 16px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #111827, #4b5563);
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+/* Main */
+.checkout-main {
+  max-width: 1100px;
+  margin: 0 auto 32px;
+  padding: 0 16px 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+  gap: 24px;
+}
+
+/* Columna izquierda */
+.checkout-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Columna derecha */
+.checkout-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Tarjeta de botones de pago */
+.payment-buttons-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 18px 18px 14px;
+}
+
+/* Botones principales */
+.payment-btn {
+  width: 100%;
+  border-radius: 14px;
+  border: none;
+  padding: 14px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, opacity 0.1s;
+  
+}
+
+.payment-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.payment-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+/* Colores específicos */
+.payment-btn-link {
+  background: #22c55e;
+  color: #ffffff;
+}
+
+.payment-btn-gpay {
+  background: #020617;
+  color: #ffffff;
+}
+
+.payment-btn-paypal {
+  background: #F5E9D9;
+  color: #111827;
+}
+
+.payment-btn-main {
+  font-weight: 600;
+}
+
+.payment-btn-extra {
+  font-size: 14px;
+}
+
+.payment-btn-bold {
+  font-weight: 700;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  margin-bottom: 10px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.divider-text {
+  font-size: 12px;
+  color: #9ca3af;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+/* BOTÓN MONEDERO */
+.wallet-pay-btn {
+  margin-top: 4px;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #d2b990;
+  background: #fdf8f3;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
+}
+
+.wallet-pay-btn:hover:not(:disabled) {
+  background: #f5e9d9;
+  border-color: #c2b28a;
+}
+
+.wallet-pay-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.wallet-pay-btn:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.wallet-pay-sub {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Texto de saldo del monedero */
+.wallet-balance-text {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #4b5563;
+  text-align: center;
+}
+
+
+/* Mensajes de error */
+.checkout-error-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fef2f2;      /* rojo clarito */
+  border: 1px solid #fecaca;
+  text-align: center;
+}
+
+.checkout-error-msg {
+  margin: 0;
+  font-size: 13px;
+  color: #b91c1c;           /* rojo más intenso para el texto */
+  font-weight: 500;
+}
+
+
+/* Sección datos de envío */
+.shipping-section {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 20px 20px 22px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.shipping-alert {
+  background: #fef2f2;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #b91c1c;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.shipping-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field label {
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* SOLO inputs/selects dentro de la página de checkout */
+.checkout-page input,
+.checkout-page select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.checkout-page input::placeholder {
+  color: #b8b8b8;
+}
+
+.checkout-page input:hover,
+.checkout-page select:hover {
+  border-color: #d3d3d3;
+}
+
+.checkout-page input:focus,
+.checkout-page select:focus {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* TELÉFONO */
+.checkout-page .phone-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 0 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.checkout-page .phone-wrapper input {
+  border: none;
+  padding: 10px 0;
+  width: 100%;
+}
+
+.checkout-page .phone-wrapper:hover {
+  border-color: #d3d3d3;
+}
+
+.checkout-page .phone-wrapper:has(input:focus) {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* Evitar halo extra en el input interno del teléfono */
+.checkout-page .phone-wrapper input:focus {
+  box-shadow: none;
+}
+
+/* Fila de campos */
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row .form-field {
+  flex: 1;
+}
+
+/* PROVINCIA (select-wrapper) */
+.select-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 0 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.select-wrapper select {
+  border: none;
+  padding: 10px 8px;
+  width: 100%;
+  background: transparent;
+}
+
+.select-wrapper:hover {
+  border-color: #d3d3d3;
+}
+
+.select-wrapper:has(select:focus) {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+}
+
+/* Evitar halo extra en el select interno */
+.checkout-page .select-wrapper select:focus {
+  box-shadow: none;
+  outline: none;
+}
+
+/* Columna derecha: resumen */
+.summary-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e3e4e6;
+  padding: 20px 20px 18px;
+}
+
+.cart-reserved-banner {
+  width: 100%;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 13px;
+  text-align: center;
+  padding: 6px 10px;
+  margin-bottom: 14px;
+}
+
+.summary-product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.summary-product-left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.product-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  overflow: hidden;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.product-qty {
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #111827;
+  color: white;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-name {
+  font-size: 14px;
+  color: #111827;
+}
+
+.summary-price {
+  margin-left: 14px;
+  min-width: 70px;
+  text-align: right;
+}
+
+/* Líneas de resumen */
+.line-items {
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 10px 0;
+  margin-top: 4px;
+  margin-bottom: 10px;
+}
+
+.line-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.line-item-sub {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Total */
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.total-label {
+  font-weight: 600;
+}
+
+.total-sub {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.total-amount {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .checkout-main {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-right {
+    order: -1;
+  }
+}

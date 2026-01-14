@@ -7,6 +7,8 @@ import "./MobileSideBar.css";
 
 export default function MobileSideBar() {
 
+    const { logout } = useContext(AuthContext);
+
     const sidebarRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -17,10 +19,6 @@ export default function MobileSideBar() {
 
     const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
-    if (!user) return null;
-
-    const year = new Date(user.createdAt).getFullYear();
-    const imageSrc = user.profilePicture || defaultPic;
 
     useEffect(() => {
         if (!user?.id) return;
@@ -48,10 +46,6 @@ export default function MobileSideBar() {
         return () => { isMounted = false; };
     }, [user?.id]);
 
-    const starClass = (n: number) => {
-        return n <= summary.average ? "filled" : "";
-    };
-
     useLayoutEffect(() => {
         const sidebar = sidebarRef.current;
         if (!sidebar) return;
@@ -70,6 +64,15 @@ export default function MobileSideBar() {
         sidebar.addEventListener("scroll", handleScroll);
         return () => sidebar.removeEventListener("scroll", handleScroll);
     }, []);
+
+    if (!user) return null;
+
+    const year = new Date(user.createdAt).getFullYear();
+    const imageSrc = user.profilePicture || defaultPic;
+
+    const starClass = (n: number) => {
+        return n <= summary.average ? "filled" : "";
+    };
 
     return (
         <>
@@ -198,6 +201,14 @@ export default function MobileSideBar() {
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M0 12.8C0 5.7304 5.7304 0 12.8 0C19.8696 0 25.6 5.7304 25.6 12.8C25.6 19.8696 19.8696 25.6 12.8 25.6C5.7304 25.6 0 19.8696 0 12.8ZM12.8 1.6C6.6144 1.6 1.6 6.6144 1.6 12.8C1.6 18.9856 6.6144 24 12.8 24C18.9856 24 24 18.9856 24 12.8C24 6.6144 18.9856 1.6 12.8 1.6Z" fill="#253238" />
                             </svg>
                             <p>Ayuda</p>
+                            <div className="arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#000000" d="m14.475 12l-7.35-7.35q-.375-.375-.363-.888t.388-.887t.888-.375t.887.375l7.675 7.7q.3.3.45.675t.15.75t-.15.75t-.45.675l-7.7 7.7q-.375.375-.875.363T7.15 21.1t-.375-.888t.375-.887z" /></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="menu-container">
+                        <div className='menu-item-mobile' onClick={logout}>
+                            <p>Cerrar sesión</p>
                             <div className="arrow">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#000000" d="m14.475 12l-7.35-7.35q-.375-.375-.363-.888t.388-.887t.888-.375t.887.375l7.675 7.7q.3.3.45.675t.15.75t-.15.75t-.45.675l-7.7 7.7q-.375.375-.875.363T7.15 21.1t-.375-.888t.375-.887z" /></svg>
                             </div>

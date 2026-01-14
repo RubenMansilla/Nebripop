@@ -39,12 +39,11 @@
 
 .back-home {
     align-items: center;
-    background-color: #c7a87b;
-    border-color: none;
+    background-color: #d6c9b4;
+    border-color: #d6c9b4;
     border-radius: 100px;
     border-style: solid;
     border-width: 0.8px;
-    color: #fff;
     display: flex;
     margin-top: 20px;
     line-height: 24px;
@@ -55,15 +54,16 @@
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+
 .back-home:hover {
-    background-color: #a68153;
+    background-color: #b0a18c;
 }
 
 .back-home p {
     margin: 0;
-    color: #fff;
+    color: #2c3e50;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 600;
 }
 
 /* Tablets */

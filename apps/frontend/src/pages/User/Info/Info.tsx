@@ -1,6 +1,3 @@
-import Navbar from '../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../components/Profile/ProfileSideBar/ProfileSideBar';
 import { useContext, useState, useEffect, useRef } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import './Info.css'
@@ -28,9 +25,9 @@ export default function Info() {
     const handleTabChange = (tab: string) => {
         if (hasUnsavedChanges) {
             pendingTabRef.current = tab;
-            setShowPopup(true);          // mostrar pop up
+            setShowPopup(true);
         } else {
-            setSelected(tab);            // nada que guardar → ir directo
+            setSelected(tab);
         }
     };
 
@@ -72,7 +69,7 @@ export default function Info() {
                     <div className="unsaved-changes-popup">
                         <h3>¿Estás seguro que quieres abandonar esta página?</h3>
                         <p>Hay información que no has guardado. Si te vas sin guardar perderás los cambios que has hecho.</p>
-                        <div className="popup-buttons">
+                        <div className="popup-buttons-product">
                             <span className="popup-no" onClick={() => setShowPopup(false)}>
                                 No
                             </span>

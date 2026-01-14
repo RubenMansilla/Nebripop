@@ -7,6 +7,7 @@ export interface NotificationsSettings {
     priceDrops: boolean;
     favoritesSold: boolean;
     newProducts: boolean;
+    transactions: boolean;
     productUploaded: boolean;
     productDeleted: boolean;
     productEdited: boolean;
@@ -22,6 +23,7 @@ const defaultSettings: NotificationsSettings = {
     priceDrops: true,
     favoritesSold: true,
     newProducts: true,
+    transactions: true,
     productUploaded: true,
     productDeleted: true,
     productEdited: true,
