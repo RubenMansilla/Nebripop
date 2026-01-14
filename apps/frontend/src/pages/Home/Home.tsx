@@ -8,16 +8,20 @@ import "./Home.css";
 
 import bolsa from "../../assets/iconos/bolsa.png";
 
-import { HOME_CATEGORIES } from "../../data/homeCategories.ts";
-import type { HomeCategoryBlock } from "../../data/homeCategories.ts";
+import { HOME_CATEGORIES } from "../../data/homeCategories";
+import type { HomeCategoryBlock } from "../../data/homeCategories";
 
 /* 🔀 función helper FUERA del componente */
 function shuffleArray<T>(array: T[]): T[] {
   return [...array].sort(() => Math.random() - 0.5);
 }
 
+// CHAT POPUP TEST
+
+
 export default function Home() {
   const [randomCategories, setRandomCategories] = useState<HomeCategoryBlock[]>([]);
+  const [chatOpen, setChatOpen] = useState(false);
 
   useEffect(() => {
     const picked = shuffleArray(HOME_CATEGORIES).slice(0, 3);
@@ -37,9 +41,7 @@ export default function Home() {
             <h1>Nebripop</h1>
           </div>
 
-          <p className="subtitle">
-            Compra y vende lo que ya no usas, fácil y cerca de ti.
-          </p>
+          <p className="subtitle">Compra y vende lo que ya no usas, fácil y cerca de ti.</p>
 
           <a className="cta" href="#contacto">
             Contacta con nosotros
@@ -100,23 +102,22 @@ export default function Home() {
             </h2>
 
             <p className="about-description">
-              Somos una aplicación creada para conectar personas que buscan vender y
-              comprar artículos de segunda mano de forma rápida, segura y cercana.
-              Nuestra misión es dar una segunda vida a los productos, fomentar el
-              ahorro y contribuir a un consumo más sostenible, facilitando el
-              encuentro entre quienes quieren vender y quienes necesitan comprar.
+              Somos una aplicación creada para conectar personas que buscan vender y comprar artículos de segunda mano
+              de forma rápida, segura y cercana. Nuestra misión es dar una segunda vida a los productos, fomentar el
+              ahorro y contribuir a un consumo más sostenible, facilitando el encuentro entre quienes quieren vender y
+              quienes necesitan comprar.
             </p>
           </div>
 
           <div className="about-image-wrapper">
-            <img
-              src="/src/assets/home/about-work.jpg"
-              alt="About us"
-              className="about-image"
-            />
+            <img src="/src/assets/home/about-work.jpg" alt="About us" className="about-image" />
           </div>
         </div>
       </section>
+
+      
+
+
 
       <Footer />
     </>

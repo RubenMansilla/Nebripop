@@ -2,9 +2,16 @@ import { createContext, useContext, useState } from "react";
 import LoginPopup from "../components/LoginPopup/LoginPopup";
 import RegisterPopup from "../components/RegisterPopup/RegisterPopup";
 
-const LoginContext = createContext({
-  openLogin: () => { },
-  openRegister: () => { },
+interface LoginContextType {
+  openLogin: () => void;
+  openRegister: () => void;
+  closeAll: () => void;
+}
+
+const LoginContext = createContext<LoginContextType>({
+  openLogin: () => {},
+  openRegister: () => {},
+  closeAll: () => {},
 });
 
 export function useLoginModal() {
@@ -26,14 +33,16 @@ export function LoginModalProvider({ children }: any) {
   };
 
   const closeAll = () => {
+    // ✅ DEBUG: mira la consola y verás quién llama a closeAll
+    console.log(new Error("closeAll llamado").stack);
+
     setLoginOpen(false);
     setRegisterOpen(false);
   };
 
   return (
-    <LoginContext.Provider value={{ openLogin, openRegister }}>
+    <LoginContext.Provider value={{ openLogin, openRegister, closeAll }}>
       {children}
-
       <LoginPopup open={loginOpen} onClose={closeAll} />
       <RegisterPopup open={registerOpen} onClose={closeAll} />
     </LoginContext.Provider>

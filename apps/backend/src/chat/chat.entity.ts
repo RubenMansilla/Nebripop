@@ -1,26 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { ChatMessage } from './chat-message.entity';
 import { Product } from '../products/products.entity';
-// Importa tu User entity si la tienes, aquí asumo relaciones por ID para simplificar
-import { User } from '../users/users.entity';
 
 @Entity('chats')
 export class Chat {
-    @PrimaryGeneratedColumn('increment') // o 'uuid' según tu BDD
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ name: 'buyer_id' })
-    buyerId: number;
+  @Column({ name: 'buyer_id', type: 'int8' })
+  buyerId: number;
 
-    @Column({ name: 'seller_id' })
-    sellerId: number;
+  @Column({ name: 'seller_id', type: 'int8' })
+  sellerId: number;
 
-    @Column({ name: 'product_id' })
-    productId: number;
+  @Column({ name: 'product_id', type: 'int8', nullable: true })
+  productId: number | null;
 
-    @ManyToOne(() => Product)
-    @JoinColumn({ name: 'product_id' })
-    product: Product;
+  @ManyToOne(() => Product, { nullable: true })
+  @JoinColumn({ name: 'product_id' })
+  product?: Product | null;
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @OneToMany(() => ChatMessage, (msg) => msg.chat)
+  messages: ChatMessage[];
 }

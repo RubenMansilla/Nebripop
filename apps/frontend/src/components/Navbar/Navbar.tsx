@@ -6,25 +6,24 @@ import logoSmall from "../../assets/logos/nebripop-fav-icon.png";
 import searchIcon from "../../assets/iconos/buscar.png";
 
 import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { useLoginModal } from "../../context/LoginModalContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-
   const { openLogin } = useLoginModal();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
 
-  const profilePic = user?.profilePicture;
+  const profilePic = user?.profilePicture || logoSmall;
 
   /* ---------------------------------------------
      PALABRAS ANIMADAS DEL BUSCADOR
   --------------------------------------------- */
   const words = ["nintendo", "iPhone", "bicicleta", "PlayStation", "Switch", "patinete", "cámara", "AirPods"];
 
-  const inputRef = useRef(null);
-  const wordRef = useRef(null);
-  const placeholderRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const wordRef = useRef<HTMLSpanElement | null>(null);
+  const placeholderRef = useRef<HTMLDivElement | null>(null);
 
   /* ---------------------------------------------
      🔥 ESTADO PARA LOS 3 BREAKPOINTS
@@ -32,17 +31,19 @@ export default function Navbar() {
      - tablet: 600–1000px
      - desktop: > 1000px
   --------------------------------------------- */
-  const [screenSize, setScreenSize] = useState("desktop");
+  const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop">("desktop");
 
+  /* ---------------------------------------------
+     ESTADO DEL MENÚ (MÓVIL)
+  --------------------------------------------- */
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  /* ----------------- RESPONSIVE ----------------- */
   useEffect(() => {
     const updateScreen = () => {
-      if (window.innerWidth < 800) {
-        setScreenSize("mobile");
-      } else if (window.innerWidth < 1000) {
-        setScreenSize("tablet");
-      } else {
-        setScreenSize("desktop");
-      }
+      if (window.innerWidth < 600) setScreenSize("mobile");
+      else if (window.innerWidth < 1000) setScreenSize("tablet");
+      else setScreenSize("desktop");
     };
 
     updateScreen();
@@ -50,79 +51,73 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", updateScreen);
   }, []);
 
-  /* ---------------------------------------------
-     ESTADO DEL MENÚ HAMBURGUESA
-  --------------------------------------------- */
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  /* ---------------------------------------------
-     ANIMACIÓN DEL BUSCADOR
-  --------------------------------------------- */
+  /* ----------------- ANIMACIÓN DEL BUSCADOR ----------------- */
   useEffect(() => {
     let i = 0;
-    let timer;
+    let timer: number | undefined;
+
+    function stopRotate() {
+      if (timer) window.clearInterval(timer);
+    }
 
     function startRotate() {
       stopRotate();
-      timer = setInterval(() => {
+      timer = window.setInterval(() => {
         const input = inputRef.current;
         if (!input) return;
 
-        if (document.activeElement === input || input.value.trim().length > 0)
-          return;
+        if (document.activeElement === input || input.value.trim().length > 0) return;
 
         i = (i + 1) % words.length;
 
-        wordRef.current.textContent = words[i];
-        wordRef.current.classList.remove("fade");
-        void wordRef.current.offsetWidth;
-        wordRef.current.classList.add("fade");
+        if (wordRef.current) {
+          wordRef.current.textContent = words[i];
+          wordRef.current.classList.remove("fade");
+          void wordRef.current.offsetWidth;
+          wordRef.current.classList.add("fade");
+        }
       }, 1800);
-    }
-
-    function stopRotate() {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
     }
 
     const handleInput = () => {
       const input = inputRef.current;
+      if (!input) return;
+
       if (input.value.trim().length) {
         stopRotate();
-        placeholderRef.current.style.opacity = 0;
-        placeholderRef.current.style.visibility = "hidden";
+        if (placeholderRef.current) {
+          placeholderRef.current.style.opacity = "0";
+          placeholderRef.current.style.visibility = "hidden";
+        }
       } else {
-        placeholderRef.current.style.opacity = 1;
-        placeholderRef.current.style.visibility = "visible";
+        if (placeholderRef.current) {
+          placeholderRef.current.style.opacity = "1";
+          placeholderRef.current.style.visibility = "visible";
+        }
         startRotate();
       }
     };
 
     const input = inputRef.current;
-    input.addEventListener("input", handleInput);
+    if (input) input.addEventListener("input", handleInput);
+
     startRotate();
 
     return () => {
-      input.removeEventListener("input", handleInput);
+      if (input) input.removeEventListener("input", handleInput);
       stopRotate();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ---------------------------------------------
-     🔥 RETURN COMPLETO CON 3 NAVBARS
-  --------------------------------------------- */
   return (
     <>
       <div className="header-block-container">
-
         {/* ============================================================
-          📱 NAVBAR MÓVIL (<600px)
-      ============================================================ */}
+            📱 NAVBAR MÓVIL (<600px)
+        ============================================================ */}
         {screenSize === "mobile" && (
           <nav className="navbar-mobile">
-
             <div className="mobile-top">
               <div className="mobile-logo" onClick={() => navigate("/")}>
                 <img src={logoSmall} alt="nebripop" />
@@ -131,7 +126,7 @@ export default function Navbar() {
               <div className="mobile-search">
                 <div className="search-wrap">
                   <input ref={inputRef} className="search" type="text" placeholder=" " />
-                  <img src={searchIcon} className="icon" />
+                  <img src={searchIcon} className="icon" alt="buscar" />
                   <div className="fake-placeholder" ref={placeholderRef}>
                     <span className="buscar">Busca</span>
                     <b ref={wordRef}>nintendo</b>
@@ -139,14 +134,10 @@ export default function Navbar() {
                 </div>
               </div>
 
-              <button
-                className="mobile-hamb"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-              >
+              <button className="mobile-hamb" onClick={() => setUserMenuOpen(!userMenuOpen)}>
                 ☰
               </button>
             </div>
-
 
             {userMenuOpen && (
               <div className="mobile-popover">
@@ -165,25 +156,19 @@ export default function Navbar() {
                   </p>
                 )}
 
-                <p
-                  className="mobile-popover-item"
-                  onClick={() => navigate("/sell-product")}
-                >
+                <p className="mobile-popover-item" onClick={() => navigate("/sell-product")}>
                   Vender artículos
                 </p>
               </div>
             )}
-
-
           </nav>
         )}
 
         {/* ============================================================
-          📱 NAVBAR TABLET (600–1000px)
-      ============================================================ */}
+            📱 NAVBAR TABLET (600–1000px)
+        ============================================================ */}
         {screenSize === "tablet" && (
           <nav className="navbar-tablet">
-
             <div className="nav-left">
               <div className="nav-logo" onClick={() => navigate("/")}>
                 <img src={logo} alt="nebripop" />
@@ -193,7 +178,7 @@ export default function Navbar() {
             <div className="nav-center">
               <div className="search-wrap">
                 <input ref={inputRef} className="search" type="text" placeholder=" " />
-                <img src={searchIcon} className="icon" />
+                <img src={searchIcon} className="icon" alt="buscar" />
                 <div className="fake-placeholder" ref={placeholderRef}>
                   <span className="buscar">Busca</span>
                   <b ref={wordRef}>nintendo</b>
@@ -203,15 +188,23 @@ export default function Navbar() {
 
             <div className="nav-right">
               {!user && (
-                <button className="btn-vender" onClick={() => navigate("/sell-product")}>
-                  Vender <span className="icon-plus">+</span>
-                </button>
+                <>
+                  <button className="btn-registro" onClick={openLogin}>
+                    Registrarte o Inicia sesión
+                  </button>
+                  <button className="btn-vender" onClick={() => navigate("/sell-product")}>
+                    Vender <span className="icon-plus">+</span>
+                  </button>
+                </>
               )}
 
               {user && (
                 <>
-                  <div className="profile-pic-container" onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}>
-                    <img src={profilePic}></img>
+                  <div
+                    className="profile-pic-container"
+                    onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
+                  >
+                    <img src={profilePic} alt="perfil" />
                     <p>Tú</p>
                   </div>
 
@@ -221,16 +214,14 @@ export default function Navbar() {
                 </>
               )}
             </div>
-
           </nav>
         )}
 
         {/* ============================================================
-          🖥️ NAVBAR ESCRITORIO (>1000px)
-      ============================================================ */}
+            🖥️ NAVBAR ESCRITORIO (>1000px)
+        ============================================================ */}
         {screenSize === "desktop" && (
           <nav className="navbar">
-
             <div className="nav-left">
               <div className="nav-logo" onClick={() => navigate("/")}>
                 <img src={logo} alt="nebripop" style={{ cursor: "pointer" }} />
@@ -240,7 +231,7 @@ export default function Navbar() {
             <div className="nav-center">
               <div className="search-wrap">
                 <input ref={inputRef} className="search" type="text" placeholder=" " />
-                <img src={searchIcon} className="icon" />
+                <img src={searchIcon} className="icon" alt="buscar" />
                 <div className="fake-placeholder" ref={placeholderRef}>
                   <span className="buscar">Busca</span>
                   <b ref={wordRef}>nintendo</b>
@@ -249,10 +240,11 @@ export default function Navbar() {
             </div>
 
             <div className="nav-right">
-
               {!user && (
                 <>
-                  <button className="btn-registro" onClick={openLogin}>Registrarte o Inicia sesión</button>
+                  <button className="btn-registro" onClick={openLogin}>
+                    Registrarte o Inicia sesión
+                  </button>
                   <button className="btn-vender" onClick={() => navigate("/sell-product")}>
                     Vender <span className="icon-plus">+</span>
                   </button>
@@ -261,19 +253,20 @@ export default function Navbar() {
 
               {user && (
                 <>
-                  <div className="profile-pic-container" onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}>
-                    <img src={profilePic}></img>
+                  <div
+                    className="profile-pic-container"
+                    onClick={() => navigate(window.innerWidth < 990 ? "/you" : "/catalog/published")}
+                  >
+                    <img src={profilePic} alt="perfil" />
                     <p>Tú</p>
                   </div>
+
                   <button className="btn-vender" onClick={() => navigate("/sell-product")}>
                     Vender <span className="icon-plus">+</span>
                   </button>
                 </>
               )}
-
             </div>
-
-
           </nav>
         )}
       </div>
