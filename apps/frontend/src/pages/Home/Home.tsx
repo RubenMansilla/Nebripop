@@ -17,8 +17,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 // CHAT POPUP TEST
-import ChatTestPopup from "../../components/ChatTest/ChatTestPopup";
-import "../../components/ChatTest/ChatTestPopup.css";
+
 
 export default function Home() {
   const [randomCategories, setRandomCategories] = useState<HomeCategoryBlock[]>([]);
@@ -116,13 +115,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BOTÓN FLOTANTE DEL CHAT */}
-      <div className="chat-floating-btn" onClick={() => setChatOpen(true)}>
-        💬
-      </div>
+      
 
-      {/* POPUP DE CHAT */}
-      <ChatTestPopup open={chatOpen} onClose={() => setChatOpen(false)} />
+
 
       <Footer />
     </>

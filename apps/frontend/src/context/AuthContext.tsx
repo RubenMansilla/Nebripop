@@ -1,3 +1,4 @@
+// apps/frontend/src/context/AuthContext.tsx
 import { createContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
@@ -15,14 +16,9 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  /**
-   * ✅ Compatible:
-   * - Antes: login(user, token)
-   * - Ahora: login(user, accessToken, refreshToken)
-   */
-  login: (user: User, accessToken: string, refreshToken?: string) => void;
+  login: (u: User, accessToken: string, refreshToken?: string) => void;
   logout: () => void;
-  setUser: (user: User | null) => void;
+  setUser: (u: User | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -44,7 +40,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (savedUser && savedToken) {
       try {
-        setUserState(JSON.parse(savedUser));
+        const parsed = JSON.parse(savedUser);
+        // ✅ Normalizamos id para evitar comparaciones "7" vs 7
+        setUserState({
+          ...parsed,
+          id: Number(parsed.id),
+        });
         setTokenState(savedToken);
       } catch (e) {
         console.error("Error parsing saved user:", e);
@@ -57,13 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // 🟩 LOGIN (nuevo + compatible)
   const login = (u: User, accessToken: string, refreshToken?: string) => {
-    setUserState(u);
+    // ✅ Normalizamos id
+    setUserState({ ...u, id: Number((u as any).id) });
     setTokenState(accessToken);
 
-    localStorage.setItem("user", JSON.stringify(u));
+    localStorage.setItem("user", JSON.stringify({ ...u, id: Number((u as any).id) }));
     localStorage.setItem("token", accessToken);
 
-    // Si viene refreshToken, lo guardamos (nuevo backend)
     if (refreshToken) {
       localStorage.setItem("refreshToken", refreshToken);
     }
@@ -79,11 +80,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("refreshToken");
   };
 
-  // ✅ setUser sincroniza localStorage (como quería main)
+  // ✅ setUser sincroniza localStorage
   const updateUserState = (newUser: User | null) => {
-    setUserState(newUser);
+    setUserState(newUser ? ({ ...newUser, id: Number((newUser as any).id) }) : null);
+
     if (newUser) {
-      localStorage.setItem("user", JSON.stringify(newUser));
+      localStorage.setItem(
+        "user",
+        JSON.stringify({ ...newUser, id: Number((newUser as any).id) })
+      );
     } else {
       localStorage.removeItem("user");
     }

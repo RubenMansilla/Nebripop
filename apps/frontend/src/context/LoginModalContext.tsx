@@ -33,6 +33,9 @@ export function LoginModalProvider({ children }: any) {
   };
 
   const closeAll = () => {
+    // ✅ DEBUG: mira la consola y verás quién llama a closeAll
+    console.log(new Error("closeAll llamado").stack);
+
     setLoginOpen(false);
     setRegisterOpen(false);
   };
@@ -40,7 +43,6 @@ export function LoginModalProvider({ children }: any) {
   return (
     <LoginContext.Provider value={{ openLogin, openRegister, closeAll }}>
       {children}
-
       <LoginPopup open={loginOpen} onClose={closeAll} />
       <RegisterPopup open={registerOpen} onClose={closeAll} />
     </LoginContext.Provider>

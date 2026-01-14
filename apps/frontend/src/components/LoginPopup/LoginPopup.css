@@ -112,3 +112,35 @@
 .register-link:hover {
   text-decoration: underline;
 }
+
+.login-error {
+  background-color: #ffe5e5;
+  color: #b30000;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.login-success {
+  background-color: #e6f7ec;
+  color: #1e7f4d;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.popup-box { position: relative; }
