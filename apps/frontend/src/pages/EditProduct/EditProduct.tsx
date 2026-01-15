@@ -842,7 +842,7 @@ export default function EditProductPage() {
                       <li>
                         ✔ Tus ventas están protegidas por{" "}
                         <a href="#" className="envio-link">
-                          Protección Wallapop
+                          Protección Nebripop
                         </a>
                         .
                       </li>

@@ -44,7 +44,7 @@ export default function OpcionesEnvio({ onChange }: Props) {
           <li>✔ Es gratis. Todo lo que ganes, para ti.</li>
           <li>
             ✔ Tus ventas están protegidas por{" "}
-            <a href="#" className="envio-link">Protección Wallapop</a>.
+            <a href="#" className="envio-link">Protección Nebripop</a>.
           </li>
         </ul>
 <img
