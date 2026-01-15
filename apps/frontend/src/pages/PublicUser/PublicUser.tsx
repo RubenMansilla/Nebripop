@@ -5,7 +5,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import PublicUserProfile from "../../components/PublicUserProfile/PublicUserProfile";
 import PublicUserProfileSkeleton from "../../components/PublicUserProfileSkeleton/PublicUserProfileSkeleton";
-import Footer from "../../components/Footer/Footer"; // Añadido para consistencia
+import Footer from "../../components/Footer/Footer";
 
 import { getPublicUser } from "../../api/users.api";
 import { getPublicProductsByUser } from "../../api/products.api";
@@ -29,7 +29,6 @@ export default function PublicUser() {
     useEffect(() => {
         if (!userId) return;
 
-        // Limpieza de ID (soporta tanto 'nombre-123' como '123')
         const rawId = userId.includes("-") ? userId.split("-").pop() : userId;
         const id = Number(rawId);
 
@@ -49,29 +48,29 @@ export default function PublicUser() {
             getUserReviewSummary(id),
         ])
             .then(([userData, productsData, reviewsData, ratingData]) => {
-                // Validación: si el usuario no existe en la DB
                 if (!userData) {
                     setNotFound(true);
                     return;
                 }
-                
+
                 setPublicUser(userData);
                 setProducts(productsData || []);
                 
-                // Mapeo de seguridad para las reviews para evitar el error de 'images'
-                const safeReviews = (reviewsData || []).map((rev: any) => ({
+                // SOLUCIÓN AL ERROR DE LA CONSOLA:
+                // Mapeamos las reviews para asegurar que 'product' e 'images' no sean null
+                const validatedReviews = (reviewsData || []).map((rev: any) => ({
                     ...rev,
                     product: rev.product ? {
                         ...rev.product,
-                        images: rev.product.images || [] // Si no hay imágenes, array vacío
-                    } : null
+                        images: rev.product.images || [] // Si no hay imágenes, enviamos array vacío
+                    } : { name: "Producto no disponible", images: [] } 
                 }));
-                
-                setReviews(safeReviews);
+
+                setReviews(validatedReviews);
                 setRating(ratingData);
             })
             .catch((err) => {
-                console.error("Error cargando perfil público:", err);
+                console.error("Error cargando perfil:", err);
                 setNotFound(true);
             })
             .finally(() => {
@@ -94,9 +93,9 @@ export default function PublicUser() {
             <>
                 <Navbar />
                 <CategoriesBar />
-                <div style={{ padding: "80px 20px", textAlign: "center", minHeight: "60vh" }}>
-                    <h2 style={{ color: "#4b4b4b" }}>Usuario no encontrado</h2>
-                    <p style={{ color: "#9a9a9a" }}>Este usuario no existe o ha sido eliminado.</p>
+                <div style={{ padding: "60px 20px", textAlign: "center" }}>
+                    <h2>Usuario no encontrado</h2>
+                    <p>El perfil que buscas no existe.</p>
                 </div>
                 <Footer />
             </>
@@ -107,7 +106,6 @@ export default function PublicUser() {
         <>
             <Navbar />
             <CategoriesBar />
-
             <PublicUserProfile
                 user={publicUser}
                 products={products}
