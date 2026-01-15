@@ -170,8 +170,36 @@
   background-color: white;
   color: var(--gris-texto);
   font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+/* Estado HOVER */
+.btn-vender:hover {
+  background-color: var(--beige);
+  color: white !important; /* Fuerza el texto a blanco */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Esta es la clave: 
+   Fuerza a cualquier icono o SVG dentro del botón a ser blanco en hover 
+*/
+.btn-vender:hover svg, 
+.btn-vender:hover i, 
+.btn-vender:hover span {
+  color: white !important;
+  fill: white !important; /* Si es un SVG */
+}
+
+/* Si el "+" es una imagen/icono con filtro, esto lo pone blanco */
+.btn-vender:hover img {
+  filter: brightness(0) invert(1);
+}
+
+.btn-vender:active {
+  transform: translateY(0);
 }
 
 .icon-plus {
@@ -421,4 +449,56 @@
   .logo-small {
     display: block;
   }
+}
+/* Resultados de búsqueda */
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid var(--beige);
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-item:hover {
+  background: #fdfaf5;
+}
+
+.search-item-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.search-item-name {
+  font-weight: 600;
+  margin: 0;
+  color: var(--gris-texto);
+}
+
+.search-item-meta {
+  font-size: 13px;
+  color: var(--beige);
+  margin: 0;
+}
+
+.search-status {
+  padding: 20px;
+  text-align: center;
+  color: var(--gris-claro);
 }
