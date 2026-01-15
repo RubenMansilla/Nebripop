@@ -5,6 +5,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import PublicUserProfile from "../../components/PublicUserProfile/PublicUserProfile";
 import PublicUserProfileSkeleton from "../../components/PublicUserProfileSkeleton/PublicUserProfileSkeleton";
+import Footer from "../../components/Footer/Footer"; // Añadido para consistencia
 
 import { getPublicUser } from "../../api/users.api";
 import { getPublicProductsByUser } from "../../api/products.api";
@@ -28,7 +29,8 @@ export default function PublicUser() {
     useEffect(() => {
         if (!userId) return;
 
-        const rawId = userId.split("-").pop();
+        // Limpieza de ID (soporta tanto 'nombre-123' como '123')
+        const rawId = userId.includes("-") ? userId.split("-").pop() : userId;
         const id = Number(rawId);
 
         if (Number.isNaN(id)) {
@@ -47,9 +49,25 @@ export default function PublicUser() {
             getUserReviewSummary(id),
         ])
             .then(([userData, productsData, reviewsData, ratingData]) => {
+                // Validación: si el usuario no existe en la DB
+                if (!userData) {
+                    setNotFound(true);
+                    return;
+                }
+                
                 setPublicUser(userData);
-                setProducts(productsData);
-                setReviews(reviewsData);
+                setProducts(productsData || []);
+                
+                // Mapeo de seguridad para las reviews para evitar el error de 'images'
+                const safeReviews = (reviewsData || []).map((rev: any) => ({
+                    ...rev,
+                    product: rev.product ? {
+                        ...rev.product,
+                        images: rev.product.images || [] // Si no hay imágenes, array vacío
+                    } : null
+                }));
+                
+                setReviews(safeReviews);
                 setRating(ratingData);
             })
             .catch((err) => {
@@ -71,16 +89,16 @@ export default function PublicUser() {
         );
     }
 
-    // Verificamos 'publicUser' en lugar de 'user'
     if (notFound || !publicUser) {
         return (
             <>
                 <Navbar />
                 <CategoriesBar />
-                <div style={{ padding: "40px", textAlign: "center" }}>
-                    <h2>Usuario no encontrado</h2>
-                    <p>Este usuario no existe o ha sido eliminado.</p>
+                <div style={{ padding: "80px 20px", textAlign: "center", minHeight: "60vh" }}>
+                    <h2 style={{ color: "#4b4b4b" }}>Usuario no encontrado</h2>
+                    <p style={{ color: "#9a9a9a" }}>Este usuario no existe o ha sido eliminado.</p>
                 </div>
+                <Footer />
             </>
         );
     }
@@ -96,6 +114,7 @@ export default function PublicUser() {
                 reviews={reviews}
                 rating={rating}
             />
+            <Footer />
         </>
     );
 }
