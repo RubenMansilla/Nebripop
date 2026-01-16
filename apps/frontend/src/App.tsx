@@ -86,13 +86,13 @@ export default function App() {
                         <Route path="/product/:productId" element={<Detail />} />
 
                         <Route
-              path="/product/edit/:productId"
-              element={
-                <ProtectedRoute>
-                  <EditProductPage />
-                </ProtectedRoute>
-              }
-            />
+                            path="/product/edit/:productId"
+                            element={
+                                <ProtectedRoute>
+                                    <EditProductPage />
+                                </ProtectedRoute>
+                            }
+                        />
 
                         <Route path="/you" element={<User />} />
 

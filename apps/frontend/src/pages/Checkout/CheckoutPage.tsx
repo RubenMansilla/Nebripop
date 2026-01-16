@@ -10,6 +10,7 @@ import api from "../../utils/axiosConfig";
 
 interface CheckoutProduct {
   id: number;
+  owner_id: number;
   name: string;
   price: number;
   images?: { image_url: string }[];
@@ -124,8 +125,11 @@ export default function CheckoutPage() {
       try {
         const data = await getProductById(String(productId));
 
+        console.log("Producto cargado para checkout:", data);
+
         setProduct({
           id: data.id,
+          owner_id: data.owner_id,
           name: data.name,
           price: Number(data.price),
           images: data.images || [],
@@ -240,6 +244,7 @@ export default function CheckoutPage() {
         replace: true,
         state: {
           productName: product?.name,
+          productId: product?.id,
           totalAmount: total,
           orderId: purchaseResponse.id || `NP-${Date.now()}`,
           image: firstImage,
@@ -249,7 +254,8 @@ export default function CheckoutPage() {
           shippingComplement: form.complement,
           shippingCity: form.city,
           shippingProvince: form.province,
-          shippingPostcode: form.postcode
+          shippingPostcode: form.postcode,
+          seller_id: product?.owner_id,
         }
       });
     } catch (err: any) {
@@ -277,6 +283,7 @@ export default function CheckoutPage() {
         replace: true,
         state: {
           productName: product?.name,
+          productId: product?.id,
           totalAmount: total,
           orderId: purchaseResponse.id || `NP-${Date.now()}`,
           image: firstImage,
@@ -286,7 +293,8 @@ export default function CheckoutPage() {
           shippingComplement: form.complement,
           shippingCity: form.city,
           shippingProvince: form.province,
-          shippingPostcode: form.postcode
+          shippingPostcode: form.postcode,
+          seller_id: product?.owner_id,
         }
       });
     } catch (err: any) {

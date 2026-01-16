@@ -215,6 +215,24 @@
     background-color: #333;
 }
 
+.btn-invoice-review {
+    width: 100%;
+    background-color: #f2e2c7;
+    color: #7a6c58;
+    border: 1px solid #d2b990;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-invoice-review:hover {
+    background-color: #e6d4b3;
+}
+
+
 .btn-invoice-home {
     width: 100%;
     background: white;

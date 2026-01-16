@@ -95,16 +95,19 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", updateScreen);
   }, []);
 
-  /* 4. ANIMACIÓN (TU LÓGICA ORIGINAL) */
+  /* 4. ANIMACIÓN  */
   useEffect(() => {
     let i = 0;
     let timer: number | undefined;
+
     const stopRotate = () => { if (timer) window.clearInterval(timer); };
+
     const startRotate = () => {
       stopRotate();
       timer = window.setInterval(() => {
-        const input = inputRef.current;
-        if (!input || document.activeElement === input || input.value.trim().length > 0) return;
+        // Si hay texto escrito, no rotamos
+        if (searchQuery.length > 0) return;
+
         i = (i + 1) % words.length;
         if (wordRef.current) {
           wordRef.current.textContent = words[i];
@@ -115,32 +118,10 @@ export default function Navbar() {
       }, 1800);
     };
 
-    const handleInput = () => {
-      const input = inputRef.current;
-      if (!input) return;
-      if (input.value.trim().length) {
-        stopRotate();
-        if (placeholderRef.current) {
-          placeholderRef.current.style.opacity = "0";
-          placeholderRef.current.style.visibility = "hidden";
-        }
-      } else {
-        if (placeholderRef.current) {
-          placeholderRef.current.style.opacity = "1";
-          placeholderRef.current.style.visibility = "visible";
-        }
-        startRotate();
-      }
-    };
-
-    const input = inputRef.current;
-    if (input) input.addEventListener("input", handleInput);
     startRotate();
-    return () => {
-      if (input) input.removeEventListener("input", handleInput);
-      stopRotate();
-    };
-  }, []);
+
+    return () => stopRotate();
+  }, [screenSize, searchQuery]);
 
   /* COMPONENTE INTERNO PARA NO REPETIR CÓDIGO DEL DROPDOWN */
   const ResultsDropdown = () => (
@@ -181,6 +162,7 @@ export default function Navbar() {
                   className="search"
                   type="text"
                   placeholder=" "
+                  value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)} // Esto actualiza el estado
                 />
                 <img src={searchIcon} className="icon" alt="buscar" />
@@ -228,6 +210,7 @@ export default function Navbar() {
                 className="search"
                 type="text"
                 placeholder=" "
+                value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} // Esto actualiza el estado
               />
               <img src={searchIcon} className="icon" alt="buscar" />
@@ -252,7 +235,7 @@ export default function Navbar() {
                 <img src={profilePic} alt="perfil" /><p>Tú</p>
               </div>
             )}
-            <button className="btn-vender" onClick={() => navigate("/sell-product")}>Vender <span className="icon-plus">+</span></button>
+            <button className="btn-vender" onClick={() => navigate("/sell-product")}>Vender<span className="icon-plus">+</span></button>
           </div>
         </nav>
       )}
@@ -268,6 +251,7 @@ export default function Navbar() {
                 className="search"
                 type="text"
                 placeholder=" "
+                value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} // Esto actualiza el estado
               />
               <img src={searchIcon} className="icon" alt="buscar" />
@@ -292,7 +276,7 @@ export default function Navbar() {
                 <img src={profilePic} alt="perfil" /><p>Tú</p>
               </div>
             )}
-            <button className="btn-vender" onClick={() => navigate("/sell-product")}>Vender <span className="icon-plus">+</span></button>
+            <button className="btn-vender" onClick={() => navigate("/sell-product")}>Vender<span className="icon-plus">+</span></button>
           </div>
         </nav>
       )}

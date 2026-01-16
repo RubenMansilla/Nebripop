@@ -1,11 +1,13 @@
 .edit-product-page {
   min-height: calc(100vh - 60px);
-  background: #f3f4f6; /* gris suave como en el otro formulario */
+  background: #f3f4f6;
+  /* gris suave como en el otro formulario */
   padding: 2rem 1rem;
   display: flex;
   justify-content: center;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow-x: hidden; /* ✅ evita scroll horizontal en móvil */
+  overflow-x: hidden;
+  /* ✅ evita scroll horizontal en móvil */
 }
 
 .edit-product-card {
@@ -16,14 +18,17 @@
   padding: 26px;
   border: 1px solid #e3e4e6;
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
-  box-sizing: border-box; /* ✅ que el padding no haga crecer el ancho */
+  box-sizing: border-box;
+  /* ✅ que el padding no haga crecer el ancho */
 }
 
 /* ✅ todo lo de dentro del card respeta el ancho sin desbordarse */
 .edit-product-card * {
   box-sizing: border-box;
-  max-width: 100% !important;  /* 🔥 nada puede ser más ancho que el card */
-  min-width: 0 !important;     /* 🔥 anulamos min-width heredados */
+  max-width: 100% !important;
+  /* 🔥 nada puede ser más ancho que el card */
+  min-width: 0 !important;
+  /* 🔥 anulamos min-width heredados */
 }
 
 .edit-product-card h1 {
@@ -41,7 +46,8 @@
 
 .edit-form-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); /* ✅ columnas colapsables */
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  /* ✅ columnas colapsables */
   gap: 2rem;
   width: 100%;
 }
@@ -86,7 +92,8 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.15s ease;
   width: 100%;
   max-width: 100%;
-  min-width: 0 !important;   /* 🔥 clave para que no revienten el layout */
+  min-width: 0 !important;
+  /* 🔥 clave para que no revienten el layout */
   box-sizing: border-box;
 }
 
@@ -142,7 +149,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  width: 100%;           /* ✅ que no desborde la columna */
+  width: 100%;
+  /* ✅ que no desborde la columna */
 }
 
 /* ===== Imágenes ===== */
@@ -222,7 +230,8 @@
   border: 1px dashed #d2b990;
   border-radius: 16px;
   padding: 1rem;
-  width: 100%;          /* ✅ ocupa el ancho del card, no más */
+  width: 100%;
+  /* ✅ ocupa el ancho del card, no más */
   max-width: 100%;
 }
 
@@ -253,9 +262,6 @@
   color: #6b7280;
 }
 
-.hidden-input {
-  display: none;
-}
 
 /* GRID PREVIEW NUEVAS
    ✅ responsive, no se sale del contenedor en móvil */
@@ -401,6 +407,7 @@
   margin-left: 8px;
   cursor: pointer;
 }
+
 /* ===========================
    Ajustes envío (texto que se corta)
    =========================== */
@@ -412,7 +419,8 @@
   gap: 0.75rem;
   width: 100%;
   min-width: 0;
-  flex-wrap: wrap;           /* ✅ que el texto y el radio puedan saltar de línea */
+  flex-wrap: wrap;
+  /* ✅ que el texto y el radio puedan saltar de línea */
 }
 
 .envio-option-left {
@@ -425,7 +433,8 @@
 .envio-option-left span,
 .envio-description,
 .envio-beneficios li {
-  white-space: normal;       /* ✅ el texto envuelve en pantallas pequeñas */
+  white-space: normal;
+  /* ✅ el texto envuelve en pantallas pequeñas */
   word-break: break-word;
 }
 
@@ -435,7 +444,8 @@
 
 @media (max-width: 480px) {
   .edit-form-actions {
-    flex-direction: column;  /* ✅ botones en columna en móviles muy estrechos */
+    flex-direction: column;
+    /* ✅ botones en columna en móviles muy estrechos */
     align-items: stretch;
     gap: 0.5rem;
   }

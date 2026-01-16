@@ -69,8 +69,8 @@
 }
 
 .manual-input:focus {
-    border-color: var(--beige);
-    box-shadow: 0 0 0 2px var(--beige);
+    border-color: #f2e2c7;
+    box-shadow: 0 0 0 1px #f2e2c7;
 }
 
 .manual-add-btn:disabled {
@@ -82,7 +82,7 @@
 }
 
 .manual-add-btn:not(:disabled):hover {
-    background-color: #b0a18c;
+    background-color: #f2e2c7;
 }
 
 .manual-add-btn:not(:disabled):active {
@@ -92,12 +92,12 @@
 
 .manual-add-btn {
     width: 100%;
-    background-color: var(--beige);
-    color: white;
-    border: none;
+    background-color: #fffaf2;
+    color: #7a6c58;
+    border: 1px solid #d2b990;
     border-radius: 12px;
     padding: 14px;
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;

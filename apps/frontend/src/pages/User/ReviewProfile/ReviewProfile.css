@@ -23,7 +23,7 @@
 }
 
 .sort-by:hover {
-    background-color: #d6c9b4;
+    background-color: #f2e2c7;
 }
 
 .sort-dropdown {
@@ -49,13 +49,13 @@
 }
 
 .sort-dropdown p:hover {
-    background-color: #E8DFD4;
+    background-color: #fbf2e2;
 }
 
 .sort-dropdown p.active {
-    background-color: #D6C9B4;
+    background-color: #f2e2c7;
     font-weight: 600;
-    border-left: 3px solid #B8A589;
+    border-left: 3px solid #d2b990;
 }
 
 .sort-by svg {
@@ -67,10 +67,9 @@
     border: 1.5px solid var(--beige);
     width: 100%;
     border-radius: 12px;
-    padding-top: 30px;
+    padding-top: 20px;
     margin-top: 10px;
     display: flex;
-    gap: 30px;
     flex-wrap: wrap;
     background-color: white;
     justify-content: center;
@@ -87,7 +86,7 @@
     padding: 12px 24px;
     border-radius: 100px;
     text-align: center;
-    background-color: var(--beige);
+    background-color: #fffaf2;
     transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
     cursor: pointer;
     font-weight: 600;
@@ -95,7 +94,7 @@
 }
 
 .btn-more-reviews:hover {
-    background-color: #ede4d5;
+    background-color: #f2e2c7;
 }
 
 .sort-by.disabled {

@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./PurchaseCompleted.css";
 import { jsPDF } from "jspdf";
+import PublicReview from "../PublicReview/PublicReview";
 
 interface PurchaseData {
     productName: string;
+    productId?: number;
     totalAmount: number;
     deliveryDate: string;
     orderId: string;
@@ -16,6 +18,7 @@ interface PurchaseData {
     shippingCity?: string;
     shippingProvince?: string;
     shippingPostcode?: string;
+    seller_id?: string;
 }
 
 export default function PurchaseCompletedPage() {
@@ -24,6 +27,35 @@ export default function PurchaseCompletedPage() {
     const location = useLocation();
 
     const [purchase, setPurchase] = useState<PurchaseData | null>(null);
+
+    const [showReviewPopup, setShowReviewPopup] = useState(false);
+    const [reviewSubmitted, setReviewSubmitted] = useState(false);
+
+    // BLOQUEO DE SCROLL
+    useEffect(() => {
+        if (showReviewPopup) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [showReviewPopup]);
+
+
+    const handleReviewSuccess = () => {
+        setReviewSubmitted(true);
+        setShowReviewPopup(false);
+    };
+
+    const handleOpenReviewPopup = () => {
+        setShowReviewPopup(true);
+    };
+
+    const handleCloseReviewPopup = () => {
+        setShowReviewPopup(false);
+    };
 
     // Formato de moneda
     const formatPrice = (value: number) =>
@@ -66,6 +98,8 @@ export default function PurchaseCompletedPage() {
             shippingCity: stateData?.shippingCity || "",
             shippingProvince: stateData?.shippingProvince || "",
             shippingPostcode: stateData?.shippingPostcode || "",
+            seller_id: stateData?.seller_id || "",
+            productId: stateData?.productId || undefined,
         });
     }, [location]);
 
@@ -198,11 +232,7 @@ export default function PurchaseCompletedPage() {
 
                     {/* CABECERA DE ÉXITO */}
                     <div className="invoice-status">
-                        <div className="status-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </div>
+
                         <h1 className="status-title">¡Gracias por tu compra!</h1>
                         <p className="status-subtitle">
                             Tu pedido ha sido confirmado. Te hemos enviado un correo con los detalles.
@@ -269,6 +299,12 @@ export default function PurchaseCompletedPage() {
                             Descargar Factura
                         </button>
 
+                        {!reviewSubmitted && (
+                            <button className="btn-invoice-review" onClick={handleOpenReviewPopup}>
+                                Valorar el producto
+                            </button>
+                        )}
+
                         <button className="btn-invoice-home" onClick={() => navigate("/filtros")}>
                             Seguir comprando
                         </button>
@@ -276,6 +312,16 @@ export default function PurchaseCompletedPage() {
 
                 </div>
             </main>
+            {showReviewPopup && (
+                <PublicReview
+                    onClose={handleCloseReviewPopup}
+                    onSuccess={handleReviewSuccess}
+                    productName={purchase.productName}
+                    productId={purchase.productId}
+                    productImage={purchase.image}
+                    seller_id={purchase.seller_id}
+                />
+            )}
         </div>
     );
 }

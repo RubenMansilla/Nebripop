@@ -225,7 +225,7 @@ export default function PublicUserProfile({
                     ) : (
                         <div className="public-user-reviews">
                             {reviews.map((review) => (
-                                <Review key={review.id} review={review} />
+                                <Review key={review.id} mode="private" review={review} />
                             ))}
                         </div>
                     )}

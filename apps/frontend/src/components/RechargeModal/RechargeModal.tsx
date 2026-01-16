@@ -103,7 +103,7 @@ export default function RechargeModal({ isOpen, onClose, onConfirm }: RechargeMo
                             <button type="button" className="btn-secondary" onClick={onClose}>
                                 Cancelar
                             </button>
-                            <button type="submit" className="btn-primary" disabled={!amount}>
+                            <button type="submit" className="btn-primary-recharge" disabled={!amount}>
                                 Confirmar pago
                             </button>
                         </div>

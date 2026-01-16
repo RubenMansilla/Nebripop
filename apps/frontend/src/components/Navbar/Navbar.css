@@ -89,10 +89,13 @@
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.08s ease;
 }
 
+.search:hover {
+  border-color: var(--beige);
+}
+
 .search:focus {
   border-color: var(--beige);
-  box-shadow: 0 6px 18px rgba(210, 185, 144, 0.25);
-  transform: scale(1.01);
+  box-shadow: none;
 }
 
 .icon {
@@ -165,7 +168,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  border: 2px solid var(--beige);
+  border: 1px solid #d2b990;
   border-radius: 10px;
   background-color: white;
   color: var(--gris-texto);
@@ -177,41 +180,34 @@
 
 /* Estado HOVER */
 .btn-vender:hover {
-  background-color: var(--beige);
-  color: white !important; /* Fuerza el texto a blanco */
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #f2e2c7;
+  color: var(--gris-texto) !important;
+  /* Fuerza el texto a blanco */
 }
 
 /* Esta es la clave: 
    Fuerza a cualquier icono o SVG dentro del botón a ser blanco en hover 
 */
-.btn-vender:hover svg, 
-.btn-vender:hover i, 
+.btn-vender:hover svg,
+.btn-vender:hover i,
 .btn-vender:hover span {
-  color: white !important;
-  fill: white !important; /* Si es un SVG */
-}
-
-/* Si el "+" es una imagen/icono con filtro, esto lo pone blanco */
-.btn-vender:hover img {
-  filter: brightness(0) invert(1);
-}
-
-.btn-vender:active {
-  transform: translateY(0);
+  color: var(--gris-texto) !important;
+  fill: var(--gris-texto) !important;
+  /* Si es un SVG */
 }
 
 .icon-plus {
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   width: 22px;
   height: 22px;
-  border: 2px solid var(--beige);
+  border: 2px solid var(--gris-texto);
   border-radius: 50%;
   font-size: 18px;
-  color: var(--beige);
+  line-height: 1;
+  padding-bottom: 2px;
+  color: var(--gris-texto);
 }
 
 /* ====================================
@@ -450,16 +446,17 @@
     display: block;
   }
 }
+
 /* Resultados de búsqueda */
 .search-results-dropdown {
   position: absolute;
-  top: 100%;
+  top: 108%;
   left: 0;
   width: 100%;
   background: white;
   border: 1px solid var(--beige);
-  border-radius: 0 0 14px 14px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   max-height: 400px;
   overflow-y: auto;
@@ -501,4 +498,17 @@
   padding: 20px;
   text-align: center;
   color: var(--gris-claro);
+}
+
+
+/* Clase para ocultar el placeholder cuando hay texto */
+.fake-placeholder.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
+}
+
+.fake-placeholder {
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
 }

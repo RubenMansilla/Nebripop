@@ -88,22 +88,23 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: #d6c9b4;
+    background-color: #fffaf2;
     border: none;
+    border: 1px solid #d2b990;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
+    color: #aa9b85;
     transition: transform 0.2s ease, background-color 0.2s;
 }
 
 .circle-btn:hover {
-    background-color: #b0a18c;
+    background-color: #f2e2c7;
     cursor: pointer;
 }
 
 .action-label {
-    color: #d6c9b4;
+    color: #aa9b85;
     font-size: 16px;
     font-weight: 500;
 }

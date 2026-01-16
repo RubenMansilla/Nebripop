@@ -64,7 +64,7 @@ export default function Detail() {
     if (product?.seller?.id) {
       getReviews(product.seller.id, "newest").then(setReviews).catch(console.error);
       getUserReviewSummary(product.seller.id).then(setReviewSummary).catch(console.error);
-      
+
       setSellerLoading(true);
       getPublicUser(product.seller.id)
         .then(setSellerPublic)
@@ -176,7 +176,7 @@ export default function Detail() {
           <div className="product-details">
             <h3 className="section-title">Detalles del producto</h3>
             {product.description && <p className="details-description">{product.description}</p>}
-            
+
             <ul className="details-list">
               {product.features?.map((f: string, i: number) => <li key={i}>– {f}</li>)}
             </ul>
@@ -199,8 +199,9 @@ export default function Detail() {
                 <p className="no-reviews">Este vendedor aún no tiene valoraciones</p>
               ) : (
                 reviews.map((rev) => (
-                  <Review 
-                    key={rev.id} 
+                  <Review
+                    key={rev.id}
+                    mode="public"
                     review={{
                       ...rev,
                       reviewer: {
@@ -209,7 +210,7 @@ export default function Detail() {
                         profilePicture: rev.reviewer?.profile_picture || rev.reviewer?.profilePicture
                       },
                       product: rev.product || { id: product.id, name: product.name, images: product.images }
-                    }} 
+                    }}
                   />
                 ))
               )}
@@ -246,7 +247,7 @@ export default function Detail() {
               </Link>
             )}
 
-            <button 
+            <button
               className="buy-offer-btn"
               disabled={product.active_negotiation}
             >
