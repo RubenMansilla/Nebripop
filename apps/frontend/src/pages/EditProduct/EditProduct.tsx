@@ -422,23 +422,58 @@ export default function EditProductPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [codigoPostal]);
 
-  // =========================
+    // =========================
   // SUBMIT
   // =========================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form || !productId) return;
 
-    if (!form.name.trim()) {
-      toast.error("El nombre del producto es obligatorio");
+    // 1) Campos obligatorios que NO pueden quedar vacíos
+    const requiredFields: { key: keyof FormState; label: string }[] = [
+      { key: "name", label: "Título" },
+      { key: "summary", label: "Resumen" },
+      { key: "description", label: "Descripción" },
+      {
+        key: "condition",
+        label: tipoFormulario === "hogar" ? "Condición" : "Estado",
+      },
+      { key: "category_id", label: "Categoría" },
+      { key: "subcategory_id", label: "Subcategoría" },
+      { key: "postal_code", label: "Código postal" },
+    ];
+
+    for (const field of requiredFields) {
+      const value = form[field.key];
+      if (!String(value ?? "").trim()) {
+        toast.error(`El campo "${field.label}" es obligatorio`);
+        return;
+      }
+    }
+
+    // 2) Precio: obligatorio y numérico
+    if (!form.price.trim()) {
+      toast.error("El precio del producto es obligatorio");
       return;
     }
-    if (!form.price.trim() || isNaN(Number(form.price))) {
+    if (isNaN(Number(form.price))) {
       toast.error("El precio debe ser un número válido");
       return;
     }
 
-    // --- LÓGICA DE CATEGORÍA / SUBCATEGORÍA ---
+    // 3) Si el envío está activo, tamaño y peso también obligatorios
+    if (envioActivo) {
+      if (!tamanoEnvio) {
+        toast.error("Debes seleccionar el tamaño del envío");
+        return;
+      }
+      if (!pesoEnvio) {
+        toast.error("Debes seleccionar el tramo de peso del envío");
+        return;
+      }
+    }
+
+    // --- LÓGICA DE CATEGORÍA / SUBCATEGORÍA (igual que antes) ---
 
     const categoryChanged =
       initialCategoryId !== null &&
@@ -521,6 +556,7 @@ export default function EditProductPage() {
       setSaving(false);
     }
   };
+
 
   // =========================
   // RENDER
