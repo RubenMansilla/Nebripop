@@ -33,7 +33,14 @@ const DetailSkeleton = () => (
 );
 
 export default function Detail() {
+
   const { productId } = useParams();
+
+  // Scroll to top on productId change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [productId]);
+
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<any>(null);
@@ -257,11 +264,11 @@ export default function Detail() {
             {/* --- LÓGICA DE BOTONES --- */}
             {isOwner ? (
               // CUANDO ES EL DUEÑO: Mostramos solo el mensaje, sin botones.
-              <div style={{ 
-                background: '#f8f9fa', 
-                padding: '20px', 
-                borderRadius: '8px', 
-                textAlign: 'center', 
+              <div style={{
+                background: '#f8f9fa',
+                padding: '20px',
+                borderRadius: '8px',
+                textAlign: 'center',
                 color: '#6c757d',
                 border: '1px solid #e9ecef',
                 marginTop: '15px'
@@ -309,7 +316,7 @@ export default function Detail() {
               <button className="seller-profile-btn" onClick={goToSellerProfile} disabled={sellerLoading}>
                 {sellerLoading ? "Cargando..." : "Ver perfil"}
               </button>
-              
+
               {/* Solo mostrar el chat si NO es el dueño */}
               {!isOwner && <button className="seller-chat-btn">Chat</button>}
             </div>
