@@ -532,12 +532,12 @@
   }
 
   .filtro-results {
-    order: 1;
+    order: 2;
   }
 
   /* Sidebar como tarjeta colapsable */
   .filtro-sidebar {
-    order: 2;
+    order: 1;
     width: 100%;
     padding-right: 0;
     background: #fff;

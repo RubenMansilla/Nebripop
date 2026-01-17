@@ -45,6 +45,23 @@ export default function Detail() {
   const [sellerPublic, setSellerPublic] = useState<any | null>(null);
   const [sellerLoading, setSellerLoading] = useState(false);
 
+  // --- LÓGICA DE RECUPERACIÓN DE USUARIO LOGUEADO ---
+  const getLoggedUserId = () => {
+    const directId = localStorage.getItem("user_id") || localStorage.getItem("id");
+    if (directId) return String(directId);
+
+    const userObj = localStorage.getItem("user") || localStorage.getItem("auth");
+    if (userObj) {
+      try {
+        const parsed = JSON.parse(userObj);
+        return String(parsed.id || parsed._id || parsed.user?.id);
+      } catch (e) { return null; }
+    }
+    return null;
+  };
+
+  const currentUserId = getLoggedUserId();
+
   useEffect(() => {
     if (productId) {
       incrementProductView(productId);
@@ -88,6 +105,10 @@ export default function Detail() {
     return <div className="error-message">Producto no encontrado</div>;
   }
 
+  // --- DETERMINAR SI EL USUARIO ES EL DUEÑO ---
+  const sellerId = product.seller?.id || product.seller_id;
+  const isOwner = !!(currentUserId && sellerId && String(currentUserId) === String(sellerId));
+
   const images = product?.images ?? [];
   const hasMultipleImages = images.length > 1;
 
@@ -113,7 +134,6 @@ export default function Detail() {
     if (id) navigate(`/users/${id}`);
   };
 
-  // Lógica de nombres y avatares (Manteniendo tu lógica original)
   const categoryName = typeof product.category === "object" ? product.category?.name : product.category;
   const subcategoryName = typeof product.subcategory === "object" ? product.subcategory?.name : product.subcategory;
   const sellerName = sellerPublic?.fullName ?? product?.seller?.fullName ?? "Vendedor";
@@ -233,26 +253,44 @@ export default function Detail() {
             </div>
 
             <div className="buy-divider"></div>
-            <div className="buy-shipping">🚚 Envío disponible</div>
 
-            {/* CAMBIO: BLOQUEO POR NEGOCIACIÓN ACTIVA */}
-            {product.active_negotiation ? (
-              <div className="negotiation-block">
-                <p>Producto en proceso de negociación</p>
-                <button className="buy-main-btn disabled" disabled>No disponible</button>
+            {/* --- LÓGICA DE BOTONES --- */}
+            {isOwner ? (
+              // CUANDO ES EL DUEÑO: Mostramos solo el mensaje, sin botones.
+              <div style={{ 
+                background: '#f8f9fa', 
+                padding: '20px', 
+                borderRadius: '8px', 
+                textAlign: 'center', 
+                color: '#6c757d',
+                border: '1px solid #e9ecef',
+                marginTop: '15px'
+              }}>
+                <p style={{ margin: 0, fontWeight: '500' }}>Este producto es tuyo</p>
               </div>
             ) : (
-              <Link to={`/checkout?productId=${product.id}`}>
-                <button className="buy-main-btn" type="button">Comprar</button>
-              </Link>
-            )}
+              // CUANDO NO ES EL DUEÑO: Se muestran los botones de siempre.
+              <>
+                <div className="buy-shipping">🚚 Envío disponible</div>
+                {product.active_negotiation ? (
+                  <div className="negotiation-block">
+                    <p>Producto en proceso de negociación</p>
+                    <button className="buy-main-btn disabled" disabled>No disponible</button>
+                  </div>
+                ) : (
+                  <Link to={`/checkout?productId=${product.id}`}>
+                    <button className="buy-main-btn" type="button">Comprar</button>
+                  </Link>
+                )}
 
-            <button
-              className="buy-offer-btn"
-              disabled={product.active_negotiation}
-            >
-              {product.active_negotiation ? "Oferta en curso" : "Hacer oferta"}
-            </button>
+                <button
+                  className="buy-offer-btn"
+                  disabled={product.active_negotiation}
+                >
+                  {product.active_negotiation ? "Oferta en curso" : "Hacer oferta"}
+                </button>
+              </>
+            )}
           </div>
 
           <div className="seller-card">
@@ -271,7 +309,9 @@ export default function Detail() {
               <button className="seller-profile-btn" onClick={goToSellerProfile} disabled={sellerLoading}>
                 {sellerLoading ? "Cargando..." : "Ver perfil"}
               </button>
-              <button className="seller-chat-btn">Chat</button>
+              
+              {/* Solo mostrar el chat si NO es el dueño */}
+              {!isOwner && <button className="seller-chat-btn">Chat</button>}
             </div>
           </div>
 
