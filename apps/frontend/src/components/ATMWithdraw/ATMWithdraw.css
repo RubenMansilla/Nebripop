@@ -41,7 +41,6 @@
 .atm-close-btn:hover {
     background-color: #e5e7eb;
     color: var(--atm-text-dark);
-    transform: rotate(90deg);
 }
 
 .atm-title {

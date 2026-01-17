@@ -16,6 +16,7 @@ import {
 } from "../../api/products.api";
 import type { ProductType } from "../../types/product";
 import { toast } from "react-toastify";
+import { useNotificationSettings } from "../../context/NotificationContext";
 
 import { getCategories } from "../../api/categories.api";
 import { getSubcategoriesByCategory } from "../../api/subcategories.api";
@@ -73,6 +74,8 @@ const INITIAL_FORM_STATE: FormState = {
 };
 
 export default function EditProductPage() {
+
+  const { notify } = useNotificationSettings();
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
 
@@ -565,7 +568,7 @@ export default function EditProductPage() {
 
       await updateProduct(Number(productId), payload, newImages);
 
-      toast.success("Producto actualizado correctamente");
+      notify("productActivity", "Producto actualizado correctamente", "success");
       navigate(`/catalog/published`);
     } catch (error: any) {
       console.error(error);

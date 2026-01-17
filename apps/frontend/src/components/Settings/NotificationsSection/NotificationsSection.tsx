@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import './NotificationsSection.css';
 import { useNotificationSettings } from '../../../context/NotificationContext';
 
@@ -43,26 +42,17 @@ export default function NotificationsSection() {
 
             <div className="notif-group">
                 <h3>Mis acciones</h3>
-                <p className="group-desc">Avisos relacionados con los productos que publicas en NebriPop.</p>
+                <p className="group-desc">Avisos relacionados con los productos publicados en NebriPop.</p>
                 <ToggleItem
                     label="Transacciones"
                     checked={settings.transactions}
                     onChange={() => updateSetting('transactions')}
                 />
                 <ToggleItem
-                    label="Al publicar un producto"
-                    checked={settings.productUploaded}
-                    onChange={() => updateSetting('productUploaded')}
-                />
-                <ToggleItem
-                    label="Al editar un producto"
-                    checked={settings.productEdited}
-                    onChange={() => updateSetting('productEdited')}
-                />
-                <ToggleItem
-                    label="Al eliminar un producto"
-                    checked={settings.productDeleted}
-                    onChange={() => updateSetting('productDeleted')}
+                    label="Mis anuncios"
+                    // Usamos una nueva variable que engloba las 3 anteriores
+                    checked={settings.productActivity}
+                    onChange={() => updateSetting('productActivity')}
                 />
                 <ToggleItem
                     label="Al añadir a favoritos un producto o perfil"
@@ -78,6 +68,11 @@ export default function NotificationsSection() {
                     label="Nuevo mensaje recibido"
                     checked={settings.newMessage}
                     onChange={() => updateSetting('newMessage')}
+                />
+                <ToggleItem
+                    label="Publicar una reseña sobre un producto"
+                    checked={settings.newReview}
+                    onChange={() => updateSetting('newReview')}
                 />
             </div>
 

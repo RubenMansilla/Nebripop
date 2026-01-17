@@ -46,7 +46,7 @@ export default function Published() {
             hasShownToast.current = true;
 
             notify(
-                'productUploaded',
+                'productActivity',
                 "Producto publicado correctamente",
                 'success'
             );

@@ -2,6 +2,8 @@ import { useState } from 'react';
 import './PublicReview.css';
 import { createReview } from '../../api/reviews.api';
 import { BiX } from "react-icons/bi";
+import { useNotificationSettings } from '../../context/NotificationContext';
+import { toast } from 'react-toastify';
 
 interface PublicReviewProps {
     onClose: () => void;
@@ -19,11 +21,28 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
     const [text, setText] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const [errors, setErrors] = useState<{ rating?: string; text?: string; general?: string }>({});
+
+    const { notify } = useNotificationSettings();
+
     const handleSubmit = async () => {
 
-        // if (rating === 0) return toast.warning("Selecciona una puntuación");
+        // Limpiar errores previos
+        setErrors({});
+
+        if (rating === 0) {
+            setErrors({ rating: "Debes seleccionar una valoración" });
+            return;
+        }
+
+        // Validación: Texto
+        if (!text.trim()) {
+            setErrors({ text: "Debes escribir una opinión sobre el producto" });
+            return;
+        }
 
         setIsSubmitting(true);
+
         try {
             await createReview({
                 owner_id: Number(seller_id),
@@ -32,7 +51,7 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
                 product_id: productId
             });
 
-            // toast.success("¡Opinión enviada con éxito!");
+            notify("newReview", "Reseña publicada con éxito", "success");
 
             if (onSuccess) {
                 onSuccess();
@@ -42,7 +61,7 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
 
         } catch (error: any) {
             console.error(error);
-            // toast.error(error.message || "Error al enviar la reseña");
+            toast.error("Error al publicar la reseña");
 
         } finally {
             setIsSubmitting(false);
@@ -107,6 +126,14 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
                             <div className="char-counter">{text.length} / 500</div>
                         </div>
                     </div>
+
+                    {(errors.rating || errors.text || errors.general) && (
+                        <div className="error-box-inline">
+                            {errors.rating}
+                            {errors.text}
+                            {errors.general}
+                        </div>
+                    )}
 
                     <div className="submit-container-review">
                         <button className="submit-btn-review" onClick={handleSubmit} >Enviar</button>

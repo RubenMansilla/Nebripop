@@ -73,19 +73,19 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
             if (mode === "active") {
                 // Producto en venta -> eliminar (soft/hard en backend)
                 await deleteProduct(product.id);
-                notify("productDeleted", "Producto eliminado correctamente", "success");
+                notify("productActivity", "Producto eliminado correctamente", "success");
             } else if (mode === "sold") {
                 // Producto vendido -> ocultar del historial de vendidos
                 if (!product.purchaseId) {
                     throw new Error("No se encontró el ID de la transacción para ocultar");
                 }
                 await hideSoldTransaction(product.purchaseId);
-                notify("productDeleted", "Producto eliminado correctamente", "success");
+                notify("productActivity", "Producto eliminado correctamente", "success");
             } else if (mode === "purchased") {
                 // Compra realizada -> ocultar del historial de compras
                 if (!product.purchaseId) throw new Error("Falta ID de transacción");
                 await hidePurchasedTransaction(product.purchaseId);
-                notify("productDeleted", "Producto eliminado correctamente", "success");
+                notify("productActivity", "Producto eliminado correctamente", "success");
             }
 
             if (onDelete) {

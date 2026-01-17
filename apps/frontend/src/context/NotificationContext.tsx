@@ -4,34 +4,32 @@ import type { ToastOptions } from 'react-toastify';
 
 // Interfaz de configuración de notificaciones
 export interface NotificationsSettings {
+    accountUpdates: boolean;
     priceDrops: boolean;
     favoritesSold: boolean;
     newProducts: boolean;
     transactions: boolean;
-    productUploaded: boolean;
-    productDeleted: boolean;
-    productEdited: boolean;
+    productActivity: boolean;
     addedToFavorites: boolean;
     newMessage: boolean;
+    newReview: boolean;
     tips: boolean;
     promotions: boolean;
-    accountUpdates: boolean;
 }
 
 // Valores por defecto
 const defaultSettings: NotificationsSettings = {
+    accountUpdates: true,
     priceDrops: true,
     favoritesSold: true,
     newProducts: true,
     transactions: true,
-    productUploaded: true,
-    productDeleted: true,
-    productEdited: true,
+    productActivity: true,
     addedToFavorites: true,
     newMessage: true,
+    newReview: true,
     tips: false,
     promotions: false,
-    accountUpdates: true,
 };
 
 // Contexto de notificaciones y su proveedor 
