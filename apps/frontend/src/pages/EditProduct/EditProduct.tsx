@@ -97,6 +97,14 @@ export default function EditProductPage() {
   const MAX_FILES = 6;
   const MAX_SIZE_MB = 50;
 
+  // IDs de imágenes existentes marcadas para borrar
+  const [imagesToDelete, setImagesToDelete] = useState<number[]>([]);
+
+  // Filtra las imágenes originales quitando las que están marcadas para borrar
+  const getActiveOriginalImages = () => {
+    return product?.images?.filter((img) => !imagesToDelete.includes(img.id)) || [];
+  };
+
   // =========================
   // BUSCAR COORDS POR CP
   // =========================
@@ -115,21 +123,19 @@ export default function EditProductPage() {
         setCoords([lat, lon]);
 
         const delta = 0.01;
-        const urlMapa = `https://www.openstreetmap.org/export/embed.html?bbox=${
-          lon - delta
-        }%2C${lat - delta}%2C${lon + delta}%2C${
-          lat + delta
-        }&layer=mapnik&marker=${lat}%2C${lon}`;
+        const urlMapa = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta
+          }%2C${lat - delta}%2C${lon + delta}%2C${lat + delta
+          }&layer=mapnik&marker=${lat}%2C${lon}`;
         setMapUrl(urlMapa);
 
         setForm((prev) =>
           prev
             ? {
-                ...prev,
-                postal_code: cp,
-                latitude: String(lat),
-                longitude: String(lon),
-              }
+              ...prev,
+              postal_code: cp,
+              latitude: String(lat),
+              longitude: String(lon),
+            }
             : prev
         );
       }
@@ -193,11 +199,9 @@ export default function EditProductPage() {
           const lon = Number(data.longitude);
           setCoords([lat, lon]);
           const delta = 0.01;
-          const urlMapa = `https://www.openstreetmap.org/export/embed.html?bbox=${
-            lon - delta
-          }%2C${lat - delta}%2C${lon + delta}%2C${
-            lat + delta
-          }&layer=mapnik&marker=${lat}%2C${lon}`;
+          const urlMapa = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta
+            }%2C${lat - delta}%2C${lon + delta}%2C${lat + delta
+            }&layer=mapnik&marker=${lat}%2C${lon}`;
           setMapUrl(urlMapa);
         } else if (initialForm.postal_code) {
           buscarCoordsPorCP(initialForm.postal_code);
@@ -297,7 +301,8 @@ export default function EditProductPage() {
     const selected = e.target.files ? Array.from(e.target.files) : [];
     if (!selected.length) return;
 
-    const existingCount = product?.images?.length || 0;
+    const activeOriginals = getActiveOriginalImages().length;
+    const currentTotal = activeOriginals + newImages.length;
 
     // Validar tamaño original
     for (const file of selected) {
@@ -308,7 +313,7 @@ export default function EditProductPage() {
     }
 
     // Validar límite numérico (existentes + nuevas)
-    if (existingCount + newImages.length + selected.length > MAX_FILES) {
+    if (currentTotal + selected.length > MAX_FILES) {
       toast.error(`Solo puedes tener un máximo de ${MAX_FILES} fotos en total.`);
       return;
     }
@@ -343,29 +348,11 @@ export default function EditProductPage() {
   };
 
   // =========================
-  // ELIMINAR IMAGEN EXISTENTE (se borra ya mismo, como lo tenías)
+  // ELIMINAR IMAGEN EXISTENTE 
   // =========================
-  const handleDeleteExistingImage = async (imageId: number) => {
-    if (!product || !productId) return;
-
-    try {
-      await deleteProductImage(Number(productId), imageId);
-
-      setProduct((prev) =>
-        prev
-          ? {
-              ...prev,
-              images:
-                prev.images?.filter((img) => img.id !== imageId) || [],
-            }
-          : prev
-      );
-
-      toast.success("Imagen eliminada correctamente");
-    } catch (error: any) {
-      console.error(error);
-      toast.error(error?.message || "No se pudo eliminar la imagen");
-    }
+  const handleDeleteExistingImage = (imageId: number) => {
+    // Añadir el ID a la lista de "pendientes de borrar"
+    setImagesToDelete((prev) => [...prev, imageId]);
   };
 
   // =========================
@@ -408,9 +395,9 @@ export default function EditProductPage() {
     setForm((prev) =>
       prev
         ? {
-            ...prev,
-            postal_code: cp,
-          }
+          ...prev,
+          postal_code: cp,
+        }
         : prev
     );
   };
@@ -422,7 +409,7 @@ export default function EditProductPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [codigoPostal]);
 
-    // =========================
+  // =========================
   // SUBMIT
   // =========================
   const handleSubmit = async (e: React.FormEvent) => {
@@ -507,6 +494,15 @@ export default function EditProductPage() {
     setSaving(true);
 
     try {
+
+      // ELIMINAR IMÁGENES MARCADAS
+      if (imagesToDelete.length > 0) {
+        // Ejecutar todas las promesas de borrado en paralelo
+        await Promise.all(
+          imagesToDelete.map((imgId) => deleteProductImage(Number(productId), imgId))
+        );
+      }
+
       const payload: any = {
         summary: form.summary || undefined,
         name: form.name,
@@ -575,8 +571,8 @@ export default function EditProductPage() {
     );
   }
 
-  const existingImagesCount = product?.images?.length || 0;
-  const totalUsed = existingImagesCount + newImages.length;
+  const activeOriginalImages = getActiveOriginalImages();
+  const totalUsed = activeOriginalImages.length + newImages.length;
   const placeholders = Math.max(0, MAX_FILES - totalUsed);
 
   return (
@@ -781,13 +777,13 @@ export default function EditProductPage() {
                 <div className="edit-images-block fotos-container">
                   <h2 className="section-title">Imágenes del producto</h2>
 
-                  {product?.images && product.images.length > 0 && (
+                  {activeOriginalImages.length > 0 && (
                     <>
                       <p className="current-images-label">
                         Imágenes actuales:
                       </p>
                       <div className="current-images-grid">
-                        {product.images.map((img) => (
+                        {activeOriginalImages.map((img) => (
                           <div
                             key={img.id}
                             className="current-image-item preview-box"
