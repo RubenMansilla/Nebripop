@@ -50,6 +50,28 @@ interface FormState {
 
 type TipoFormulario = "hogar" | "generico";
 
+const INITIAL_FORM_STATE: FormState = {
+  summary: "",
+  name: "",
+  description: "",
+  price: "",
+  condition: "",
+  brand: "",
+  color: "",
+  material: "",
+  width_cm: "",
+  height_cm: "",
+  depth_cm: "",
+  category_id: "",
+  subcategory_id: "",
+  shipping_active: false,
+  shipping_size: "",
+  shipping_weight: "",
+  postal_code: "",
+  latitude: "",
+  longitude: "",
+};
+
 export default function EditProductPage() {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
@@ -57,7 +79,7 @@ export default function EditProductPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [product, setProduct] = useState<ProductType | null>(null);
-  const [form, setForm] = useState<FormState | null>(null);
+  const [form, setForm] = useState<FormState>(INITIAL_FORM_STATE);
 
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
@@ -544,7 +566,7 @@ export default function EditProductPage() {
       await updateProduct(Number(productId), payload, newImages);
 
       toast.success("Producto actualizado correctamente");
-      navigate(`/product/${productId}`);
+      navigate(`/catalog/published`);
     } catch (error: any) {
       console.error(error);
       toast.error(error?.message || "Error al actualizar el producto");
@@ -553,23 +575,6 @@ export default function EditProductPage() {
     }
   };
 
-
-  // =========================
-  // RENDER
-  // =========================
-  if (loading || !form) {
-    return (
-      <>
-        <Navbar />
-        <CategoriesBar />
-        <div className="edit-product-page">
-          <div className="edit-product-card">
-            <p>Cargando producto...</p>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   const activeOriginalImages = getActiveOriginalImages();
   const totalUsed = activeOriginalImages.length + newImages.length;
@@ -584,446 +589,448 @@ export default function EditProductPage() {
           <h1>Editar producto</h1>
 
           <form className="edit-product-form" onSubmit={handleSubmit}>
-            <div className="edit-form-grid">
-              {/* ===== COLUMNA IZQUIERDA ===== */}
-              <div className="edit-form-column">
-                <label>
-                  Título
-                  <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="Título del anuncio"
-                    maxLength={50}
-                  />
-                </label>
-
-                <label>
-                  Resumen
-                  <input
-                    type="text"
-                    name="summary"
-                    value={form.summary}
-                    onChange={handleChange}
-                    placeholder="Resumen corto"
-                  />
-                </label>
-
-                <label>
-                  Descripción
-                  <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    rows={4}
-                    placeholder="Describe el estado, uso, detalles..."
-                    maxLength={640}
-                  />
-                </label>
-
-                <label>
-                  Precio (€)
-                  <input
-                    type="number"
-                    name="price"
-                    value={form.price}
-                    onChange={handleChange}
-                    min={0}
-                    step="0.01"
-                  />
-                </label>
-
-                {tipoFormulario === "hogar" ? (
-                  <>
-                    <div className="edit-form-row">
-                      <label>
-                        Condición
-                        <input
-                          type="text"
-                          name="condition"
-                          value={form.condition}
-                          onChange={handleChange}
-                          placeholder="Nuevo, como nuevo, usado..."
-                        />
-                      </label>
-                      <label>
-                        Marca
-                        <input
-                          type="text"
-                          name="brand"
-                          value={form.brand}
-                          onChange={handleChange}
-                          placeholder="Marca"
-                        />
-                      </label>
-                    </div>
-
-                    <div className="edit-form-row">
-                      <label>
-                        Color
-                        <input
-                          type="text"
-                          name="color"
-                          value={form.color}
-                          onChange={handleChange}
-                          placeholder="Color"
-                        />
-                      </label>
-                      <label>
-                        Material
-                        <input
-                          type="text"
-                          name="material"
-                          value={form.material}
-                          onChange={handleChange}
-                          placeholder="Material"
-                        />
-                      </label>
-                    </div>
-
-                    <div className="edit-form-row">
-                      <label>
-                        Ancho (cm)
-                        <input
-                          type="number"
-                          name="width_cm"
-                          value={form.width_cm}
-                          onChange={handleChange}
-                          min={0}
-                          step="0.1"
-                        />
-                      </label>
-                      <label>
-                        Alto (cm)
-                        <input
-                          type="number"
-                          name="height_cm"
-                          value={form.height_cm}
-                          onChange={handleChange}
-                          min={0}
-                          step="0.1"
-                        />
-                      </label>
-                      <label>
-                        Fondo (cm)
-                        <input
-                          type="number"
-                          name="depth_cm"
-                          value={form.depth_cm}
-                          onChange={handleChange}
-                          min={0}
-                          step="0.1"
-                        />
-                      </label>
-                    </div>
-                  </>
-                ) : (
+            <fieldset disabled={loading} style={{ border: 'none', padding: 0, margin: 0, width: '100%' }}>
+              <div className="edit-form-grid">
+                {/* ===== COLUMNA IZQUIERDA ===== */}
+                <div className="edit-form-column">
                   <label>
-                    Estado
-                    <select
-                      name="condition"
-                      value={form.condition}
+                    Título
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
                       onChange={handleChange}
-                    >
-                      <option value="">Seleccionar estado</option>
-                      <option value="Nuevo">Nuevo</option>
-                      <option value="Semi-nuevo">Semi-nuevo</option>
-                      <option value="Usado">Usado</option>
-                      <option value="Condiciones aceptables">
-                        Condiciones aceptables
-                      </option>
-                      <option value="Muy usado">Muy usado</option>
-                    </select>
-                  </label>
-                )}
-
-                {/* CATEGORÍA / SUBCATEGORÍA */}
-                <div className="edit-form-row">
-                  <label>
-                    Categoría
-                    <select
-                      name="category_id"
-                      value={form.category_id}
-                      onChange={handleChange}
-                    >
-                      <option value="">Selecciona una categoría</option>
-                      {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                          {category.name}
-                        </option>
-                      ))}
-                    </select>
+                      placeholder="Título del anuncio"
+                      maxLength={50}
+                    />
                   </label>
 
                   <label>
-                    Subcategoría
-                    <select
-                      name="subcategory_id"
-                      value={form.subcategory_id}
+                    Resumen
+                    <input
+                      type="text"
+                      name="summary"
+                      value={form.summary}
                       onChange={handleChange}
-                    >
-                      <option value="">Selecciona una subcategoría</option>
-                      {subcategories.map((subcategory) => (
-                        <option key={subcategory.id} value={subcategory.id}>
-                          {subcategory.name}
-                        </option>
-                      ))}
-                    </select>
+                      placeholder="Resumen corto"
+                    />
                   </label>
-                </div>
 
-                {/* IMÁGENES */}
-                <div className="edit-images-block fotos-container">
-                  <h2 className="section-title">Imágenes del producto</h2>
+                  <label>
+                    Descripción
+                    <textarea
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      rows={4}
+                      placeholder="Describe el estado, uso, detalles..."
+                      maxLength={640}
+                    />
+                  </label>
 
-                  {activeOriginalImages.length > 0 && (
+                  <label>
+                    Precio (€)
+                    <input
+                      type="number"
+                      name="price"
+                      value={form.price}
+                      onChange={handleChange}
+                      min={0}
+                      step="0.01"
+                    />
+                  </label>
+
+                  {tipoFormulario === "hogar" ? (
                     <>
-                      <p className="current-images-label">
-                        Imágenes actuales:
-                      </p>
-                      <div className="current-images-grid">
-                        {activeOriginalImages.map((img) => (
-                          <div
-                            key={img.id}
-                            className="current-image-item preview-box"
-                          >
-                            <img
-                              src={img.image_url}
-                              alt={`img-${img.id}`}
-                              className="preview-img"
-                            />
-                            <button
-                              type="button"
-                              className="delete-btn"
-                              onClick={() =>
-                                handleDeleteExistingImage(img.id)
-                              }
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ))}
+                      <div className="edit-form-row">
+                        <label>
+                          Condición
+                          <input
+                            type="text"
+                            name="condition"
+                            value={form.condition}
+                            onChange={handleChange}
+                            placeholder="Nuevo, como nuevo, usado..."
+                          />
+                        </label>
+                        <label>
+                          Marca
+                          <input
+                            type="text"
+                            name="brand"
+                            value={form.brand}
+                            onChange={handleChange}
+                            placeholder="Marca"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="edit-form-row">
+                        <label>
+                          Color
+                          <input
+                            type="text"
+                            name="color"
+                            value={form.color}
+                            onChange={handleChange}
+                            placeholder="Color"
+                          />
+                        </label>
+                        <label>
+                          Material
+                          <input
+                            type="text"
+                            name="material"
+                            value={form.material}
+                            onChange={handleChange}
+                            placeholder="Material"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="edit-form-row">
+                        <label>
+                          Ancho (cm)
+                          <input
+                            type="number"
+                            name="width_cm"
+                            value={form.width_cm}
+                            onChange={handleChange}
+                            min={0}
+                            step="0.1"
+                          />
+                        </label>
+                        <label>
+                          Alto (cm)
+                          <input
+                            type="number"
+                            name="height_cm"
+                            value={form.height_cm}
+                            onChange={handleChange}
+                            min={0}
+                            step="0.1"
+                          />
+                        </label>
+                        <label>
+                          Fondo (cm)
+                          <input
+                            type="number"
+                            name="depth_cm"
+                            value={form.depth_cm}
+                            onChange={handleChange}
+                            min={0}
+                            step="0.1"
+                          />
+                        </label>
                       </div>
                     </>
+                  ) : (
+                    <label>
+                      Estado
+                      <select
+                        name="condition"
+                        value={form.condition}
+                        onChange={handleChange}
+                      >
+                        <option value="">Seleccionar estado</option>
+                        <option value="Nuevo">Nuevo</option>
+                        <option value="Semi-nuevo">Semi-nuevo</option>
+                        <option value="Usado">Usado</option>
+                        <option value="Condiciones aceptables">
+                          Condiciones aceptables
+                        </option>
+                        <option value="Muy usado">Muy usado</option>
+                      </select>
+                    </label>
                   )}
 
-                  {/* DROPZONE NUEVAS FOTOS */}
-                  <div className="dropzone">
-                    <div className="dropzone-inner">
-                      <span className="upload-btn">Subir fotos</span>
-                      <span className="dropzone-text">
-                        Arrastra tus fotos aquí
-                      </span>
-                      <p className="dropzone-info">
-                        Formatos aceptados: JPEG, PNG y WebP. Tamaño máx:{" "}
-                        {MAX_SIZE_MB} MB por archivo. Máx: {MAX_FILES} fotos
-                        (incluyendo las actuales).
-                      </p>
-                    </div>
+                  {/* CATEGORÍA / SUBCATEGORÍA */}
+                  <div className="edit-form-row">
+                    <label>
+                      Categoría
+                      <select
+                        name="category_id"
+                        value={form.category_id}
+                        onChange={handleChange}
+                      >
+                        <option value="">Selecciona una categoría</option>
+                        {categories.map((category) => (
+                          <option key={category.id} value={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
 
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={handleSelectImages}
-                      className="hidden-input"
-                    />
-                  </div>
-
-                  {/* GRID PREVIEW NUEVAS */}
-                  <div className="preview-grid">
-                    {newImages.map((file, i) => (
-                      <div key={i} className="preview-box">
-                        <img
-                          src={URL.createObjectURL(file)}
-                          alt={`preview-${i}`}
-                          className="preview-img"
-                        />
-                        <button
-                          type="button"
-                          className="delete-btn"
-                          onClick={() => removeNewImage(i)}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-
-                    {Array.from({ length: placeholders }).map((_, i) => (
-                      <div
-                        key={`empty-${i}`}
-                        className="preview-placeholder"
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* ===== COLUMNA DERECHA ===== */}
-              <div className="edit-form-column">
-                {/* ENVÍO */}
-                <div className="edit-shipping-block envio-container">
-                  <h2 className="section-title">Opciones de envío</h2>
-
-                  <div className="envio-header">
-                    <ul className="envio-beneficios">
-                      <li>✔ Vende más rápido.</li>
-                      <li>✔ Sin necesidad de quedar con nadie.</li>
-                      <li>✔ Es gratis. Todo lo que ganes, para ti.</li>
-                      <li>
-                        ✔ Tus ventas están protegidas por{" "}
-                        <a href="#" className="envio-link">
-                          Protección Nebripop
-                        </a>
-                        .
-                      </li>
-                    </ul>
-                    <img
-                      src={shippingToggleOn}
-                      className="envio-img"
-                      alt="envio"
-                    />
-                  </div>
-
-                  <a className="envio-faq" href="#">
-                    ¿Dudas? Consulta las preguntas frecuentes
-                  </a>
-
-                  <hr className="envio-divider" />
-
-                  <div className="envio-toggle-row">
-                    <span>Activar envío</span>
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        checked={envioActivo}
-                        onChange={handleToggleEnvio}
-                      />
-                      <span className="slider"></span>
+                    <label>
+                      Subcategoría
+                      <select
+                        name="subcategory_id"
+                        value={form.subcategory_id}
+                        onChange={handleChange}
+                      >
+                        <option value="">Selecciona una subcategoría</option>
+                        {subcategories.map((subcategory) => (
+                          <option key={subcategory.id} value={subcategory.id}>
+                            {subcategory.name}
+                          </option>
+                        ))}
+                      </select>
                     </label>
                   </div>
 
-                  {envioActivo && (
-                    <>
-                      <h3 className="envio-title">Tamaño del producto</h3>
-                      <p className="envio-description">
-                        Según el tamaño del producto las opciones de envío
-                        pueden cambiar.
-                        <br />
-                        <a className="tamano-link" href="#">
-                          ¿Qué tamaño debería elegir?
-                        </a>
-                      </p>
+                  {/* IMÁGENES */}
+                  <div className="edit-images-block fotos-container">
+                    <h2 className="section-title">Imágenes del producto</h2>
 
-                      <label className="envio-option">
-                        <div className="envio-option-left">
-                          <img
-                            src={shirtIcon}
-                            className="option-icon"
-                            alt="estándar"
-                          />
-                          <span>
-                            <strong>Estándar:</strong> productos pequeños y
-                            medianos.
-                          </span>
+                    {activeOriginalImages.length > 0 && (
+                      <>
+                        <p className="current-images-label">
+                          Imágenes actuales:
+                        </p>
+                        <div className="current-images-grid">
+                          {activeOriginalImages.map((img) => (
+                            <div
+                              key={img.id}
+                              className="current-image-item preview-box"
+                            >
+                              <img
+                                src={img.image_url}
+                                alt={`img-${img.id}`}
+                                className="preview-img"
+                              />
+                              <button
+                                type="button"
+                                className="delete-btn"
+                                onClick={() =>
+                                  handleDeleteExistingImage(img.id)
+                                }
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                        <input
-                          type="radio"
-                          checked={tamanoEnvio === "estandar"}
-                          onChange={() => handleSelectTamano("estandar")}
-                        />
-                      </label>
+                      </>
+                    )}
 
-                      <hr className="envio-separator" />
-
-                      <label className="envio-option">
-                        <div className="envio-option-left">
-                          <img
-                            src={bikeIcon}
-                            className="option-icon"
-                            alt="voluminoso"
-                          />
-                          <span>
-                            <strong>Voluminoso:</strong> productos grandes o
-                            pesados.
-                          </span>
-                        </div>
-                        <input
-                          type="radio"
-                          checked={tamanoEnvio === "voluminoso"}
-                          onChange={() => handleSelectTamano("voluminoso")}
-                        />
-                      </label>
-
-                      <h3 className="envio-title">¿Cuánto pesa?</h3>
-                      <p className="envio-description">
-                        Elige el tramo de peso correspondiente a tu producto.
-                      </p>
-
-                      <div className="peso-list">
-                        {TRAMOS_PESO.map((p) => (
-                          <label key={p} className="peso-row">
-                            <span>{p}</span>
-                            <input
-                              type="radio"
-                              checked={pesoEnvio === p}
-                              onChange={() => handleSelectPeso(p)}
-                            />
-                          </label>
-                        ))}
+                    {/* DROPZONE NUEVAS FOTOS */}
+                    <div className="dropzone">
+                      <div className="dropzone-inner">
+                        <span className="upload-btn">Subir fotos</span>
+                        <span className="dropzone-text">
+                          Arrastra tus fotos aquí
+                        </span>
+                        <p className="dropzone-info">
+                          Formatos aceptados: JPEG, PNG y WebP. Tamaño máx:{" "}
+                          {MAX_SIZE_MB} MB por archivo. Máx: {MAX_FILES} fotos
+                          (incluyendo las actuales).
+                        </p>
                       </div>
-                    </>
-                  )}
+
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleSelectImages}
+                        className="hidden-input"
+                      />
+                    </div>
+
+                    {/* GRID PREVIEW NUEVAS */}
+                    <div className="preview-grid">
+                      {newImages.map((file, i) => (
+                        <div key={i} className="preview-box">
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`preview-${i}`}
+                            className="preview-img"
+                          />
+                          <button
+                            type="button"
+                            className="delete-btn"
+                            onClick={() => removeNewImage(i)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+
+                      {Array.from({ length: placeholders }).map((_, i) => (
+                        <div
+                          key={`empty-${i}`}
+                          className="preview-placeholder"
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
-                {/* ZONA / MAPA */}
-                <div className="edit-location-block zona-container">
-                  <h2 className="section-title">Zona de venta</h2>
+                {/* ===== COLUMNA DERECHA ===== */}
+                <div className="edit-form-column">
+                  {/* ENVÍO */}
+                  <div className="edit-shipping-block envio-container">
+                    <h2 className="section-title">Opciones de envío</h2>
 
-                  <label>Código postal</label>
-                  <input
-                    type="text"
-                    className="zona-input"
-                    placeholder="Ej: 28001"
-                    value={codigoPostal}
-                    onChange={handlePostalChange}
-                  />
+                    <div className="envio-header">
+                      <ul className="envio-beneficios">
+                        <li>✔ Vende más rápido.</li>
+                        <li>✔ Sin necesidad de quedar con nadie.</li>
+                        <li>✔ Es gratis. Todo lo que ganes, para ti.</li>
+                        <li>
+                          ✔ Tus ventas están protegidas por{" "}
+                          <a href="#" className="envio-link">
+                            Protección Nebripop
+                          </a>
+                          .
+                        </li>
+                      </ul>
+                      <img
+                        src={shippingToggleOn}
+                        className="envio-img"
+                        alt="envio"
+                      />
+                    </div>
 
-                  <div className="zona-map-box">
-                    {mapUrl && (
-                      <iframe
-                        src={mapUrl}
-                        style={{
-                          width: "100%",
-                          height: "260px",
-                          border: "0",
-                          borderRadius: "12px",
-                        }}
-                      ></iframe>
+                    <a className="envio-faq" href="#">
+                      ¿Dudas? Consulta las preguntas frecuentes
+                    </a>
+
+                    <hr className="envio-divider" />
+
+                    <div className="envio-toggle-row">
+                      <span>Activar envío</span>
+                      <label className="switch">
+                        <input
+                          type="checkbox"
+                          checked={envioActivo}
+                          onChange={handleToggleEnvio}
+                        />
+                        <span className="slider"></span>
+                      </label>
+                    </div>
+
+                    {envioActivo && (
+                      <>
+                        <h3 className="envio-title">Tamaño del producto</h3>
+                        <p className="envio-description">
+                          Según el tamaño del producto las opciones de envío
+                          pueden cambiar.
+                          <br />
+                          <a className="tamano-link" href="#">
+                            ¿Qué tamaño debería elegir?
+                          </a>
+                        </p>
+
+                        <label className="envio-option">
+                          <div className="envio-option-left">
+                            <img
+                              src={shirtIcon}
+                              className="option-icon"
+                              alt="estándar"
+                            />
+                            <span>
+                              <strong>Estándar:</strong> productos pequeños y
+                              medianos.
+                            </span>
+                          </div>
+                          <input
+                            type="radio"
+                            checked={tamanoEnvio === "estandar"}
+                            onChange={() => handleSelectTamano("estandar")}
+                          />
+                        </label>
+
+                        <hr className="envio-separator" />
+
+                        <label className="envio-option">
+                          <div className="envio-option-left">
+                            <img
+                              src={bikeIcon}
+                              className="option-icon"
+                              alt="voluminoso"
+                            />
+                            <span>
+                              <strong>Voluminoso:</strong> productos grandes o
+                              pesados.
+                            </span>
+                          </div>
+                          <input
+                            type="radio"
+                            checked={tamanoEnvio === "voluminoso"}
+                            onChange={() => handleSelectTamano("voluminoso")}
+                          />
+                        </label>
+
+                        <h3 className="envio-title">¿Cuánto pesa?</h3>
+                        <p className="envio-description">
+                          Elige el tramo de peso correspondiente a tu producto.
+                        </p>
+
+                        <div className="peso-list">
+                          {TRAMOS_PESO.map((p) => (
+                            <label key={p} className="peso-row">
+                              <span>{p}</span>
+                              <input
+                                type="radio"
+                                checked={pesoEnvio === p}
+                                onChange={() => handleSelectPeso(p)}
+                              />
+                            </label>
+                          ))}
+                        </div>
+                      </>
                     )}
+                  </div>
+
+                  {/* ZONA / MAPA */}
+                  <div className="edit-location-block zona-container">
+                    <h2 className="section-title">Zona de venta</h2>
+
+                    <label>Código postal</label>
+                    <input
+                      type="text"
+                      className="zona-input"
+                      placeholder="Ej: 28001"
+                      value={codigoPostal}
+                      onChange={handlePostalChange}
+                    />
+
+                    <div className="zona-map-box">
+                      {mapUrl && (
+                        <iframe
+                          src={mapUrl}
+                          style={{
+                            width: "100%",
+                            height: "260px",
+                            border: "0",
+                            borderRadius: "12px",
+                          }}
+                        ></iframe>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="edit-form-actions">
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => navigate(-1)}
-                disabled={saving}
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="btn-primary"
-                disabled={saving}
-              >
-                {saving ? "Guardando..." : "Guardar cambios"}
-              </button>
-            </div>
+              <div className="edit-form-actions">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => navigate(-1)}
+                  disabled={saving}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={saving}
+                >
+                  {saving ? "Guardando..." : "Guardar cambios"}
+                </button>
+              </div>
+            </fieldset>
           </form>
         </div>
       </div>
