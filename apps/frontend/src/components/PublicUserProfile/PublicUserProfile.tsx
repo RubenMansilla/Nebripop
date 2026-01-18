@@ -196,25 +196,27 @@ export default function PublicUserProfile({
             </div>
 
             {/* ===== CONTENT ===== */}
-            {activeTab === "products" && (
-                <div className="public-user-section">
-                    {products.length === 0 ? (
-                        <p className="empty-text">
-                            Este usuario no tiene productos publicados
-                        </p>
-                    ) : (
-                        <ul className="public-user-products">
-                            {products.map((product) => (
-                                <Product
-                                    key={product.id}
-                                    product={product}
-                                    mode="public"
-                                />
-                            ))}
-                        </ul>
-                    )}
-                </div>
-            )}
+          {activeTab === "products" && (
+  <div className="public-user-section">
+    {products.length === 0 ? (
+      <p className="empty-text">
+        Este usuario no tiene productos publicados
+      </p>
+    ) : (
+      <ul className="public-user-products">
+        {products.map((product) => (
+          <li key={product.id}>
+            <Product
+              product={product}
+              mode="public"
+            />
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
+
 
             {activeTab === "reviews" && (
                 <div className="public-user-section">

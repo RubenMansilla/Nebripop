@@ -76,13 +76,11 @@
 .public-user-rating .star {
   width: 16px;
   height: 16px;
-  fill: #d1d5db;
-  /* gris por defecto (coincide con Review.css si lo tienes igual) */
+  fill: #d1d5db; /* gris por defecto (coincide con Review.css si lo tienes igual) */
 }
 
 .public-user-rating .star.filled {
-  fill: #facc15;
-  /* amarillo (mismo estilo que Review) */
+  fill: #facc15; /* amarillo (mismo estilo que Review) */
 }
 
 .rating-average {
@@ -148,22 +146,28 @@
 }
 
 /* ================= PRODUCTOS ================= */
+/* Grid robusto tipo wallapop, varios por fila incluso en móvil */
 
 .public-user-products {
   list-style: none;
-  padding: 0;
   margin: 0;
   width: 100%;
+  padding: 10px;
 
-  /* Estilo basado en product-container de Published.css (sin borde) */
   background-color: #ffffff;
+  border: 1.5px solid var(--beige);
   border-radius: 12px;
-  padding: 20px;
   margin-top: 10px;
 
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+/* li envolviendo cada Product */
+.public-user-products > li {
+  width: 100%;
 }
 
 /* Ajuste visual para cards Product */
@@ -172,7 +176,14 @@
   border-radius: 14px;
   overflow: hidden;
   transition: box-shadow 0.2s ease;
-  /* SIN hover extra en el perfil público */
+}
+
+/* En pantallas grandes damos un poco más de aire */
+@media (min-width: 900px) {
+  .public-user-products {
+    gap: 20px;
+    padding: 20px;
+  }
 }
 
 /* ================= REVIEWS ================= */
@@ -200,22 +211,6 @@
 
   .public-user-section {
     padding: 20px;
-  }
-}
-
-/* Grid responsive como Published.css */
-
-@media (max-width: 600px) {
-  .public-user-products {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    padding: 10px;
-  }
-}
-
-@media (max-width: 787px) {
-  .public-user-products {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -257,6 +252,7 @@
 }
 
 /* ================= BOTÓN FAVORITO USUARIO ================= */
+/* (lo dejo tal cual lo tenías) */
 
 .fav-user-btn {
   background: transparent;
@@ -289,6 +285,7 @@
 /* SVG FAVORITO (relleno) */
 .fav-icon-svg.filled {
   fill: #e67b7b;
+  /* rosita relleno */
   stroke: #e67b7b;
 }
 
@@ -299,17 +296,9 @@
   border: none !important;
 }
 
-
-.fav-icon-svg.filled {
-  fill: #e67b7b;
-  /* rosita relleno */
-  stroke: #e67b7b;
-}
-
 .fav-user-btn:hover {
   opacity: 0.85;
 }
-
 
 .fav-user-btn .fav-icon {
   font-size: 14px;
@@ -329,4 +318,22 @@
 
 .fav-user-btn.active:hover {
   background: #ffdede;
+}
+/* === FIX: en móvil forzamos 2 columnas sí o sí === */
+@media (max-width: 600px) {
+  .public-user-products {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px;
+    padding: 10px;
+  }
+}
+
+/* === FIX: evitar que las stats del perfil cojan el fondo blanco de otras vistas === */
+@media (max-width: 900px) {
+  .public-user-stats .stat {
+    background-color: transparent !important;
+    border: none;
+    padding: 0;
+  }
 }
