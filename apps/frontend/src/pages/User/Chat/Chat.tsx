@@ -178,7 +178,6 @@ const buildOfferActionContent = (args: {
   if (action === "reject") visible = "Oferta rechazada ❌";
   if (action === "counter") visible = `Contraoferta: ${offerAmount}€`;
 
-  // En accept: añadimos paylink con el importe aceptado
   const base = `${visible} /product/${productId} /offer:${offerAmount} /offer_action:${action} /offer_ref:${refOfferMsgId}`;
 
   if (action === "accept") {
@@ -187,6 +186,25 @@ const buildOfferActionContent = (args: {
   }
 
   return base;
+};
+
+// ===================== ORDENAR CHATS POR ÚLTIMO MENSAJE =====================
+const getChatLastTs = (c: ChatSummary) => {
+  const d = c.lastMessage?.createdAt;
+  const t = d ? new Date(d).getTime() : 0;
+  return Number.isFinite(t) ? t : 0;
+};
+
+const sortChatsByLastMessageDesc = (arr: ChatSummary[]) => {
+  const copy = [...arr];
+  copy.sort((a, b) => {
+    const tb = getChatLastTs(b);
+    const ta = getChatLastTs(a);
+    if (tb !== ta) return tb - ta;
+    // fallback estable por id
+    return Number(b.id) - Number(a.id);
+  });
+  return copy;
 };
 
 export default function ChatPage() {
@@ -274,7 +292,9 @@ export default function ChatPage() {
             : [];
 
         const safe = raw.map(normalizeChatSummary).filter(Boolean) as ChatSummary[];
-        setChats(safe);
+
+        // ✅ ORDENAR POR ÚLTIMO MENSAJE
+        setChats(sortChatsByLastMessageDesc(safe));
 
         setSelectedChat((prev) => {
           if (!prev) return null;
@@ -439,6 +459,38 @@ export default function ChatPage() {
     }
   };
 
+  // ===================== Actualizar lastMessage + reordenar =====================
+  const bumpChatToTopWithLastMessage = (chatId: number, lastMsg: { id: number; content: string; createdAt: string }) => {
+    setChats((prev) => {
+      const updated = prev.map((c) =>
+        c.id === chatId
+          ? {
+              ...c,
+              lastMessage: {
+                id: Number(lastMsg.id),
+                content: String(lastMsg.content ?? ""),
+                createdAt: String(lastMsg.createdAt ?? new Date().toISOString()),
+              },
+            }
+          : c
+      );
+      return sortChatsByLastMessageDesc(updated);
+    });
+
+    // Si el chat activo es este, también actualizamos selectedChat.lastMessage para que el header/snippet cuadre
+    setSelectedChat((prev) => {
+      if (!prev || prev.id !== chatId) return prev;
+      return {
+        ...prev,
+        lastMessage: {
+          id: Number(lastMsg.id),
+          content: String(lastMsg.content ?? ""),
+          createdAt: String(lastMsg.createdAt ?? new Date().toISOString()),
+        },
+      };
+    });
+  };
+
   // ===================== Seleccionar chat =====================
   const handleSelectChat = async (chat: ChatSummary) => {
     setSelectedChat(chat);
@@ -470,6 +522,12 @@ export default function ChatPage() {
 
       setMessages(safeMsgs);
       await resolveChatProductsFromMessages(safeMsgs);
+
+      // ✅ si el backend no manda lastMessage, lo inferimos de los mensajes cargados
+      const last = safeMsgs[safeMsgs.length - 1];
+      if (last) {
+        bumpChatToTopWithLastMessage(chat.id, { id: last.id, content: last.content, createdAt: last.createdAt });
+      }
     } catch (err) {
       console.error("getChatMessages error:", err);
       setMessages([]);
@@ -503,7 +561,7 @@ export default function ChatPage() {
           : [];
 
       const safe = rawUpdated.map(normalizeChatSummary).filter(Boolean) as ChatSummary[];
-      setChats(safe);
+      setChats(sortChatsByLastMessageDesc(safe));
 
       const chosen =
         (created?.id ? safe.find((c) => c.id === created.id) : null) || (created ? created : null);
@@ -521,45 +579,54 @@ export default function ChatPage() {
   };
 
   // ===================== SOCKET: recibir mensajes =====================
-useEffect(() => {
-  if (!selectedChat) return;
+  useEffect(() => {
+    if (!selectedChat) return;
 
-  const socket = getChatSocket();
+    const socket = getChatSocket();
 
-  const handler = (raw: IncomingSocketMessage) => {
-    const chatId = raw.chatId ?? raw.chat?.id;
-    if (!chatId) return;
+    const handler = (raw: IncomingSocketMessage) => {
+      const chatId = raw.chatId ?? raw.chat?.id;
+      if (!chatId) return;
 
-    if (chatId === selectedChat.id) {
-      setMessages((prev) => {
-        if (prev.some((m) => m.id === raw.id)) return prev;
-
-        const safeSender =
-          normalizeUserLite((raw as any).sender) || { id: 0, fullName: "Usuario" };
-
-        const safeMsg: ChatMessageType = {
+      // ✅ actualiza lastMessage + reordena lista SIEMPRE que llegue mensaje
+      if (raw?.id && raw?.createdAt) {
+        bumpChatToTopWithLastMessage(chatId, {
           id: Number(raw.id),
           content: String(raw.content ?? ""),
           createdAt: String(raw.createdAt ?? new Date().toISOString()),
-          sender: safeSender,
-        };
+        });
+      }
 
-        const pid = extractProductIdFromText(safeMsg.content);
-        if (pid) bumpProductToFront(pid);
+      // ✅ si el mensaje es del chat abierto, lo añadimos
+      if (chatId === selectedChat.id) {
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === raw.id)) return prev;
 
-        return [...prev, safeMsg];
-      });
-    }
-  };
+          const safeSender =
+            normalizeUserLite((raw as any).sender) || { id: 0, fullName: "Usuario" };
 
-  socket.on("new_message", handler);
+          const safeMsg: ChatMessageType = {
+            id: Number(raw.id),
+            content: String(raw.content ?? ""),
+            createdAt: String(raw.createdAt ?? new Date().toISOString()),
+            sender: safeSender,
+          };
 
-  return () => {
-    socket.off("new_message", handler); // ✅ ahora el cleanup devuelve void
-  };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [selectedChat]);
+          const pid = extractProductIdFromText(safeMsg.content);
+          if (pid) bumpProductToFront(pid);
 
+          return [...prev, safeMsg];
+        });
+      }
+    };
+
+    socket.on("new_message", handler);
+
+    return () => {
+      socket.off("new_message", handler);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat]);
 
   // ===================== Enviar mensaje normal (socket) =====================
   const handleSend = async () => {
@@ -578,7 +645,10 @@ useEffect(() => {
           if (!ackMsg?.id) return;
 
           const safeSender =
-            normalizeUserLite((ackMsg as any).sender) || { id: myId, fullName: user.fullName ?? "Tú" };
+            normalizeUserLite((ackMsg as any).sender) || {
+              id: myId,
+              fullName: (user as any)?.fullName ?? "Tú",
+            };
 
           const safeAck: ChatMessageType = {
             id: Number(ackMsg.id),
@@ -587,7 +657,15 @@ useEffect(() => {
             sender: safeSender,
           };
 
+          // ✅ añade mensaje al chat abierto
           setMessages((prev) => (prev.some((m) => m.id === safeAck.id) ? prev : [...prev, safeAck]));
+
+          // ✅ actualiza lastMessage + reordena lista
+          bumpChatToTopWithLastMessage(selectedChat.id, {
+            id: safeAck.id,
+            content: safeAck.content,
+            createdAt: safeAck.createdAt,
+          });
         }
       );
     } catch (err) {
@@ -614,7 +692,7 @@ useEffect(() => {
         if (!ackMsg?.id) return;
 
         const safeSender =
-          normalizeUserLite((ackMsg as any).sender) || { id: myId, fullName: user?.fullName ?? "Tú" };
+          normalizeUserLite((ackMsg as any).sender) || { id: myId, fullName: (user as any)?.fullName ?? "Tú" };
 
         const safeAck: ChatMessageType = {
           id: Number(ackMsg.id),
@@ -624,6 +702,13 @@ useEffect(() => {
         };
 
         setMessages((prev) => (prev.some((m) => m.id === safeAck.id) ? prev : [...prev, safeAck]));
+
+        // ✅ ordena chats por reciente
+        bumpChatToTopWithLastMessage(selectedChat.id, {
+          id: safeAck.id,
+          content: safeAck.content,
+          createdAt: safeAck.createdAt,
+        });
       }
     );
   };
@@ -642,6 +727,9 @@ useEffect(() => {
     return grouped;
   }, [messages]);
 
+  // ✅ chats ya ordenados
+  const orderedChats = useMemo(() => sortChatsByLastMessageDesc(chats), [chats]);
+
   // ===================== Oferta: resolver “hilo” =====================
   type OfferThreadResolved = {
     rootMsg: ChatMessageType; // oferta original
@@ -653,7 +741,6 @@ useEffect(() => {
   const resolveOfferThread = (rootMsg: ChatMessageType): OfferThreadResolved => {
     const rootId = rootMsg.id;
 
-    // acciones relacionadas a esa raíz
     const related = messages
       .filter((m) => extractOfferRefFromText(m.content) === rootId)
       .map((m) => ({
@@ -664,18 +751,14 @@ useEffect(() => {
       .filter((x) => x.action)
       .sort((a, b) => a.ts - b.ts);
 
-    const lastAccept = [...related].reverse().find((x) => x.action === "accept")?.msg ?? null;
-    const lastReject = [...related].reverse().find((x) => x.action === "reject")?.msg ?? null;
     const lastCounter = [...related].reverse().find((x) => x.action === "counter")?.msg ?? null;
 
-    // terminal si hay accept o reject posterior a todo
     const terminal = (() => {
       const lastTerminal = [...related].reverse().find((x) => x.action === "accept" || x.action === "reject");
       if (!lastTerminal) return null;
       return lastTerminal.action as "accept" | "reject";
     })();
 
-    // lastNode = última “oferta activa”: el último counter si existe, si no el root
     const lastNode = lastCounter ?? rootMsg;
 
     return { rootMsg, lastNode, terminalAction: terminal, lastCounter };
@@ -767,7 +850,6 @@ useEffect(() => {
 
     const mineNode = Number(offerNodeMsg.sender.id) === myId;
 
-    // Resolvemos hilo desde root
     const thread = resolveOfferThread(rootOfferMsg);
 
     const statusLabel =
@@ -779,7 +861,6 @@ useEffect(() => {
         ? "Contraoferta 🔁"
         : null;
 
-    // Si está aceptada: sacar paylink del último accept
     const payLink =
       thread.terminalAction === "accept"
         ? (() => {
@@ -791,13 +872,7 @@ useEffect(() => {
           })()
         : null;
 
-    // ✅ Solo mostramos acciones en el ÚLTIMO nodo activo del hilo
     const isLastActiveNode = thread.lastNode.id === offerNodeMsg.id;
-
-    // ✅ Acciones permitidas si:
-    // - el hilo NO está terminado
-    // - y este nodo es el último activo
-    // - y el nodo NO es mío (porque yo ya propuse ese importe)
     const canRespond = !thread.terminalAction && isLastActiveNode && !mineNode;
 
     return (
@@ -830,7 +905,6 @@ useEffect(() => {
           </div>
         </Link>
 
-        {/* ✅ Botones de acción sobre el último nodo activo */}
         {canRespond && (
           <div className="chat-offer-actions">
             <button
@@ -839,9 +913,9 @@ useEffect(() => {
               onClick={() =>
                 sendOfferAction({
                   productId: pid,
-                  offerAmount, // ✅ aceptas este importe (sea oferta o contraoferta)
+                  offerAmount,
                   action: "accept",
-                  refOfferMsgId: rootOfferMsg.id, // ✅ SIEMPRE al root
+                  refOfferMsgId: rootOfferMsg.id,
                 })
               }
             >
@@ -869,14 +943,13 @@ useEffect(() => {
                   productId: pid,
                   offerAmount: counter,
                   action: "counter",
-                  refOfferMsgId: rootOfferMsg.id, // ✅ sigue el hilo
+                  refOfferMsgId: rootOfferMsg.id,
                 })
               }
             />
           </div>
         )}
 
-        {/* ✅ Si aceptada: botón comprar */}
         {thread.terminalAction === "accept" && payLink && (
           <div className="chat-offer-pay">
             <button className="chat-offer-btn buy" type="button" onClick={() => navigate(payLink)}>
@@ -964,8 +1037,12 @@ useEffect(() => {
             {loadingChats ? (
               <div className="chat-small-text">Cargando chats...</div>
             ) : (
-              chats.map((c) => {
+              orderedChats.map((c) => {
                 const other = getOtherUser(c);
+
+                const preview = c.lastMessage?.content
+                  ? stripAllMarkers(c.lastMessage.content)
+                  : "Sin mensajes";
 
                 return (
                   <div
@@ -984,9 +1061,7 @@ useEffect(() => {
                     <div className="chat-user-texts">
                       <span className="chat-user-name">{other.fullName}</span>
                       <span className="chat-user-sub">
-                        {c.lastMessage?.content
-                          ? stripAllMarkers(c.lastMessage.content).slice(0, 26) + "..."
-                          : "Sin mensajes"}
+                        {preview.length > 26 ? preview.slice(0, 26) + "..." : preview}
                       </span>
                     </div>
                   </div>
@@ -1054,9 +1129,6 @@ useEffect(() => {
                       {msgs.map((msg) => {
                         const mine = Number(msg.sender.id) === myId;
 
-                        // ✅ Pintamos tarjeta SOLO si es “nodo de oferta” (oferta raíz o contraoferta)
-                        // - Si es oferta raíz: root = msg
-                        // - Si es contraoferta: root = mensaje al que referencia /offer_ref
                         let offerCard: React.ReactNode = null;
 
                         if (isOfferNode(msg.content)) {
@@ -1064,18 +1136,14 @@ useEffect(() => {
                           const isCounter = action === "counter";
 
                           if (!isCounter) {
-                            // oferta raíz
                             offerCard = renderOfferNodeAttachment(msg, msg);
                           } else {
-                            // contraoferta: necesita encontrar root
                             const rootId = extractOfferRefFromText(msg.content);
-                            const rootMsg =
-                              rootId != null ? messages.find((m) => m.id === rootId) : null;
+                            const rootMsg = rootId != null ? messages.find((m) => m.id === rootId) : null;
 
                             if (rootMsg && isOfferNode(rootMsg.content)) {
                               offerCard = renderOfferNodeAttachment(msg, rootMsg);
                             } else {
-                              // fallback: si no encontramos root, igualmente intentamos render
                               offerCard = renderOfferNodeAttachment(msg, msg);
                             }
                           }
