@@ -1,0 +1,310 @@
+/* =========================================================
+   CHAT POPUP (estilo alineado con Chat.css)
+   - Misma paleta (beige), tamaños de burbujas, sombras, etc.
+========================================================= */
+
+.chatpop-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.chatpop-box{
+  width: 520px;
+  max-width: 100%;
+  height: 720px;
+  max-height: 90vh;
+
+  background: #ffffff;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* Close button */
+.chatpop-close{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+
+  border: none;
+  background: rgba(0,0,0,.06);
+  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+
+  cursor: pointer;
+  transition: transform .12s ease, background .15s ease;
+}
+
+.chatpop-close:hover{
+  background: rgba(0,0,0,.10);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+.chatpop-header{
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  align-items: center;
+  background: #fff;
+}
+
+.chatpop-seller-avatar{
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.04);
+  background: #f2f2f2;
+}
+
+.chatpop-header-info{
+  min-width: 0;
+}
+
+.chatpop-title{
+  margin: 0;
+  font-weight: 800;
+  color: #2b2b2b;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chatpop-subtitle{
+  margin: 2px 0 0;
+  color: #6b6b6b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   PRODUCTO (igual feeling que las tarjetas de Chat.css)
+========================================================= */
+.chatpop-product{
+  display: flex;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.chatpop-product-img{
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid rgba(0,0,0,0.04);
+  background: #f2f2f2;
+  flex: 0 0 46px;
+}
+
+.chatpop-product-info{
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+}
+
+.chatpop-product-name{
+  margin: 0;
+  font-weight: 900;
+  font-size: 13px;
+  color: #2b2b2b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chatpop-product-price{
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b6b6b;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+.chatpop-error{
+  margin: 10px 16px 0;
+  background: #ffe7e7;
+  color: #7b1414;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 13px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* =========================================================
+   MENSAJES (mismo look que .chat-messages y .message)
+========================================================= */
+.chatpop-messages{
+  flex: 1;
+  overflow: auto;
+  padding: 14px 16px;
+  background: #f7f5f2; /* igual que Chat.css */
+}
+
+.chatpop-loading,
+.chatpop-empty{
+  color: #777;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.chatpop-msg{
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.chatpop-msg.mine{
+  justify-content: flex-end;
+}
+
+/* Burbujas */
+.chatpop-bubble{
+  background: #d6c9b4; /* igual que .message */
+  padding: 9px 12px;
+  border-radius: 14px;
+  max-width: min(520px, 78%);
+
+  font-size: 13px;
+  line-height: 1.35;
+  color: #1f1f1f;
+
+  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  border: none;
+}
+
+.chatpop-msg.mine .chatpop-bubble{
+  background: #c0b299; /* igual que .message.own-message */
+}
+
+.chatpop-text{
+  margin: 0 0 4px 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.chatpop-date{
+  display: flex;
+  justify-content: flex-end;
+  font-size: 11px;
+  color: rgba(0,0,0,0.55);
+}
+
+/* =========================================================
+   INPUT BAR (igual que .chat-input-box)
+========================================================= */
+.chatpop-inputbar{
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border-top: 1px solid #eee;
+  background: #fff;
+}
+
+.chatpop-input{
+  flex: 1;
+  resize: none;
+
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+
+  transition: border 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chatpop-input:focus{
+  border-color: #d6c9b4;
+  box-shadow: 0 0 0 4px rgba(214, 201, 180, 0.25);
+}
+
+.chatpop-send{
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+
+  font-weight: 800;
+  cursor: pointer;
+
+  background: #d6c9b4;
+  color: #fff;
+
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.chatpop-send:hover{
+  background: #c9b79d;
+  transform: translateY(-1px);
+}
+
+.chatpop-send:disabled{
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================================================
+   SCROLLBARS suaves (opcional, igual idea)
+========================================================= */
+.chatpop-messages::-webkit-scrollbar{
+  width: 8px;
+}
+
+.chatpop-messages::-webkit-scrollbar-thumb{
+  background: rgba(0,0,0,0.12);
+  border-radius: 999px;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 520px){
+  .chatpop-box{
+    height: 86vh;
+  }
+
+  .chatpop-header{
+    padding: 12px 14px;
+  }
+
+  .chatpop-product{
+    padding: 10px 14px;
+  }
+
+  .chatpop-messages{
+    padding: 12px 14px;
+  }
+
+  .chatpop-inputbar{
+    padding: 10px;
+  }
+}
