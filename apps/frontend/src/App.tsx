@@ -19,7 +19,7 @@ import Solds from "./pages/User/Catalog/Sold/Solds";
 import Balance from "./pages/User/Wallet/Balance/Balance";
 import BankDetails from "./pages/User/Wallet/BankDetails/BankDetails";
 import History from "./pages/User/Wallet/History/History";
-import Chat from "./pages/User/Chat/Chat";
+import ChatListPage from "./pages/User/Chat/ChatListPage";
 import FavoritesProducts from "./pages/User/Favorites/Products/FavoritesProducts";
 import FavoritesProfiles from "./pages/User/Favorites/Profiles/FavoritesProfiles";
 import PurchasesOngoing from "./pages/User/Purchases/Ongoing/PurchasesOngoing";
@@ -93,15 +93,19 @@ export default function App() {
                                 </ProtectedRoute>
                             }
                         />
-
                         <Route path="/you" element={<User />} />
+
+                       // Ejemplo en tu App.tsx o Router
+
 
                         <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
-                            {/* Perfil */}
                             <Route path="/profile/info" element={<Info />} />
                             <Route path="/profile/reviews" element={<ReviewProfile />} />
-                            <Route path="/profile/chat" element={<Chat />} />
+
+                            <Route path="/profile/chat" element={<ChatListPage />} />
+                            <Route path="/profile/chat/:chatId" element={<ChatListPage />} />
+
                             <Route path="/profile/stats" element={<Stats />} />
 
                             {/* Catálogo */}

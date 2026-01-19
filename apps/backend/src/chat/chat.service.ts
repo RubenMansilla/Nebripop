@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Chat } from "./chat.entity";
@@ -148,6 +148,7 @@ export class ChatService {
   // Obtener mensajes de un chat
   // ==============================
   async getChatMessages(chatId: number) {
+
     const msgs = await this.msgRepo.find({
       where: { chat: { id: chatId } },
       order: { createdAt: "ASC" },

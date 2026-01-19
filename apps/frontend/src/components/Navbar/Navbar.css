@@ -64,6 +64,7 @@
   height: 38px;
   width: auto;
   object-fit: contain;
+  cursor: pointer;
 }
 
 /* ================================
@@ -208,6 +209,10 @@
   line-height: 1;
   padding-bottom: 2px;
   color: var(--gris-texto);
+}
+
+.mobile-logo {
+  cursor: pointer;
 }
 
 /* ====================================

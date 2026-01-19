@@ -36,6 +36,17 @@
     justify-content: center;
 }
 
+.sidebar-right.chat-mode {
+    padding: 0 !important;
+    display: block;
+    overflow: hidden;
+    background-color: #efe9df;
+    width: 85%;
+    justify-content: unset;
+    align-content: unset;
+    flex-wrap: nowrap;
+}
+
 @media (max-width: 1000px) and (min-width: 800px) {
     .sidebar-container {
         height: calc(100vh - 153.6px);
@@ -52,6 +63,12 @@
         width: 100%;
         gap: 10px;
         padding-inline: 20px;
+    }
+
+    .sidebar-right,
+    .sidebar-right.chat-mode {
+        width: 100%;
+        border-left: none;
     }
 
     .hide-left-sidebar {

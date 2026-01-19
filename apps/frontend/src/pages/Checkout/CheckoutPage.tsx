@@ -263,7 +263,7 @@ export default function CheckoutPage() {
 
   const effectiveSubtotal = useMemo(() => {
     if (!product) return 0;
-    if (parsedOffer !== null && parsedOffer > 0 && parsedOffer <= product.price) return parsedOffer;
+    if (parsedOffer !== null && parsedOffer > 0) return parsedOffer;
     return product.price;
   }, [product, parsedOffer]);
 

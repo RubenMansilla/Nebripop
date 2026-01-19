@@ -4,7 +4,11 @@ import type { ReactElement } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
 export default function ProtectedRoute({ children }: { children: ReactElement }) {
-    const { user, token } = useContext(AuthContext);
+    const { user, token, loading } = useContext(AuthContext);
+
+    if (loading) {
+        return null;
+    }
 
     if (!user || !token) {
         return <Navigate to="/" replace />;

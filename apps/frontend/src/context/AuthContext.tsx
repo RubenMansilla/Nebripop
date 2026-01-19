@@ -16,6 +16,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   token: string | null;
+  loading: boolean;
   login: (u: User, accessToken: string, refreshToken?: string) => void;
   logout: () => void;
   setUser: (u: User | null) => void;
@@ -24,41 +25,47 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
-  login: () => {},
-  logout: () => {},
-  setUser: () => {},
+  loading: true,
+  login: () => { },
+  logout: () => { },
+  setUser: () => { },
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [userState, setUserState] = useState<User | null>(null);
   const [tokenState, setTokenState] = useState<string | null>(null);
 
+  const [loading, setLoading] = useState(true);
+
   // 🟦 RESTAURAR SESIÓN
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token"); // accessToken (o token antiguo)
+    const restoreSession = () => {
+      const savedUser = localStorage.getItem("user");
+      const savedToken = localStorage.getItem("token");
 
-    if (savedUser && savedToken) {
-      try {
-        const parsed = JSON.parse(savedUser);
-        // ✅ Normalizamos id para evitar comparaciones "7" vs 7
-        setUserState({
-          ...parsed,
-          id: Number(parsed.id),
-        });
-        setTokenState(savedToken);
-      } catch (e) {
-        console.error("Error parsing saved user:", e);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
+      if (savedUser && savedToken) {
+        try {
+          const parsed = JSON.parse(savedUser);
+          setUserState({
+            ...parsed,
+            id: Number(parsed.id),
+          });
+          setTokenState(savedToken);
+        } catch (e) {
+          console.error("Error parsing saved user:", e);
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+        }
       }
-    }
+      setLoading(false);
+    };
+
+    restoreSession();
   }, []);
 
-  // 🟩 LOGIN (nuevo + compatible)
+  // 🟩 LOGIN
   const login = (u: User, accessToken: string, refreshToken?: string) => {
-    // ✅ Normalizamos id
     setUserState({ ...u, id: Number((u as any).id) });
     setTokenState(accessToken);
 
@@ -99,6 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user: userState,
         token: tokenState,
+        loading,
         login,
         logout,
         setUser: updateUserState,
