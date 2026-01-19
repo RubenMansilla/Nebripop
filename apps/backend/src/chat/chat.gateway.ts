@@ -14,18 +14,18 @@ import { ChatService } from './chat.service';
     // ✅ Permite localhost + Vercel + lo que pongas por ENV
     origin: [
       'http://localhost:5173',
-      process.env.FRONTEND_URL,
       'https://nebripop.vercel.app',
-      process.env.CORS_ORIGIN,
+      process.env.FRONTEND_URL,
     ].filter(Boolean) as string[],
     credentials: true,
   },
+  transports: ['websocket', 'polling'],
 })
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService) { }
 
   @SubscribeMessage('join_chat')
   handleJoin(@MessageBody() data: { chatId: number }, @ConnectedSocket() client: Socket) {
