@@ -59,6 +59,7 @@ export class ChatController {
 
         // Definir el nombre de la sala 
         const roomName = `chat_${chatId}`;
+        console.log(`🔔 HTTP -> SOCKET: Emitiendo evento 'new_message' a sala '${roomName}'`);
 
         // Emitir el evento a esa sala
         // Enviar el objeto extendido con chatId para facilitar la vida al frontend
