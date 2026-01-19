@@ -160,14 +160,22 @@
 .chat-sidebar-chats {
   flex: 1;
   overflow-y: auto;
-  padding: 0 10px 10px 10px;
+
+  /* ✅ FIX: un poquito de padding arriba para que el primer item (y su badge) no quede pegado
+     al borde del scroll y pueda "cortarse" si hay transforms/box-shadows */
+  padding: 8px 10px 10px 10px;
 }
 
 /* Item (chat y búsqueda) */
 .chat-user-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+
+  /* ✅ FIX: aseguramos que el badge nunca se recorte */
+  overflow: visible;
+
   padding: 10px 10px;
   border-radius: 12px;
   cursor: pointer;
@@ -754,4 +762,50 @@
 
 .chat-offer-btn.counter-cancel {
   border-color: #eee;
+}
+
+/* Contenedor meta (derecha) */
+.chat-user-meta {
+  margin-left: auto;              /* empuja a la derecha */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;                /* reserva un poquito de espacio */
+}
+
+/* Badge (bolita verde) */
+.chat-unread-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 20px;
+  min-width: 20px;                /* círculo para 1 dígito */
+  padding: 0 6px;                 /* se estira para 2-3 dígitos */
+
+  border-radius: 999px;           /* pill/círculo tipo WhatsApp */
+  background: #2ec22e;            /* verde WhatsApp */
+  color: #fff;
+
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* ✅ FIX: quitamos el translateY para evitar que el primer badge pueda quedar "cortado" arriba */
+.chat-unread-badge {
+  transform: none;
+}
+
+/* Opcional: cuando el chat está activo, el badge se mantiene visible y “limpio” */
+.chat-user-item.active .chat-unread-badge {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.10);
+}
+
+/* Opcional: si tu .chat-user-item tiene height fijo, esto lo deja perfecto */
+.chat-user-item .chat-user-meta {
+  align-self: center;
 }
