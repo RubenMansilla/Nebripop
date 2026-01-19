@@ -107,7 +107,6 @@
   display: flex;
   flex-direction: column;
   background: #E0C9A4;
-  
 }
 
 .chat-sidebar-header {
@@ -315,7 +314,115 @@
   color: #2b2b2b;
 }
 
-/* Mensajes */
+/* =========================================================
+   CARRUSEL DE PRODUCTOS DEL CHAT (scroll horizontal)
+   - último producto mencionado aparece el primero (lo controla TSX)
+========================================================= */
+
+.chat-products-strip {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+
+  /* sensación suave */
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chat-products-loading {
+  font-size: 13px;
+  color: #777;
+  font-weight: 800;
+  padding: 2px 2px;
+}
+
+.chat-product-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 220px;
+  max-width: 260px;
+
+  padding: 8px 10px;
+  border-radius: 14px;
+  border: 1px solid #eee;
+  background: #faf8f5;
+
+  text-decoration: none;
+  color: inherit;
+
+  flex: 0 0 auto;
+  transition: transform 0.12s ease, background 0.15s ease, border 0.15s ease;
+}
+
+.chat-product-pill:hover {
+  background: #f2ede6;
+  border-color: #e7ddcf;
+  transform: translateY(-1px);
+}
+
+.chat-product-pill:active {
+  transform: translateY(0);
+}
+
+.chat-product-pill-img {
+  width: 40px; /* Ajustamos el tamaño de la imagen */
+  height: 40px; /* Ajustamos el tamaño de la imagen */
+  border-radius: 12px;
+  object-fit: cover; /* Mantiene la proporción sin deformar la imagen */
+  flex: 0 0 40px; /* Definimos el tamaño máximo */
+  background: #f2f2f2;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.chat-product-pill-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-product-pill-name {
+  font-size: 13px;
+  font-weight: 900;
+  color: #2b2b2b;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chat-product-pill-price {
+  font-size: 12px;
+  color: #6b6b6b;
+  font-weight: 800;
+}
+
+/* Scrollbar horizontal del carrusel */
+.chat-products-strip::-webkit-scrollbar {
+  height: 8px;
+}
+
+.chat-products-strip::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 999px;
+}
+
+.chat-products-strip::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* =========================================================
+   Mensajes
+========================================================= */
+
 .chat-messages {
   flex: 1;
   overflow-y: auto;
@@ -426,6 +533,11 @@
   .chat-sidebar {
     width: 320px;
   }
+
+  .chat-product-pill {
+    min-width: 210px;
+    max-width: 240px;
+  }
 }
 
 /* Móvil: sidebar arriba, chat abajo */
@@ -444,6 +556,15 @@
   .chat-messages {
     min-height: 320px;
   }
+
+  .chat-products-strip {
+    padding: 10px 10px;
+  }
+
+  .chat-product-pill {
+    min-width: 200px;
+    max-width: 230px;
+  }
 }
 
 /* Scrollbars suaves (opcional) */
@@ -458,4 +579,179 @@
 .chat-messages::-webkit-scrollbar-thumb {
   background: rgba(0,0,0,0.12);
   border-radius: 999px;
+}
+
+/* =========================================================
+   PRODUCTO LIGADO AL CHAT (tarjeta compacta)
+   (lo dejo por compatibilidad, pero ya estás usando el carrusel)
+========================================================= */
+
+.chat-product-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin: 10px 16px 0 16px;
+  padding: 8px 10px;
+
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+
+  box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+  max-width: 520px;
+}
+
+.chat-product-img {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex: 0 0 46px;
+  background: #f2f2f2;
+}
+
+.chat-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.chat-product-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #2b2b2b;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.chat-product-price {
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b6b6b;
+}
+
+.chat-product-link {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #b07c2b;
+  text-decoration: none;
+  width: fit-content;
+}
+
+.chat-product-link:hover {
+  text-decoration: underline;
+}
+
+/* En móvil ocupa todo el ancho y ajusta el texto */
+@media (max-width: 780px) {
+  .chat-product-card {
+    margin: 10px 12px 0 12px;
+    max-width: 100%;
+  }
+
+  .chat-product-name {
+    max-width: 220px;
+  }
+}
+
+.chat-offer-attachment-img {
+  max-width: 60px;
+  border-radius: 12px;
+}
+
+/* ===== OFERTAS ===== */
+.chat-offer-attachment-wrap {
+  margin-bottom: 8px;
+}
+
+.chat-offer-attachment {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+}
+
+.chat-offer-attachment-img {
+  width: 46px;
+  height: 46px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.chat-offer-attachment-name {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.chat-offer-attachment-prices {
+  font-size: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.chat-offer-attachment-label {
+  color: #777;
+  font-weight: 600;
+}
+
+.chat-offer-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chat-offer-btn {
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.chat-offer-btn.accept {
+  border-color: #cdeedc;
+}
+
+.chat-offer-btn.reject {
+  border-color: #ffd0d0;
+}
+
+.chat-offer-btn.counter {
+  border-color: #d6e4ff;
+}
+
+.chat-offer-counter {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.chat-offer-counter input {
+  width: 90px;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-weight: 700;
+}
+
+.chat-offer-btn.counter-send {
+  border-color: #d6e4ff;
+}
+
+.chat-offer-btn.counter-cancel {
+  border-color: #eee;
 }

@@ -1,5 +1,5 @@
 // apps/frontend/src/pages/CheckOut/CheckoutPage.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./CheckoutPage.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPurchase } from "../../api/purchases.api";
@@ -35,6 +35,7 @@ export default function CheckoutPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const productIdParam = searchParams.get("productId");
+  const offerParam = searchParams.get("offer"); // ✅ NUEVO
 
   // =========================
   // ESTADO DEL FORMULARIO DE ENVÍO
@@ -58,18 +59,23 @@ export default function CheckoutPage() {
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
 
+  // =========================
+  // PRECIO ACORDADO (OFERTA)
+  // =========================
+  const parsedOffer = useMemo(() => {
+    if (!offerParam) return null;
+    const raw = String(offerParam).replace(",", ".");
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
+  }, [offerParam]);
+
   // Manejo genérico de campos
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     // Campos SOLO texto (no números): nombre, apellidos, ciudad
     if (name === "firstName" || name === "lastName" || name === "city") {
-      const cleaned = value.replace(
-        /[^a-zA-ZÁÉÍÓÚáéíóúÜüÑñ\s'-]/g,
-        "",
-      );
+      const cleaned = value.replace(/[^a-zA-ZÁÉÍÓÚáéíóúÜüÑñ\s'-]/g, "");
       setForm((prev) => ({
         ...prev,
         [name]: cleaned,
@@ -77,7 +83,6 @@ export default function CheckoutPage() {
       return;
     }
 
-    // El resto de campos de texto normales
     setForm((prev) => ({
       ...prev,
       [name]: value,
@@ -85,9 +90,7 @@ export default function CheckoutPage() {
   };
 
   // Campos numéricos específicos
-  const handlePostcodeChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handlePostcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const digits = e.target.value.replace(/\D/g, "").slice(0, 5);
     setForm((prev) => ({
       ...prev,
@@ -203,12 +206,33 @@ export default function CheckoutPage() {
       return false;
     }
 
+    // ✅ Validación de oferta si viene
+    if (offerParam) {
+      if (parsedOffer === null || parsedOffer <= 0) {
+        setErrorMsg("La oferta recibida no es válida.");
+        return false;
+      }
+      // Si ya tenemos producto, evitamos que paguen más que el precio real
+      if (product && parsedOffer > product.price) {
+        setErrorMsg("La oferta no puede ser superior al precio original del producto.");
+        return false;
+      }
+    }
+
     return true;
   };
 
+  /**
+   * ✅ Importante:
+   * Para que se cobre la oferta, el backend debe aceptar un campo con el precio acordado.
+   * Aquí lo mandamos como `agreedPrice`.
+   *
+   * Si tu DTO en backend NO lo permite aún, te dará error y no continuamos (mejor que cobrar mal).
+   */
   const buildPayload = (paymentMethod: "external" | "wallet") => {
     const productId = Number(productIdParam);
-    return {
+
+    const payload: any = {
       productId,
       paymentMethod,
       shippingEmail: form.email,
@@ -221,7 +245,33 @@ export default function CheckoutPage() {
       shippingPhone: form.phone || undefined,
       shippingCountry: form.country,
     };
+
+    // ✅ solo si la oferta es válida y ya tenemos producto
+    if (product && parsedOffer !== null && parsedOffer > 0 && parsedOffer <= product.price) {
+      payload.agreedPrice = parsedOffer; // 👈 backend debe usarlo para calcular
+    }
+
+    return payload;
   };
+
+  // =========================
+  // Cálculos de importes
+  // =========================
+  const shippingCost = 1.99;
+
+  const effectiveSubtotal = useMemo(() => {
+    if (!product) return 0;
+    if (parsedOffer !== null && parsedOffer > 0 && parsedOffer <= product.price) return parsedOffer;
+    return product.price;
+  }, [product, parsedOffer]);
+
+  const iva = effectiveSubtotal * 0.21;
+  const total = effectiveSubtotal + iva + shippingCost;
+
+  const firstImage =
+    product?.images && product.images.length > 0 ? product.images[0].image_url : null;
+
+  const isDisabled = loadingProduct || !product;
 
   // =========================
   // Pagar con método EXTERNO (PayPal)
@@ -235,7 +285,9 @@ export default function CheckoutPage() {
     try {
       setIsPayingExternal(true);
       const purchaseResponse = await createPurchase(payload);
+
       notify("transactions", "Compra realizada con éxito");
+
       navigate("/purchase/completed", {
         replace: true,
         state: {
@@ -244,16 +296,32 @@ export default function CheckoutPage() {
           orderId: purchaseResponse.id || `NP-${Date.now()}`,
           image: firstImage,
           customerName: `${form.firstName} ${form.lastName}`.trim(),
-          paymentMethod: isPayingWallet ? "Monedero NebriPop" : "PayPal",
+          paymentMethod: "PayPal",
           shippingAddress: form.address,
           shippingComplement: form.complement,
           shippingCity: form.city,
           shippingProvince: form.province,
-          shippingPostcode: form.postcode
-        }
+          shippingPostcode: form.postcode,
+          // ✅ extra por si lo quieres mostrar en completed
+          agreedPrice: effectiveSubtotal,
+          originalPrice: product?.price,
+        },
       });
     } catch (err: any) {
-      setErrorMsg(err.message || "Error al procesar la compra.");
+      const msg = err?.message || "Error al procesar la compra.";
+
+      // ✅ Si el backend no acepta agreedPrice, mejor avisar claramente
+      if (
+        String(msg).toLowerCase().includes("agreedprice") ||
+        String(msg).toLowerCase().includes("should not exist")
+      ) {
+        setErrorMsg(
+          "El servidor todavía no acepta el precio de oferta. Necesitamos adaptar el backend para cobrar el precio acordado."
+        );
+      } else {
+        setErrorMsg(msg);
+      }
+
       toast.error("Error al procesar la compra");
     } finally {
       setIsPayingExternal(false);
@@ -272,7 +340,9 @@ export default function CheckoutPage() {
     try {
       setIsPayingWallet(true);
       const purchaseResponse = await createPurchase(payload);
+
       notify("transactions", "Compra realizada con éxito");
+
       navigate("/purchase/completed", {
         replace: true,
         state: {
@@ -281,39 +351,36 @@ export default function CheckoutPage() {
           orderId: purchaseResponse.id || `NP-${Date.now()}`,
           image: firstImage,
           customerName: `${form.firstName} ${form.lastName}`.trim(),
-          paymentMethod: isPayingWallet ? "Monedero NebriPop" : "PayPal",
+          paymentMethod: "Monedero NebriPop",
           shippingAddress: form.address,
           shippingComplement: form.complement,
           shippingCity: form.city,
           shippingProvince: form.province,
-          shippingPostcode: form.postcode
-        }
+          shippingPostcode: form.postcode,
+          // ✅ extra
+          agreedPrice: effectiveSubtotal,
+          originalPrice: product?.price,
+        },
       });
     } catch (err: any) {
-      setErrorMsg(
-        err.message || "Error al procesar la compra con monedero.",
-      );
+      const msg = err?.message || "Error al procesar la compra con monedero.";
+
+      if (
+        String(msg).toLowerCase().includes("agreedprice") ||
+        String(msg).toLowerCase().includes("should not exist")
+      ) {
+        setErrorMsg(
+          "El servidor todavía no acepta el precio de oferta. Necesitamos adaptar el backend para cobrar el precio acordado."
+        );
+      } else {
+        setErrorMsg(msg);
+      }
+
       toast.error("Error al procesar la compra");
     } finally {
       setIsPayingWallet(false);
     }
   };
-
-  // =========================
-  // Cálculos de importes
-  // =========================
-  const shippingCost = 1.99;
-
-  const subtotal = product ? product.price : 0;
-  const iva = subtotal * 0.21;
-  const total = subtotal + iva + shippingCost;
-
-  const firstImage =
-    product?.images && product.images.length > 0
-      ? product.images[0].image_url
-      : null;
-
-  const isDisabled = loadingProduct || !product;
 
   return (
     <div className="checkout-page">
@@ -328,6 +395,20 @@ export default function CheckoutPage() {
         <section className="checkout-left">
           {/* Botones de pago rápido */}
           <div className="payment-buttons-card">
+            {/* ✅ Aviso oferta */}
+            {product &&
+              parsedOffer !== null &&
+              parsedOffer > 0 &&
+              parsedOffer <= product.price && (
+                <div className="checkout-offer-banner">
+                  Estás pagando con precio acordado por oferta:{" "}
+                  <b>{formatPrice(parsedOffer)}</b>{" "}
+                  <span style={{ opacity: 0.8 }}>
+                    (precio original: {formatPrice(product.price)})
+                  </span>
+                </div>
+              )}
+
             <button
               className="payment-btn payment-btn-paypal"
               type="button"
@@ -346,9 +427,7 @@ export default function CheckoutPage() {
 
             <div className="divider">
               <span className="divider-line" />
-              <span className="divider-text">
-                O paga con tu monedero NebriPop
-              </span>
+              <span className="divider-text">O paga con tu monedero NebriPop</span>
               <span className="divider-line" />
             </div>
 
@@ -364,9 +443,7 @@ export default function CheckoutPage() {
               ) : (
                 <>
                   <span>💰 Pagar con monedero NebriPop</span>
-                  <span className="wallet-pay-sub">
-                    Se descontará del saldo de tu cuenta
-                  </span>
+                  <span className="wallet-pay-sub">Se descontará del saldo de tu cuenta</span>
                 </>
               )}
             </button>
@@ -388,17 +465,13 @@ export default function CheckoutPage() {
                 <p className="checkout-error-msg">{errorMsg}</p>
               </div>
             )}
-
           </div>
 
           {/* Detalles de envío */}
           <section className="shipping-section">
             <h2 className="section-title">Datos de envío</h2>
 
-            <form
-              className="shipping-form"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <form className="shipping-form" onSubmit={(e) => e.preventDefault()}>
               <div className="form-field">
                 <label>Correo electrónico</label>
                 <input
@@ -477,11 +550,7 @@ export default function CheckoutPage() {
                 <div className="form-field">
                   <label>Provincia</label>
                   <div className="select-wrapper">
-                    <select
-                      name="province"
-                      value={form.province}
-                      onChange={handleChange}
-                    >
+                    <select name="province" value={form.province} onChange={handleChange}>
                       <option>Madrid</option>
                       <option>Barcelona</option>
                       <option>Valencia</option>
@@ -550,14 +619,13 @@ export default function CheckoutPage() {
                 <div className="product-info">
                   <div className="product-qty">1</div>
                   <p className="product-name">
-                    {loadingProduct
-                      ? "Cargando producto…"
-                      : product?.name || "Producto no disponible"}
+                    {loadingProduct ? "Cargando producto…" : product?.name || "Producto no disponible"}
                   </p>
                 </div>
               </div>
+
               <div className="summary-price">
-                {product ? formatPrice(subtotal) : "--"}
+                {product ? formatPrice(effectiveSubtotal) : "--"}
               </div>
             </div>
 
@@ -565,7 +633,7 @@ export default function CheckoutPage() {
             <div className="line-items">
               <div className="line-item">
                 <span>Subtotal</span>
-                <span>{product ? formatPrice(subtotal) : "--"}</span>
+                <span>{product ? formatPrice(effectiveSubtotal) : "--"}</span>
               </div>
 
               <div className="line-item">
@@ -579,9 +647,7 @@ export default function CheckoutPage() {
               <div className="line-item">
                 <div>
                   <div>Envío en España</div>
-                  <div className="line-item-sub">
-                    Envío a domicilio o punto de recogida
-                  </div>
+                  <div className="line-item-sub">Envío a domicilio o punto de recogida</div>
                 </div>
                 <span>{formatPrice(1.99)}</span>
               </div>
@@ -593,9 +659,7 @@ export default function CheckoutPage() {
                 <div className="total-label">Total</div>
                 <div className="total-sub">Impuestos incluidos</div>
               </div>
-              <div className="total-amount">
-                {product ? formatPrice(total) : "--"}
-              </div>
+              <div className="total-amount">{product ? formatPrice(total) : "--"}</div>
             </div>
           </section>
         </aside>
