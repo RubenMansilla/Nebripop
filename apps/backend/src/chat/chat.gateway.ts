@@ -8,6 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
+import { Inject, forwardRef } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -25,7 +26,13 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly chatService: ChatService) { }
+
+
+  constructor(
+
+    @Inject(forwardRef(() => ChatService))
+    private readonly chatService: ChatService
+  ) { }
 
   @SubscribeMessage('join_chat')
   handleJoin(@MessageBody() data: { chatId: number }, @ConnectedSocket() client: Socket) {

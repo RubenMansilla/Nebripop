@@ -5,6 +5,8 @@ import { Chat } from "./chat.entity";
 import { ChatMessage } from "./chat-message.entity";
 import { User } from "../users/users.entity";
 import { Notification } from "../notifications/notification.entity";
+import { ChatGateway } from "./chat.gateway";
+import { Inject, forwardRef } from "@nestjs/common";
 
 type UserLite = Pick<User, "id" | "fullName" | "profilePicture">;
 
@@ -21,7 +23,10 @@ export class ChatService {
     private readonly userRepo: Repository<User>,
 
     @InjectRepository(Notification)
-    private readonly notificationRepo: Repository<Notification>
+    private readonly notificationRepo: Repository<Notification>,
+
+    @Inject(forwardRef(() => ChatGateway))
+    private readonly chatGateway: ChatGateway
   ) { }
 
   private getUserLite(id: number): Promise<UserLite | null> {
@@ -198,6 +203,9 @@ export class ChatService {
       const recipientId = (senderId === buyerId) ? sellerId : buyerId;
 
       console.log(`Notificando: Sender=${senderId}, Buyer=${buyerId}, Seller=${sellerId} -> Recipient=${recipientId}`);
+
+      const room = `chat_${chatId}`;
+      console.log(`🚀 SERVICE -> SOCKET: Emitiendo a sala ${room}`);
 
       // Guardar notificación en BD
       if (recipientId) {

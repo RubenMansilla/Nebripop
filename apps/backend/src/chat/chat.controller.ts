@@ -57,16 +57,31 @@ export class ChatController {
             body.content
         );
 
-        // Definir el nombre de la sala 
-        const roomName = `chat_${chatId}`;
-        console.log(`🔔 HTTP -> SOCKET: Emitiendo evento 'new_message' a sala (porfi) '${roomName}'`);
+        try {
+            const roomName = `chat_${chatId}`;
+            console.log(`📡 [3/4] Intentando emitir a sala: '${roomName}'`);
 
-        // Emitir el evento a esa sala
-        // Enviar el objeto extendido con chatId para facilitar la vida al frontend
-        this.chatGateway.server.to(roomName).emit('new_message', {
-            ...newMessage,
-            chatId: chatId
-        });
+            // Verificamos si el gateway existe
+            if (!this.chatGateway) {
+                throw new Error("CRÍTICO: this.chatGateway es undefined");
+            }
+            // Verificamos si el server existe
+            if (!this.chatGateway.server) {
+                throw new Error("CRÍTICO: this.chatGateway.server es undefined (Socket no iniciado)");
+            }
+
+            // Emitimos
+            this.chatGateway.server.to(roomName).emit('new_message', {
+                ...newMessage,
+                chatId: chatId
+            });
+            console.log(`🎉 [4/4] ÉXITO: Evento 'new_message' emitido.`);
+
+        } catch (error) {
+            console.error("❌ ERROR CRÍTICO EMITIENDO SOCKET:", error);
+            // No lanzamos error HTTP para no romper la petición del usuario, 
+            // pero ya sabemos que el socket falló.
+        }
 
         return newMessage;
     }
