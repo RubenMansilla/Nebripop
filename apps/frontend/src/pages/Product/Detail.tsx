@@ -14,6 +14,7 @@ import { getCategoryIcon } from "../../utils/categoryIcons";
 import { getSubcategoryIcon } from "../../utils/subcategoryIcons";
 
 import { getPublicUser } from "../../api/users.api";
+import Review from "../../components/Review/Review";
 
 // ✅ auth + modal login + popup chat
 import { AuthContext } from "../../context/AuthContext";
@@ -22,15 +23,39 @@ import ChatPopup from "../../components/ChatPopup/ChatPopup";
 
 type ChatPopupMode = "message" | "offer";
 
+// COMPONENTE SKELETON PARA CARGA
+const DetailSkeleton = () => (
+  <div className="detail-container skeleton-active">
+    <div className="left-sidebar skeleton-item" style={{ height: "600px" }}></div>
+    <div className="detail-main">
+      <div className="image-wrapper skeleton-item" style={{ aspectRatio: "4/3" }}></div>
+      <div className="skeleton-item" style={{ height: "40px", width: "70%", marginTop: "20px" }}></div>
+      <div className="skeleton-item" style={{ height: "100px", width: "100%", marginTop: "10px" }}></div>
+    </div>
+    <div className="right-sidebar">
+      <div className="detail-buy-card skeleton-item" style={{ height: "300px" }}></div>
+      <div className="seller-card skeleton-item" style={{ height: "150px" }}></div>
+    </div>
+  </div>
+);
+
 export default function Detail() {
   const { productId } = useParams();
+  const navigate = useNavigate();
 
+  // ✅ scroll top al cambiar de producto (main)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [productId]);
+
+  // ✅ incrementar vistas (tu lógica)
   useEffect(() => {
     if (productId) incrementProductView(productId);
   }, [productId]);
 
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
   const [deliveryType, setDeliveryType] = useState<"shipping" | "person">("shipping");
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -43,31 +68,33 @@ export default function Detail() {
   const [sellerPublic, setSellerPublic] = useState<any | null>(null);
   const [sellerLoading, setSellerLoading] = useState(false);
 
-  const navigate = useNavigate();
-
-  // ✅ login + popup chat
+  // ✅ login + popup chat (tu lógica)
   const { user, token } = useContext(AuthContext);
   const { openLogin } = useLoginModal();
-  const [chatOpen, setChatOpen] = useState(false);
 
-  // ✅ NUEVO: modo y oferta inicial
+  const [chatOpen, setChatOpen] = useState(false);
   const [chatMode, setChatMode] = useState<ChatPopupMode>("message");
   const [initialOffer, setInitialOffer] = useState<number | null>(null);
 
-  const images = product?.images ?? [];
-  const hasMultipleImages = images.length > 1;
+  // --- fallback para ID del usuario logueado (main) + preferencia AuthContext ---
+  const currentUserId = useMemo(() => {
+    const directFromContext = (user as any)?.id;
+    if (directFromContext) return String(directFromContext);
 
-  const renderStars = (rating: number) => "⭐".repeat(Math.round(rating));
+    const directId = localStorage.getItem("user_id") || localStorage.getItem("id");
+    if (directId) return String(directId);
 
-  const nextImage = () => {
-    if (images.length === 0) return;
-    setCurrentImage((prev) => (prev < images.length - 1 ? prev + 1 : prev));
-  };
-
-  const prevImage = () => {
-    if (images.length === 0) return;
-    setCurrentImage((prev) => (prev > 0 ? prev - 1 : prev));
-  };
+    const userObj = localStorage.getItem("user") || localStorage.getItem("auth");
+    if (userObj) {
+      try {
+        const parsed = JSON.parse(userObj);
+        return String(parsed.id || parsed._id || parsed.user?.id);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }, [user]);
 
   // ✅ Cargar producto
   useEffect(() => {
@@ -85,9 +112,14 @@ export default function Detail() {
       .finally(() => setLoading(false));
   }, [productId]);
 
-  // ✅ ID del vendedor (TU DB: products.owner_id)
+  // ✅ ID del vendedor robusto (TU DB: products.owner_id)
   const ownerId = useMemo(() => {
-    const id = product?.owner_id ?? product?.seller?.id ?? product?.owner?.id;
+    const id =
+      product?.owner_id ??
+      product?.seller_id ??
+      product?.seller?.id ??
+      product?.owner?.id ??
+      product?.user?.id;
     const n = Number(id);
     return Number.isFinite(n) && n > 0 ? n : null;
   }, [product]);
@@ -111,21 +143,51 @@ export default function Detail() {
       .finally(() => setSellerLoading(false));
   }, [ownerId]);
 
-  const goToSellerProfile = () => {
-    const id = sellerPublic?.id ?? ownerId;
-    if (!id) return;
-    navigate(`/users/${id}`);
+  // ✅ Owner check (main) pero con tu ownerId
+  const isOwner = useMemo(() => {
+    if (!currentUserId || !ownerId) return false;
+    return String(currentUserId) === String(ownerId);
+  }, [currentUserId, ownerId]);
+
+  // Skeleton / errores
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <CategoriesBar />
+        <DetailSkeleton />
+        <Footer />
+      </>
+    );
+  }
+
+  if (!product) {
+    return (
+      <>
+        <Navbar />
+        <CategoriesBar />
+        <div className="error-message">Producto no encontrado</div>
+        <Footer />
+      </>
+    );
+  }
+
+  const images = product?.images ?? [];
+  const hasMultipleImages = images.length > 1;
+
+  const nextImage = () => {
+    if (images.length === 0) return;
+    setCurrentImage((prev: number) => (prev < images.length - 1 ? prev + 1 : prev));
   };
 
-  if (loading) return <div>Cargando...</div>;
-  if (!product) return <div>Producto no encontrado</div>;
+  const prevImage = () => {
+    if (images.length === 0) return;
+    setCurrentImage((prev: number) => (prev > 0 ? prev - 1 : prev));
+  };
 
   const formatPrice = (value: number) => {
     if (Number.isInteger(value)) return `${value}€`;
-    return `${value.toLocaleString("es-ES", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}€`;
+    return `${value.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}€`;
   };
 
   const categoryName =
@@ -134,7 +196,7 @@ export default function Detail() {
   const subcategoryName =
     typeof product.subcategory === "object" ? product.subcategory?.name : product.subcategory;
 
-  // ✅ NOMBRE DEL VENDEDOR
+  // ✅ NOMBRE DEL VENDEDOR (robusto)
   const sellerName =
     sellerPublic?.fullName ??
     sellerPublic?.name ??
@@ -142,7 +204,7 @@ export default function Detail() {
     product?.seller?.name ??
     "Vendedor";
 
-  // ✅ AVATAR DEL VENDEDOR
+  // ✅ AVATAR DEL VENDEDOR (robusto)
   const rawAvatar =
     sellerPublic?.profilePicture ??
     sellerPublic?.profile_picture ??
@@ -154,10 +216,13 @@ export default function Detail() {
 
   const sellerAvatar = rawAvatar && rawAvatar !== "" ? rawAvatar : "/default-avatar.png";
 
-  const sellerTotalSales = (sellerPublic as any)?.totalSales ?? 0;
-
-  // ✅ ID seguro para chat: ownerId
   const sellerIdForChat = sellerPublic?.id ?? ownerId;
+
+  const goToSellerProfile = () => {
+    const id = sellerPublic?.id ?? ownerId;
+    if (!id) return;
+    navigate(`/users/${id}`);
+  };
 
   // ✅ Abrir popup chat (normal)
   const openChatPopup = () => {
@@ -176,8 +241,8 @@ export default function Detail() {
     setChatOpen(true);
   };
 
-  // ✅ Abrir popup chat en modo oferta (solo numérico)
-  const handleMakeOffer = (value: number) => {
+  // ✅ Abrir popup chat en modo oferta (con valor sugerido)
+  const handleMakeOffer = () => {
     if (!user || !token) {
       openLogin();
       return;
@@ -188,10 +253,15 @@ export default function Detail() {
       return;
     }
 
+    const priceNum = Number(product?.price ?? 0);
+    const suggested = priceNum > 0 ? Math.max(1, Math.floor(priceNum * 0.8)) : 0;
+
     setChatMode("offer");
-    setInitialOffer(value);
+    setInitialOffer(suggested > 0 ? suggested : null);
     setChatOpen(true);
   };
+
+  const firstImage = images?.[currentImage]?.image_url || "/no-image.webp";
 
   return (
     <>
@@ -210,36 +280,28 @@ export default function Detail() {
         <div className="detail-main">
           <div className="breadcrumb">
             <Link to="/">Inicio</Link>
-
             {categoryName && (
               <>
                 <span>/</span>
                 <Link to={`/filtros?categoryId=${product.category_id}`}>{categoryName}</Link>
               </>
             )}
-
             {subcategoryName && (
               <>
                 <span>/</span>
-                <Link
-                  to={`/filtros?categoryId=${product.category_id}&subcategoryId=${product.subcategory_id}`}
-                >
+                <Link to={`/filtros?categoryId=${product.category_id}&subcategoryId=${product.subcategory_id}`}>
                   {subcategoryName}
                 </Link>
               </>
             )}
-
             <span>/</span>
             <span className="breadcrumb-current">{product.name}</span>
           </div>
 
           <div className="product-images">
             <div className="image-wrapper">
-              <img
-                src={images[currentImage]?.image_url || "/no-image.webp"}
-                className="product-image"
-                alt={product.name}
-              />
+              <img src={firstImage} className="product-image" alt={product.name} />
+
               {hasMultipleImages && (
                 <>
                   {currentImage > 0 && (
@@ -252,6 +314,7 @@ export default function Detail() {
                       ›
                     </button>
                   )}
+
                   <div className="image-dots">
                     {images.map((_: any, index: number) => (
                       <span
@@ -266,14 +329,33 @@ export default function Detail() {
             </div>
           </div>
 
+          {/* ✅ Tags (main) */}
+          <div className="product-tags">
+            {categoryName && (
+              <div className="product-tag">
+                <img src={getCategoryIcon(categoryName)} alt={categoryName} />
+                <span>{categoryName}</span>
+              </div>
+            )}
+            {subcategoryName && (
+              <div className="product-tag sub">
+                <img
+                  src={getSubcategoryIcon(categoryName, subcategoryName)}
+                  alt={subcategoryName}
+                />
+                <span>{subcategoryName}</span>
+              </div>
+            )}
+          </div>
+
           <div className="product-details">
             <h3 className="section-title">Detalles del producto</h3>
 
             {product.description && <p className="details-description">{product.description}</p>}
 
             <ul className="details-list">
-              {product.features?.map((feature: string, index: number) => (
-                <li key={index}>– {feature}</li>
+              {product.features?.map((f: string, i: number) => (
+                <li key={i}>– {f}</li>
               ))}
             </ul>
 
@@ -284,7 +366,6 @@ export default function Detail() {
                   <strong>{product.color}</strong>
                 </div>
               )}
-
               {product.material && (
                 <div>
                   <span>Material</span>
@@ -307,36 +388,25 @@ export default function Detail() {
                 ⭐ {reviewSummary.average.toFixed(1)} · {sellerName} – {reviewSummary.total} valoraciones
               </h3>
 
-              {reviews.length === 0 && (
+              {reviews.length === 0 ? (
                 <p className="no-reviews">Este vendedor aún no tiene valoraciones</p>
-              )}
-
-              {reviews.map((review) => (
-                <div className="review-item" key={review.id}>
-                  <img
-                    src={review.reviewer?.profile_picture ?? "/default-avatar.png"}
-                    alt={review.reviewer?.full_name}
-                    className="review-avatar"
-                    loading="lazy"
+              ) : (
+                reviews.map((rev) => (
+                  <Review
+                    key={rev.id}
+                    mode="public"
+                    review={{
+                      ...rev,
+                      reviewer: {
+                        ...rev.reviewer,
+                        fullName: rev.reviewer?.full_name || rev.reviewer?.fullName || "Usuario",
+                        profilePicture: rev.reviewer?.profile_picture || rev.reviewer?.profilePicture,
+                      },
+                      product: rev.product || { id: product.id, name: product.name, images: product.images },
+                    }}
                   />
-
-                  <div>
-                    <strong>{review.reviewer?.full_name}</strong>
-
-                    <p className="review-date">
-                      {new Date(review.created_at).toLocaleDateString("es-ES", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })}
-                    </p>
-
-                    <div className="review-stars">{renderStars(review.rating)}</div>
-
-                    {review.comment && <p className="review-comment">{review.comment}</p>}
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -347,7 +417,9 @@ export default function Detail() {
             <h3 className="buy-title">{product.name}</h3>
 
             <p className="buy-subtitle">
-              {product.condition} - {product.color ?? "Beige"} - {product.material ?? "Madera"}
+              {product.condition}
+              {product.color ? ` - ${product.color}` : ""}
+              {product.material ? ` - ${product.material}` : ""}
             </p>
 
             <p className="buy-price">{formatPrice(Number(product.price))}</p>
@@ -355,58 +427,85 @@ export default function Detail() {
             <div className="buy-payments">
               <div className="apple-pay"> Apple Pay</div>
               <div className="apple-info">
-                <span>3 Pagos al 0% de interés con Apple Pay</span>
+                <span>3 Pagos al 0% con Apple Pay</span>
                 <a href="#">Más información</a>
               </div>
             </div>
 
             <div className="buy-divider"></div>
 
-            <div className="buy-shipping">🚚 Envío disponible</div>
+            {/* --- LÓGICA DE BOTONES (main + tu oferta/chat) --- */}
+            {isOwner ? (
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  padding: "20px",
+                  borderRadius: "8px",
+                  textAlign: "center",
+                  color: "#6c757d",
+                  border: "1px solid #e9ecef",
+                  marginTop: "15px",
+                }}
+              >
+                <p style={{ margin: 0, fontWeight: "500" }}>Este producto es tuyo</p>
+              </div>
+            ) : (
+              <>
+                <div className="buy-shipping">🚚 Envío disponible</div>
 
-            <Link to={`/checkout?productId=${product.id}`}>
-              <button className="buy-main-btn" type="button">
-                Comprar
-              </button>
-            </Link>
+                {product.active_negotiation ? (
+                  <div className="negotiation-block">
+                    <p>Producto en proceso de negociación</p>
+                    <button className="buy-main-btn disabled" disabled>
+                      No disponible
+                    </button>
+                  </div>
+                ) : (
+                  <Link to={`/checkout?productId=${product.id}`}>
+                    <button className="buy-main-btn" type="button">
+                      Comprar
+                    </button>
+                  </Link>
+                )}
 
-            {/* ✅ Botón hacer oferta: abre popup SOLO oferta */}
-            <button className="buy-offer-btn" type="button" onClick={() => handleMakeOffer(100)}>
-              Hacer oferta
-            </button>
+                <button
+                  className="buy-offer-btn"
+                  type="button"
+                  onClick={handleMakeOffer}
+                  disabled={!!product.active_negotiation}
+                >
+                  {product.active_negotiation ? "Oferta en curso" : "Hacer oferta"}
+                </button>
+              </>
+            )}
           </div>
 
           <div className="seller-card">
             <div className="seller-main" onClick={goToSellerProfile} style={{ cursor: "pointer" }}>
               <img src={sellerAvatar} alt={sellerName} className="seller-avatar" loading="lazy" />
-
               <div className="seller-info">
                 <p className="seller-name">{sellerName}</p>
-
                 <div className="seller-rating-row">
                   <span className="star">⭐</span>
                   <span className="rating">{reviewSummary.average.toFixed(1)}</span>
                 </div>
-
                 <p className="seller-meta">
-                  {sellerTotalSales} ventas · {reviewSummary.total} valoraciones
+                  {(sellerPublic as any)?.totalSales ?? 0} ventas · {reviewSummary.total} valoraciones
                 </p>
               </div>
             </div>
 
             <div className="seller-actions">
-              <button
-                className="seller-profile-btn"
-                type="button"
-                onClick={goToSellerProfile}
-                disabled={sellerLoading}
-              >
-                {sellerLoading ? "Cargando perfil..." : "Ver perfil"}
+              <button className="seller-profile-btn" onClick={goToSellerProfile} disabled={sellerLoading}>
+                {sellerLoading ? "Cargando..." : "Ver perfil"}
               </button>
 
-              <button className="seller-chat-btn" type="button" onClick={openChatPopup}>
-                Chat
-              </button>
+              {/* ✅ Chat solo si NO es el dueño */}
+              {!isOwner && (
+                <button className="seller-chat-btn" type="button" onClick={openChatPopup}>
+                  Chat
+                </button>
+              )}
             </div>
           </div>
 
@@ -442,7 +541,9 @@ export default function Detail() {
                   <div className="shipping-icon">🛡</div>
                   <div className="shipping-info">
                     <p className="shipping-title">Protección de Wallastock</p>
-                    <p className="shipping-desc">Envío protegido: reembolso fácil y ayuda cuando lo necesites</p>
+                    <p className="shipping-desc">
+                      Envío protegido: reembolso fácil y ayuda cuando lo necesites
+                    </p>
                   </div>
                 </div>
               </>
@@ -469,7 +570,7 @@ export default function Detail() {
         </div>
       </div>
 
-      {/* ✅ Popup del chat */}
+      {/* ✅ Popup del chat (TU CAMBIO) */}
       {chatOpen && sellerIdForChat && (
         <ChatPopup
           open={chatOpen}

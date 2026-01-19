@@ -12,12 +12,12 @@ createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <ToastContainer
             position="top-right"
-            autoClose={3000}
+            autoClose={2000}
             limit={1}
             newestOnTop={false}
             closeOnClick
             pauseOnFocusLoss
-            pauseOnHover
+            pauseOnHover={false}
             theme="light"
         />
         <AuthProvider>

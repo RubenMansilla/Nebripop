@@ -1,5 +1,5 @@
 // apps/frontend/src/pages/CheckOut/CheckoutPage.tsx
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./CheckoutPage.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPurchase } from "../../api/purchases.api";
@@ -10,6 +10,7 @@ import api from "../../utils/axiosConfig";
 
 interface CheckoutProduct {
   id: number;
+  owner_id: number;
   name: string;
   price: number;
   images?: { image_url: string }[];
@@ -127,14 +128,17 @@ export default function CheckoutPage() {
       try {
         const data = await getProductById(String(productId));
 
+        console.log("Producto cargado para checkout:", data);
+
         setProduct({
           id: data.id,
+          owner_id: data.owner_id,
           name: data.name,
           price: Number(data.price),
           images: data.images || [],
         });
       } catch (err: any) {
-        setErrorMsg(err.message || "Error al cargar el producto.");
+        setErrorMsg(err?.message || "Error al cargar el producto.");
       } finally {
         setLoadingProduct(false);
       }
@@ -226,8 +230,6 @@ export default function CheckoutPage() {
    * ✅ Importante:
    * Para que se cobre la oferta, el backend debe aceptar un campo con el precio acordado.
    * Aquí lo mandamos como `agreedPrice`.
-   *
-   * Si tu DTO en backend NO lo permite aún, te dará error y no continuamos (mejor que cobrar mal).
    */
   const buildPayload = (paymentMethod: "external" | "wallet") => {
     const productId = Number(productIdParam);
@@ -292,8 +294,10 @@ export default function CheckoutPage() {
         replace: true,
         state: {
           productName: product?.name,
+          productId: product?.id,
+          seller_id: product?.owner_id, // ✅ main
           totalAmount: total,
-          orderId: purchaseResponse.id || `NP-${Date.now()}`,
+          orderId: purchaseResponse?.id || `NP-${Date.now()}`,
           image: firstImage,
           customerName: `${form.firstName} ${form.lastName}`.trim(),
           paymentMethod: "PayPal",
@@ -302,7 +306,8 @@ export default function CheckoutPage() {
           shippingCity: form.city,
           shippingProvince: form.province,
           shippingPostcode: form.postcode,
-          // ✅ extra por si lo quieres mostrar en completed
+
+          // ✅ tus extras (útil para la pantalla completed)
           agreedPrice: effectiveSubtotal,
           originalPrice: product?.price,
         },
@@ -347,8 +352,10 @@ export default function CheckoutPage() {
         replace: true,
         state: {
           productName: product?.name,
+          productId: product?.id,
+          seller_id: product?.owner_id, // ✅ main
           totalAmount: total,
-          orderId: purchaseResponse.id || `NP-${Date.now()}`,
+          orderId: purchaseResponse?.id || `NP-${Date.now()}`,
           image: firstImage,
           customerName: `${form.firstName} ${form.lastName}`.trim(),
           paymentMethod: "Monedero NebriPop",
@@ -357,7 +364,8 @@ export default function CheckoutPage() {
           shippingCity: form.city,
           shippingProvince: form.province,
           shippingPostcode: form.postcode,
-          // ✅ extra
+
+          // ✅ tus extras
           agreedPrice: effectiveSubtotal,
           originalPrice: product?.price,
         },
@@ -396,18 +404,14 @@ export default function CheckoutPage() {
           {/* Botones de pago rápido */}
           <div className="payment-buttons-card">
             {/* ✅ Aviso oferta */}
-            {product &&
-              parsedOffer !== null &&
-              parsedOffer > 0 &&
-              parsedOffer <= product.price && (
-                <div className="checkout-offer-banner">
-                  Estás pagando con precio acordado por oferta:{" "}
-                  <b>{formatPrice(parsedOffer)}</b>{" "}
-                  <span style={{ opacity: 0.8 }}>
-                    (precio original: {formatPrice(product.price)})
-                  </span>
-                </div>
-              )}
+            {product && parsedOffer !== null && parsedOffer > 0 && parsedOffer <= product.price && (
+              <div className="checkout-offer-banner">
+                Estás pagando con precio acordado por oferta: <b>{formatPrice(parsedOffer)}</b>{" "}
+                <span style={{ opacity: 0.8 }}>
+                  (precio original: {formatPrice(product.price)})
+                </span>
+              </div>
+            )}
 
             <button
               className="payment-btn payment-btn-paypal"
@@ -624,9 +628,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="summary-price">
-                {product ? formatPrice(effectiveSubtotal) : "--"}
-              </div>
+              <div className="summary-price">{product ? formatPrice(effectiveSubtotal) : "--"}</div>
             </div>
 
             {/* Resumen números */}

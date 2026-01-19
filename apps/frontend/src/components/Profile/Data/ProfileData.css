@@ -83,13 +83,13 @@
     border-radius: 100px;
     font-size: 14px;
     cursor: pointer;
-    border: 1px solid var(--beige);
+    border: 1px solid #d2b990;
     transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
     color: #333;
 }
 
 .change-photo-btn:hover {
-    background-color: #d6c9b4;
+    background-color: #f2e2c7;
 }
 
 .photo-hint {
@@ -134,9 +134,9 @@
 }
 
 .input-normal:focus {
-    border-color: var(--beige);
+    border-color: #f2e2c7;
     outline: none;
-    box-shadow: 0 0 0 2px #e8ddcf;
+    box-shadow: 0 0 0 1px #f2e2c7;
 }
 
 .gender-options {
@@ -159,18 +159,18 @@
 }
 
 .gender-option.active {
-    background-color: var(--beige);
-    border-color: var(--beige);
+    background-color: #f2e2c7;
+    border-color: #d2b990;
 }
 
 .gender-option:hover {
-    border: 1px solid #d6c9b4;
-    box-shadow: 0 0 0 2px #d6c9b4;
+    border: 1px solid #f2e2c7;
+    box-shadow: 0 0 0 1px #f2e2c7;
 }
 
 .gender-option:not(.active):hover {
-    border: 1px solid #d6c9b4;
-    box-shadow: 0 0 0 2px #d6c9b4;
+    border: 1px solid #f2e2c7;
+    box-shadow: 0 0 0 1px #f2e2c7;
 }
 
 .gender-option.active:hover {
@@ -187,18 +187,19 @@
 .save-btn {
     margin-top: 6px;
     align-self: center;
-    background-color: #ede4d5;
-    border: none;
-    color: #000000;
+    background-color: #fffaf2;
+    border: 1px solid #d2b990;
+    color: #7a6c58;
     padding: 12px 25px;
     border-radius: 100px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+    white-space: nowrap;
 }
 
 .save-btn:hover {
-    background-color: var(--beige);
+    background-color: #f2e2c7;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {

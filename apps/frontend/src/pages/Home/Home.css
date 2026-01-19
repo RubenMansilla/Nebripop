@@ -4,26 +4,19 @@
   --blanco: #FFFFFF;
 }
 
-/* Quitar subrayado a todos los links del home */
-.home-categories a,
-.home-categories a:hover,
-.home-categories a:visited {
-  text-decoration: none;
-  color: inherit;
-}
-
-html,
-body {
+/* Reset y básicos */
+html, body {
   margin: 0;
   padding: 0;
   width: 100%;
+  font-family: "Inter", sans-serif;
 }
 
-/* Línea debajo del navbar */
-.navbar-line {
-  width: 100%;
-  height: 1px;
-  background: #E8E8E8;
+/* Quitar subrayado a links */
+.home-categories a,
+.category-card {
+  text-decoration: none;
+  color: inherit;
 }
 
 /* =========================================
@@ -53,10 +46,8 @@ body {
   padding: 48px 16px;
   color: var(--blanco);
   text-align: left;
-  font-family: "Inter", sans-serif;
 }
 
-/* Marca */
 .brand {
   display: flex;
   align-items: center;
@@ -69,15 +60,13 @@ body {
   height: auto;
 }
 
-/* Título */
 h1 {
   font-size: clamp(32px, 6vw, 68px);
   line-height: 1.05;
-  margin-bottom: 16px;
+  margin: 0 0 16px 0;
   font-weight: 800;
 }
 
-/* Subtitulo */
 .subtitle {
   font-size: clamp(16px, 2.2vw, 22px);
   opacity: .95;
@@ -85,7 +74,6 @@ h1 {
   max-width: 900px;
 }
 
-/* CTA */
 .cta {
   display: inline-block;
   background: #ffffff;
@@ -103,15 +91,13 @@ h1 {
 .cta:hover {
   background: var(--beige);
   color: #ffffff;
-  border-color: #ffffff;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
 }
 
 /* =========================================
    CATEGORÍAS
 ========================================= */
-
 .categories-wrapper {
   width: min(1200px, 92vw);
   margin: 60px auto;
@@ -122,7 +108,6 @@ h1 {
   font-weight: 800;
   margin-bottom: 32px;
   color: #222;
-  font-family: "Inter", sans-serif;
 }
 
 .categories-grid {
@@ -134,137 +119,39 @@ h1 {
 .category-card {
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: .2s ease;
+  transition: transform .2s ease;
 }
 
 .category-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
 }
 
-.card-inner {
-  width: 100%;
-  background: #FFF;
-  border-radius: 14px;
-}
-
-/* Caja beige detrás de la imagen */
-.image-box,
-.category-image-box {
+.image-box {
   background: #EFE9DF;
   border-radius: 12px;
   height: 210px;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
-/* ✅ Fusionado: que se vea bien con ambos contenedores */
-.image-box img,
-.category-image-box img {
+.image-box img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* Textos */
-.cat-title,
-.category-title {
+.cat-title {
   margin-top: 12px;
   font-size: 18px;
   font-weight: 700;
   color: #333;
 }
 
-.cat-sub,
-.category-sub {
-  font-size: 14px;
-  color: #777;
-}
-
-/* =========================================
-   SECCIÓN JARDÍN
-========================================= */
-
-.garden-title {
-  font-size: 28px;
-  font-weight: 800;
-  margin: 60px auto 32px;
-  width: min(1200px, 92vw);
-  color: #3a3a3a;
-}
-
-.garden-grid {
-  width: min(1200px, 92vw);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 28px;
-}
-
-.garden-card {
-  background: white;
-  border-radius: 18px;
-  transition: transform .2s ease;
-}
-
-.garden-card:hover {
-  transform: translateY(-4px);
-}
-
-.garden-img-wrap {
-  background: #EFE9E2;
-  border-radius: 14px;
-  height: 220px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.garden-img-wrap img {
-  width: 86%;
-  height: auto;
-  object-fit: contain;
-}
-
-.garden-card h3 {
-  font-size: 17px;
-  font-weight: 700;
-  color: #3A3A3A;
-  margin-bottom: 4px;
-}
-
-.count {
-  font-size: 13px;
-  color: #868686;
-}
-
-/* =========================================
-   SECCIÓN FITNESS
-========================================= */
-
-.home-section {
-  width: min(1200px, 90vw);
-  margin: 60px auto 0;
-}
-
-.home-section-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 28px;
-  color: #333;
-}
-
 /* =========================================
    QUIÉNES SOMOS
 ========================================= */
-
-/* ===========================
-   SECCIÓN QUIÉNES SOMOS (FINAL)
-=========================== */
-
 .about-wrapper {
   width: min(1200px, 92vw);
   margin: 80px auto;
@@ -273,19 +160,34 @@ h1 {
   gap: 40px;
 }
 
-/* ---------- IZQUIERDA ---------- */
+/* IZQUIERDA: Stats */
 .about-stats {
-  background: #d6c9b4;
-  padding: 32px;
+  background: var(--beige);
+  padding: 40px;
   border-radius: 18px;
   color: #FFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stats-subtitle {
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 1px;
 }
 
 .stats-year {
-  font-size: 130px;
-  text-align: center;
-  font-weight: 700;
-  margin-bottom: 20px;
+  font-size: clamp(80px, 8vw, 130px);
+  font-weight: 900;
+  margin: 10px 0;
+  line-height: 1;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .stats-number {
@@ -301,16 +203,16 @@ h1 {
 .img-icon-stats {
   width: 40px;
   height: auto;
-  margin-left: 6px;
 }
 
-.stats-users {
-  margin-top: 8px;
-  font-size: 15px;
-  opacity: 0.9;
+.stats-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.3);
+  margin: 15px 0;
+  width: 100%;
 }
 
-/* ---------- DERECHA ---------- */
+/* DERECHA: Card */
 .about-card {
   background: #f3ebdf;
   border-radius: 24px;
@@ -321,7 +223,7 @@ h1 {
 }
 
 .about-text {
-  padding-right: 18px;
+  padding: 40px;
 }
 
 .about-title {
@@ -329,206 +231,126 @@ h1 {
   font-weight: 800;
   color: #3e3e3e;
   margin-bottom: 18px;
-  margin-left: 24px;
+}
+
+.about-title span {
+  color: var(--beige);
 }
 
 .about-description {
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   color: #4a4a4a;
-  margin-left: 24px;
 }
 
-/* Imagen curva */
 .about-image-wrapper {
-  position: relative;
   height: 100%;
+  min-height: 300px;
 }
 
 .about-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* El diseño de la curva */
   border-radius: 0 20px 20px 120px;
 }
 
-/* ===========================
-   RESPONSIVE · MOBILE
-=========================== */
-@media (max-width: 768px) {
-
-  /* ---------- HERO ---------- */
-  .hero {
-    min-height: 300px;
+/* =========================================
+   RESPONSIVE (Móviles y Tablets)
+========================================= */
+@media (max-width: 1024px) {
+  .categories-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .about-card {
+    grid-template-columns: 1fr; /* Apilar texto e imagen en tablets */
   }
 
+  .about-image {
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Hero */
   .hero::after {
     clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
   }
-
   .hero__inner {
     text-align: center;
-    padding: 36px 16px;
   }
-
   .brand {
     justify-content: center;
   }
 
-  .bag {
-    width: 90px;
-  }
-
-  h1 {
-    font-size: 42px;
-  }
-
-  .cta {
-    padding: 14px 22px;
-    font-size: 14px;
-  }
-
-  /* ---------- CATEGORÍAS ---------- */
+  /* Categorías */
   .categories-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
-
   .image-box {
     height: 160px;
   }
-
   .cat-title {
-    font-size: 16px;
     text-align: center;
-    width: 100%;
+    font-size: 15px;
   }
 
-  .category-card {
-    align-items: center;
-  }
-
-  /* ---------- ABOUT WRAPPER ---------- */
+  /* Secciones Quiénes Somos */
   .about-wrapper {
     grid-template-columns: 1fr;
-    gap: 24px;
-    margin: 60px auto;
+    margin: 40px auto;
   }
 
-  /* ---------- STATS (IZQUIERDA) ---------- */
   .about-stats {
-    padding: 28px 20px;
     text-align: center;
-  }
-
-  .stats-year {
-    font-size: 90px;
-    margin-bottom: 10px;
+    align-items: center;
+    padding: 30px 20px;
   }
 
   .stats-row {
     justify-content: center;
-  }
-
-  .img-icon-stats {
-    width: 32px;
-  }
-
-  .stats-users {
-    font-size: 14px;
-  }
-
-  /* ---------- ABOUT CARD (DERECHA) ---------- */
-  .about-card {
-    grid-template-columns: 1fr;
-    border-radius: 20px;
+    display: flex !important; /* Aseguramos que NO se oculte */
   }
 
   .about-text {
-    padding: 24px;
-  }
-
-  .about-title {
-    font-size: 26px;
-    margin-left: 0;
+    padding: 30px 20px;
     text-align: center;
   }
 
-  .about-description {
-    margin-left: 0;
-    text-align: center;
-  }
-
-  /* Imagen abajo */
   .about-image-wrapper {
-    height: 220px;
+    height: 250px;
+    order: 2; /* La imagen queda abajo */
   }
 
   .about-image {
-    border-radius: 0 0 20px 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  .stats-row {
-    display: none !important;
-    height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .about-stats {
-    padding: 28px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-}
-
-@media (max-width: 768px) {
-  .stats-subtitle {
-    font-size: 13px;
-    opacity: 0.9;
-  }
-
-  .stats-year {
-    font-size: 88px;
-    margin: 0;
-    line-height: 1;
-  }
-
-  .stats-users {
-    font-size: 14px;
-    margin-top: 6px;
+    border-radius: 0 0 24px 24px;
   }
 }
 
 /* =========================================
-   BOTÓN FLOTANTE DE CHAT
+   CHAT FLOTANTE
 ========================================= */
-
 .chat-floating-btn {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  bottom: 25px;
+  right: 25px;
   width: 60px;
   height: 60px;
-  background: #d6c9b4;
+  background: var(--beige);
   border-radius: 50%;
-  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+  box-shadow: 0 6px 20px rgba(0,0,0,.2);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 26px;
+  font-size: 24px;
   cursor: pointer;
-  z-index: 999;
-  transition: transform .2s ease;
+  z-index: 1000;
+  transition: transform .3s ease;
 }
 
 .chat-floating-btn:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(5deg);
 }

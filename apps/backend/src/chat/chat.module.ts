@@ -7,14 +7,17 @@ import { ChatController } from './chat.controller';
 import { ChatGateway } from './chat.gateway';
 import { User } from '../users/users.entity';
 import { UsersModule } from '../users/users.module';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { Notification } from '../notifications/notification.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Chat, ChatMessage, User]),
+    TypeOrmModule.forFeature([Chat, ChatMessage, User, Notification]),
     UsersModule,
+    NotificationsModule,
   ],
   controllers: [ChatController],
   providers: [ChatService, ChatGateway],
   exports: [ChatService],
 })
-export class ChatModule {}
+export class ChatModule { }

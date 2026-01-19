@@ -5,6 +5,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import PublicUserProfile from "../../components/PublicUserProfile/PublicUserProfile";
 import PublicUserProfileSkeleton from "../../components/PublicUserProfileSkeleton/PublicUserProfileSkeleton";
+import Footer from "../../components/Footer/Footer";
 
 import { getPublicUser } from "../../api/users.api";
 import { getPublicProductsByUser } from "../../api/products.api";
@@ -28,7 +29,7 @@ export default function PublicUser() {
     useEffect(() => {
         if (!userId) return;
 
-        const rawId = userId.split("-").pop();
+        const rawId = userId.includes("-") ? userId.split("-").pop() : userId;
         const id = Number(rawId);
 
         if (Number.isNaN(id)) {
@@ -47,13 +48,29 @@ export default function PublicUser() {
             getUserReviewSummary(id),
         ])
             .then(([userData, productsData, reviewsData, ratingData]) => {
+                if (!userData) {
+                    setNotFound(true);
+                    return;
+                }
+
                 setPublicUser(userData);
-                setProducts(productsData);
-                setReviews(reviewsData);
+                setProducts(productsData || []);
+                
+                // SOLUCIÓN AL ERROR DE LA CONSOLA:
+                // Mapeamos las reviews para asegurar que 'product' e 'images' no sean null
+                const validatedReviews = (reviewsData || []).map((rev: any) => ({
+                    ...rev,
+                    product: rev.product ? {
+                        ...rev.product,
+                        images: rev.product.images || [] // Si no hay imágenes, enviamos array vacío
+                    } : { name: "Producto no disponible", images: [] } 
+                }));
+
+                setReviews(validatedReviews);
                 setRating(ratingData);
             })
             .catch((err) => {
-                console.error("Error cargando perfil público:", err);
+                console.error("Error cargando perfil:", err);
                 setNotFound(true);
             })
             .finally(() => {
@@ -71,16 +88,16 @@ export default function PublicUser() {
         );
     }
 
-    // Verificamos 'publicUser' en lugar de 'user'
     if (notFound || !publicUser) {
         return (
             <>
                 <Navbar />
                 <CategoriesBar />
-                <div style={{ padding: "40px", textAlign: "center" }}>
+                <div style={{ padding: "60px 20px", textAlign: "center" }}>
                     <h2>Usuario no encontrado</h2>
-                    <p>Este usuario no existe o ha sido eliminado.</p>
+                    <p>El perfil que buscas no existe.</p>
                 </div>
+                <Footer />
             </>
         );
     }
@@ -89,13 +106,13 @@ export default function PublicUser() {
         <>
             <Navbar />
             <CategoriesBar />
-
             <PublicUserProfile
                 user={publicUser}
                 products={products}
                 reviews={reviews}
                 rating={rating}
             />
+            <Footer />
         </>
     );
 }

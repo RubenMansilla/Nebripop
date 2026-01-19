@@ -58,14 +58,15 @@
 }
 
 .info-items {
-    background-color: #E5DED4;
+    background-color: #fffaf2;
     width: fit-content;
     display: flex;
     border-radius: 25px;
+    border: 1.5px solid #d6c9b4;
 }
 
 .info-item {
-    color: #5A5959;
+    color: #7a6c58;
     font-size: 14px;
     font-weight: 700;
     line-height: 21px;
@@ -80,8 +81,8 @@
 }
 
 .info-item.active {
-    background-color: #D6C9B4;
-    color: #000000;
+    background-color: #f2e2c7;
+    color: #333;
     transition: 0.2s ease;
 }
 

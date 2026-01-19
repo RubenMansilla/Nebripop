@@ -5,7 +5,7 @@ const baseURL = rawBaseURL.replace(/\/$/, "");
 
 const api = axios.create({
   baseURL,
-  withCredentials: true, // ✅ por si usas cookies/credentials
+  withCredentials: true,
 });
 
 // REQUEST interceptor
@@ -31,7 +31,6 @@ api.interceptors.response.use(
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) throw new Error("No refreshToken");
 
-        // ✅ axios crudo (SIN interceptores)
         const { data } = await axios.post(
           `${baseURL}/auth/refresh`,
           {},

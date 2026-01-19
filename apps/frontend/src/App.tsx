@@ -45,6 +45,7 @@ import Privacy from "./components/PantallasFooter/Privacy";
 import Terms from "./components/PantallasFooter/Terms";
 import Filtro from "./pages/Filtro/Filtro";
 
+import EditProductPage from "./pages/EditProduct/EditProduct";
 
 // PERFIL PÚBLICO
 import PublicUser from "./pages/PublicUser/PublicUser";
@@ -83,6 +84,15 @@ export default function App() {
 
                         <Route path="/filtros" element={<Filtro />} />
                         <Route path="/product/:productId" element={<Detail />} />
+
+                        <Route
+                            path="/product/edit/:productId"
+                            element={
+                                <ProtectedRoute>
+                                    <EditProductPage />
+                                </ProtectedRoute>
+                            }
+                        />
 
                         <Route path="/you" element={<User />} />
 

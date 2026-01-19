@@ -1,0 +1,458 @@
+.edit-product-page {
+  min-height: calc(100vh - 60px);
+  background: #f3f4f6;
+  /* gris suave como en el otro formulario */
+  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  /* ✅ evita scroll horizontal en móvil */
+}
+
+.edit-product-card {
+  width: 100%;
+  max-width: 1100px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 26px;
+  border: 1px solid #e3e4e6;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
+  /* ✅ que el padding no haga crecer el ancho */
+}
+
+/* ✅ todo lo de dentro del card respeta el ancho sin desbordarse */
+.edit-product-card * {
+  box-sizing: border-box;
+  max-width: 100% !important;
+  /* 🔥 nada puede ser más ancho que el card */
+  min-width: 0 !important;
+  /* 🔥 anulamos min-width heredados */
+}
+
+.edit-product-card h1 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: #111827;
+  font-weight: 700;
+}
+
+.edit-product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.edit-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  /* ✅ columnas colapsables */
+  gap: 2rem;
+  width: 100%;
+}
+
+.edit-form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.edit-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.edit-form-row label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.edit-product-form label {
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+/* ===== Inputs / Textareas / Selects ===== */
+
+.edit-product-form input,
+.edit-product-form textarea,
+.edit-product-form select {
+  border: 1px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  outline: none;
+  background: #ffffff;
+  color: #111827;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.15s ease;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0 !important;
+  /* 🔥 clave para que no revienten el layout */
+  box-sizing: border-box;
+}
+
+.edit-product-form input::placeholder,
+.edit-product-form textarea::placeholder {
+  color: #b8b8b8;
+  font-weight: 400;
+}
+
+.edit-product-form input:hover,
+.edit-product-form textarea:hover,
+.edit-product-form select:hover {
+  border-color: #d3d3d3;
+}
+
+.edit-product-form input:focus,
+.edit-product-form textarea:focus,
+.edit-product-form select:focus {
+  border-color: #c2b28a;
+  box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.25);
+  background: #ffffff;
+}
+
+.edit-product-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+/* ===== Checkbox ===== */
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  color: #374151;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+/* ===== Bloques laterales (envío, zona, imágenes) ===== */
+
+.edit-shipping-block,
+.edit-location-block,
+.edit-images-block {
+  border: 1px solid #e3e4e6;
+  border-radius: 20px;
+  padding: 24px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+  /* ✅ que no desborde la columna */
+}
+
+/* ===== Imágenes ===== */
+
+.edit-images-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #111827;
+}
+
+.current-images-label {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+
+/* ✅ grids adaptativos que nunca se salen */
+.current-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.current-image-item {
+  position: relative;
+}
+
+.current-image-item img {
+  width: 100%;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+}
+
+/* Botón borrar imagen actual */
+.current-image-item .delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Texto input file si lo usas en algún label */
+.file-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.file-label input[type="file"] {
+  font-size: 0.85rem;
+}
+
+/* Contador de nuevas imágenes */
+.new-images-count {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ===== Dropzone ===== */
+
+.dropzone {
+  border: 1px dashed #d2b990;
+  border-radius: 16px;
+  padding: 1rem;
+  width: 100%;
+  /* ✅ ocupa el ancho del card, no más */
+  max-width: 100%;
+}
+
+.dropzone-inner {
+  text-align: center;
+}
+
+.upload-btn {
+  display: inline-block;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  background: #d2b990;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.35rem;
+}
+
+.dropzone-text {
+  display: block;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.dropzone-info {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+
+/* GRID PREVIEW NUEVAS
+   ✅ responsive, no se sale del contenedor en móvil */
+.preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.preview-box,
+.preview-placeholder {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1px dashed #e5e7eb;
+  background: #f9fafb;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-box .delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  border: none;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ===== Acciones (botones) ===== */
+
+.edit-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  border-radius: 999px;
+  padding: 0.55rem 1.4rem;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease,
+    opacity 0.15s;
+}
+
+/* Botón principal en beige NebriPop */
+.btn-primary {
+  background: #d2b990;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(210, 185, 144, 0.45);
+  font-weight: 500;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  opacity: 0.9;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* Secundario gris suave */
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 900px) {
+  .edit-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-product-card {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .edit-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-product-page {
+    padding: 1.5rem 0.75rem;
+  }
+
+  /* un pelín menos padding en los bloques para que respiren en móviles */
+  .edit-shipping-block,
+  .edit-location-block,
+  .edit-images-block {
+    padding: 16px;
+  }
+}
+
+/* ===========================
+   RADIOS DE ENVÍO SOLO AQUÍ
+   =========================== */
+
+.edit-shipping-block .envio-option input[type="radio"],
+.edit-shipping-block .peso-row input[type="radio"] {
+  all: unset;
+  appearance: auto;
+  -webkit-appearance: radio;
+  -moz-appearance: radio;
+
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+/* ===========================
+   Ajustes envío (texto que se corta)
+   =========================== */
+
+.envio-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  /* ✅ que el texto y el radio puedan saltar de línea */
+}
+
+.envio-option-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.envio-option-left span,
+.envio-description,
+.envio-beneficios li {
+  white-space: normal;
+  /* ✅ el texto envuelve en pantallas pequeñas */
+  word-break: break-word;
+}
+
+/* ===========================
+   Ajustes botones inferiores
+   =========================== */
+
+@media (max-width: 480px) {
+  .edit-form-actions {
+    flex-direction: column;
+    /* ✅ botones en columna en móviles muy estrechos */
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  .edit-form-actions .btn-primary,
+  .edit-form-actions .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}

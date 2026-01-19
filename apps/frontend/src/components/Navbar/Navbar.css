@@ -89,10 +89,13 @@
   transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.08s ease;
 }
 
+.search:hover {
+  border-color: var(--beige);
+}
+
 .search:focus {
   border-color: var(--beige);
-  box-shadow: 0 6px 18px rgba(210, 185, 144, 0.25);
-  transform: scale(1.01);
+  box-shadow: none;
 }
 
 .icon {
@@ -165,31 +168,60 @@
   align-items: center;
   gap: 8px;
   padding: 10px 22px;
-  border: 2px solid var(--beige);
+  border: 1px solid #d2b990;
   border-radius: 10px;
   background-color: white;
   color: var(--gris-texto);
   font-size: 17px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+/* Estado HOVER */
+.btn-vender:hover {
+  background-color: #f2e2c7;
+  color: var(--gris-texto) !important;
+  /* Fuerza el texto a blanco */
+}
+
+/* Esta es la clave: 
+   Fuerza a cualquier icono o SVG dentro del botón a ser blanco en hover 
+*/
+.btn-vender:hover svg,
+.btn-vender:hover i,
+.btn-vender:hover span {
+  color: var(--gris-texto) !important;
+  fill: var(--gris-texto) !important;
+  /* Si es un SVG */
+}
+
 .icon-plus {
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
   width: 22px;
   height: 22px;
-  border: 2px solid var(--beige);
+  border: 2px solid var(--gris-texto);
   border-radius: 50%;
   font-size: 18px;
-  color: var(--beige);
+  line-height: 1;
+  padding-bottom: 2px;
+  color: var(--gris-texto);
 }
 
 /* ====================================
    NAVBAR TABLET (600px – 1000px)
 ==================================== */
-@media (max-width: 1000px) and (min-width: 800px) {
+@media (max-width: 1000px) and (min-width: 600px) {
+
+  .logo-small {
+    display: none;
+  }
+
+  .logo-pc {
+    display: block;
+  }
 
   /* Mantiene el espacio para la palabra animada */
   .fake-placeholder {
@@ -246,7 +278,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 600px) {
 
   .header-block-container {
     position: sticky;
@@ -403,4 +435,80 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+@media (max-width: 800px) and (min-width: 600px) {
+  .logo-pc {
+    display: none;
+  }
+
+  .logo-small {
+    display: block;
+  }
+}
+
+/* Resultados de búsqueda */
+.search-results-dropdown {
+  position: absolute;
+  top: 108%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid var(--beige);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-item:hover {
+  background: #fdfaf5;
+}
+
+.search-item-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.search-item-name {
+  font-weight: 600;
+  margin: 0;
+  color: var(--gris-texto);
+}
+
+.search-item-meta {
+  font-size: 13px;
+  color: var(--beige);
+  margin: 0;
+}
+
+.search-status {
+  padding: 20px;
+  text-align: center;
+  color: var(--gris-claro);
+}
+
+
+/* Clase para ocultar el placeholder cuando hay texto */
+.fake-placeholder.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none;
+}
+
+.fake-placeholder {
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
 }

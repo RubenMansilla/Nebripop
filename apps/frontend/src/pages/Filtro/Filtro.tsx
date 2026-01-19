@@ -29,24 +29,36 @@ export default function Filtro() {
   const [subcategories, setSubcategories] = useState<any[]>([]);
 
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(
+    null,
+  );
 
-
+  // Rango de precio que se manda a la API (si lo usas)
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(20000);
+
   const [dateFilter, setDateFilter] = useState<
     "today" | "7days" | "30days" | undefined
   >(undefined);
 
-
   // ========================
-  // FILTROS
+  // FILTROS (UI)
   // ========================
   const [min, setMin] = useState(0);
   const [max, setMax] = useState(20000);
   const [conditionFilters, setConditionFilters] = useState<string[]>([]);
   const [shippingFilter, setShippingFilter] =
     useState<"shipping" | "person" | null>(null);
+
+  // ========================
+  // PAGINACIÓN (40 en 40)
+  // ========================
+  const [visibleCount, setVisibleCount] = useState(40);
+
+  // ========================
+  // FILTROS MÓVIL
+  // ========================
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // ========================
   // CARGAR PRODUCTOS
@@ -59,21 +71,32 @@ export default function Filtro() {
       selectedSubcategory,
       minPrice,
       maxPrice,
-      dateFilter
+      dateFilter,
     )
       .then(setProducts)
       .finally(() => setLoading(false));
-
   }, [
     token,
     selectedCategory,
     selectedSubcategory,
     minPrice,
     maxPrice,
-    dateFilter
+    dateFilter,
   ]);
 
-
+  // Cada vez que cambian productos o filtros → volver a 40 primeros
+  useEffect(() => {
+    setVisibleCount(40);
+  }, [
+    products,
+    selectedCategory,
+    selectedSubcategory,
+    min,
+    max,
+    conditionFilters,
+    shippingFilter,
+    dateFilter,
+  ]);
 
   // ========================
   // CARGAR CATEGORÍAS
@@ -85,7 +108,7 @@ export default function Filtro() {
   }, []);
 
   // ========================
-  // CARGAR SUBCATEGORÍAS
+  // CARGAR SUBCATEGORÍAS (y borrar duplicadas)
   // ========================
   useEffect(() => {
     if (!selectedCategory) {
@@ -95,7 +118,15 @@ export default function Filtro() {
     }
 
     getSubcategoriesByCategory(selectedCategory)
-      .then(setSubcategories)
+      .then((subs) => {
+        const seenNames = new Set<string>();
+        const uniqueSubs = subs.filter((sub: any) => {
+          if (seenNames.has(sub.name)) return false;
+          seenNames.add(sub.name);
+          return true;
+        });
+        setSubcategories(uniqueSubs);
+      })
       .catch(console.error);
   }, [selectedCategory]);
 
@@ -104,18 +135,33 @@ export default function Filtro() {
   // ========================
   const toggleCondition = (value: string) => {
     setConditionFilters((prev) =>
-      prev.includes(value)
-        ? prev.filter((v) => v !== value)
-        : [...prev, value]
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
     );
   };
 
   // ========================
-  // FILTRADO REAL
+  // REINICIAR FILTROS
+  // ========================
+  const resetFilters = () => {
+    setSelectedCategory(null);
+    setSelectedSubcategory(null);
+
+    setMin(0);
+    setMax(20000);
+    setMinPrice(0);
+    setMaxPrice(20000);
+
+    setConditionFilters([]);
+    setShippingFilter(null);
+    setDateFilter(undefined);
+    setShowMobileFilters(false);
+  };
+
+  // ========================
+  // FILTRADO REAL (front)
   // ========================
   const filteredProducts = products.filter((p) => {
     const price = Number(p.price);
-
     if (Number.isNaN(price)) return false;
     if (price < min || price > max) return false;
 
@@ -131,6 +177,7 @@ export default function Filtro() {
     return true;
   });
 
+  const paginatedProducts = filteredProducts.slice(0, visibleCount);
 
   return (
     <>
@@ -139,11 +186,36 @@ export default function Filtro() {
       <CategoriesBar />
 
       <div className="filtro-container">
+        {/* CABECERA MÓVIL: toggle filtros */}
+        <div className="filtro-mobile-header">
+          <h2 className="results-title-mobile">Resultados</h2>
+          <button
+            type="button"
+            className="filtro-toggle-mobile"
+            onClick={() => setShowMobileFilters((prev) => !prev)}
+          >
+            {showMobileFilters ? "Ocultar filtros ▲" : "Mostrar filtros ▼"}
+          </button>
+        </div>
+
         {/* ========================
             SIDEBAR
         ======================== */}
-        <aside className="filtro-sidebar">
-          <h2 className="filtro-title">Filtros</h2>
+        <aside
+          className={`filtro-sidebar ${
+            showMobileFilters ? "filtro-sidebar--open" : ""
+          }`}
+        >
+          <div className="filtro-sidebar-header">
+            <h2 className="filtro-title">Filtros</h2>
+            <button
+              type="button"
+              className="filtro-reset-button"
+              onClick={resetFilters}
+            >
+              Reiniciar filtros
+            </button>
+          </div>
 
           {/* CATEGORÍAS */}
           <div className="filtro-block">
@@ -162,7 +234,7 @@ export default function Filtro() {
                 </li>
               ))}
               <li
-                className="ver-todo"
+                className={`ver-todo ${selectedCategory === null ? "active" : ""}`}
                 onClick={() => {
                   setSelectedCategory(null);
                   setSelectedSubcategory(null);
@@ -196,22 +268,24 @@ export default function Filtro() {
             <h3 className="filtro-subtitle">Opciones de envío</h3>
             <div className="envio-toggle">
               <div
-                className={`envio-option ${shippingFilter === "shipping" ? "active" : ""
-                  }`}
+                className={`envio-option ${
+                  shippingFilter === "shipping" ? "active" : ""
+                }`}
                 onClick={() =>
                   setShippingFilter(
-                    shippingFilter === "shipping" ? null : "shipping"
+                    shippingFilter === "shipping" ? null : "shipping",
                   )
                 }
               >
                 Con envío
               </div>
               <div
-                className={`envio-option ${shippingFilter === "person" ? "active" : ""
-                  }`}
+                className={`envio-option ${
+                  shippingFilter === "person" ? "active" : ""
+                }`}
                 onClick={() =>
                   setShippingFilter(
-                    shippingFilter === "person" ? null : "person"
+                    shippingFilter === "person" ? null : "person",
                   )
                 }
               >
@@ -244,6 +318,8 @@ export default function Filtro() {
               </label>
             ))}
           </div>
+
+          {/* PRECIO */}
           <div className="filtro-block filtro-precio-inputs">
             <h3 className="filtro-subtitle">Precio</h3>
 
@@ -252,18 +328,28 @@ export default function Filtro() {
                 type="number"
                 placeholder="0"
                 value={min}
-                onChange={(e) => setMin(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setMin(value);
+                  setMinPrice(value);
+                }}
               />
               <span className="precio-separador">€</span>
               <input
                 type="number"
                 placeholder="20000"
                 value={max}
-                onChange={(e) => setMax(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setMax(value);
+                  setMaxPrice(value);
+                }}
               />
               <span className="precio-separador">€</span>
             </div>
           </div>
+
+          {/* FECHA PUBLICACIÓN */}
           <div className="filtro-block">
             <h3 className="filtro-subtitle">Fecha de publicación</h3>
 
@@ -290,14 +376,13 @@ export default function Filtro() {
               </li>
 
               <li
-                className="ver-todo"
+                className={`ver-todo ${!dateFilter ? "active" : ""}`}
                 onClick={() => setDateFilter(undefined)}
               >
                 Ver todo
               </li>
             </ul>
           </div>
-
         </aside>
 
         {/* ========================
@@ -309,19 +394,29 @@ export default function Filtro() {
           <ul className="products-grid products-grid--filters">
             {loading ? (
               <p>Cargando productos...</p>
-            ) : filteredProducts.length === 0 ? (
+            ) : paginatedProducts.length === 0 ? (
               <p>No se encontraron productos</p>
             ) : (
-              filteredProducts.map((p) => (
+              paginatedProducts.map((p) => (
                 <li key={p.id} className="products-grid-item">
-
                   <Product product={p} mode="public" />
-
                 </li>
               ))
             )}
           </ul>
 
+          {/* Botón VER MÁS (40 en 40) */}
+          {!loading && filteredProducts.length > visibleCount && (
+            <div className="filtro-ver-mas-wrapper">
+              <button
+                type="button"
+                className="filtro-ver-mas-button"
+                onClick={() => setVisibleCount((prev) => prev + 40)}
+              >
+                Ver más
+              </button>
+            </div>
+          )}
         </main>
       </div>
 

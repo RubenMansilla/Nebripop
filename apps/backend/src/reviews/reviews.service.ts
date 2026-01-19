@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './review.entity';
+import { CreateReviewDto } from './dto/create-review.dto';
 
 @Injectable()
 export class ReviewsService {
@@ -53,5 +54,17 @@ export class ReviewsService {
 
         return { average, total };
     }
+
+    async createReview(createReviewDto: CreateReviewDto, reviewerIdFromToken: number) {
+        const newReview = this.reviewRepo.create({
+            rating: createReviewDto.rating,
+            comment: createReviewDto.comment,
+            reviewed_user_id: createReviewDto.owner_id,
+            product_id: createReviewDto.product_id,
+            reviewer_id: reviewerIdFromToken,
+            created_at: new Date(),
+        });
+
+        return await this.reviewRepo.save(newReview);
+    }
 }
-    

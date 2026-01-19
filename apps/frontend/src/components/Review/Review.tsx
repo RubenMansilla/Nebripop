@@ -5,7 +5,9 @@ import { formatAccountAge } from "../../utils/accountAge";
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Review({ review }: { review: ReviewType }) {
+export default function Review({ mode, review }: { mode: string; review: ReviewType }) {
+
+    const [showProduct, setShowProduct] = useState(false);
 
     const createSlug = (name: string) => {
         return name
@@ -76,20 +78,22 @@ export default function Review({ review }: { review: ReviewType }) {
                             </button>
                         )}
                     </div>
-                    <div className="review-product"
-                        onClick={() => { navigate(`/product/${review.product.id}`); }}
-                    >
-                        <div className="review-product-img">
-                            <img
-                                src={review.product.images[0]?.image_url || defaultProfile}
-                                alt="Foto de producto"
-                            />
+                    {mode === "private" && (
+                        <div className="review-product"
+                            onClick={() => { navigate(`/product/${review.product.id}`); }}
+                        >
+                            <div className="review-product-img">
+                                <img
+                                    src={review.product.images[0]?.image_url || defaultProfile}
+                                    alt="Foto de producto"
+                                />
+                            </div>
+                            <div className="review-product-info">
+                                <p className="review-product-ds">Compró por envío:</p>
+                                <p className="review-product-name">{review.product.name}</p>
+                            </div>
                         </div>
-                        <div className="review-product-info">
-                            <p className="review-product-ds">Compró por envío:</p>
-                            <p className="review-product-name">{review.product.name}</p>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </>

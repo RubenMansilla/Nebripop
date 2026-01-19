@@ -10,6 +10,45 @@
   padding: 0 20px;  /* ✔ margen suave responsivo */
 }
 
+/* Cabecera móvil (por defecto oculta en escritorio) */
+.filtro-mobile-header {
+  display: none;
+  width: 100%;
+  max-width: 1300px;
+  margin: 16px auto 0;
+  padding: 0 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.results-title-mobile {
+  font-size: 22px;
+  font-weight: 700;
+  color: #3a3a3a;
+}
+
+.filtro-toggle-mobile {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: #f1ebe1;
+  font-size: 13px;
+  font-weight: 600;
+  color: #7a6c58;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.filtro-toggle-mobile:hover {
+  background: #e4d8c6;
+}
+
+.filtro-toggle-mobile:active {
+  transform: scale(0.98);
+}
 
 /* ============================================
    SIDEBAR IZQUIERDO
@@ -19,11 +58,42 @@
   padding-right: 16px;
 }
 
+.filtro-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
 .filtro-title {
   font-size: 26px;
   font-weight: 800;
-  margin-bottom: 28px;
   color: #3a3a3a;
+}
+
+/* Botón "Reiniciar filtros" */
+.filtro-reset-button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e0d4c3;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  color: #8a7b64;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.filtro-reset-button:hover {
+  background: #f7f1e7;
+  border-color: #d2b990;
+  color: #6f5f46;
+}
+
+.filtro-reset-button:active {
+  transform: scale(0.97);
 }
 
 .filtro-block {
@@ -43,6 +113,7 @@
   cursor: pointer;
   font-size: 15px;
   color: #3a3a3a;
+  transition: color 0.2s ease;
 }
 
 .filtro-list li:hover {
@@ -53,6 +124,12 @@
   color: #d2b990;
   font-weight: 700;
   margin-top: 10px;
+}
+
+/* Activo (categorías, fechas, ver todo, etc.) */
+.filtro-list li.active {
+  color: #d2b990;
+  font-weight: 700;
 }
 
 /* ============================================
@@ -134,7 +211,7 @@
 }
 
 /* ============================================
-   PRECIO (SLIDER)
+   PRECIO (SLIDER) – si en algún momento lo usas
 ============================================ */
 .filtro-precio .range-labels {
   font-size: 14px;
@@ -252,17 +329,56 @@
   flex: 1;
 }
 
-/* Filtro categoria activa */
-.filtro-list li.active {
-  color: #d2b990;
+/* Títulos */
+.results-title {
+  font-size: 26px;
   font-weight: 700;
+  margin-bottom: 4px;
 }
 
-.filtro-list li {
-  transition: color 0.2s ease;
+.results-subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 20px;
 }
 
+/* GRID PRODUCTOS */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  padding-top: 10px;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
 
+/* ✅ grid correcto: UL -> LI */
+.products-grid-item {
+  min-width: 0; /* 🔑 evita que el contenido “empuje” la columna */
+}
+
+.product-link {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 🔒 Encierra el slider dentro de su celda */
+.products-grid--filters .slider-track {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.products-grid--filters .slider-track img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Bloques con línea inferior */
 .filtro-block:not(:last-child) {
   padding-bottom: 24px;
   border-bottom: 1px solid #eee;
@@ -324,8 +440,7 @@
   color: #b7a184;
 }
 
-
-/* Flecha ↓ personalizada */
+/* Flecha ↓ personalizada para selects genéricos */
 .order-select {
   background-image: url("data:image/svg+xml;utf8,<svg fill='%236f6f6f' height='16' viewBox='0 0 20 20' width='16' xmlns='http://www.w3.org/2000/svg'><polygon points='0,0 20,0 10,12'/></svg>");
   background-repeat: no-repeat;
@@ -333,63 +448,36 @@
   background-position: right 14px center;
 }
 
-
-/* Títulos */
-.results-title {
-  font-size: 26px;
-  font-weight: 700;
-  margin-bottom: 4px;
+/* Botón VER MÁS */
+.filtro-ver-mas-wrapper {
+  margin-top: 24px;
+  text-align: center;
 }
 
-.results-subtitle {
+.filtro-ver-mas-button {
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid #d2b990;
+  background: #fffaf2;
   font-size: 14px;
-  color: #777;
-  margin-bottom: 20px;
+  font-weight: 600;
+  color: #7a6c58;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-/* GRID PRODUCTOS */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  padding-top: 10px;
+.filtro-ver-mas-button:hover {
+  background: #f2e2c7;
+  border-color: #c3a678;
 }
 
-/* ✅ grid correcto: UL -> LI */
-.products-grid {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
+.filtro-ver-mas-button:active {
+  transform: scale(0.98);
 }
 
-.products-grid-item {
-  min-width: 0; /* 🔑 evita que el contenido “empuje” la columna */
-}
-
-.product-link {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  text-decoration: none;
-  color: inherit;
-}
-
-/* 🔒 Encierra el slider dentro de su celda */
-.products-grid--filters .slider-track {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-.products-grid--filters .slider-track img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-
-/* ===========================
-   RESPONSIVE · TABLET
-=========================== */
+/* ============================================
+   RESPONSIVE · TABLET (≤ 1024px)
+============================================ */
 @media (max-width: 1024px) {
   .filtro-container {
     max-width: 100%;
@@ -403,11 +491,39 @@
   }
 }
 
-/* ===========================
-   RESPONSIVE · MOBILE
-=========================== */
+/* ============================================
+   RESPONSIVE · DESKTOP PEQUEÑO (≤ 900px)
+   – cambia orden: filtros arriba, productos abajo
+============================================ */
+@media (max-width: 900px) {
+  .filtro-container {
+    flex-direction: column;
+  }
+
+  .filtro-sidebar {
+    order: 1;
+  }
+
+  .filtro-results {
+    order: 2;
+  }
+}
+
+/* ============================================
+   RESPONSIVE · MOBILE (≤ 768px)
+============================================ */
 @media (max-width: 768px) {
-  /* Layout: resultados arriba + filtros abajo */
+  /* Cabecera móvil visible */
+  .filtro-mobile-header {
+    display: flex;
+  }
+
+  /* Ocultar título de resultados de escritorio */
+  .filtro-results .results-title {
+    display: none;
+  }
+
+  /* Layout: resultados arriba + filtros colapsables debajo */
   .filtro-container {
     flex-direction: column;
     margin: 18px auto;
@@ -416,37 +532,32 @@
   }
 
   .filtro-results {
-    order: 1;
+    order: 2;
   }
 
+  /* Sidebar como tarjeta colapsable */
   .filtro-sidebar {
-    order: 2;
+    order: 1;
     width: 100%;
     padding-right: 0;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    padding: 16px;
+    display: none;            /* 🔥 por defecto oculto en móvil */
   }
 
-  /* Títulos más compactos */
-  .results-title {
-    font-size: 20px;
-    margin-bottom: 10px;
+  .filtro-sidebar.filtro-sidebar--open {
+    display: block;           /* 🔓 se muestra cuando el toggle está abierto */
   }
 
   .filtro-title {
     font-size: 20px;
-    margin-bottom: 16px;
   }
 
   .filtro-subtitle {
     font-size: 14px;
     margin-bottom: 10px;
-  }
-
-  /* Sidebar como tarjeta */
-  .filtro-sidebar {
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 16px;
-    padding: 16px;
   }
 
   .filtro-block {
@@ -541,7 +652,9 @@
   }
 }
 
-/* Móviles pequeños: 1 columna para que respire */
+/* ============================================
+   Móviles pequeños (≤ 600px)
+============================================ */
 @media (max-width: 600px) {
   .products-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -550,23 +663,6 @@
   .filtro-list {
     grid-template-columns: 1fr; /* filtros en 1 col para no apretar */
   }
-  }
-  @media (max-width: 900px) {
-  .filtro-container {
-    flex-direction: column;
-  }
-
-  /* 🔥 FILTROS ARRIBA */
-  .filtro-sidebar {
-    order: 1;
-  }
-
-  /* 🔥 PRODUCTOS DEBAJO */
-  .filtro-results {
-    order: 2;
-  }
-}
-@media (max-width: 600px) {
 
   .envio-toggle {
     height: 42px;                 /* más cómodo táctil */

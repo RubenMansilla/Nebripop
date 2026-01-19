@@ -103,7 +103,7 @@
     width: auto;
     height: auto;
 
-    object-fit: contain;
+    object-fit: cover;
   }
 
   .image-arrow {
@@ -252,6 +252,9 @@
     font-size: 14px;
     color: #6f6f6f;
     margin-bottom: 10px;
+    line-height: 1.6;
+    text-align: justify;
+    hyphens: auto;
   }
 
   .details-list {
@@ -312,6 +315,10 @@
     padding: 20px 0;
   }
 
+  .review {
+    margin: 25px 0 0 0;
+  }
+
   .reviews-section {
     margin-top: 24px;
     padding-top: 20px;
@@ -369,6 +376,13 @@
     margin-bottom: 4px;
     font-weight: 700;
     color: #4b4b4b;
+    /* Solución para nombres infinitos */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* Máximo 2 líneas, luego puntos suspensivos */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
   }
 
   /* Subtítulo */
@@ -526,85 +540,85 @@
     6. TARJETA VENDEDOR
   ====================================================== */
   .seller-card {
-  background: #fff;
-  border: 2px solid #e8e2d9;
-  border-radius: 16px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+    background: #fff;
+    border: 2px solid #e8e2d9;
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
 
-.seller-main {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
+  .seller-main {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
 
-.seller-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #f2f2f2;
-}
+  .seller-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #f2f2f2;
+  }
 
-.seller-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+  .seller-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-.seller-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1f1f1f;
-}
+  .seller-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f1f1f;
+  }
 
-.seller-rating-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #1f1f1f;
-}
+  .seller-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #1f1f1f;
+  }
 
-.seller-rating-row .star {
-  color: #f5b400;
-}
+  .seller-rating-row .star {
+    color: #f5b400;
+  }
 
-.seller-meta {
-  font-size: 12px;
-  color: #7a7a7a;
-}
+  .seller-meta {
+    font-size: 12px;
+    color: #7a7a7a;
+  }
 
-.seller-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 6px;
-}
+  .seller-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+  }
 
-.seller-profile-btn {
-  flex: 1;
-  background: #fff;
-  border: 1px solid #e0d8cd;
-  border-radius: 12px;
-  padding: 8px 0;
-  font-size: 14px;
-  cursor: pointer;
-}
+  .seller-profile-btn {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #e0d8cd;
+    border-radius: 12px;
+    padding: 8px 0;
+    font-size: 14px;
+    cursor: pointer;
+  }
 
-.seller-chat-btn {
-  flex: 1;
-  background: #d9cbb3;
-  border: none;
-  border-radius: 12px;
-  padding: 8px 0;
-  font-size: 14px;
-  color: #fff;
-  cursor: pointer;
-}
+  .seller-chat-btn {
+    flex: 1;
+    background: #d9cbb3;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+  }
 
 
   /* ======================================================
@@ -687,4 +701,163 @@
   .shipping-tab {
     cursor: pointer;
     transition: background-color 0.2s ease;
+  }
+
+  /* --- 1. IMAGEN EN COVER --- */
+  .product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cambiado de contain a cover */
+    display: block;
+  }
+
+  /* --- 2. DESCRIPCIÓN AJUSTADA --- */
+  .details-description {
+    font-size: 15px;
+    color: #6f6f6f;
+    margin-bottom: 16px;
+    line-height: 1.7;
+    /* Más separación entre líneas */
+    text-align: justify;
+    /* Justificado */
+    hyphens: auto;
+  }
+
+  /* --- 3. NOMBRE LARGO OVERFLOW --- */
+  .buy-title {
+    font-size: 20px;
+    margin-bottom: 4px;
+    font-weight: 700;
+    color: #4b4b4b;
+    /* Truncado a 2 líneas */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+  }
+
+  /* --- 4. ESTILOS SKELETON --- */
+  .skeleton-item {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite ease-in-out;
+    border-radius: 12px;
+  }
+
+  @keyframes skeleton-loading {
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* --- 5. BLOQUEO NEGOCIACIÓN --- */
+  .negotiation-block {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .negotiation-block p {
+    font-size: 12px;
+    color: #c53030;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .buy-main-btn.disabled {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+  }
+
+  .buy-offer-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ======================================================
+   8. RESPONSIVE DESIGN (MÓVIL Y TABLET)
+   ====================================================== */
+
+  @media (max-width: 1024px) {
+    .detail-container {
+      flex-direction: column;
+      /* Apila las columnas una sobre otra */
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* El sidebar de publicidad suele ocultarse en móvil para ahorrar espacio */
+    .left-sidebar {
+      display: none;
+    }
+
+    .detail-main {
+      width: 100%;
+      /* Ocupa todo el ancho */
+      order: 1;
+      /* La info del producto va primero */
+    }
+
+    .right-sidebar {
+      width: 100%;
+      /* La tarjeta de compra y vendedor ocupan todo el ancho */
+      order: 2;
+      /* Aparecen debajo de las imágenes y descripción */
+    }
+
+    /* Ajustamos la galería para que no sea tan alta en pantallas pequeñas */
+    .image-wrapper {
+      aspect-ratio: 1 / 1;
+      /* Imagen cuadrada en móvil suele funcionar mejor */
+    }
+  }
+
+  @media (max-width: 768px) {
+    .detail-container {
+      padding: 0 10px;
+      /* Menos margen lateral en móviles pequeños */
+    }
+
+    .breadcrumb {
+      justify-content: flex-start;
+      /* Alineado a la izquierda para leer mejor */
+      font-size: 12px;
+    }
+
+    .buy-price {
+      font-size: 32px;
+      /* Reducimos un poco el precio para que no desborde */
+    }
+
+    /* Las etiquetas de categorías se ajustan para que no se corten */
+    .product-tags {
+      gap: 8px;
+    }
+
+    .product-tag {
+      font-size: 13px;
+      padding: 6px 10px;
+    }
+
+    /* Ajuste de los botones del vendedor para que queden cómodos al tacto */
+    .seller-actions {
+      flex-direction: column;
+    }
+
+    .seller-profile-btn,
+    .seller-chat-btn {
+      width: 100%;
+      padding: 12px 0;
+      /* Botones más grandes para dedos */
+    }
   }

@@ -179,7 +179,7 @@ export default function ReviewProfile() {
                         <>
                             <div className="review-container">
                                 {reviews.slice(0, visibleCount).map((rev) => (
-                                    <Review review={rev} key={rev.id} />
+                                    <Review review={rev} mode="private" key={rev.id} />
                                 ))}
                             </div>
 

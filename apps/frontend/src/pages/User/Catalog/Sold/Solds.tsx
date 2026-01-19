@@ -1,6 +1,3 @@
-import Navbar from '../../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../../components/Profile/ProfileSideBar/ProfileSideBar';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import { getMySoldProducts } from "../../../../api/products.api";
@@ -20,7 +17,6 @@ export default function Solds() {
     const [visibleCount, setVisibleCount] = useState(25);
     const visibleProducts = Soldproducts.slice(0, visibleCount);
 
-    // 1. Loading controla la lógica, pero showSkeleton controla lo visual
     const [loading, setLoading] = useState(true);
     const [showSkeleton, setShowSkeleton] = useState(false);
 
@@ -40,9 +36,9 @@ export default function Solds() {
         if (!token) return;
 
         setLoading(true);
-        setShowSkeleton(false); // Reseteamos al iniciar
+        setShowSkeleton(false); // Resetear al iniciar
 
-        // Solo mostramos el skeleton si tarda más de 300ms
+        // Mostrar el skeleton si tarda más de 300ms
         const skeletonTimer = setTimeout(() => {
             setShowSkeleton(true);
         }, 300);
@@ -55,8 +51,6 @@ export default function Solds() {
                 console.error(err);
             })
             .finally(() => {
-                // Si la carga fue rápida (menos de 300ms), cancelamos el timer
-                // El skeleton NUNCA habrá salido, y pasará directo a "Sin productos"
                 clearTimeout(skeletonTimer);
                 setLoading(false);
             });
