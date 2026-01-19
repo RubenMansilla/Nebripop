@@ -1,4 +1,5 @@
-import { useContext, useEffect, useMemo, useRef, useState } from "react";
+// apps/frontend/src/pages/User/Chat/Chat.tsx
+import { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Chat.css";
 
@@ -37,8 +38,8 @@ interface ChatMessageType {
 }
 
 interface IncomingSocketMessage extends ChatMessageType {
-  chatId?: number;
-  chat?: { id: number };
+  chatId?: number | string;
+  chat?: { id: number | string };
 }
 
 // ✅ Producto mínimo para pintar tarjeta
@@ -48,6 +49,84 @@ type ProductLite = {
   price: number;
   images?: { image_url: string }[];
 };
+
+// ===================== DATE HELPERS (FIX) =====================
+// Motivo del bug del "primer chat":
+// En algunos entornos el backend devuelve createdAt con formatos distintos por chat:
+// - ISO: "2026-01-19T10:22:33.123Z"
+// - SQL: "2026-01-19 10:22:33"
+// - numérico: "1705650000000" (ms) o "1705650000" (s)
+// new Date() puede fallar en uno de esos formatos y el unread queda en 0 SOLO en ese chat.
+const toTs = (dateStr?: string | null): number => {
+  if (dateStr == null) return 0;
+
+  const s = String(dateStr).trim();
+  if (!s) return 0;
+
+  // 0) timestamps numéricos (segundos o milisegundos)
+  if (/^\d+$/.test(s)) {
+    const n = Number(s);
+    if (!Number.isFinite(n)) return 0;
+    // si parece segundos (10 dígitos aprox), conviértelo
+    if (s.length <= 10) return n * 1000;
+    return n;
+  }
+
+  // 1) intento directo
+  const d1 = new Date(s);
+  const t1 = d1.getTime();
+  if (Number.isFinite(t1)) return t1;
+
+  // 2) convierte "YYYY-MM-DD HH:mm:ss" -> "YYYY-MM-DDTHH:mm:ss"
+  const fixedT = s.replace(" ", "T");
+  const d2 = new Date(fixedT);
+  const t2 = d2.getTime();
+  if (Number.isFinite(t2)) return t2;
+
+  // 3) fuerza Z (UTC) si sigue sin timezone
+  const d3 = new Date(fixedT + "Z");
+  const t3 = d3.getTime();
+  if (Number.isFinite(t3)) return t3;
+
+  return 0;
+};
+
+const toISO = (dateStr?: string | null): string => {
+  const ts = toTs(dateStr);
+  return ts ? new Date(ts).toISOString() : "";
+};
+
+// ===================== API MESSAGE NORMALIZATION (FIX) =====================
+// Algunos backends devuelven los mensajes en distintas claves según el chat/paginación:
+// - Array directo
+// - { data: [...] }
+// - { messages: [...] }
+// - { chatMessages: [...] }
+// Además, los campos pueden venir como createdAt / created_at y sender / user / from.
+const extractMessagesArray = (resp: any): any[] => {
+  if (Array.isArray(resp)) return resp;
+  if (Array.isArray(resp?.data)) return resp.data;
+  if (Array.isArray(resp?.messages)) return resp.messages;
+  if (Array.isArray(resp?.chatMessages)) return resp.chatMessages;
+  if (Array.isArray(resp?.items)) return resp.items;
+  return [];
+};
+
+const normalizeMessage = (m: any): ChatMessageType | null => {
+  if (!m) return null;
+
+  const id = Number(m.id ?? m.messageId ?? m.msgId);
+  const createdAt = String(m.createdAt ?? m.created_at ?? m.timestamp ?? m.sentAt ?? "");
+  const content = String(m.content ?? m.text ?? "");
+
+  const senderRaw = m.sender ?? m.user ?? m.from ?? m.author;
+  const sender = normalizeUserLite(senderRaw) || { id: 0, fullName: "Usuario" };
+
+  if (!Number.isFinite(id) || !createdAt) return null;
+
+  return { id, content, createdAt, sender };
+};
+
 
 // ===================== HELPERS =====================
 const normalizeUserLite = (u: any): UserLite | null => {
@@ -191,7 +270,7 @@ const buildOfferActionContent = (args: {
 // ===================== ORDENAR CHATS POR ÚLTIMO MENSAJE =====================
 const getChatLastTs = (c: ChatSummary) => {
   const d = c.lastMessage?.createdAt;
-  const t = d ? new Date(d).getTime() : 0;
+  const t = toTs(d);
   return Number.isFinite(t) ? t : 0;
 };
 
@@ -205,6 +284,74 @@ const sortChatsByLastMessageDesc = (arr: ChatSummary[]) => {
     return Number(b.id) - Number(a.id);
   });
   return copy;
+};
+
+// ===================== UNREAD (WHATSAPP DOT) =====================
+const LS_LAST_SEEN_KEY = "nebripop_chat_last_seen_v1";
+type LastSeenMap = Record<number, string>; // chatId -> ISO date
+
+const loadLastSeenMap = (): LastSeenMap => {
+  try {
+    const raw = localStorage.getItem(LS_LAST_SEEN_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return {};
+    const out: LastSeenMap = {};
+    for (const [k, v] of Object.entries(parsed)) {
+      const chatId = Number(k);
+      const iso = String(v ?? "");
+      if (Number.isFinite(chatId) && iso) out[chatId] = iso;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+};
+
+const saveLastSeenMap = (map: LastSeenMap) => {
+  try {
+    localStorage.setItem(LS_LAST_SEEN_KEY, JSON.stringify(map));
+  } catch {
+    // noop
+  }
+};
+
+const getLastSeenISO = (chatId: number): string => {
+  const map = loadLastSeenMap();
+  return map[chatId] || "";
+};
+
+const setLastSeenISO = (chatId: number, iso: string) => {
+  const map = loadLastSeenMap();
+  map[chatId] = iso;
+  saveLastSeenMap(map);
+};
+
+// Pool sencillo para no petar el backend si tienes muchos chats
+const asyncPool = async <T, R>(
+  poolLimit: number,
+  array: T[],
+  iteratorFn: (item: T) => Promise<R>
+): Promise<R[]> => {
+  const ret: Promise<R>[] = [];
+  const executing: Promise<any>[] = [];
+
+  for (const item of array) {
+    const p = Promise.resolve().then(() => iteratorFn(item));
+    ret.push(p);
+
+    const e = p.finally(() => {
+      const idx = executing.indexOf(e);
+      if (idx >= 0) executing.splice(idx, 1);
+    });
+    executing.push(e);
+
+    if (executing.length >= poolLimit) {
+      await Promise.race(executing);
+    }
+  }
+
+  return Promise.all(ret);
 };
 
 export default function ChatPage() {
@@ -238,10 +385,27 @@ export default function ChatPage() {
   const productsCacheRef = useRef<Map<number, ProductLite>>(new Map());
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = (behavior: ScrollBehavior = "auto") => {
+    const el = messagesContainerRef.current;
+    if (el) {
+      if (behavior === "smooth") {
+        el.scrollTo({ top: el.scrollHeight, behavior });
+      } else {
+        el.scrollTop = el.scrollHeight;
+      }
+      return;
+    }
+    bottomRef.current?.scrollIntoView({ behavior });
+  };
+
+  // ✅ UNREAD COUNTS (puntito whatsapp)
+  const [unreadByChat, setUnreadByChat] = useState<Record<number, number>>({});
 
   // ---------- FORMATOS ----------
   const formatDateLabel = (dateStr: string) => {
-    const date = new Date(dateStr);
+    const date = new Date(toTs(dateStr));
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(today.getDate() - 1);
@@ -252,7 +416,7 @@ export default function ChatPage() {
   };
 
   const formatTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleTimeString("es-ES", {
+    return new Date(toTs(dateStr)).toLocaleTimeString("es-ES", {
       hour: "2-digit",
       minute: "2-digit",
     });
@@ -268,13 +432,52 @@ export default function ChatPage() {
   };
 
   // ---------- AUTO-SCROLL ----------
+  // 1) Cuando entramos a un chat y terminan de cargarse los mensajes: salto directo al final
+  useLayoutEffect(() => {
+    if (!selectedChat) return;
+    if (loadingMessages) return;
+    // Espera a que el DOM pinte el listado agrupado
+    requestAnimationFrame(() => scrollToBottom("auto"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChat?.id, loadingMessages]);
+
+  // 2) Cuando llegan nuevos mensajes (socket o envío): scroll suave al final
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!selectedChat) return;
+    scrollToBottom("smooth");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
+// ===================== Calcular unread real de 1 chat (robusto) =====================
+  const computeUnreadForChat = async (chatId: number) => {
+    const lastSeenISO = getLastSeenISO(chatId);
+    const lastSeenTs = toTs(lastSeenISO);
+
+    try {
+      const msgsResp = await getChatMessages(chatId);
+      const msgsRaw = extractMessagesArray(msgsResp);
+
+      const msgs: ChatMessageType[] = msgsRaw.map(normalizeMessage).filter(Boolean) as ChatMessageType[];
+
+      const unread = msgs.reduce((acc, m) => {
+        const ts = toTs(m.createdAt);
+        const fromOther = Number(m.sender.id) !== myId;
+        if (fromOther && ts > lastSeenTs) return acc + 1;
+        return acc;
+      }, 0);
+
+      return Number.isFinite(unread) ? unread : 0;
+    } catch {
+      return 0;
+    }
+  };
 
   // ===================== Cargar chats =====================
   useEffect(() => {
-    if (!user || !token) return;
+    if (!user || !token || !Number.isFinite(myId)) return;
+
+    // FIX: evita cualquier "auto-leído" por un selectedChat residual
+    // (por ejemplo si React reutiliza estado en navegación).
+    setSelectedChat(null);
 
     const fetchChats = async () => {
       try {
@@ -293,12 +496,29 @@ export default function ChatPage() {
 
         const safe = raw.map(normalizeChatSummary).filter(Boolean) as ChatSummary[];
 
-        // ✅ ORDENAR POR ÚLTIMO MENSAJE
-        setChats(sortChatsByLastMessageDesc(safe));
+        const ordered = sortChatsByLastMessageDesc(safe);
+        setChats(ordered);
 
-        setSelectedChat((prev) => {
-          if (!prev) return null;
-          return safe.some((c) => c.id === prev.id) ? prev : null;
+        // ✅ Inicializa TODOS a 0 para que NINGUNO (incluido el primero) quede undefined
+        setUnreadByChat((prev) => {
+          const next = { ...prev };
+          for (const c of ordered) {
+            if (next[c.id] == null) next[c.id] = 0;
+          }
+          return next;
+        });
+
+        // ✅ Calcular no-leídos reales comparando con lastSeen
+        const results = await asyncPool(4, ordered, async (c) => {
+          const unread = await computeUnreadForChat(c.id);
+          return { chatId: c.id, unread };
+        });
+
+        // ✅ Merge (NO reemplazar) para evitar pisados
+        setUnreadByChat((prev) => {
+          const next = { ...prev };
+          for (const r of results) next[r.chatId] = r.unread;
+          return next;
         });
       } catch (err) {
         console.error("fetchChats error:", err);
@@ -308,11 +528,12 @@ export default function ChatPage() {
     };
 
     fetchChats();
-  }, [user, token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, token, myId]);
 
   // ===================== Buscar usuarios =====================
   useEffect(() => {
-    if (!user || !token) return;
+    if (!user || !token || !Number.isFinite(myId)) return;
 
     const delay = setTimeout(async () => {
       const q = searchTerm.trim();
@@ -460,7 +681,10 @@ export default function ChatPage() {
   };
 
   // ===================== Actualizar lastMessage + reordenar =====================
-  const bumpChatToTopWithLastMessage = (chatId: number, lastMsg: { id: number; content: string; createdAt: string }) => {
+  const bumpChatToTopWithLastMessage = (
+    chatId: number,
+    lastMsg: { id: number; content: string; createdAt: string }
+  ) => {
     setChats((prev) => {
       const updated = prev.map((c) =>
         c.id === chatId
@@ -477,7 +701,6 @@ export default function ChatPage() {
       return sortChatsByLastMessageDesc(updated);
     });
 
-    // Si el chat activo es este, también actualizamos selectedChat.lastMessage para que el header/snippet cuadre
     setSelectedChat((prev) => {
       if (!prev || prev.id !== chatId) return prev;
       return {
@@ -501,33 +724,30 @@ export default function ChatPage() {
     try {
       const data = await getChatMessages(chat.id);
 
-      const raw =
-        Array.isArray(data)
-          ? data
-          : Array.isArray((data as any)?.data)
-          ? (data as any).data
-          : [];
+      const raw = extractMessagesArray(data);
 
-      const safeMsgs: ChatMessageType[] = raw
-        .filter(Boolean)
-        .map((m: any) => ({
-          id: Number(m.id),
-          content: String(m.content ?? ""),
-          createdAt: String(m.createdAt ?? ""),
-          sender: normalizeUserLite(m.sender) || { id: 0, fullName: "Usuario" },
-        }))
-        .filter((m: any) => Number.isFinite(m.id) && m.createdAt);
+      const safeMsgs: ChatMessageType[] = raw.map(normalizeMessage).filter(Boolean) as ChatMessageType[];
 
-      safeMsgs.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      safeMsgs.sort((a, b) => toTs(a.createdAt) - toTs(b.createdAt));
 
       setMessages(safeMsgs);
       await resolveChatProductsFromMessages(safeMsgs);
 
-      // ✅ si el backend no manda lastMessage, lo inferimos de los mensajes cargados
       const last = safeMsgs[safeMsgs.length - 1];
       if (last) {
-        bumpChatToTopWithLastMessage(chat.id, { id: last.id, content: last.content, createdAt: last.createdAt });
+        bumpChatToTopWithLastMessage(chat.id, {
+          id: last.id,
+          content: last.content,
+          createdAt: last.createdAt,
+        });
+
+        // ✅ guardamos ISO normalizado
+        setLastSeenISO(chat.id, toISO(last.createdAt) || new Date().toISOString());
+      } else {
+        setLastSeenISO(chat.id, new Date().toISOString());
       }
+
+      setUnreadByChat((prev) => ({ ...prev, [chat.id]: 0 }));
     } catch (err) {
       console.error("getChatMessages error:", err);
       setMessages([]);
@@ -563,6 +783,11 @@ export default function ChatPage() {
       const safe = rawUpdated.map(normalizeChatSummary).filter(Boolean) as ChatSummary[];
       setChats(sortChatsByLastMessageDesc(safe));
 
+      if (created?.id) {
+        setUnreadByChat((prev) => ({ ...prev, [created.id]: 0 }));
+        setLastSeenISO(created.id, new Date().toISOString());
+      }
+
       const chosen =
         (created?.id ? safe.find((c) => c.id === created.id) : null) || (created ? created : null);
 
@@ -580,15 +805,16 @@ export default function ChatPage() {
 
   // ===================== SOCKET: recibir mensajes =====================
   useEffect(() => {
-    if (!selectedChat) return;
-
     const socket = getChatSocket();
 
     const handler = (raw: IncomingSocketMessage) => {
-      const chatId = raw.chatId ?? raw.chat?.id;
-      if (!chatId) return;
+      const chatIdRaw = raw.chatId ?? raw.chat?.id;
+      const chatId = Number(chatIdRaw);
+      if (!Number.isFinite(chatId)) return;
 
-      // ✅ actualiza lastMessage + reordena lista SIEMPRE que llegue mensaje
+      const senderId = Number((raw as any)?.sender?.id ?? raw?.sender?.id);
+      const isMine = Number.isFinite(senderId) && senderId === myId;
+
       if (raw?.id && raw?.createdAt) {
         bumpChatToTopWithLastMessage(chatId, {
           id: Number(raw.id),
@@ -597,13 +823,20 @@ export default function ChatPage() {
         });
       }
 
-      // ✅ si el mensaje es del chat abierto, lo añadimos
-      if (chatId === selectedChat.id) {
+      const isOpenChat = selectedChat?.id === chatId;
+
+      if (!isOpenChat && !isMine) {
+        setUnreadByChat((prev) => ({
+          ...prev,
+          [chatId]: (prev[chatId] ?? 0) + 1,
+        }));
+      }
+
+      if (isOpenChat) {
         setMessages((prev) => {
           if (prev.some((m) => m.id === raw.id)) return prev;
 
-          const safeSender =
-            normalizeUserLite((raw as any).sender) || { id: 0, fullName: "Usuario" };
+          const safeSender = normalizeUserLite((raw as any).sender) || { id: 0, fullName: "Usuario" };
 
           const safeMsg: ChatMessageType = {
             id: Number(raw.id),
@@ -617,6 +850,9 @@ export default function ChatPage() {
 
           return [...prev, safeMsg];
         });
+
+        setUnreadByChat((prev) => ({ ...prev, [chatId]: 0 }));
+        if (raw?.createdAt) setLastSeenISO(chatId, toISO(String(raw.createdAt)) || new Date().toISOString());
       }
     };
 
@@ -626,7 +862,7 @@ export default function ChatPage() {
       socket.off("new_message", handler);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChat]);
+  }, [selectedChat, myId]);
 
   // ===================== Enviar mensaje normal (socket) =====================
   const handleSend = async () => {
@@ -657,15 +893,16 @@ export default function ChatPage() {
             sender: safeSender,
           };
 
-          // ✅ añade mensaje al chat abierto
           setMessages((prev) => (prev.some((m) => m.id === safeAck.id) ? prev : [...prev, safeAck]));
 
-          // ✅ actualiza lastMessage + reordena lista
           bumpChatToTopWithLastMessage(selectedChat.id, {
             id: safeAck.id,
             content: safeAck.content,
             createdAt: safeAck.createdAt,
           });
+
+          setLastSeenISO(selectedChat.id, toISO(safeAck.createdAt) || new Date().toISOString());
+          setUnreadByChat((prev) => ({ ...prev, [selectedChat.id]: 0 }));
         }
       );
     } catch (err) {
@@ -678,7 +915,7 @@ export default function ChatPage() {
     productId: number;
     offerAmount: number;
     action: OfferAction;
-    refOfferMsgId: number; // referencia SIEMPRE a la oferta raíz
+    refOfferMsgId: number;
   }) => {
     if (!selectedChat) return;
 
@@ -692,7 +929,7 @@ export default function ChatPage() {
         if (!ackMsg?.id) return;
 
         const safeSender =
-          normalizeUserLite((ackMsg as any).sender) || { id: myId, fullName: (user as any)?.fullName ?? "Tú" };
+          normalizeUserLite((ackMsg as any).sender) || ({ id: myId, fullName: (user as any)?.fullName ?? "Tú" } as UserLite);
 
         const safeAck: ChatMessageType = {
           id: Number(ackMsg.id),
@@ -703,12 +940,14 @@ export default function ChatPage() {
 
         setMessages((prev) => (prev.some((m) => m.id === safeAck.id) ? prev : [...prev, safeAck]));
 
-        // ✅ ordena chats por reciente
         bumpChatToTopWithLastMessage(selectedChat.id, {
           id: safeAck.id,
           content: safeAck.content,
           createdAt: safeAck.createdAt,
         });
+
+        setLastSeenISO(selectedChat.id, toISO(safeAck.createdAt) || new Date().toISOString());
+        setUnreadByChat((prev) => ({ ...prev, [selectedChat.id]: 0 }));
       }
     );
   };
@@ -717,25 +956,24 @@ export default function ChatPage() {
   const messagesByDate = useMemo(() => {
     const grouped: Record<string, ChatMessageType[]> = {};
     for (const m of messages) {
-      const key = new Date(m.createdAt).toDateString();
+      const key = new Date(toTs(m.createdAt)).toDateString();
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(m);
     }
     for (const k of Object.keys(grouped)) {
-      grouped[k].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+      grouped[k].sort((a, b) => toTs(a.createdAt) - toTs(b.createdAt));
     }
     return grouped;
   }, [messages]);
 
-  // ✅ chats ya ordenados
   const orderedChats = useMemo(() => sortChatsByLastMessageDesc(chats), [chats]);
 
   // ===================== Oferta: resolver “hilo” =====================
   type OfferThreadResolved = {
-    rootMsg: ChatMessageType; // oferta original
-    lastNode: ChatMessageType; // oferta activa actual (root o counter)
-    terminalAction: "accept" | "reject" | null; // si ya terminó
-    lastCounter: ChatMessageType | null; // último counter si existe
+    rootMsg: ChatMessageType;
+    lastNode: ChatMessageType;
+    terminalAction: "accept" | "reject" | null;
+    lastCounter: ChatMessageType | null;
   };
 
   const resolveOfferThread = (rootMsg: ChatMessageType): OfferThreadResolved => {
@@ -746,7 +984,7 @@ export default function ChatPage() {
       .map((m) => ({
         msg: m,
         action: extractOfferActionFromText(m.content),
-        ts: new Date(m.createdAt).getTime(),
+        ts: toTs(m.createdAt),
       }))
       .filter((x) => x.action)
       .sort((a, b) => a.ts - b.ts);
@@ -779,7 +1017,6 @@ export default function ChatPage() {
     );
   }
 
-  // ✅ mini-componente para contraoferta
   function CounterOfferButton({ onSend }: { onSend: (amount: number) => void }) {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState<number | "">("");
@@ -833,7 +1070,6 @@ export default function ChatPage() {
     );
   }
 
-  // ✅ Render de un “nodo de oferta” (root o counter)
   const renderOfferNodeAttachment = (offerNodeMsg: ChatMessageType, rootOfferMsg: ChatMessageType) => {
     const pid = extractProductIdFromText(offerNodeMsg.content);
     if (!pid) return null;
@@ -867,7 +1103,7 @@ export default function ChatPage() {
             const acceptMsg = messages
               .filter((m) => extractOfferRefFromText(m.content) === rootOfferMsg.id)
               .filter((m) => extractOfferActionFromText(m.content) === "accept")
-              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+              .sort((a, b) => toTs(b.createdAt) - toTs(a.createdAt))[0];
             return acceptMsg ? extractPayLinkFromText(acceptMsg.content) : null;
           })()
         : null;
@@ -998,11 +1234,7 @@ export default function ChatPage() {
               {searchResults.map((u) => (
                 <div key={u.id} className="chat-user-item" onClick={() => setConfirmUser(u)}>
                   <div className="avatar-circle">
-                    {u.profilePicture ? (
-                      <img src={u.profilePicture} className="avatar-img" />
-                    ) : (
-                      u.fullName.charAt(0).toUpperCase()
-                    )}
+                    {u.profilePicture ? <img src={u.profilePicture} className="avatar-img" /> : u.fullName.charAt(0).toUpperCase()}
                   </div>
 
                   <div className="chat-user-texts">
@@ -1040,9 +1272,8 @@ export default function ChatPage() {
               orderedChats.map((c) => {
                 const other = getOtherUser(c);
 
-                const preview = c.lastMessage?.content
-                  ? stripAllMarkers(c.lastMessage.content)
-                  : "Sin mensajes";
+                const preview = c.lastMessage?.content ? stripAllMarkers(c.lastMessage.content) : "Sin mensajes";
+                const unread = unreadByChat[c.id] ?? 0;
 
                 return (
                   <div
@@ -1051,18 +1282,17 @@ export default function ChatPage() {
                     onClick={() => handleSelectChat(c)}
                   >
                     <div className="avatar-circle">
-                      {other.profilePicture ? (
-                        <img src={other.profilePicture} className="avatar-img" />
-                      ) : (
-                        other.fullName.charAt(0).toUpperCase()
-                      )}
+                      {other.profilePicture ? <img src={other.profilePicture} className="avatar-img" /> : other.fullName.charAt(0).toUpperCase()}
                     </div>
 
                     <div className="chat-user-texts">
                       <span className="chat-user-name">{other.fullName}</span>
-                      <span className="chat-user-sub">
-                        {preview.length > 26 ? preview.slice(0, 26) + "..." : preview}
-                      </span>
+                      <span className="chat-user-sub">{preview.length > 26 ? preview.slice(0, 26) + "..." : preview}</span>
+                    </div>
+
+                    {/* ✅ Puntito tipo WhatsApp */}
+                    <div className="chat-user-meta">
+                      {unread > 0 && <span className="chat-unread-badge">{unread > 99 ? "99+" : unread}</span>}
                     </div>
                   </div>
                 );
@@ -1118,7 +1348,7 @@ export default function ChatPage() {
               )}
 
               {/* Mensajes */}
-              <div className="chat-messages">
+              <div className="chat-messages" ref={messagesContainerRef}>
                 {loadingMessages ? (
                   <div className="chat-empty">Cargando mensajes...</div>
                 ) : (
