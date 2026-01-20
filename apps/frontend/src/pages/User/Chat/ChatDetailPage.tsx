@@ -118,7 +118,7 @@ export default function ChatDetailPage() {
         if (!chatId || !token) return;
 
         const socket = getChatSocket();
-        console.log("🔗 Re-uniéndose a la sala:", chatId);
+
         socket.emit("join_chat", { chatId });
 
         const handler = (rawMsg: any) => {

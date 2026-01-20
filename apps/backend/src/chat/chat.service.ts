@@ -25,8 +25,6 @@ export class ChatService {
     @InjectRepository(Notification)
     private readonly notificationRepo: Repository<Notification>,
 
-    @Inject(forwardRef(() => ChatGateway))
-    private readonly chatGateway: ChatGateway
   ) { }
 
   private getUserLite(id: number): Promise<UserLite | null> {
@@ -202,10 +200,7 @@ export class ChatService {
       // Calcular quién recibe la notificación
       const recipientId = (senderId === buyerId) ? sellerId : buyerId;
 
-      console.log(`Notificando: Sender=${senderId}, Buyer=${buyerId}, Seller=${sellerId} -> Recipient=${recipientId}`);
-
       const room = `chat_${chatId}`;
-      console.log(`🚀 SERVICE -> SOCKET: Emitiendo a sala ${room}`);
 
       // Guardar notificación en BD
       if (recipientId) {

@@ -57,31 +57,13 @@ export class ChatController {
             body.content
         );
 
-        try {
-            const roomName = `chat_${chatId}`;
-            console.log(`📡 [3/4] Intentando emitir a sala: '${roomName}'`);
+        const roomName = `chat_${chatId}`;
 
-            // Verificamos si el gateway existe
-            if (!this.chatGateway) {
-                throw new Error("CRÍTICO: this.chatGateway es undefined");
-            }
-            // Verificamos si el server existe
-            if (!this.chatGateway.server) {
-                throw new Error("CRÍTICO: this.chatGateway.server es undefined (Socket no iniciado)");
-            }
-
-            // Emitimos
-            this.chatGateway.server.to(roomName).emit('new_message', {
-                ...newMessage,
-                chatId: chatId
-            });
-            console.log(`🎉 [4/4] ÉXITO: Evento 'new_message' emitido.`);
-
-        } catch (error) {
-            console.error("❌ ERROR CRÍTICO EMITIENDO SOCKET:", error);
-            // No lanzamos error HTTP para no romper la petición del usuario, 
-            // pero ya sabemos que el socket falló.
-        }
+        // Emitimos
+        this.chatGateway.server.to(roomName).emit('new_message', {
+            ...newMessage,
+            chatId: chatId
+        });
 
         return newMessage;
     }

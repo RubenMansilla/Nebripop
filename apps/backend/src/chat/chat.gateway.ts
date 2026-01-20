@@ -12,7 +12,6 @@ import { Inject, forwardRef } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
-    // ✅ Permite localhost + Vercel + lo que pongas por ENV
     origin: [
       'http://localhost:5173',
       'https://nebripop.vercel.app',
@@ -26,13 +25,7 @@ export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-
-
-  constructor(
-
-    @Inject(forwardRef(() => ChatService))
-    private readonly chatService: ChatService
-  ) { }
+  constructor(private readonly chatService: ChatService) { }
 
   @SubscribeMessage('join_chat')
   handleJoin(@MessageBody() data: { chatId: number }, @ConnectedSocket() client: Socket) {
@@ -54,13 +47,12 @@ export class ChatGateway {
 
     const room = `chat_${data.chatId}`;
 
-    // 👇 Emitimos SIEMPRE con chatId plano (para que el front lo detecte seguro)
+    // Emitir SIEMPRE con chatId plano (para que el front lo detecte seguro)
     this.server.to(room).emit('new_message', {
       ...msg,
       chatId: data.chatId,
     });
 
-    // esto es lo que recibirá el ack en el cliente si lo usas
     return {
       ...msg,
       chatId: data.chatId,
