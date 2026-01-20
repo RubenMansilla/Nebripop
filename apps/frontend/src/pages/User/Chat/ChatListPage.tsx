@@ -5,6 +5,7 @@ import "./ChatListPage.css";
 import { AuthContext } from "../../../context/AuthContext";
 import { getUserChats } from "../../../api/chat.api";
 import { getChatSocket } from "../../../chatSocket";
+import noReviewsImg from "../../../assets/profile/pop-no-messages.svg";
 
 import {
     normalizeChatSummary,
@@ -22,11 +23,8 @@ export default function ChatListPage() {
     const activeChatId = params.chatId ? Number(params.chatId) : null;
     const myId = Number((user as any)?.id);
 
-    // Estado de chats y carga
     const [chats, setChats] = useState<ChatSummary[]>([]);
     const [loadingChats, setLoadingChats] = useState(true);
-
-    // Estado del buscador (FILTRO)
     const [searchTerm, setSearchTerm] = useState("");
 
     // CARGA INICIAL
@@ -49,33 +47,54 @@ export default function ChatListPage() {
         return () => { socket.off("new_message", handler); };
     }, []);
 
-    // HELPER PARA OBTENER EL OTRO USUARIO
     const getOtherUser = (c: ChatSummary) => (c.user1.id === myId ? c.user2 : c.user1);
 
-    // FILTRADO DE CHATS (Lógica del buscador)
     const filteredChats = useMemo(() => {
         if (!searchTerm.trim()) return chats;
         const lower = searchTerm.toLowerCase();
         return chats.filter(c => {
             const other = getOtherUser(c);
-            // Filtrar por nombre del otro usuario
             return other.fullName.toLowerCase().includes(lower);
         });
     }, [chats, searchTerm, myId]);
 
     const viewModeClass = activeChatId ? "mode-chat" : "mode-list";
 
+    // ESTADO DE CARGA
+    if (loadingChats) {
+        return (<div className="chat-app-loading"></div>);
+    }
+
+    // ESTADO VACÍO (0 Chats)
+    if (chats.length === 0) {
+        return (
+            <div className="chat-app-empty-state">
+                <div className="no-reviews">
+                    <img
+                        src={noReviewsImg}
+                        alt="Sin mensajes"
+                        className="no-reviews-img"
+                    />
+                    <h3>Sin mensajes todavía</h3>
+                    <p>
+                        Chatear en Nebripop suele ser el comienzo de una bonita compra. Encuentra algo que te guste y empieza una conversación. ¡Rompe el hielo!
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
+    // ESTADO NORMAL (Con Sidebar y Chats)
     return (
         <div className="chat-app">
             <div className={`chat-layout ${viewModeClass}`}>
 
-                {/* === IZQUIERDA: LISTA DE CHATS === */}
+                {/* === BARRA LATERAL === */}
                 <div className="chat-layout__sidebar">
                     <div className="cl-header">
                         <h3 className="cl-header__title">Mis Conversaciones</h3>
                     </div>
 
-                    {/* BUSCADOR (FILTRO) */}
                     <div className="cl-search">
                         <input
                             className="cl-search__input"
@@ -85,13 +104,10 @@ export default function ChatListPage() {
                         />
                     </div>
 
-                    {/* LISTA FILTRADA */}
                     <div className="cl-list">
-                        {loadingChats ? (
-                            <p style={{ padding: 20, textAlign: 'center', color: '#888' }}>Cargando...</p>
-                        ) : filteredChats.length === 0 ? (
+                        {filteredChats.length === 0 ? (
                             <div style={{ padding: 20, textAlign: 'center', color: '#888' }}>
-                                {searchTerm ? "No se encontraron chats." : "No tienes conversaciones."}
+                                No se encontraron chats con ese nombre.
                             </div>
                         ) : (
                             filteredChats.map(c => {
@@ -119,6 +135,7 @@ export default function ChatListPage() {
                     </div>
                 </div>
 
+                {/* === ZONA PRINCIPAL === */}
                 <div className="chat-layout__main">
                     {activeChatId ? (
                         <ChatDetailPage />
