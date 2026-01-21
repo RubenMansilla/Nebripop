@@ -3,7 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import type React from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useLoginModal } from "../../context/LoginModalContext";
-import { loginUser } from "../../api/auth.api";
+import { loginUser, requestPasswordReset } from "../../api/auth.api";
 import { AuthContext } from "../../context/AuthContext";
 import "./LoginPopup.css";
 
@@ -25,6 +25,10 @@ export default function LoginPopup({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // ✅ modo recuperación
+  const [isResetMode, setIsResetMode] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+
   useEffect(() => {
     if (!open) return;
     const onKeyDown = (e: KeyboardEvent) => {
@@ -39,6 +43,8 @@ export default function LoginPopup({
     if (!open) return;
     setErrorMsg(null);
     setSuccessMsg(null);
+    setIsResetMode(false);
+    setResetEmail("");
   }, [open]);
 
   if (!open) return null;
@@ -50,6 +56,7 @@ export default function LoginPopup({
 
   const handleLogin = async () => {
     if (loading) return;
+
     setLoading(true);
     setErrorMsg(null);
     setSuccessMsg(null);
@@ -65,33 +72,90 @@ export default function LoginPopup({
       }
 
       login(res.user, accessToken, refreshToken);
-
       setSuccessMsg("Has iniciado sesión correctamente");
 
       setTimeout(() => {
-        onClose(); // ✅ solo cerramos si fue bien
+        onClose();
       }, 1200);
     } catch (err: any) {
-      // ✅ mensaje robusto
       const msg =
         err?.response?.data?.message ||
         err?.message ||
         "Credenciales incorrectas";
 
       setErrorMsg(typeof msg === "string" ? msg : "Credenciales incorrectas");
-      // ❌ NO cerramos aquí
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ evita submit oculto / Enter en forms de arriba
+  const handleRequestReset = async () => {
+    if (loading) return;
+
+    const mail = (resetEmail || "").trim().toLowerCase();
+    if (!mail) {
+      setErrorMsg("Introduce tu email para recuperar la contraseña");
+      return;
+    }
+
+    setLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    try {
+      await requestPasswordReset({ email: mail });
+
+      setSuccessMsg(
+        "Si el email existe, te enviaremos un correo con instrucciones para recuperar la contraseña."
+      );
+
+      // volver a login después de 2s (opcional)
+      setTimeout(() => {
+        setIsResetMode(false);
+        setResetEmail("");
+      }, 2000);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "No se pudo solicitar el cambio de contraseña";
+
+      setErrorMsg(typeof msg === "string" ? msg : "No se pudo solicitar el cambio de contraseña");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ Enter: según modo
   const onKeyDownLogin = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
-      handleLogin();
+      if (loading) return;
+      if (isResetMode) handleRequestReset();
+      else handleLogin();
     }
+  };
+
+  const openForgotPassword = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (loading) return;
+
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    setIsResetMode(true);
+    setResetEmail(email?.trim()); // rellena con lo que ya escribió
+    setPassword(""); // ✅ limpiamos password por UX
+    setCaptchaValue(null); // opcional: resetea captcha en el modo reset
+  };
+
+  const backToLogin = () => {
+    if (loading) return;
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    setIsResetMode(false);
+    setCaptchaValue(null); // ✅ cuando vuelves, que vuelva a validar captcha
   };
 
   return (
@@ -109,72 +173,121 @@ export default function LoginPopup({
         </div>
 
         <div className="popup-right">
-          <h2 className="welcome-title">¡Te damos la bienvenida!</h2>
+          <h2 className="welcome-title">
+            {isResetMode ? "Recuperar contraseña" : "¡Te damos la bienvenida!"}
+          </h2>
 
           {errorMsg && <div className="login-error">{errorMsg}</div>}
           {successMsg && <div className="login-success">{successMsg}</div>}
 
-          <input
-            className="login-input"
-            placeholder="Dirección de e-mail"
-            value={email}
-            onKeyDown={onKeyDownLogin}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setErrorMsg(null);
-              setSuccessMsg(null);
-            }}
-          />
+          {isResetMode ? (
+            <>
+              <input
+                className="login-input"
+                placeholder="Tu email"
+                value={resetEmail}
+                onKeyDown={onKeyDownLogin}
+                onChange={(e) => {
+                  setResetEmail(e.target.value);
+                  setErrorMsg(null);
+                  setSuccessMsg(null);
+                }}
+                autoFocus
+              />
 
-          <input
-            className="login-input"
-            placeholder="Contraseña"
-            type="password"
-            value={password}
-            onKeyDown={onKeyDownLogin}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              setErrorMsg(null);
-              setSuccessMsg(null);
-            }}
-          />
+              <button
+                type="button"
+                className="login-btn"
+                disabled={!resetEmail.trim() || loading}
+                onClick={handleRequestReset}
+                style={{
+                  opacity: resetEmail.trim() && !loading ? 1 : 0.6,
+                  cursor: resetEmail.trim() && !loading ? "pointer" : "not-allowed",
+                }}
+              >
+                {loading ? "Enviando..." : "Enviar email de recuperación"}
+              </button>
 
-          <ReCAPTCHA
-            sitekey="6Lc8ADksAAAAAASu-cd5qVoh8_wW_IceZNtCgFYr"
-            onChange={(value: string | null) => setCaptchaValue(value)}
-            onExpired={() => setCaptchaValue(null)}
-            onErrored={() => {
-              setCaptchaValue(null);
-              setErrorMsg("No se pudo cargar el captcha. Prueba a recargar.");
-            }}
-          />
+              <button
+                type="button"
+                className="login-btn secondary"
+                onClick={backToLogin}
+                disabled={loading}
+              >
+                Volver a iniciar sesión
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                className="login-input"
+                placeholder="Dirección de e-mail"
+                value={email}
+                onKeyDown={onKeyDownLogin}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrorMsg(null);
+                  setSuccessMsg(null);
+                }}
+                autoFocus
+              />
 
-          <a className="forgot-password" href="#" onClick={(e) => e.preventDefault()}>
-            ¿Has olvidado tu contraseña?
-          </a>
+              <input
+                className="login-input"
+                placeholder="Contraseña"
+                type="password"
+                value={password}
+                onKeyDown={onKeyDownLogin}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setErrorMsg(null);
+                  setSuccessMsg(null);
+                }}
+              />
 
-          <button
-            type="button"
-            className="login-btn"
-            disabled={!captchaValue || !email || !password || loading}
-            onClick={handleLogin}
-            style={{
-              opacity: captchaValue && email && password && !loading ? 1 : 0.6,
-              cursor:
-                captchaValue && email && password && !loading
-                  ? "pointer"
-                  : "not-allowed",
-            }}
-          >
-            {loading ? "Entrando..." : "Acceder a Wallastock"}
-          </button>
+              <ReCAPTCHA
+                sitekey="6Lc8ADksAAAAAASu-cd5qVoh8_wW_IceZNtCgFYr"
+                onChange={(value: string | null) => setCaptchaValue(value)}
+                onExpired={() => setCaptchaValue(null)}
+                onErrored={() => {
+                  setCaptchaValue(null);
+                  setErrorMsg("No se pudo cargar el captcha. Prueba a recargar.");
+                }}
+              />
 
-          <p className="register-text">
-            ¿No tienes cuenta?{" "}
-            <span className="register-link" onClick={goRegister}>
-              Regístrate aquí
-            </span>
-          </p>
+              <a
+                className="forgot-password"
+                href="#"
+                onClick={openForgotPassword}
+                style={{ pointerEvents: loading ? "none" : "auto", opacity: loading ? 0.6 : 1 }}
+              >
+                ¿Has olvidado tu contraseña?
+              </a>
+
+              <button
+                type="button"
+                className="login-btn"
+                disabled={!captchaValue || !email || !password || loading}
+                onClick={handleLogin}
+                style={{
+                  opacity: captchaValue && email && password && !loading ? 1 : 0.6,
+                  cursor:
+                    captchaValue && email && password && !loading
+                      ? "pointer"
+                      : "not-allowed",
+                }}
+              >
+                {loading ? "Entrando..." : "Acceder a Wallastock"}
+              </button>
+
+              <p className="register-text">
+                ¿No tienes cuenta?{" "}
+                <span className="register-link" onClick={goRegister}>
+                  Regístrate aquí
+                </span>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

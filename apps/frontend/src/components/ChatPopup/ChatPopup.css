@@ -308,3 +308,74 @@
     padding: 10px;
   }
 }
+
+/* =========================================================
+   BOTÓN HACER OFERTA (toggle)
+========================================================= */
+.chatpop-offer-toggle{
+  padding: 12px 12px 14px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+}
+
+.offer-toggle-btn{
+  width: 100%;
+  max-width: 360px;
+
+  border-radius: 999px;
+  padding: 11px 16px;
+
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: .2px;
+
+  border: 1px solid rgba(0,0,0,0.08);
+  background: #f7f5f2;
+  color: #2b2b2b;
+
+  cursor: pointer;
+  transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.offer-toggle-btn:hover{
+  background: #efe9df;
+  transform: translateY(-1px);
+  border-color: rgba(0,0,0,0.14);
+}
+
+.offer-toggle-btn:active{
+  transform: translateY(0px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.offer-toggle-btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(214, 201, 180, 0.30), 0 6px 16px rgba(0,0,0,0.06);
+}
+
+/* Cuando está activado (modo oferta) -> estilo "cancelar" */
+.offer-toggle-btn.is-active{
+  background: #fff2f2;
+  color: #7b1414;
+  border-color: rgba(123, 20, 20, 0.22);
+}
+
+.offer-toggle-btn.is-active:hover{
+  background: #ffe7e7;
+  border-color: rgba(123, 20, 20, 0.30);
+}
+
+/* Responsive: que no se pegue demasiado abajo */
+@media (max-width: 520px){
+  .chatpop-offer-toggle{
+    padding: 10px 10px 12px;
+  }
+
+  .offer-toggle-btn{
+    max-width: 100%;
+    font-size: 13.5px;
+  }
+}
