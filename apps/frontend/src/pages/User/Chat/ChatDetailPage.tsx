@@ -42,6 +42,9 @@ export default function ChatDetailPage() {
     const loadingProductsRef = useRef<Set<number>>(new Set());
 
     const bottomRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
+    const [showScrollButton, setShowScrollButton] = useState(false);
+
     const [headerUser, setHeaderUser] = useState<{ name: string; avatar?: string } | null>(null);
 
     const [counterOfferModeId, setCounterOfferModeId] = useState<number | null>(null);
@@ -172,6 +175,21 @@ export default function ChatDetailPage() {
         }).catch(() => { });
     }, [chatId, token, myId]);
 
+    // Manejar scroll para mostrar botón flotante
+    const handleScroll = () => {
+        if (!messagesContainerRef.current) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+
+        // Si la distancia desde el fondo es mayor a 150px, mostrar botón
+        const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+        setShowScrollButton(distanceFromBottom > 150);
+    };
+
+    // Función para bajar al hacer clic en el botón flotante
+    const scrollToBottomSmooth = () => {
+        bottomRef.current?.scrollIntoView();
+    };
 
     // Scroll al fondo
     useLayoutEffect(() => {
@@ -197,7 +215,7 @@ export default function ChatDetailPage() {
                 setIsReady(true);
             }, 0);
         } else {
-            // Scroll ANIMADO en nuevos mensajes
+            // Scroll en nuevos mensajes
             bottomRef.current.scrollIntoView();
         }
     }, [messages, loading]);
@@ -357,6 +375,8 @@ export default function ChatDetailPage() {
 
             <div
                 className="cr-messages"
+                ref={messagesContainerRef}
+                onScroll={handleScroll}
                 style={{ opacity: isReady && !loading ? 1 : 0 }}
             >
                 {loading ? <p style={{ textAlign: 'center', padding: 20, color: '#888' }}>Cargando...</p> :
@@ -392,6 +412,13 @@ export default function ChatDetailPage() {
                 }
                 <div ref={bottomRef} />
             </div>
+
+            <button
+                className={`scroll-bottom-btn ${showScrollButton ? 'visible' : ''}`}
+                onClick={scrollToBottomSmooth}
+            >
+                ↓
+            </button>
 
             <div className="cr-input-area">
                 <input
