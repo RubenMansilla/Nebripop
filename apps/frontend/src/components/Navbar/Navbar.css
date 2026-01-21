@@ -465,6 +465,29 @@
   z-index: 1000;
   max-height: 400px;
   overflow-y: auto;
+  clip-path: inset(0 round 14px);
+}
+
+.search-results-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-results-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+  border-radius: 14px;
+}
+
+.search-results-dropdown::-webkit-scrollbar-thumb {
+  background-color: #dcdcdc;
+  border-radius: 20px;
+  border: 2px solid transparent;
+
+}
+
+.search-results-dropdown::-webkit-scrollbar-thumb:hover {
+  background-color: #b0b0b0;
+  width: 10px;
 }
 
 .search-item {
