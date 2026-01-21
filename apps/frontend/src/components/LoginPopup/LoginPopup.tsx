@@ -166,7 +166,7 @@ export default function LoginPopup({
         </button>
 
         <div className="popup-left">
-          <h1 className="brand-title">Wallastock</h1>
+          <h1 className="brand-title">Nebripop</h1>
           <p className="brand-subtitle">
             Compra y vende lo que ya no usas, fácil y cerca de ti.
           </p>
@@ -277,7 +277,7 @@ export default function LoginPopup({
                       : "not-allowed",
                 }}
               >
-                {loading ? "Entrando..." : "Acceder a Wallastock"}
+                {loading ? "Entrando..." : "Acceder a Nebripop"}
               </button>
 
               <p className="register-text">
