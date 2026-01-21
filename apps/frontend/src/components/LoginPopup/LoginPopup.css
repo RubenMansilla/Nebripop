@@ -1,37 +1,38 @@
-/* Fondo oscuro que bloquea la pantalla SOLO cuando el popup está abierto */
+/* ===================== BASE (PC & TABLET) ===================== */
 .popup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* SUPERIOR a todo */
+  z-index: 9999;
+  padding: 20px;
 }
 
-/* Caja del pop-up */
 .popup-box {
-  width: 900px;
-  height: 520px;
+  width: 100%;
+  max-width: 900px;
+  min-height: 520px;
   background: white;
   border-radius: 15px;
   display: flex;
   overflow: hidden;
   animation: popup 0.25s ease-out;
-  z-index: 10000;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
-/* Animación suave */
 @keyframes popup {
   from { opacity: 0; transform: scale(0.94); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Lado izquierdo */
+/* Panel Izquierdo */
 .popup-left {
-  width: 35%;
+  flex: 0 0 35%;
   background: #d6c6b0;
-  padding: 60px 40px;
+  padding: 40px;
   color: white;
   display: flex;
   flex-direction: column;
@@ -39,108 +40,390 @@
 }
 
 .brand-title {
-  font-size: 36px;
+  font-size: clamp(28px, 4vw, 36px);
   margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .brand-subtitle {
   font-size: 15px;
+  line-height: 1.4;
   opacity: 0.9;
 }
 
-/* Lado derecho */
+/* Panel Derecho */
 .popup-right {
-  width: 65%;
+  flex: 1;
   padding: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow-y: auto; /* Permite scroll si el contenido es muy alto */
 }
 
 .welcome-title {
   font-size: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   font-weight: 600;
+  text-align: center;
+  color: #333;
+}
+
+/* Elementos de Formulario */
+.login-input,
+.login-btn,
+.login-error,
+.login-success {
+  width: 100%;
+  max-width: 340px;
+  box-sizing: border-box;
 }
 
 .login-input {
-  width: 340px;
-  height: 46px;
+  height: 48px;
   border: 1px solid #ddd;
   border-radius: 10px;
-  padding-left: 10px;
+  padding: 0 16px;
   margin-bottom: 12px;
+  font-size: 16px;
+  transition: border-color 0.2s;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: #d6c6b0;
+  box-shadow: 0 0 0 3px rgba(214, 198, 176, 0.1);
 }
 
 .forgot-password {
-  margin-top: 10px;
+  margin: 15px 0;
   font-size: 14px;
   color: #c2a98a;
-  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.2s;
 }
 
-/* Botón login */
+.forgot-password:hover {
+  color: #a38b6d;
+  text-decoration: underline;
+}
+
 .login-btn {
-  width: 340px;
-  height: 48px;
+  height: 50px;
   background: #d6c6b0;
   border: none;
   border-radius: 10px;
   color: white;
   font-weight: 600;
-  margin-top: 20px;
+  font-size: 16px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s;
 }
 
-.login-btn:hover {
+.login-btn:hover:not(:disabled) {
   background: #cbb59c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(214, 198, 176, 0.3);
+}
+
+.login-btn:disabled {
+  cursor: not-allowed;
+}
+
+.login-btn.secondary {
+  background: #f2ebe3;
+  color: #6d5a45;
+  border: 1px solid #e6dbcf;
+  margin-top: 10px;
+}
+
+.login-btn.secondary:hover:not(:disabled) {
+  background: #e6dbcf;
 }
 
 .register-text {
-  margin-top: 18px;
+  margin-top: 20px;
   font-size: 14px;
   color: #444;
+  text-align: center;
 }
 
 .register-link {
   color: #c2a98a;
   cursor: pointer;
   font-weight: bold;
+  transition: color 0.2s;
 }
 
 .register-link:hover {
+  color: #a38b6d;
   text-decoration: underline;
 }
 
-.login-error {
-  background-color: #ffe5e5;
-  color: #b30000;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 12px;
+/* Manejo de Errores y Mensajes */
+.login-error, .login-success {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
   font-size: 14px;
   text-align: center;
 }
-
-.login-success {
-  background-color: #e6f7ec;
+.login-error { 
+  background: #ffe5e5; 
+  color: #b30000;
+  border: 1px solid #ffcccc;
+}
+.login-success { 
+  background: #e6f7ec; 
   color: #1e7f4d;
-  padding: 10px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  font-size: 14px;
-  text-align: center;
+  border: 1px solid #c3e6cb;
 }
 
 .popup-close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 15px;
+  right: 15px;
   border: none;
-  background: transparent;
-  font-size: 18px;
+  background: #eee;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  z-index: 10;
+  font-size: 18px;
+  color: #666;
+  transition: all 0.2s;
 }
 
-.popup-box { position: relative; }
+.popup-close:hover {
+  background: #ddd;
+  transform: rotate(90deg);
+}
+
+/* ReCAPTCHA responsive */
+.popup-right > div[class*="recaptcha"] {
+  width: 100%;
+  max-width: 340px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+/* ===================== TABLET (768px - 1024px) ===================== */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .popup-box {
+    max-width: 750px;
+  }
+  
+  .popup-left {
+    flex: 0 0 40%;
+    padding: 30px;
+  }
+  
+  .popup-right {
+    padding: 30px 25px;
+  }
+}
+
+/* ===================== MÓVIL (BOTTOM SHEET) ===================== */
+@media (max-width: 768px) {
+  .popup-overlay {
+    align-items: flex-end;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .popup-box {
+    flex-direction: column;
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    max-height: 95vh;
+    min-height: auto;
+    border-radius: 20px 20px 0 0;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .popup-left {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 20px 24px 18px 24px !important;
+    background: #d6c6b0;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .popup-left .brand-title {
+    font-size: 24px !important;
+    margin-bottom: 4px !important;
+    font-weight: 700;
+  }
+  
+  .popup-left .brand-subtitle {
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    opacity: 0.95 !important;
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .popup-right {
+    padding: 24px 24px 24px 24px;
+    justify-content: flex-start;
+    overflow-y: auto;
+    max-height: calc(95vh - 90px); /* Ajustado para el header más pequeño */
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .login-input, 
+  .login-btn, 
+  .login-error, 
+  .login-success {
+    max-width: 100%;
+  }
+
+  .login-input {
+    height: 48px; /* Reducido de 52px */
+    font-size: 16px;
+    margin-bottom: 12px; /* Reducido de 14px */
+  }
+
+  .login-btn {
+    height: 48px; /* Reducido de 52px */
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .forgot-password {
+    font-size: 14px;
+    margin: 10px 0; /* Reducido de 12px */
+  }
+
+  .register-text {
+    font-size: 14px;
+    margin-top: 14px; /* Reducido de 16px */
+  }
+
+  .popup-close {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  /* ReCAPTCHA en móvil */
+  .popup-right > div[class*="recaptcha"] {
+    transform: scale(0.95);
+    transform-origin: center;
+    margin-bottom: 16px;
+  }
+
+  /* Forzar que el iframe del captcha sea responsive */
+  .popup-right iframe[src*="recaptcha"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* ===================== MÓVILES PEQUEÑOS (< 400px) ===================== */
+@media (max-width: 400px) {
+  .popup-right {
+    padding: 24px 16px 20px 16px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .login-input,
+  .login-btn {
+    height: 50px;
+    font-size: 15px;
+  }
+
+  .login-error,
+  .login-success {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  /* ReCAPTCHA más pequeño en pantallas muy pequeñas */
+  .popup-right > div[class*="recaptcha"] {
+    transform: scale(0.88);
+  }
+}
+
+/* ===================== MODO LANDSCAPE EN MÓVIL ===================== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .popup-box {
+    max-height: 98vh;
+  }
+
+  .popup-right {
+    padding: 20px 24px;
+    justify-content: flex-start;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .login-input {
+    height: 46px;
+    margin-bottom: 10px;
+  }
+
+  .login-btn {
+    height: 46px;
+    margin-bottom: 6px;
+  }
+
+  .forgot-password {
+    margin: 10px 0;
+  }
+
+  .register-text {
+    margin-top: 12px;
+  }
+}
+
+/* ===================== ACCESIBILIDAD ===================== */
+@media (prefers-reduced-motion: reduce) {
+  .popup-box,
+  .login-btn,
+  .popup-close {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus visible para navegación por teclado */
+.login-input:focus-visible,
+.login-btn:focus-visible,
+.forgot-password:focus-visible,
+.register-link:focus-visible,
+.popup-close:focus-visible {
+  outline: 2px solid #d6c6b0;
+  outline-offset: 2px;
+}
