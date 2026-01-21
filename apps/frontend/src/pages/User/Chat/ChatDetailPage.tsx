@@ -153,7 +153,7 @@ export default function ChatDetailPage() {
     useEffect(() => {
         if (!chatId || !token) return;
         setLoading(true);
-        getChatMessages(chatId)
+        getChatMessages(Number(chatId))
             .then(res => {
                 const raw = extractMessagesArray(res);
                 const norm = raw.map(normalizeMessage).filter(Boolean) as ChatMessageType[];

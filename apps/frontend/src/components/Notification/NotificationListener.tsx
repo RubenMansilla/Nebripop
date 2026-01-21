@@ -3,15 +3,17 @@ import { createClient } from '@supabase/supabase-js';
 import { AuthContext } from '../../context/AuthContext';
 import { useNotificationSettings } from '../../context/NotificationContext';
 import { getUnreadNotifications, markNotificationAsRead } from '../../api/notifications.api';
+import { useNavigate } from 'react-router-dom';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function NotificationListener() {
+
     const { user } = useContext(AuthContext);
     const { notify, settings } = useNotificationSettings();
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!user) {
@@ -63,7 +65,17 @@ export default function NotificationListener() {
                         const shouldShow = userSettings[newNotif.type] !== false;
 
                         if (shouldShow) {
-                            notify(newNotif.type, newNotif.message, 'info');
+                            // LÓGICA DE NAVEGACIÓN
+                            let clickAction = undefined;
+
+                            // Si es un mensaje nuevo, ir al buzón general
+                            if (newNotif.type === 'newMessage') {
+                                clickAction = () => navigate('/profile/chat');
+                            }
+
+                            notify(newNotif.type, newNotif.message, 'info', {
+                                onClick: clickAction
+                            });
                         }
                     }
                 }
@@ -76,7 +88,7 @@ export default function NotificationListener() {
             supabase.removeChannel(channel);
         };
 
-    }, [user, notify, settings]);
+    }, [user, notify, settings, navigate]);
 
     return null;
 }

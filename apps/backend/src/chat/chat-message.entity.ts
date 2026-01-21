@@ -27,4 +27,7 @@ export class ChatMessage {
 
   @CreateDateColumn({ name: "sent_at" })
   createdAt: Date;
+
+  @Column({ name: 'is_read', default: false })
+  isRead: boolean;
 }

@@ -17,6 +17,7 @@ export interface ChatSummary {
         content: string;
         createdAt: string;
     } | null;
+    unreadCount?: number;
 }
 
 export interface ChatMessageType {
@@ -127,8 +128,9 @@ export const normalizeChatSummary = (c: any): ChatSummary | null => {
                 createdAt: String(lm.createdAt ?? ""),
             }
             : null;
+    const unreadCount = Number(c.unreadCount || 0);
 
-    return { id, user1, user2, lastMessage };
+    return { id, user1, user2, lastMessage, unreadCount };
 };
 
 export const extractMessagesArray = (resp: any): any[] => {

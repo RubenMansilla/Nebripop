@@ -15,6 +15,7 @@ export interface ChatSummary {
     content: string;
     createdAt: string;
   } | null;
+  unreadCount?: number;
 }
 
 export interface ChatMessageType {
@@ -29,19 +30,26 @@ export async function getUserChats(): Promise<ChatSummary[]> {
   return res.data;
 }
 
-// ✅ BACKEND REAL: POST /chat/get-or-create  body: { user2Id }
+// Crear o devolver chat existente
 export async function createOrGetChat(user2Id: number): Promise<ChatSummary> {
   const res = await api.post<ChatSummary>("/chat/get-or-create", { user2Id });
   return res.data;
 }
 
+// Mensajes de un chat
 export async function getChatMessages(chatId: number): Promise<ChatMessageType[]> {
   const res = await api.get<ChatMessageType[]>(`/chat/${chatId}/messages`);
   return res.data;
 }
 
-// (opcional) enviar mensaje por HTTP si lo necesitas
+
 export async function sendMessageHttp(chatId: number, content: string): Promise<ChatMessageType> {
   const res = await api.post<ChatMessageType>(`/chat/${chatId}/messages`, { content });
+  return res.data;
+}
+
+// Marcar chat como leído
+export async function markChatAsRead(chatId: number): Promise<{ success: boolean }> {
+  const res = await api.patch<{ success: boolean }>(`/chat/${chatId}/read`);
   return res.data;
 }

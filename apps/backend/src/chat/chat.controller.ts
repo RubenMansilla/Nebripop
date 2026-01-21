@@ -7,6 +7,7 @@ import {
     Post,
     Req,
     UseGuards,
+    Patch
 } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { ChatService } from "./chat.service";
@@ -59,12 +60,21 @@ export class ChatController {
 
         const roomName = `chat_${chatId}`;
 
-        // Emitimos
+        // Emitir
         this.chatGateway.server.to(roomName).emit('new_message', {
             ...newMessage,
             chatId: chatId
         });
 
         return newMessage;
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Patch(':chatId/read')
+    async markChatAsRead(
+        @Req() req,
+        @Param('chatId', ParseIntPipe) chatId: number
+    ) {
+        return this.chatService.markMessagesAsRead(chatId, req.user.id);
     }
 }

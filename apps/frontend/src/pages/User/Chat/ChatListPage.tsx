@@ -3,7 +3,7 @@ import { useContext, useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ChatListPage.css";
 import { AuthContext } from "../../../context/AuthContext";
-import { getUserChats } from "../../../api/chat.api";
+import { getUserChats, markChatAsRead } from "../../../api/chat.api";
 import { getChatSocket } from "../../../chatSocket";
 import noReviewsImg from "../../../assets/profile/pop-no-messages.svg";
 
@@ -17,6 +17,7 @@ import {
 import ChatDetailPage from "./ChatDetailPage";
 
 export default function ChatListPage() {
+
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const params = useParams();
@@ -26,6 +27,7 @@ export default function ChatListPage() {
     const [chats, setChats] = useState<ChatSummary[]>([]);
     const [loadingChats, setLoadingChats] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+
 
     // CARGA INICIAL
     useEffect(() => {
@@ -42,10 +44,37 @@ export default function ChatListPage() {
     // SOCKETS
     useEffect(() => {
         const socket = getChatSocket();
-        const handler = () => { console.log("Update list..."); };
-        socket.on("new_message", handler);
-        return () => { socket.off("new_message", handler); };
-    }, []);
+
+        const handleNewMessage = (rawMsg: any) => {
+            const msgChatId = Number(rawMsg.chatId ?? rawMsg.chat?.id);
+
+            setChats(prevChats => {
+                return prevChats.map(chat => {
+                    if (chat.id === msgChatId) {
+
+                        // Si estoy viendo este chat AHORA MISMO, no aumento contador
+                        if (msgChatId === activeChatId) {
+                            return {
+                                ...chat,
+                                lastMessage: normalizeChatSummary({ ...chat, lastMessage: rawMsg })?.lastMessage || null,
+                            };
+                        }
+
+                        // Si es otro chat, aumento contador
+                        return {
+                            ...chat,
+                            lastMessage: normalizeChatSummary({ ...chat, lastMessage: rawMsg })?.lastMessage || null,
+                            unreadCount: (chat.unreadCount || 0) + 1
+                        };
+                    }
+                    return chat;
+                });
+            });
+        };
+
+        socket.on("new_message", handleNewMessage);
+        return () => { socket.off("new_message", handleNewMessage); };
+    }, [activeChatId]);
 
     const getOtherUser = (c: ChatSummary) => (c.user1.id === myId ? c.user2 : c.user1);
 
@@ -57,6 +86,18 @@ export default function ChatListPage() {
             return other.fullName.toLowerCase().includes(lower);
         });
     }, [chats, searchTerm, myId]);
+
+    const handleChatClick = (targetChatId: number) => {
+        navigate(`/profile/chat/${targetChatId}`);
+
+        // Optimismo visual: poner contador a 0 inmediatamente
+        setChats(prev => prev.map(c =>
+            c.id === targetChatId ? { ...c, unreadCount: 0 } : c
+        ));
+
+        // Llamada a la API
+        markChatAsRead(targetChatId).catch(err => console.error("Error marcando leido", err));
+    };
 
     const viewModeClass = activeChatId ? "mode-chat" : "mode-list";
 
@@ -119,14 +160,20 @@ export default function ChatListPage() {
                                     <div
                                         key={c.id}
                                         className={`cl-item ${isActive ? "active" : ""}`}
-                                        onClick={() => navigate(`/profile/chat/${c.id}`)}
+                                        onClick={() => handleChatClick(c.id)}
                                     >
                                         <div className="c-avatar">
                                             {other.profilePicture ? <img src={other.profilePicture} alt="av" /> : other.fullName[0]}
                                         </div>
                                         <div className="cl-info">
-                                            <span className="cl-info__name">{other.fullName}</span>
-                                            <span className="cl-info__last-msg">{preview}</span>
+                                            <div className="cl-info-text">
+                                                <span className="cl-info__name">{other.fullName}</span>
+                                                <span className="cl-info__last-msg">{preview}</span>
+                                            </div>
+                                            {(c.unreadCount || 0) > 0 && (
+                                                <span className="unread-badge">
+                                                    {(c.unreadCount || 0) > 99 ? "+99" : c.unreadCount}                                                </span>
+                                            )}
                                         </div>
                                     </div>
                                 );

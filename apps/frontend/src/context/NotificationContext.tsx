@@ -36,7 +36,12 @@ const defaultSettings: NotificationsSettings = {
 interface NotificationContextType {
     settings: NotificationsSettings;
     updateSetting: (key: keyof NotificationsSettings) => void;
-    notify: (key: keyof NotificationsSettings, message: string, type?: 'success' | 'error' | 'info' | 'warning', options?: ToastOptions) => void;
+    notify: (
+        key: keyof NotificationsSettings,
+        message: string,
+        type?: 'success' | 'error' | 'info' | 'warning',
+        options?: ToastOptions & { onClick?: () => void }
+    ) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -69,7 +74,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
         //  Verificar si el usuario tiene activada esa categoría
         if (settings[key]) {
             // Si está activada, lanzar el toast
-            toast[type](message, options);
+            toast[type](message, {
+                ...options,
+                // Si pasamos una función onClick, la usamos.
+                onClick: options?.onClick,
+                // Cambiar el cursor para que se vea que es clickeable
+                style: { cursor: options?.onClick ? 'pointer' : 'default' }
+            });
         } else {
             console.log(`Notificación silenciada por configuración de usuario: ${key}`);
         }
