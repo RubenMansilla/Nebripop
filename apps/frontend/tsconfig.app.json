@@ -28,7 +28,7 @@
   },
   "include": [
     "src"
-  ],
+, "../backend/src/mail"  ],
   "references": [],
   "exclude": [
     "node_modules",
