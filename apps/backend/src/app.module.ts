@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { ProductsModule } from './products/products.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { AuctionsModule } from './auctions/auctions.module';
 import { PurchasesModule } from './purchases/purchases.module';
 import { CategoriesModule } from './categories/categories.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
@@ -46,6 +47,7 @@ import { ChatModule } from './chat/chat.module';
     ProductsModule,
     ReviewsModule,
     FavoritesModule,
+    AuctionsModule,
     PurchasesModule,
     CategoriesModule,
     SubcategoriesModule,
@@ -56,4 +58,4 @@ import { ChatModule } from './chat/chat.module';
     ChatModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

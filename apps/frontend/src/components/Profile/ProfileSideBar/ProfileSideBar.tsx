@@ -13,7 +13,7 @@ export default function ProfileSideBar() {
     const { user } = useContext(AuthContext);
 
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
-    const [loadingReviews, setLoadingReviews] = useState(false);
+    // const [loadingReviews, setLoadingReviews] = useState(false);
 
     const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
@@ -21,7 +21,7 @@ export default function ProfileSideBar() {
         if (!user?.id) return;
 
         let isMounted = true;
-        setLoadingReviews(true);
+        // setLoadingReviews(true);
 
         // CAMBIO 3: Usamos el endpoint ligero de resumen
         getUserReviewSummary(user.id)
@@ -37,7 +37,7 @@ export default function ProfileSideBar() {
                 if (isMounted) setSummary({ average: 0, total: 0 });
             })
             .finally(() => {
-                if (isMounted) setLoadingReviews(false);
+                // if (isMounted) setLoadingReviews(false);
             });
 
         return () => { isMounted = false; };
@@ -120,9 +120,12 @@ export default function ProfileSideBar() {
                         </svg>
                         <p>Tu Catálogo</p>
                     </div>
-                    <div className={`menu-item ${location.pathname.startsWith("/profile/chat") ? "active" : ""}`} onClick={() => navigate("/profile/chat")}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#29363d" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.26 6.95a.75.75 0 1 0-1.02 1.1l.02.018.056.052.211.193a83 83 0 0 0 3.208 2.768c.53.433 1.085.87 1.63 1.274L4 16.72a.75.75 0 1 0 1.06 1.06l4.551-4.55c.422.274.83.514 1.204.69.368.174.79.33 1.185.33.396 0 .817-.156 1.185-.33.384-.181.806-.43 1.24-.714L19 17.78a.75.75 0 1 0 1.06-1.06l-4.39-4.39a47 47 0 0 0 1.595-1.249 79 79 0 0 0 3.42-2.961l.055-.052.02-.018a.75.75 0 0 0-1.02-1.1l-.017.016-.053.049-.206.188a82 82 0 0 1-3.146 2.716c-.913.743-1.866 1.475-2.69 2.017a9.5 9.5 0 0 1-1.084.628c-.326.154-.495.186-.544.186s-.218-.032-.544-.186a9 9 0 0 1-1.083-.628c-.826-.542-1.778-1.274-2.69-2.017A78 78 0 0 1 4.33 7.015l-.054-.049z"></path><path fill-rule="evenodd" d="M12 1.5C-.123 1.5-.074 4.563.014 10.097c.008.49.016 1 .016 1.528l-.002.884C0 18.514-.018 22.5 12 22.5s12-3.986 11.973-9.99q-.003-.436-.003-.885.002-.793.016-1.528C24.074 4.563 24.123 1.5 12 1.5M1.53 11.625c0-.595-.009-1.137-.017-1.64-.016-.97-.029-1.793.028-2.573.082-1.131.303-1.844.707-2.362.397-.507 1.133-1.034 2.683-1.427C6.495 3.226 8.75 3 12 3s5.505.226 7.069.623c1.55.393 2.286.92 2.683 1.427.404.518.625 1.23.707 2.362.057.78.044 1.604.028 2.573-.008.503-.017 1.045-.017 1.64l.002.925c.006 1.278.01 2.367-.093 3.359-.124 1.194-.392 2.046-.873 2.694C20.563 19.871 18.283 21 12 21s-8.563-1.129-9.505-2.397c-.482-.648-.75-1.5-.874-2.694-.104-.992-.099-2.08-.093-3.358z" clip-rule="evenodd"></path></svg>
-                        <p>Buzón</p>
+                    <div className={`menu-item ${location.pathname.startsWith("/profile/auctions") ? "active" : ""}`} onClick={() => navigate("/profile/auctions")}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 19H22L12 2ZM12 5.8L17.5 15H6.5L12 5.8Z" fill="#253238" /> {/* Placeholder Gavel Icon logic needed, using SVG path or similar */}
+                            <path fillRule="evenodd" clipRule="evenodd" d="M15.4223 3.23722L17.1527 2.23846C17.5517 2.00811 18.0645 2.14486 18.2949 2.5439L21.2917 7.73461C21.522 8.13364 21.3853 8.64642 20.9862 8.87677L19.2558 9.87554L15.4223 3.23722ZM13.8863 5.43468L18.4283 13.3017L6.68536 13.3017L11.2274 5.43468C11.7588 4.51421 13.3549 4.51421 13.8863 5.43468ZM12.5568 15.3017H19.5828L18.6756 16.8735C18.4099 17.3337 17.9178 17.6177 17.3863 17.6177H7.72739C7.19597 17.6177 6.70385 17.3337 6.43813 16.8735L5.53094 15.3017H12.5568ZM2.16413 19.6177H22.9496V21.6177H2.16413V19.6177Z" fill="#253238" />
+                        </svg>
+                        <p>Subastas</p>
                     </div>
                     <div className={`menu-item ${location.pathname.startsWith("/favorites") ? "active" : ""}`} onClick={() => navigate("/favorites/products")}>
                         <svg width="28" height="25" viewBox="0 0 28 25" fill="none" xmlns="http://www.w3.org/2000/svg">

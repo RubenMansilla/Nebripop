@@ -36,4 +36,7 @@ export class User {
 
     @Column({ type: 'text', nullable: true })
     refreshToken: string | null;
+
+    @Column({ name: 'penalties_count', default: 0 })
+    penaltiesCount: number;
 }

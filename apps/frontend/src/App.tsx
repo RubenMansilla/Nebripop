@@ -56,6 +56,12 @@ import PurchaseCompleted from "./pages/PurchaseCompleted/PurchaseCompleted";
 // PAGINA 404
 import NotFound from "./pages/NotFound/NotFound";
 
+// AUCTIONS
+import AuctionsManager from "./pages/User/Auctions/AuctionsManager";
+import CreateAuction from "./pages/User/Auctions/CreateAuction";
+import AuctionList from "./pages/Auctions/AuctionList";
+import AuctionDetail from "./pages/Auctions/AuctionDetail";
+
 export default function App() {
     return (
         <AuthProvider>
@@ -85,6 +91,10 @@ export default function App() {
                         <Route path="/filtros" element={<Filtro />} />
                         <Route path="/product/:productId" element={<Detail />} />
 
+                        {/* Auctions Public Routes */}
+                        <Route path="/auctions" element={<AuctionList />} />
+                        <Route path="/auction/:id" element={<AuctionDetail />} />
+
                         <Route
                             path="/product/edit/:productId"
                             element={
@@ -111,6 +121,10 @@ export default function App() {
                             {/* Catálogo */}
                             <Route path="/catalog/published" element={<Published />} />
                             <Route path="/catalog/sold" element={<Solds />} />
+
+                            {/* Subastas (User) */}
+                            <Route path="/profile/auctions" element={<AuctionsManager />} />
+                            <Route path="/profile/auctions/create" element={<CreateAuction />} />
 
                             {/* Monedero */}
                             <Route path="/wallet/balance" element={<Balance />} />

@@ -15,6 +15,7 @@ export interface NotificationsSettings {
     newReview: boolean;
     tips: boolean;
     promotions: boolean;
+    auctions: boolean;
 }
 
 // Valores por defecto
@@ -30,6 +31,7 @@ const defaultSettings: NotificationsSettings = {
     newReview: true,
     tips: false,
     promotions: false,
+    auctions: true,
 };
 
 // Contexto de notificaciones y su proveedor 
