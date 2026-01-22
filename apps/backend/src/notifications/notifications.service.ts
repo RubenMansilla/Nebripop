@@ -11,13 +11,18 @@ export class NotificationsService {
     ) { }
 
     // CREAR NOTIFICACIÓN
-    async create(userId: number | string, message: string, type: string = 'transactions') {
+    async create(userId: number | string, message: string, type: string = 'transactions', productId?: number) {
         const notification = this.notificationRepository.create({
             userId: String(userId),
             message,
             type,
+            productId: productId,
         });
         return await this.notificationRepository.save(notification);
+    }
+
+    async createBatch(notificationsData: Partial<Notification>[]) {
+        return await this.notificationRepository.insert(notificationsData);
     }
 
     // BUSCAR NO LEÍDAS

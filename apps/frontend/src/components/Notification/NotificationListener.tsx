@@ -27,7 +27,17 @@ export default function NotificationListener() {
 
                 unread.forEach(async (n: any) => {
                     await markNotificationAsRead(n.id);
-                    notify(n.type, n.message, 'info');
+
+                    // Definir acción de click también para las pendientes
+                    let clickAction = undefined;
+
+                    if (n.type === 'priceDrops' && n.product_id) {
+                        clickAction = () => navigate(`/product/${n.product_id}`);
+                    } else if (n.type === 'newMessage') {
+                        clickAction = () => navigate('/profile/chat');
+                    }
+
+                    notify(n.type, n.message, 'info', { onClick: clickAction });
                 });
             } catch (error) {
                 console.error("Error cargando notificaciones pendientes", error);
@@ -36,6 +46,7 @@ export default function NotificationListener() {
 
         const initialTimer = setTimeout(checkPendingNotifications, 2000);
 
+        // Escuchar notificaciones en Tiempo Real
         const channel = supabase
             .channel('realtime:notifications')
             .on(
@@ -47,7 +58,6 @@ export default function NotificationListener() {
                 },
                 async (payload) => {
 
-                    // Si sigue llegando error, salir
                     if (payload.errors) {
                         console.error("Error de permisos Supabase:", payload.errors);
                         return;
@@ -55,22 +65,27 @@ export default function NotificationListener() {
 
                     const newNotif = payload.new;
 
-                    // Comparar el user_id de la notificación con el de la sesión
+                    // Verificar que la notificación es para el usuario actual
                     if (Number(newNotif.user_id) === Number(user.id)) {
 
                         await markNotificationAsRead(newNotif.id);
 
-                        // Comprobar configuración
                         const userSettings = settings || {};
                         const shouldShow = userSettings[newNotif.type] !== false;
 
                         if (shouldShow) {
-                            // LÓGICA DE NAVEGACIÓN
                             let clickAction = undefined;
 
-                            // Si es un mensaje nuevo, ir al buzón general
+                            // Si es mensaje nuevo -> Chat
                             if (newNotif.type === 'newMessage') {
                                 clickAction = () => navigate('/profile/chat');
+                            }
+
+                            // Si es bajada de precio -> Producto Específico
+                            else if (newNotif.type === 'priceDrops') {
+                                if (newNotif.product_id) {
+                                    clickAction = () => navigate(`/product/${newNotif.product_id}`);
+                                }
                             }
 
                             notify(newNotif.type, newNotif.message, 'info', {
@@ -80,8 +95,7 @@ export default function NotificationListener() {
                     }
                 }
             )
-            .subscribe((status, err) => {
-            });
+            .subscribe();
 
         return () => {
             clearTimeout(initialTimer);

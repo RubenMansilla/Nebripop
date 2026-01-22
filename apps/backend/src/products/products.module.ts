@@ -10,10 +10,12 @@ import { Purchase } from "../purchases/purchase.entity";
 import { Review } from "../reviews/review.entity";
 import { User } from "../users/users.entity";
 import { ProductView } from "./ProductView/product-view.entity";
+import { NotificationsService } from "../notifications/notifications.service";
+import { Notification } from "../notifications/notification.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, ProductImage, FavoriteProduct, Chat, Purchase, Review, User, ProductView])],
+  imports: [TypeOrmModule.forFeature([Product, ProductImage, FavoriteProduct, Chat, Purchase, Review, User, ProductView, Notification])],
   controllers: [ProductsController],
-  providers: [ProductsService],
+  providers: [ProductsService, NotificationsService],
 })
 export class ProductsModule { }

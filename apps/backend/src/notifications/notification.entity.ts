@@ -14,9 +14,13 @@ export class Notification {
     @Column()
     message: string;
 
+    @Column({ name: 'product_id', type: 'int', nullable: true })
+    productId: number | null;
+
     @Column({ name: 'is_read', default: false })
     isRead: boolean;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
+
 }

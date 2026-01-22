@@ -17,6 +17,7 @@ import { Purchase } from "../purchases/purchase.entity";
 import sharp from "sharp";
 import { Review } from "../reviews/review.entity";
 import { ProductView } from "./ProductView/product-view.entity";
+import { NotificationsService } from "../notifications/notifications.service";
 
 @Injectable()
 export class ProductsService {
@@ -46,7 +47,9 @@ export class ProductsService {
 
     @InjectRepository(ProductView)
     private readonly productViewRepo: Repository<ProductView>,
-  ) {}
+
+    private notificationsService: NotificationsService,
+  ) { }
 
   // ============================
   // HELPER SUPABASE: sacar path real desde la URL pública
@@ -132,7 +135,7 @@ export class ProductsService {
   ) {
     const product = await this.productRepo.findOne({
       where: { id: productId },
-      relations: ["images"],
+      relations: ["images", "favorites", "favorites.user"],
     });
 
     if (!product) {
@@ -149,12 +152,30 @@ export class ProductsService {
       throw new BadRequestException("No puedes editar un producto vendido");
     }
 
-    Object.assign(product, dto);
+    // Lógica para detectar bajada de precio
+    const oldPrice = Number(product.price); // Aseguramos que sea número
+    const newPrice = dto.price !== undefined ? Number(dto.price) : undefined;
 
+    // Guardar una bandera para saber si se debe notificar DESPUÉS de guardar
+    let shouldNotifyPriceDrop = false;
+
+    // Verificar: 
+    // 1. Que venga un precio nuevo
+    // 2. Que sea menor al viejo
+    if (newPrice !== undefined && newPrice < oldPrice) {
+      shouldNotifyPriceDrop = true;
+    }
+
+    Object.assign(product, dto);
     await this.productRepo.save(product);
 
     if (files && files.length > 0) {
       await this.uploadImages(files, product.id);
+    }
+
+    if (newPrice !== undefined && newPrice < oldPrice) {
+      // Llamamos a la función auxiliar (sin await si quieres que sea background)
+      this.notifyFollowers(product, newPrice).catch(console.error);
     }
 
     const updated = await this.productRepo.findOne({
@@ -163,6 +184,23 @@ export class ProductsService {
     });
 
     return updated;
+  }
+
+
+  private async notifyFollowers(product: Product, newPrice: number) {
+    if (!product.favorites || product.favorites.length === 0) return;
+
+    const notificationsPayload = product.favorites.map(fav => ({
+      userId: String(fav.user_id),
+      type: 'priceDrops',
+      message: `¡${product.name} ha bajado de precio a ${newPrice}€!`,
+      productId: product.id,
+      isRead: false,
+      createdAt: new Date()
+    }));
+
+    await this.notificationsService.createBatch(notificationsPayload);
+    console.log(`Alertas enviadas a ${notificationsPayload.length} usuarios.`);
   }
 
   // ============================
