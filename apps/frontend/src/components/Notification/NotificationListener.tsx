@@ -2,6 +2,7 @@ import { useEffect, useContext } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { AuthContext } from '../../context/AuthContext';
 import { useNotificationSettings } from '../../context/NotificationContext';
+import type { NotificationsSettings } from '../../context/NotificationContext';
 import { getUnreadNotifications, markNotificationAsRead } from '../../api/notifications.api';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +15,20 @@ export default function NotificationListener() {
     const { user } = useContext(AuthContext);
     const { notify, settings } = useNotificationSettings();
     const navigate = useNavigate();
+
+    // Mapeo de tipos de backend a claves de configuración de frontend
+    const mapNotificationType = (type: string): keyof NotificationsSettings | string => {
+        const auctionTypes = [
+            'auction_alert',
+            'auction_end',
+            'auction_win',
+            'payment_reminder',
+            'penalty_alert',
+            'auction_failed'
+        ];
+        if (auctionTypes.includes(type)) return 'auctions';
+        return type;
+    }
 
     useEffect(() => {
         if (!user) {
@@ -28,16 +43,26 @@ export default function NotificationListener() {
                 unread.forEach(async (n: any) => {
                     await markNotificationAsRead(n.id);
 
+                    const mappedType = mapNotificationType(n.type) as keyof NotificationsSettings;
+
                     // Definir acción de click también para las pendientes
                     let clickAction = undefined;
 
+                    // Lógica de navegación basada en el tipo ORIGINAL o mapeado
+                    // Si es bajada de precio
                     if (n.type === 'priceDrops' && n.product_id) {
                         clickAction = () => navigate(`/product/${n.product_id}`);
-                    } else if (n.type === 'newMessage') {
+                    }
+                    // Si es mensaje nuevo
+                    else if (n.type === 'newMessage') {
                         clickAction = () => navigate('/profile/chat');
                     }
+                    // Si es algo de subastas
+                    else if (mappedType === 'auctions' && n.product_id) {
+                        clickAction = () => navigate(`/auction/${n.product_id}`);
+                    }
 
-                    notify(n.type, n.message, 'info', { onClick: clickAction });
+                    notify(mappedType, n.message, 'info', { onClick: clickAction });
                 });
             } catch (error) {
                 console.error("Error cargando notificaciones pendientes", error);
@@ -70,8 +95,16 @@ export default function NotificationListener() {
 
                         await markNotificationAsRead(newNotif.id);
 
+                        const mappedType = mapNotificationType(newNotif.type) as keyof NotificationsSettings;
                         const userSettings = settings || {};
-                        const shouldShow = userSettings[newNotif.type] !== false;
+
+                        // Verificar configuración usando el tipo mapeado
+                        // Si no existe la key en settings, asumimos true por defecto (o false dependiendo de lo que queramos, pero notify ya hace su chequeo)
+                        // Aquí solo pre-filtramos para logica extra si fuera necesario, pero notify es el guardián final.
+                        // Sin embargo, como el usuario reportó que se "silencia", es porque notify recibe 'auction_alert' y no lo encuentra.
+                        // Al pasar 'auctions', notify lo encontrará.
+
+                        const shouldShow = userSettings[mappedType] !== false;
 
                         if (shouldShow) {
                             let clickAction = undefined;
@@ -87,8 +120,14 @@ export default function NotificationListener() {
                                     clickAction = () => navigate(`/product/${newNotif.product_id}`);
                                 }
                             }
+                            // Lógica para subastas
+                            else if (mappedType === 'auctions') {
+                                if (newNotif.product_id) {
+                                    clickAction = () => navigate(`/auction/${newNotif.product_id}`);
+                                }
+                            }
 
-                            notify(newNotif.type, newNotif.message, 'info', {
+                            notify(mappedType, newNotif.message, 'info', {
                                 onClick: clickAction
                             });
                         }

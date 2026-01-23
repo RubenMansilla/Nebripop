@@ -6,7 +6,6 @@ import { getMyActiveProducts } from "../../../../api/products.api";
 import type { ProductType } from '../../../../types/product';
 import { AuthContext } from "../../../../context/AuthContext";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
-import { toast } from "react-toastify";
 import noReviewsImg from '../../../../assets/profile/pop-nothing-for-sale.svg';
 import { useNotificationSettings } from '../../../../context/NotificationContext';
 

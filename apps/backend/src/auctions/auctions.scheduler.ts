@@ -58,7 +58,7 @@ export class AuctionsScheduler {
                     for (const bidderId of uniqueBidders) {
                         await this.notificationsService.create(
                             bidderId,
-                            `⏳ Atención: Quedan ${t.label} para que finalice la subasta de "${auction.product.name}"`,
+                            `Subasta "${auction.product.name}": quedan ${t.label}`,
                             'auction_alert',
                             auction.product.id
                         );
@@ -94,7 +94,7 @@ export class AuctionsScheduler {
                 this.logger.log(`Auction ${auction.id} expired with no bids`);
                 this.notificationsService.create(
                     auction.seller_id,
-                    `Tu subasta para "${auction.product.name}" ha finalizado sin pujas.`,
+                    `Subasta "${auction.product.name}" finalizada sin pujas.`,
                     'auction_end',
                     auction.product.id
                 );
@@ -110,13 +110,14 @@ export class AuctionsScheduler {
 
                 // Set deadline (48 hours)
                 const deadline = new Date();
-                deadline.setHours(deadline.getHours() + 48);
+                deadline.setMinutes(deadline.getMinutes() + 1);
+                // deadline.setHours(deadline.getHours() + 48);
                 auction.payment_deadline = deadline;
 
                 // NOTIFY WINNER
                 await this.notificationsService.create(
                     highestBid.bidder.id,
-                    `🎉 ¡Has ganado la subasta de "${auction.product.name}"! Tienes 48h para realizar el pago.`,
+                    `¡Ganaste "${auction.product.name}"! Paga en 48h.`,
                     'auction_win',
                     auction.product.id
                 );
@@ -177,7 +178,7 @@ export class AuctionsScheduler {
                 if (shouldNotify) {
                     await this.notificationsService.create(
                         auction.winner.id,
-                        `⚠️ Recordatorio: Te quedan ${t.label} para pagar "${auction.product.name}".`,
+                        `Pago "${auction.product.name}": quedan ${t.label}.`,
                         'payment_reminder',
                         auction.product.id
                     );
@@ -212,23 +213,25 @@ export class AuctionsScheduler {
             currentWinner.penaltiesCount = (currentWinner.penaltiesCount || 0) + 1;
             await this.usersRepository.save(currentWinner);
 
+            // 2. Track failed payment to prevent loops
+            auction.notifications_sent = auction.notifications_sent || {};
+            auction.notifications_sent[`failed_payment_${currentWinner.id}`] = true;
+
             // NOTIFY PENALTY
             await this.notificationsService.create(
                 currentWinner.id,
-                `❌ No has pagado a tiempo el artículo "${auction.product.name}". Has recibido una penalización.`,
+                `Pago vencido: "${auction.product.name}". Penalización aplicada.`,
                 'penalty_alert',
                 auction.product.id
             );
 
-            // 2. Reassign to next highest bidder (excluding penalized ones)
-            // Note: In a real system, we might need a list of 'failed_winners' to exclude all
-            // For now, filter out current winner.
+            // 3. Reassign to next highest bidder (excluding penalized ones for this auction)
 
-            // Logic: Filter out this specific User from bids
-            const validBids = auction.bids.filter(bid => Number(bid.bidder_id) !== Number(currentWinner.id));
-
-            // Filter out ANY previous winner if we track them (simple approach: assumed only 1 reassignment here or loop logic needed)
-            // But simplified: 
+            // Logic: Filter out this specific User AND any previous failures for this auction
+            const validBids = auction.bids.filter(bid =>
+                Number(bid.bidder_id) !== Number(currentWinner.id) &&
+                !auction.notifications_sent[`failed_payment_${bid.bidder_id}`]
+            );
 
             if (validBids.length === 0) {
                 // No backup -> Expired
@@ -239,17 +242,13 @@ export class AuctionsScheduler {
                 // NOTIFY SELLER
                 await this.notificationsService.create(
                     auction.seller_id,
-                    `😞 Lamentablemente, ningún usuario completó el pago para "${auction.product.name}". La subasta ha sido cancelada.`,
+                    `Sin pago para "${auction.product.name}". Subasta cancelada.`,
                     'auction_failed',
                     auction.product.id
                 );
             } else {
                 // Sort descending
                 validBids.sort((a, b) => Number(b.amount) - Number(a.amount));
-
-                // We need to find the next highest bidder who HAS NOT already been penalized for THIS auction...
-                // Ideally, we'd store 'failed_winner_ids' on the auction.
-                // For this iteration, we just accept the next one.
 
                 const nextHighestBid = validBids[0];
 
@@ -258,18 +257,25 @@ export class AuctionsScheduler {
 
                 // Reset deadline (48h)
                 const deadline = new Date();
-                deadline.setHours(deadline.getHours() + 48);
+                // deadline.setHours(deadline.getHours() + 48);
+                deadline.setMinutes(deadline.getMinutes() + 1);
                 auction.payment_deadline = deadline;
 
-                // Reset notification flags for payment reminders
-                auction.notifications_sent = {};
+                // We DO NOT reset notifications_sent completely because we need to keep the failed_payment flags!
+                // We only need to reset the payment reminders.
+                // Let's iterate and remove only keys starting with 'pay_'
+                Object.keys(auction.notifications_sent).forEach(key => {
+                    if (key.startsWith('pay_')) {
+                        delete auction.notifications_sent[key];
+                    }
+                });
 
                 this.logger.log(`Auction ${auction.id} reassigned to ${nextHighestBid.bidder.id}.`);
 
                 // NOTIFY NEW WINNER
                 await this.notificationsService.create(
                     nextHighestBid.bidder.id,
-                    `🎉 ¡Buenas noticias! El ganador anterior falló el pago. Ahora eres el ganador de "${auction.product.name}". Tienes 48h para pagar.`,
+                    `¡Eres el nuevo ganador de "${auction.product.name}"! Paga en 48h.`,
                     'auction_win',
                     auction.product.id
                 );

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginModalProvider } from "./context/LoginModalContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
@@ -58,6 +58,9 @@ import NotFound from "./pages/NotFound/NotFound";
 
 // AUCTIONS
 import AuctionsManager from "./pages/User/Auctions/AuctionsManager";
+import MyAuctions from "./pages/User/Auctions/components/MyAuctions";
+import ActiveAuctions from "./pages/User/Auctions/components/ActiveAuctions";
+import AuctionsHistory from "./pages/User/Auctions/components/AuctionsHistory";
 import CreateAuction from "./pages/User/Auctions/CreateAuction";
 import AuctionList from "./pages/Auctions/AuctionList";
 import AuctionDetail from "./pages/Auctions/AuctionDetail";
@@ -123,7 +126,12 @@ export default function App() {
                             <Route path="/catalog/sold" element={<Solds />} />
 
                             {/* Subastas (User) */}
-                            <Route path="/profile/auctions" element={<AuctionsManager />} />
+                            <Route path="/profile/auctions" element={<AuctionsManager />}>
+                                <Route index element={<Navigate to="created" replace />} />
+                                <Route path="created" element={<MyAuctions />} />
+                                <Route path="active" element={<ActiveAuctions />} />
+                                <Route path="history" element={<AuctionsHistory />} />
+                            </Route>
                             <Route path="/profile/auctions/create" element={<CreateAuction />} />
 
                             {/* Monedero */}

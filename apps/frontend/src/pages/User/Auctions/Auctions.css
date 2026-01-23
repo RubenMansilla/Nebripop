@@ -300,3 +300,112 @@
 .btn-create:hover {
     opacity: 0.9;
 }
+
+/* --- Refactored Components Styles --- */
+
+/* Loading State */
+.loading-container {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Grid Layout Override for internal components */
+.auctions-grid-internal {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+/* Empty States */
+.empty-state-container {
+    text-align: center;
+    padding: 40px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin: 0 20px;
+}
+
+.empty-state-text {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.create-auction-link {
+    color: #b0a18c;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.create-auction-link:hover {
+    text-decoration: underline;
+}
+
+/* Auction Card Internal Styles */
+.card-price-text {
+    font-weight: 800;
+    color: #00a0a0;
+    font-size: 1.2rem;
+}
+
+.card-status-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-action {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-view {
+    color: #253238;
+    background: #f5f5f5;
+}
+
+.btn-view:hover {
+    background: #eeeeee;
+}
+
+.btn-delete {
+    background: rgba(229, 57, 53, 0.1);
+    /* #e5393520 */
+    color: #e53935;
+}
+
+.btn-delete:hover {
+    background: rgba(229, 57, 53, 0.2);
+}
+
+.btn-pay {
+    color: white;
+    background: #00a0a0;
+}
+
+.btn-pay:hover {
+    background: #008f8f;
+}
