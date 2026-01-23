@@ -61,7 +61,6 @@ import AuctionsManager from "./pages/User/Auctions/AuctionsManager";
 import MyAuctions from "./pages/User/Auctions/components/MyAuctions";
 import ActiveAuctions from "./pages/User/Auctions/components/ActiveAuctions";
 import AuctionsHistory from "./pages/User/Auctions/components/AuctionsHistory";
-import CreateAuction from "./pages/User/Auctions/CreateAuction";
 import AuctionList from "./pages/Auctions/AuctionList";
 import AuctionDetail from "./pages/Auctions/AuctionDetail";
 
@@ -132,7 +131,6 @@ export default function App() {
                                 <Route path="active" element={<ActiveAuctions />} />
                                 <Route path="history" element={<AuctionsHistory />} />
                             </Route>
-                            <Route path="/profile/auctions/create" element={<CreateAuction />} />
 
                             {/* Monedero */}
                             <Route path="/wallet/balance" element={<Balance />} />

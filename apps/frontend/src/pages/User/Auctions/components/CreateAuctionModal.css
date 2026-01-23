@@ -1,0 +1,162 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.82);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 500px;
+    width: 90%;
+    margin: 20px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.create-auction-card {
+    background: white;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    border: 1px solid #e3e4e6;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.close-modal-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    background: #f3f4f6;
+    border-radius: 50%;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-modal-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.create-auction-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+    text-align: center;
+}
+
+.create-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.create-form-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.create-form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 1rem;
+    outline: none;
+    background: #fff;
+    color: #1f2937;
+}
+
+.create-form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    padding-right: 3rem;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    font-size: 1rem;
+    outline: none;
+    background-color: #fff;
+    color: #1f2937;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: right 1.5rem center;
+    background-size: 1.1em;
+}
+
+.create-form-select:hover {
+    border-color: #d1d5db;
+    background-color: #f9fafb;
+}
+
+.create-form-input:focus {
+    border-color: #d2b990;
+    box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.2);
+}
+
+.create-form-select:focus {
+    border-color: #d2b990;
+    box-shadow: 0 0 0 2px rgba(210, 185, 144, 0.2);
+    outline: none !important;
+}
+
+.create-form-input::-webkit-outer-spin-button,
+.create-form-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.create-form-input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.create-form-helper {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+}
+
+.btn-create-auction {
+    margin-top: 1rem;
+    padding: 0.85rem;
+    color: #7a6c58;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fffaf2;
+    border: 1px solid #d2b990;
+    transition: background-color 0.2s;
+}
+
+.btn-create-auction:hover:not(:disabled) {
+    border: 1px solid #d2b990;
+    background-color: #f2e2c7;
+}
+
+.btn-create-auction:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    border: 1px solid #e5e7eb;
+}

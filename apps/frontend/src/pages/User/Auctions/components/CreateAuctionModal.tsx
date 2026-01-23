@@ -1,12 +1,16 @@
-import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createAuction, getMyAuctions } from '../../../api/auctions.api';
-import { getMyActiveProducts } from '../../../api/products.api';
-import { AuthContext } from '../../../context/AuthContext';
-import './Auctions.css';
 
-export default function CreateAuction() {
-    const navigate = useNavigate();
+import { useState, useEffect, useContext } from 'react';
+import { createAuction, getMyAuctions } from '../../../../api/auctions.api';
+import { getMyActiveProducts } from '../../../../api/products.api';
+import { AuthContext } from '../../../../context/AuthContext';
+import './CreateAuctionModal.css';
+
+interface CreateAuctionModalProps {
+    onClose: () => void;
+    onAuctionCreated: () => void;
+}
+
+export default function CreateAuctionModal({ onClose, onAuctionCreated }: CreateAuctionModalProps) {
     const { user } = useContext(AuthContext);
     const [products, setProducts] = useState<any[]>([]);
     const [selectedProduct, setSelectedProduct] = useState('');
@@ -32,7 +36,8 @@ export default function CreateAuction() {
         try {
             await createAuction(selectedProduct, Number(startPrice), Number(duration));
             alert('Subasta creada con éxito!');
-            navigate('/profile/auctions');
+            onAuctionCreated();
+            onClose();
         } catch (error) {
             console.error(error);
             alert('Error al crear la subasta');
@@ -42,46 +47,48 @@ export default function CreateAuction() {
     };
 
     return (
-        <div className="auctions-container" style={{ maxWidth: '600px' }}>
-            <h2 className="auctions-title">Crear nueva subasta</h2>
-            <div className="bidding-box">
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="create-auction-card modal-content" onClick={(e) => e.stopPropagation()}>
+                <button className="close-modal-btn" onClick={onClose}><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg></button>
+                <h2 className="create-auction-title">Crear nueva subasta</h2>
+
                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontWeight: 600, color: '#333' }}>Selecciona un producto</label>
+                    <div className="create-form-group">
+                        <label className="create-form-label">Selecciona un producto</label>
                         <select
+                            className="create-form-select"
                             value={selectedProduct}
                             onChange={e => setSelectedProduct(e.target.value)}
                             required
-                            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '1rem' }}
                         >
-                            <option value="">-- Seleccionar --</option>
+                            <option value="">Seleccionar producto</option>
                             {products.map(p => (
                                 <option key={p.id} value={p.id}>{p.name} - {p.price}€</option>
                             ))}
                         </select>
-                        <p style={{ fontSize: '0.85rem', color: '#666' }}>Solo se muestran tus productos activos que no se han vendido.</p>
+                        <p className="create-form-helper">Solo se muestran tus productos activos que no se han vendido.</p>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontWeight: 600, color: '#333' }}>Precio de salida (€)</label>
+                    <div className="create-form-group">
+                        <label className="create-form-label">Precio de salida (€)</label>
                         <input
                             type="number"
+                            className="create-form-input"
                             value={startPrice}
                             onChange={e => setStartPrice(e.target.value)}
                             required
                             min="1"
-                            className="bid-input"
                             placeholder="Ej. 50"
                         />
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label style={{ fontWeight: 600, color: '#333' }}>Duración</label>
+                    <div className="create-form-group">
+                        <label className="create-form-label">Duración</label>
                         <select
+                            className="create-form-select"
                             value={duration}
                             onChange={e => setDuration(e.target.value)}
-                            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #ddd', fontSize: '1rem' }}
                         >
                             <option value="12">12 Horas</option>
                             <option value="24">24 Horas</option>
@@ -93,11 +100,10 @@ export default function CreateAuction() {
 
                     <button
                         type="submit"
-                        disabled={loading || !selectedProduct}
-                        className="bid-btn"
-                        style={{ marginTop: '10px' }}
+                        disabled={loading || !selectedProduct || !startPrice}
+                        className="btn-create-auction"
                     >
-                        {loading ? 'Creando...' : 'Comenzar Subasta'}
+                        Comenzar Subasta
                     </button>
                 </form>
             </div>

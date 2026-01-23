@@ -51,15 +51,9 @@
     background: white;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     border: 1px solid #f0f0f0;
-}
-
-.auction-card-public:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
 .auction-card-img-wrapper {
@@ -75,10 +69,6 @@
     transition: transform 0.5s ease;
 }
 
-.auction-card-public:hover .auction-card-img-wrapper img {
-    transform: scale(1.05);
-}
-
 .auction-card-content {
     padding: 20px;
 }
@@ -90,7 +80,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #333;
+    color: #253238;
 }
 
 .auction-status-row {
@@ -312,13 +302,27 @@
 }
 
 /* Grid Layout Override for internal components */
+/* Grid Layout Override for internal components */
 .auctions-grid-internal {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 20px;
     padding: 20px;
-    max-width: 1440px;
     margin: 0 auto;
+}
+
+@media (max-width: 1100px) {
+    .auctions-grid-internal {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .auctions-grid-internal {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
 }
 
 /* Empty States */
@@ -350,7 +354,7 @@
 /* Auction Card Internal Styles */
 .card-price-text {
     font-weight: 800;
-    color: #00a0a0;
+    color: #253238;
     font-size: 1.2rem;
 }
 
@@ -409,3 +413,35 @@
 .btn-pay:hover {
     background: #008f8f;
 }
+
+/* MyAuctions Specific Styles */
+.my-auctions-content {
+    width: 100%;
+}
+
+.my-auctions-header {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-new-auction {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+    border: 1px solid #d6c9b4;
+    color: #253238;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-new-auction:hover {
+    background-color: #f2e2c7;
+}
+
+/* End of Auctions.css */
