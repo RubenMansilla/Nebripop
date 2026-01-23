@@ -5,6 +5,7 @@ import {
   DeleteDateColumn,
   ManyToOne,
   OneToMany,
+  ManyToMany,
   JoinColumn,
   CreateDateColumn,
 } from "typeorm";
@@ -129,7 +130,7 @@ export class Product {
   @OneToMany(() => FavoriteProduct, (fav) => fav.product)
   favorites: FavoriteProduct[];
 
-  @OneToMany(() => Chat, (chat) => chat.product)
+  @ManyToMany(() => Chat, (chat) => chat.products)
   chats: Chat[];
 
 }

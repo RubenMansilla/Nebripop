@@ -31,8 +31,8 @@ export class ChatController {
     // POST /chat/get-or-create  body: { user2Id: number }
     @UseGuards(JwtAuthGuard)
     @Post("get-or-create")
-    getOrCreate(@Req() req, @Body() body: { user2Id: number }) {
-        return this.chatService.getOrCreateChat(req.user.id, body.user2Id);
+    getOrCreate(@Req() req, @Body() body: { user2Id: number; productId?: number }) {
+        return this.chatService.getOrCreateChat(req.user.id, body.user2Id, body.productId);
     }
 
     // ✅ Mensajes de un chat

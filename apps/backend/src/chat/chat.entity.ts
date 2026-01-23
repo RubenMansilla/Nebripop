@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   OneToMany,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
   JoinColumn,
 } from 'typeorm';
 
@@ -22,12 +24,13 @@ export class Chat {
   @Column({ name: 'seller_id', type: 'int8' })
   sellerId: number;
 
-  @Column({ name: 'product_id', type: 'int8', nullable: true })
-  productId: number | null;
-
-  @ManyToOne(() => Product, { nullable: true })
-  @JoinColumn({ name: 'product_id' })
-  product?: Product | null;
+  @ManyToMany(() => Product, (product) => product.chats)
+  @JoinTable({
+    name: 'chat_products',
+    joinColumn: { name: 'chat_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'product_id', referencedColumnName: 'id' },
+  })
+  products: Product[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

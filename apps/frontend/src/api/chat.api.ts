@@ -31,8 +31,8 @@ export async function getUserChats(): Promise<ChatSummary[]> {
 }
 
 // Crear o devolver chat existente
-export async function createOrGetChat(user2Id: number): Promise<ChatSummary> {
-  const res = await api.post<ChatSummary>("/chat/get-or-create", { user2Id });
+export async function createOrGetChat(user2Id: number, productId?: number): Promise<ChatSummary> {
+  const res = await api.post<ChatSummary>("/chat/get-or-create", { user2Id, productId });
   return res.data;
 }
 

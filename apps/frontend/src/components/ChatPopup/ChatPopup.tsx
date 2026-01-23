@@ -209,7 +209,7 @@ export default function ChatPopup({
       setLoading(true);
 
       if (!chatId) {
-        const createdOrExisting = await createOrGetChat(Number(seller.id));
+        const createdOrExisting = await createOrGetChat(Number(seller.id), Number(product.id));
         chatId = createdOrExisting?.id;
         setChat(createdOrExisting);
 
