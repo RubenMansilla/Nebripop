@@ -23,6 +23,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
     const navigate = useNavigate();
 
     const [showPopup, setShowPopup] = useState(false);
+    const [showOptions, setShowOptions] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [currentImgIndex, setCurrentImgIndex] = useState(0);
     const [isFavorite, setIsFavorite] = useState(product.isFavorite ?? false);
@@ -51,6 +52,41 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
         e.stopPropagation();
         navigate(`/product/edit/${product.id}`); // 🟣 Ruta de edición
     };
+
+    const handleOptionsClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const willOpen = !showOptions;
+        if (willOpen) {
+            // Dispatch event to close other menus
+            window.dispatchEvent(
+                new CustomEvent("product-options-opened", {
+                    detail: { id: product.id },
+                })
+            );
+        }
+        setShowOptions(willOpen);
+    };
+
+    useEffect(() => {
+        const handleCloseMenu = () => setShowOptions(false);
+
+        const handleOtherMenuOpened = (e: Event) => {
+            const customEvent = e as CustomEvent;
+            if (customEvent.detail.id !== product.id) {
+                setShowOptions(false);
+            }
+        };
+
+        if (showOptions) {
+            document.addEventListener("click", handleCloseMenu);
+            window.addEventListener("product-options-opened", handleOtherMenuOpened);
+        }
+
+        return () => {
+            document.removeEventListener("click", handleCloseMenu);
+            window.removeEventListener("product-options-opened", handleOtherMenuOpened);
+        };
+    }, [showOptions, product.id]);
 
     /* ================= ELIMINAR PRODUCTO ================= */
     const handleDeleteClick = (productId: number) => {
@@ -260,47 +296,55 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                                     </svg>
                                 </div>
                             )}
-                            <div className="product-delete-container">
-                                {mode === "active" && (
-                                    <div className="edit-btn" onClick={handleEditClick}>
+                            {(mode === "active" || mode === "sold" || mode === "purchased") && (
+                                <div className="product-options-container">
+                                    <div className="options-btn" onClick={handleOptionsClick}>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
-                                            width="32"
-                                            height="32"
+                                            width="24"
+                                            height="24"
                                             viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
                                         >
-                                            <g fill="none" stroke="#000000" strokeWidth="2">
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M4.333 16.048L16.57 3.81a2.56 2.56 0 0 1 3.62 3.619L7.951 19.667a2 2 0 0 1-1.022.547L3 21l.786-3.93a2 2 0 0 1 .547-1.022"
-                                                />
-                                                <path d="m14.5 6.5l3 3" />
-                                            </g>
+                                            <circle cx="12" cy="12" r="1" />
+                                            <circle cx="19" cy="12" r="1" />
+                                            <circle cx="5" cy="12" r="1" />
                                         </svg>
                                     </div>
-                                )}
-                                {(mode === "active" ||
-                                    mode === "sold" ||
-                                    mode === "purchased") && (
-                                        <div
-                                            className="delete-btn"
-                                            onClick={(e) => handleDeleteClickWrapper(e, product.id)}
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="32"
-                                                height="32"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <g fill="none" stroke="#000000" strokeWidth="1.5">
-                                                    <path d="M3.04 4.294a.5.5 0 0 1 .191-.479C3.927 3.32 6.314 2 12 2s8.073 1.32 8.769 1.815a.5.5 0 0 1 .192.479l-1.7 12.744a4 4 0 0 1-1.98 2.944l-.32.183a10 10 0 0 1-9.922 0l-.32-.183a4 4 0 0 1-1.98-2.944z" />
-                                                    <path d="M3 5c2.571 2.667 15.429 2.667 18 0" />
-                                                </g>
-                                            </svg>
+                                    {showOptions && (
+                                        <div className="popover-menu" onClick={(e) => e.stopPropagation()}>
+                                            {mode === "active" && (
+                                                <div
+                                                    className="popover-option"
+                                                    onClick={(e) => {
+                                                        setShowOptions(false);
+                                                        handleEditClick(e);
+                                                    }}
+                                                >
+                                                    <span>Editar</span>
+                                                </div>
+                                            )}
+                                            {(mode === "active" ||
+                                                mode === "sold" ||
+                                                mode === "purchased") && (
+                                                    <div
+                                                        className="popover-option delete"
+                                                        onClick={(e) => {
+                                                            setShowOptions(false);
+                                                            handleDeleteClickWrapper(e, product.id);
+                                                        }}
+                                                    >
+                                                        <span>Eliminar</span>
+                                                    </div>
+                                                )}
                                         </div>
                                     )}
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                     <div className="product-title">
@@ -354,8 +398,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                         )}
                     </div>
                 </div>
-            </li>
-            {showPopup && (
+            </li>            {showPopup && (
                 <div className="popup-backdrop">
                     <div className="unsaved-changes-popup">
                         <h3>¿Estás seguro que quieres eliminar este producto?</h3>

@@ -115,7 +115,7 @@ export class ChatService {
     // Crear o devolver un chat existente
     // ✅ devuelve el mismo formato que getUserChats
     // ==============================
-    async getOrCreateChat(meId: number, otherId: number) {
+    async getOrCreateChat(meId: number, otherId: number, productId?: number) {
         // validar usuarios (lite)
         const [meLite, otherLite] = await Promise.all([
             this.userRepo.findOne({
@@ -132,19 +132,30 @@ export class ChatService {
             throw new NotFoundException("Usuario no encontrado");
 
         // buscar chat existente (en ambos sentidos)
-        const existing = await this.chatRepo.findOne({
+        let chat = await this.chatRepo.findOne({
             where: [
                 { buyerId: meId, sellerId: otherId },
                 { buyerId: otherId, sellerId: meId },
             ],
+            relations: ["products"], // Cargar productos para verificar si ya está
         });
 
-        if (existing) {
-            const lastMessage = await this.getLastMessage(existing.id);
+        if (chat) {
+            // Si nos pasan un producto y no está en la lista, lo añadimos
+            if (productId) {
+                const alreadyHas = chat.products?.some(p => Number(p.id) === Number(productId));
+                if (!alreadyHas) {
+                    if (!chat.products) chat.products = [];
+                    // Creamos objeto parcial para relacionar (TypeORM solo necesita el ID para save relations)
+                    chat.products.push({ id: productId } as any);
+                    await this.chatRepo.save(chat);
+                }
+            }
 
-            // ✅ mantenemos el mismo formato: user1=yo, user2=el otro
+            const lastMessage = await this.getLastMessage(chat.id);
+
             return {
-                id: existing.id,
+                id: chat.id,
                 user1: meLite,
                 user2: otherLite,
                 lastMessage:
@@ -159,10 +170,12 @@ export class ChatService {
         }
 
         // crear chat nuevo
-        const created = await this.chatRepo.save({
-            buyerId: meId,
-            sellerId: otherId,
-        });
+        const newChat = new Chat();
+        newChat.buyerId = meId;
+        newChat.sellerId = otherId;
+        newChat.products = productId ? [{ id: productId } as any] : [];
+
+        const created = await this.chatRepo.save(newChat);
 
         return {
             id: created.id,

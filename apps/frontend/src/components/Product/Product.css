@@ -361,3 +361,103 @@
 .favorite-icon-container.liked .heart-fill-circle {
     r: 20px;
 }
+
+/* Mobile Options Menu (Popover) */
+.product-options-container {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Necessary for absolute positioning of popover */
+    z-index: 10;
+}
+
+.options-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    color: #29363d;
+}
+
+.options-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Invisible backdrop to handle click-outside */
+.popover-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: transparent;
+    z-index: 9998;
+    cursor: default;
+}
+
+/* Popover Menu */
+.popover-menu {
+    position: absolute;
+    bottom: 100%;
+    /* Position above the button */
+    right: 0;
+    /* Align right edge with button right edge */
+    margin-bottom: 4px;
+    /* Slight spacing from button */
+    background-color: white;
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 120px;
+    z-index: 9999;
+    animation: popoverScale 0.15s ease-out;
+    transform-origin: bottom right;
+    border: 1px solid #f0f0f0;
+}
+
+.popover-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.popover-option:hover {
+    background-color: #f5f5f5;
+}
+
+.popover-option.delete {
+    color: #dc3545;
+}
+
+.popover-option.delete:hover {
+    background-color: #fff5f5;
+}
+
+@keyframes popoverScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

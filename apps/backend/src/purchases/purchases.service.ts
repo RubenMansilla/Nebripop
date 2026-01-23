@@ -12,6 +12,8 @@ import { Product } from "../products/products.entity";
 import { WalletService } from "../wallet/wallet.service";
 import { NotificationsService } from "../notifications/notifications.service";
 
+import { Chat } from "../chat/chat.entity";
+
 @Injectable()
 export class PurchasesService {
   constructor(
@@ -20,6 +22,9 @@ export class PurchasesService {
 
     @InjectRepository(Product)
     private productRepo: Repository<Product>,
+
+    @InjectRepository(Chat)
+    private chatRepo: Repository<Chat>,
 
     private walletService: WalletService,
 
@@ -98,6 +103,23 @@ export class PurchasesService {
     // 3) Marcar producto como vendido
     product.sold = true;
     await this.productRepo.save(product);
+
+    // 3.5) Eliminar producto de los chats
+    // Buscamos los chats que tienen este producto
+    const chatsWithProduct = await this.chatRepo.find({
+      where: { products: { id: product.id } },
+      select: ["id"], // Solo necesitamos el ID
+    });
+
+    // Usamos QueryBuilder 'relation' para borrar solo esa entrada de la tabla intermedia
+    // sin afectar a los otros productos del chat.
+    for (const chat of chatsWithProduct) {
+      await this.chatRepo
+        .createQueryBuilder()
+        .relation(Chat, "products")
+        .of(chat.id)
+        .remove(product.id);
+    }
 
     // 4) Crear compra guardando el TOTAL real pagado
     const purchase = this.purchaseRepo.create({

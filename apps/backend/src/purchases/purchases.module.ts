@@ -7,10 +7,11 @@ import { PurchasesService } from "./purchases.service";
 import { Product } from "../products/products.entity";
 import { WalletModule } from "../wallet/wallet.module";
 import { NotificationsModule } from '../notifications/notifications.module';
+import { Chat } from "../chat/chat.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Purchase, Product]),
+    TypeOrmModule.forFeature([Purchase, Product, Chat]),
     WalletModule,
     NotificationsModule,
   ],

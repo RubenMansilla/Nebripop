@@ -117,7 +117,7 @@
 .unsaved-changes-popup {
     background: white;
     padding: 24px;
-    padding-block: 25px;
+    padding-block: 25px 9px;
     width: 500px;
     border-radius: 12px;
     text-align: left;

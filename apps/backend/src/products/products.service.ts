@@ -414,7 +414,7 @@ export class ProductsService {
       throw new BadRequestException("No puedes eliminar un producto vendido");
 
     const chatCount = await this.chatRepo.count({
-      where: { productId },
+      where: { products: { id: productId } },
     });
 
     if (chatCount > 0) {
@@ -476,7 +476,7 @@ export class ProductsService {
   async getBuyingProcessProducts(userId: number) {
     const products = await this.productRepo
       .createQueryBuilder("product")
-      .innerJoin("chats", "chat", "chat.product_id = product.id")
+      .innerJoin("product.chats", "chat")
       .leftJoinAndSelect("product.images", "images")
       .where("chat.buyer_id = :userId", { userId })
       .andWhere("product.sold = false")
@@ -500,7 +500,7 @@ export class ProductsService {
   async getSellingProcessProducts(userId: number) {
     return this.productRepo
       .createQueryBuilder("product")
-      .innerJoin("chats", "chat", "chat.product_id = product.id")
+      .innerJoin("product.chats", "chat")
       .leftJoinAndSelect("product.images", "images")
       .where("chat.seller_id = :userId", { userId })
       .andWhere("product.sold = false")
