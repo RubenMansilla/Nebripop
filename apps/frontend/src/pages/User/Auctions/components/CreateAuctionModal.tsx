@@ -35,12 +35,10 @@ export default function CreateAuctionModal({ onClose, onAuctionCreated }: Create
         setLoading(true);
         try {
             await createAuction(selectedProduct, Number(startPrice), Number(duration));
-            alert('Subasta creada con éxito!');
             onAuctionCreated();
             onClose();
         } catch (error) {
             console.error(error);
-            alert('Error al crear la subasta');
         } finally {
             setLoading(false);
         }

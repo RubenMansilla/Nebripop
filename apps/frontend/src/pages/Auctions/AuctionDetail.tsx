@@ -1,15 +1,29 @@
-import { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+
+import '../User/Auctions/Auctions.css';
+
+import { useEffect, useState, useContext, useMemo } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getAuctionById, placeBid, payAuction } from '../../api/auctions.api';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import CategoriesBar from '../../components/CategoriesBar/CategoriesBar';
 import { AuthContext } from '../../context/AuthContext';
 import { useLoginModal } from '../../context/LoginModalContext';
-import '../User/Auctions/Auctions.css';
+import './AuctionDetail.css';
+
+// Additional Imports (Seller, Reviews)
+import { getReviews, getUserReviewSummary } from "../../api/reviews.api";
+import { getPublicUser } from "../../api/users.api";
+import Review from "../../components/Review/Review";
+import { getCategories } from '../../api/categories.api';
+import { getSubcategoriesByCategory } from '../../api/subcategories.api';
+import { getCategoryIcon } from "../../utils/categoryIcons";
+import { getSubcategoryIcon } from "../../utils/subcategoryIcons";
+import AuctionDetailSkeleton from '../../components/AuctionDetailSkeleton/AuctionDetailSkeleton';
 
 export default function AuctionDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const { openLogin } = useLoginModal();
 
@@ -18,19 +32,104 @@ export default function AuctionDetail() {
     const [bidAmount, setBidAmount] = useState('');
     const [bidError, setBidError] = useState('');
 
+    // Seller & Reviews State
+    const [sellerPublic, setSellerPublic] = useState<any | null>(null);
+    const [reviews, setReviews] = useState<any[]>([]);
+    const [reviewSummary, setReviewSummary] = useState<{ average: number; total: number }>({
+        average: 0,
+        total: 0,
+    });
+    const [sellerLoading, setSellerLoading] = useState(false);
+
+    // Category Fallback State
+    const [fetchedCategoryName, setFetchedCategoryName] = useState<string>('');
+    const [fetchedSubcategoryName, setFetchedSubcategoryName] = useState<string>('');
+
+    // Image Gallery State
+    const [currentImage, setCurrentImage] = useState(0);
+
+    // Initial Load
     useEffect(() => {
         if (id) {
             loadAuction();
         }
     }, [id]);
 
-    const loadAuction = () => {
+    const loadAuction = (isBackground = false) => {
+        if (!isBackground) setLoading(true);
         getAuctionById(id!)
             .then(data => setAuction(data))
             .catch(err => console.error(err))
-            .finally(() => setLoading(false));
+            .finally(() => {
+                if (!isBackground) setLoading(false);
+            });
     };
 
+    // Derived Owner ID
+    const ownerId = useMemo(() => {
+        const product = auction?.product;
+        return product?.owner_id ?? product?.seller_id ?? product?.user?.id;
+    }, [auction]);
+
+    // Check if current user is owner
+    const isOwner = useMemo(() => {
+        if (!user || !ownerId) return false;
+        // Ensure comparison works with strings/numbers
+        return String(user.id) === String(ownerId);
+    }, [user, ownerId]);
+
+    // Fetch Seller Info & Reviews
+    useEffect(() => {
+        if (!ownerId) return;
+
+        setSellerLoading(true);
+        // Parallel fetching
+        Promise.all([
+            getPublicUser(ownerId),
+            getReviews(ownerId, "newest"),
+            getUserReviewSummary(ownerId)
+        ]).then(([userData, reviewsData, summaryData]) => {
+            setSellerPublic(userData);
+            setReviews(reviewsData);
+            setReviewSummary(summaryData);
+        }).catch(console.error)
+            .finally(() => setSellerLoading(false));
+
+    }, [ownerId]);
+
+    // Fetch Category Names Fallback
+    useEffect(() => {
+        if (!auction || !auction.product) return;
+        const product = auction.product;
+
+        // 1. Try to get names from object
+        const catName = typeof product.category === 'object' ? product.category?.name : product.category;
+        const subName = typeof product.subcategory === 'object' ? product.subcategory?.name : product.subcategory;
+
+        if (catName) setFetchedCategoryName(catName);
+        if (subName) setFetchedSubcategoryName(subName);
+
+        // 2. If missing and we have IDs, fetch them
+        if (!catName && product.category_id) {
+            getCategories().then(cats => {
+                const found = cats.find((c: any) => c.id === Number(product.category_id));
+                if (found) {
+                    setFetchedCategoryName(found.name);
+                    // Fetch subcategory only if category found
+                    if (!subName && product.subcategory_id) {
+                        getSubcategoriesByCategory(found.id).then(subs => {
+                            const foundSub = subs.find((s: any) => s.id === Number(product.subcategory_id));
+                            if (foundSub) setFetchedSubcategoryName(foundSub.name);
+                        });
+                    }
+                }
+            }).catch(err => console.error("Error fetching categories for breadcrumb", err));
+        }
+
+    }, [auction]);
+
+
+    // Bid Logic
     const handleBid = async (e: React.FormEvent) => {
         e.preventDefault();
         setBidError('');
@@ -51,8 +150,7 @@ export default function AuctionDetail() {
         try {
             await placeBid(auction.id, amount, user);
             setBidAmount('');
-            alert('Puja realizada con éxito');
-            loadAuction(); // Refresh data
+            loadAuction(true); // Refresh data silently
         } catch (error: any) {
             setBidError(error.message || 'Error al realizar la puja');
         }
@@ -62,13 +160,13 @@ export default function AuctionDetail() {
         if (!confirm('¿Confirmar pago de la subasta?')) return;
         try {
             await payAuction(auction.id);
-            alert('Pago realizado con éxito');
-            loadAuction();
+            loadAuction(true);
         } catch (error: any) {
-            alert(error.message || 'Error al procesar el pago');
+            console.error(error.message || 'Error al procesar el pago');
         }
     };
 
+    // Helpers
     const calculateTimeLeft = (endTime: string) => {
         const end = new Date(endTime).getTime();
         const now = new Date().getTime();
@@ -79,11 +177,54 @@ export default function AuctionDetail() {
         return `${hours}h ${minutes}m`;
     };
 
-    if (loading) return <div>Cargando...</div>;
+    // Navigation
+    const goToSellerProfile = () => {
+        if (!ownerId) return;
+        navigate(`/users/${ownerId}`);
+    };
+
+    // Gallery Logic
+    const nextImage = () => {
+        const images = auction?.product?.images || [];
+        if (images.length === 0) return;
+        setCurrentImage((prev) => (prev < images.length - 1 ? prev + 1 : prev));
+    };
+
+    const prevImage = () => {
+        const images = auction?.product?.images || [];
+        if (images.length === 0) return;
+        setCurrentImage((prev) => (prev > 0 ? prev - 1 : prev));
+    };
+
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <CategoriesBar />
+                <AuctionDetailSkeleton />
+                <Footer />
+            </>
+        );
+    }
     if (!auction) return <div>Subasta no encontrada</div>;
 
+    // Derived Variables
+    const product = auction.product;
     const currentPrice = auction.current_bid > 0 ? auction.current_bid : auction.starting_price;
     const minBid = Number(currentPrice) + 1;
+
+    // Seller Display Info
+    const sellerName = sellerPublic?.fullName ?? sellerPublic?.name ?? "Vendedor";
+    const sellerAvatar = sellerPublic?.profilePicture ?? sellerPublic?.avatar ?? "/default-avatar.png";
+
+    const images = product?.images ?? [];
+    const firstImage = images?.[currentImage]?.image_url || "/no-image.webp";
+    const hasMultipleImages = images.length > 1;
+
+    // Category & Subcategory Names
+    const categoryName = typeof product?.category === "object" ? product.category?.name : product?.category;
+    const subcategoryName = typeof product?.subcategory === "object" ? product.subcategory?.name : product?.subcategory;
 
     return (
         <>
@@ -91,30 +232,132 @@ export default function AuctionDetail() {
             <CategoriesBar />
 
             <div className="auction-detail-container">
-                {/* Gallery */}
-                <div className="detail-gallery">
+
+                {/* 1. LEFT SIDEBAR (Ad) */}
+                <div className="left-sidebar">
                     <img
-                        src={auction.product?.images?.[0]?.image_url || "/no-image.webp"}
-                        alt="Producto"
+                        src="https://via.placeholder.com/300x600.png?text=Publicidad"
+                        alt="Publicidad"
+                        className="ad-image"
                     />
                 </div>
 
-                {/* Info */}
-                <div className="detail-info">
-                    <h1 className="detail-product-name">{auction.product?.name}</h1>
-                    <p className="detail-desc">{auction.product?.description || "Sin descripción disponible."}</p>
+                {/* 2. MAIN CONTENT */}
+                <div className="detail-main">
+                    <div className="breadcrumb">
+                        <Link to="/">Inicio</Link>
+                        {(categoryName || fetchedCategoryName) && (
+                            <>
+                                <span>/</span>
+                                <Link to={`/auctions?categoryId=${product.category_id}`}>{categoryName || fetchedCategoryName}</Link>
+                            </>
+                        )}
+                        {(subcategoryName || fetchedSubcategoryName) && (
+                            <>
+                                <span>/</span>
+                                <Link to={`/auctions?categoryId=${product.category_id}&subcategoryId=${product.subcategory_id}`}>
+                                    {subcategoryName || fetchedSubcategoryName}
+                                </Link>
+                            </>
+                        )}
+                        <span>/</span>
+                        <span className="breadcrumb-current">{product?.name}</span>
+                    </div>
 
+                    <div className="product-images">
+                        <div className="image-wrapper">
+                            <img src={firstImage} className="product-image" alt={product?.name} />
+
+                            {hasMultipleImages && (
+                                <>
+                                    {currentImage > 0 && (
+                                        <button className="image-arrow left" onClick={prevImage}>‹</button>
+                                    )}
+                                    {currentImage < images.length - 1 && (
+                                        <button className="image-arrow right" onClick={nextImage}>›</button>
+                                    )}
+                                    <div className="image-dots">
+                                        {images.map((_: any, index: number) => (
+                                            <span
+                                                key={index}
+                                                className={`dot ${index === currentImage ? "active" : ""}`}
+                                                onClick={() => setCurrentImage(index)}
+                                            />
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Tags Section */}
+                    <div className="product-tags">
+                        {(categoryName || fetchedCategoryName) && (
+                            <div className="product-tag">
+                                <img src={getCategoryIcon(categoryName || fetchedCategoryName)} alt={categoryName || fetchedCategoryName} />
+                                <span>{categoryName || fetchedCategoryName}</span>
+                            </div>
+                        )}
+                        {(subcategoryName || fetchedSubcategoryName) && (
+                            <div className="product-tag sub">
+                                <img
+                                    src={getSubcategoryIcon(categoryName || fetchedCategoryName, subcategoryName || fetchedSubcategoryName)}
+                                    alt={subcategoryName || fetchedSubcategoryName}
+                                />
+                                <span>{subcategoryName || fetchedSubcategoryName}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="product-details">
+                        <h3 className="section-title">Detalles del producto</h3>
+                        {product?.description && <p className="details-description">{product.description}</p>}
+
+                        {product?.location && <div className="product-location">📍 {product.location}</div>}
+
+                        <div className="seller-reviews">
+                            <h3 className="section-title">
+                                ⭐ {reviewSummary.average.toFixed(1)} · {sellerName} – {reviewSummary.total} valoraciones
+                            </h3>
+                            {reviews.length === 0 ? (
+                                <p className="no-reviews">Este vendedor aún no tiene valoraciones</p>
+                            ) : (
+                                reviews.map((rev) => (
+                                    <Review
+                                        key={rev.id}
+                                        mode="public"
+                                        review={{
+                                            ...rev,
+                                            reviewer: {
+                                                ...rev.reviewer,
+                                                fullName: rev.reviewer?.full_name || rev.reviewer?.fullName || "Usuario",
+                                                profilePicture: rev.reviewer?.profile_picture || rev.reviewer?.profilePicture,
+                                            },
+                                        }}
+                                    />
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* 3. RIGHT SIDEBAR */}
+                <div className="right-sidebar">
+
+                    {/* Bidding Box */}
                     <div className="bidding-box">
+                        <h3 className="buy-title">{product?.name}</h3>
+
                         <div className="bid-header">
                             <div>
                                 <p className="bid-label">Oferta actual</p>
                                 <p className="bid-value">{currentPrice}€</p>
                             </div>
-                            <div>
-                                <p className="bid-label" style={{ textAlign: 'right' }}>
+                            <div style={{ textAlign: 'right' }}>
+                                <p className="bid-label">
                                     {auction.status === 'active' ? 'Tiempo restante' : 'Estado'}
                                 </p>
-                                <div className="time-left-badge" style={{ marginTop: '5px', fontSize: '1rem', color: auction.status === 'active' ? 'black' : '#e53935' }}>
+                                <div className="time-left-badge">
                                     {auction.status === 'active' ? calculateTimeLeft(auction.end_time) :
                                         auction.status === 'awaiting_payment' ? 'Esperando Pago' :
                                             auction.status === 'sold' ? 'VENDIDO' : 'EXPIRADO'}
@@ -124,19 +367,33 @@ export default function AuctionDetail() {
 
                         {auction.status === 'active' && (
                             <>
-                                <form className="bid-form" onSubmit={handleBid}>
-                                    <input
-                                        className="bid-input"
-                                        type="number"
-                                        placeholder={`Pujar ${minBid}€ o más`}
-                                        value={bidAmount}
-                                        onChange={e => setBidAmount(e.target.value)}
-                                        min={minBid}
-                                    />
-                                    <button className="bid-btn" type="submit">
-                                        Pujar
-                                    </button>
-                                </form>
+                                {isOwner ? (
+                                    <div style={{
+                                        background: "#f8f9fa",
+                                        padding: "15px",
+                                        borderRadius: "8px",
+                                        textAlign: "center",
+                                        color: "#6c757d",
+                                        border: "1px solid #e9ecef",
+                                        marginBottom: "15px"
+                                    }}>
+                                        <p style={{ margin: 0, fontWeight: "500" }}>Esta es tu subasta</p>
+                                    </div>
+                                ) : (
+                                    <form className="bid-form" onSubmit={handleBid}>
+                                        <input
+                                            className="bid-input"
+                                            type="number"
+                                            placeholder={`min ${minBid}€`}
+                                            value={bidAmount}
+                                            onChange={e => setBidAmount(e.target.value)}
+                                            min={minBid}
+                                        />
+                                        <button className="bid-btn" type="submit">
+                                            Pujar
+                                        </button>
+                                    </form>
+                                )}
                                 {bidError && <p style={{ color: '#e53935', marginTop: '10px', fontSize: '0.9rem' }}>{bidError}</p>}
                             </>
                         )}
@@ -146,13 +403,7 @@ export default function AuctionDetail() {
                                 {user && auction.winner_id === user.id ? (
                                     <>
                                         <p style={{ color: '#00a0a0', fontWeight: 'bold', marginBottom: '10px' }}>¡Has ganado la subasta!</p>
-                                        <button
-                                            className="bid-btn"
-                                            style={{ backgroundColor: '#00a0a0' }}
-                                            onClick={handlePayment}
-                                        >
-                                            Pagar Ahora
-                                        </button>
+                                        <button className="bid-btn" onClick={handlePayment}>Pagar Ahora</button>
                                     </>
                                 ) : (
                                     <p style={{ color: '#666' }}>El ganador está procesando el pago.</p>
@@ -165,26 +416,65 @@ export default function AuctionDetail() {
                                 <p style={{ color: '#2e7d32', fontWeight: 'bold', fontSize: '1.2rem' }}>¡Vendido!</p>
                             </div>
                         )}
-                    </div>
 
-                    <div className="bid-history-list">
-                        <h3 className="history-title">Historial de pujas ({auction.bids?.length || 0})</h3>
-                        {(!auction.bids || auction.bids.length === 0) ? (
-                            <p style={{ color: '#888' }}>Sé el primero en pujar por este artículo.</p>
-                        ) : (
-                            <div>
-                                {auction.bids.map((bid: any) => (
-                                    <div key={bid.id} className="history-item">
-                                        <span className="history-user">{bid.bidder?.fullName || "Usuario"}</span>
-                                        <div className="history-meta">
-                                            <span>{new Date(bid.created_at).toLocaleTimeString()}</span>
+                        <div className="bid-history-list">
+                            <h3 className="history-title">Historial de pujas ({auction.bids?.length || 0})</h3>
+                            {(!auction.bids || auction.bids.length === 0) ? (
+                                <p style={{ color: '#888', fontSize: '0.9rem' }}>Sé el primero en pujar.</p>
+                            ) : (
+                                <div>
+                                    {auction.bids.slice(0, 5).map((bid: any) => (
+                                        <div key={bid.id} className="history-item">
+                                            <span className="history-user">{bid.bidder?.fullName || bid.bidder?.name || "Usuario"}</span>
                                             <span className="history-amount">{bid.amount}€</span>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+                                    ))}
+                                    {auction.bids.length > 5 && <p style={{ fontSize: '0.8rem', color: '#888', textAlign: 'center', marginTop: '5px' }}>...</p>}
+                                </div>
+                            )}
+                        </div>
                     </div>
+
+                    {/* Seller Card */}
+                    <div className="seller-card">
+                        <div className="seller-main" onClick={goToSellerProfile}>
+                            <img src={sellerAvatar} alt={sellerName} className="seller-avatar" />
+                            <div className="seller-info">
+                                <p className="seller-name">{sellerName}</p>
+                                <div className="seller-rating-row">
+                                    <span className="star">⭐</span>
+                                    <span className="rating">{reviewSummary.average.toFixed(1)}</span>
+                                </div>
+                                <p className="seller-meta">
+                                    {reviewSummary.total} valoraciones
+                                </p>
+                            </div>
+                        </div>
+                        <div className="seller-actions">
+                            <button className="seller-profile-btn" onClick={goToSellerProfile} disabled={sellerLoading}>
+                                {sellerLoading ? "Cargando..." : "Ver perfil"}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Shipping Card */}
+                    <div className="shipping-card">
+                        <div className="shipping-row">
+                            <div className="shipping-icon">🚚</div>
+                            <div className="shipping-info">
+                                <p className="shipping-title">Entrega de 3 - 7 días</p>
+                                <p className="shipping-desc">En punto de recogida o a domicilio</p>
+                            </div>
+                        </div>
+                        <div className="shipping-row">
+                            <div className="shipping-icon">🛡</div>
+                            <div className="shipping-info">
+                                <p className="shipping-title">Protección de Wallastock</p>
+                                <p className="shipping-desc">Envío protegido: reembolso fácil</p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <Footer />

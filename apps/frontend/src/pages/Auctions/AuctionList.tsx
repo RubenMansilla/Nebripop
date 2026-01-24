@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getAuctions } from '../../api/auctions.api';
 import { getCategories } from '../../api/categories.api';
 import { getSubcategoriesByCategory } from '../../api/subcategories.api';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '../../components/Navbar/Navbar';
 import Footer from '../../components/Footer/Footer';
 import CategoriesBar from '../../components/CategoriesBar/CategoriesBar';
@@ -11,6 +12,7 @@ import '../../pages/Filtro/Filtro.css'; // Importing shared CSS for filters layo
 import AuctionCard from '../../components/AuctionCard/AuctionCard';
 
 export default function AuctionList() {
+    const [searchParams] = useSearchParams();
     // Data states
     const [auctions, setAuctions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -29,6 +31,15 @@ export default function AuctionList() {
     // UI states
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [visibleCount, setVisibleCount] = useState(40);
+
+    // Sync URL params with state
+    useEffect(() => {
+        const catId = searchParams.get('categoryId');
+        const subId = searchParams.get('subcategoryId');
+
+        if (catId) setSelectedCategory(Number(catId));
+        if (subId) setSelectedSubcategory(Number(subId));
+    }, [searchParams]);
 
     // Initial Data Fetch
     useEffect(() => {
