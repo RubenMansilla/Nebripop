@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+
 import { getAuctions } from '../../api/auctions.api';
 import { getCategories } from '../../api/categories.api';
 import { getSubcategoriesByCategory } from '../../api/subcategories.api';
@@ -8,6 +8,7 @@ import Footer from '../../components/Footer/Footer';
 import CategoriesBar from '../../components/CategoriesBar/CategoriesBar';
 import '../User/Auctions/Auctions.css';
 import '../../pages/Filtro/Filtro.css'; // Importing shared CSS for filters layout
+import AuctionCard from '../../components/AuctionCard/AuctionCard';
 
 export default function AuctionList() {
     // Data states
@@ -82,19 +83,7 @@ export default function AuctionList() {
         );
     };
 
-    // Helper: Calculate Time Left
-    const calculateTimeLeft = (endTime: string) => {
-        const end = new Date(endTime).getTime();
-        const now = new Date().getTime();
-        const diff = end - now;
 
-        if (diff <= 0) return 'Finalizada';
-
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-        return `${hours}h ${minutes}m`;
-    };
 
     // Filtering Logic
     const filteredAuctions = auctions.filter(auction => {
@@ -309,7 +298,7 @@ export default function AuctionList() {
 
                 {/* Main Content */}
                 <main className="filtro-results">
-                    <h1 className="auctions-title" style={{ textAlign: 'left', marginTop: 0 }}>🔥 Subastas Activas</h1>
+                    <h1 className="auctions-title" style={{ textAlign: 'left', marginTop: 0 }}>Subastas</h1>
 
                     {loading ? (
                         <div className="loading-spinner">Cargando subastas...</div>
@@ -318,27 +307,7 @@ export default function AuctionList() {
                     ) : (
                         <div className="auctions-grid">
                             {paginatedAuctions.map(auction => (
-                                <Link to={`/auction/${auction.id}`} key={auction.id} style={{ textDecoration: 'none' }}>
-                                    <div className="auction-card-public">
-                                        <div className="auction-card-img-wrapper">
-                                            <img src={auction.product?.images?.[0]?.image_url || "/no-image.webp"} alt={auction.product?.name} />
-                                        </div>
-                                        <div className="auction-card-content">
-                                            <h3 className="auction-name">{auction.product?.name || "Producto sin nombre"}</h3>
-                                            <div className="auction-status-row">
-                                                <div>
-                                                    <p className="current-bid-label">Puja actual</p>
-                                                    <p className="current-bid-amount">{auction.current_bid || auction.starting_price}€</p>
-                                                </div>
-                                                <div>
-                                                    <div className="time-left-badge">
-                                                        <span>⏳</span> {calculateTimeLeft(auction.end_time)}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
+                                <AuctionCard key={auction.id} auction={auction} />
                             ))}
                         </div>
                     )}

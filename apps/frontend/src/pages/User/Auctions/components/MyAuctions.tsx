@@ -66,11 +66,13 @@ export default function MyAuctions() {
             )}
 
             <div className="my-auctions-content">
-                <div className="my-auctions-header">
-                    <button onClick={() => setShowModal(true)} className="btn-new-auction" style={{ cursor: 'pointer' }}>
-                        Nueva Subasta
-                    </button>
-                </div>
+                {auctions.length > 0 && (
+                    <div className="my-auctions-header">
+                        <button onClick={() => setShowModal(true)} className="btn-new-auction" style={{ cursor: 'pointer' }}>
+                            Nueva Subasta
+                        </button>
+                    </div>
+                )}
 
                 {loading && showSkeleton ? (
                     <div className="product-container auctions-grid-internal">

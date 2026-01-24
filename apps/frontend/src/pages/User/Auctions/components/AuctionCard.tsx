@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import '../../../../components/AuctionCard/AuctionCard.css';
 
 interface AuctionCardProps {
     auction: any;
@@ -24,14 +25,21 @@ export default function AuctionCard({ auction, user, mode, onDelete }: AuctionCa
                 <img src={auction.product?.images?.[0]?.image_url || "/no-image.webp"} alt={auction.product?.name} />
             </div>
             <div className="auction-card-content">
-                <h3 className="auction-name">{auction.product?.name}</h3>
+                <div className="auction-card-header">
+                    <h3 className="auction-name">{auction.product?.name}</h3>
+                </div>
                 <div className="auction-status-row">
-                    <span className="card-price-text">{auction.current_bid || auction.starting_price}€</span>
-                    <span className="card-status-text">
-                        {auction.status === 'active' ? calculateTimeLeft(auction.end_time) :
-                            auction.status === 'awaiting_payment' ? 'Esperando Pago' :
-                                auction.status === 'sold' ? 'VENDIDO' : 'EXPIRADO'}
-                    </span>
+                    <div>
+                        <p className="current-bid-label">Puja actual</p>
+                        <p className="current-bid-amount">{auction.current_bid || auction.starting_price}€</p>
+                    </div>
+                    <div>
+                        <div className="time-left-badge" style={{ fontSize: '0.8rem', padding: '4px 8px' }}>
+                            {auction.status === 'active' ? calculateTimeLeft(auction.end_time) :
+                                auction.status === 'awaiting_payment' ? 'Esperando Pago' :
+                                    auction.status === 'sold' ? 'VENDIDO' : 'EXPIRADO'}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="card-actions">

@@ -1,20 +1,19 @@
-import "./FavoritesProducts.css";
+import "./FavoritesAuctions.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import Product from "../../../../components/Product/Product";
+import AuctionCard from "../../../../components/AuctionCard/AuctionCard";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
-import { getMyFavoriteProducts } from "../../../../api/favorites.api";
-import type { ProductType } from "../../../../types/product";
+import { getMyFavoriteAuctions } from "../../../../api/favorites.api";
 import { AuthContext } from "../../../../context/AuthContext";
-import noReviewsImg from '../../../../assets/profile/pop-no-favorite-products.svg';
+import noReviewsImg from '../../../../assets/profile/pop-no-favorite-products.svg'; // Reuse or get new image
 
-export default function FavoritesProducts() {
+export default function FavoritesAuctions() {
     const { token } = useContext(AuthContext);
-    const [FavoriteProducts, setFavoriteProducts] = useState<ProductType[]>([]);
+    const [FavoriteAuctions, setFavoriteAuctions] = useState<any[]>([]);
 
     // PAGINACIÓN
     const [visibleCount, setVisibleCount] = useState(25);
-    const visibleProducts = FavoriteProducts.slice(0, visibleCount);
+    const visibleAuctions = FavoriteAuctions.slice(0, visibleCount);
 
     const [loading, setLoading] = useState(true);
     const [showSkeleton, setShowSkeleton] = useState(false);
@@ -24,7 +23,7 @@ export default function FavoritesProducts() {
         setVisibleCount((prev) => prev + 25);
     };
 
-    const hasMore = visibleCount < FavoriteProducts.length;
+    const hasMore = visibleCount < FavoriteAuctions.length;
 
     // CARGAR FAVORITOS DEL USUARIO
     useEffect(() => {
@@ -38,11 +37,11 @@ export default function FavoritesProducts() {
             setShowSkeleton(true);
         }, 300);
 
-        getMyFavoriteProducts()
-            .then((data) => {
-                setFavoriteProducts(data);
+        getMyFavoriteAuctions()
+            .then((data: any[]) => {
+                setFavoriteAuctions(data);
             })
-            .catch((err) => {
+            .catch((err: any) => {
                 console.error(err);
             })
             .finally(() => {
@@ -56,28 +55,28 @@ export default function FavoritesProducts() {
     }, [token]);
 
 
-    // NAVEGAR ENTRE PRODUCTOS / PERFILES
+    // NAVEGAR ENTRE PRODUCTOS / PERFILES / SUBASTAS
     const navigate = useNavigate();
-    const [selected, setSelected] = useState("products");
+    const [selected, setSelected] = useState("auctions");
 
     useEffect(() => {
-        if (selected === "profiles") {
+        if (selected === "products") {
+            navigate("/favorites/products");
+        } else if (selected === "profiles") {
             navigate("/favorites/profiles");
-        } else if (selected === "auctions") {
-            navigate("/favorites/auctions");
         }
     }, [selected, navigate]);
 
     return (
         <>
-            {/* CABECERA */}
+            {/* CABECERA (Reused styles from info-section) */}
             <div className="info-section">
                 <div className="info-container">
                     <div className="title">
                         <h1>Tus favoritos</h1>
                     </div>
                     <div className="description">
-                        <p>Estos son los productos de Nebripop que más te gustan</p>
+                        <p>Estas son las subastas de Nebripop que más te gustan</p>
                     </div>
                 </div>
             </div>
@@ -94,39 +93,35 @@ export default function FavoritesProducts() {
 
             {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
             {loading && showSkeleton ? (
-                <ul className="product-container">
+                <div className="product-container favorites-auctions-container">
                     {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
-                </ul>
+                </div>
             ) : (
                 <>
-                    {/* No hay productos */}
-                    {FavoriteProducts.length === 0 && !loading && (
+                    {/* No hay subastas */}
+                    {FavoriteAuctions.length === 0 && !loading && (
                         <div className="no-reviews">
                             <img
                                 src={noReviewsImg}
-                                alt="Sin valoraciones"
+                                alt="Sin favoritos"
                                 className="no-reviews-img"
                             />
-                            <h3>Productos que te gustan</h3>
-                            <p>Para guardar un producto, pulsa el icono de producto favorito (❤️).</p>
+                            <h3>Subastas que te gustan</h3>
+                            <p>Para guardar una subasta, pulsa el icono de favorito (❤️).</p>
                         </div>
                     )}
 
-                    {/* LISTA DE PRODUCTOS */}
-                    {FavoriteProducts.length > 0 && (
+                    {/* LISTA DE SUBASTAS */}
+                    {FavoriteAuctions.length > 0 && (
                         <>
-                            <ul className="product-container">
-                                {visibleProducts.map((p) => (
-                                    <Product key={p.id} product={p} mode="public" onUnfavorite={(id) =>
-                                        setFavoriteProducts((prev) =>
-                                            prev.filter((prod) => prod.id !== id)
-                                        )
-                                    } />
+                            <div className="product-container favorites-auctions-container">
+                                {visibleAuctions.map((auction) => (
+                                    <AuctionCard key={auction.id} auction={auction} />
                                 ))}
-                            </ul>
+                            </div>
                             {hasMore && (
                                 <div className="btn-more-reviews-container" onClick={showMore}>
-                                    <div className='btn-more-reviews'>Ver más productos</div>
+                                    <div className='btn-more-reviews'>Ver más subastas</div>
                                 </div>
                             )}
                         </>

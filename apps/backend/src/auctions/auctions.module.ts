@@ -10,11 +10,12 @@ import { Product } from '../products/products.entity';
 import { User } from '../users/users.entity'; // Import User for Scheduler
 
 import { PurchasesModule } from '../purchases/purchases.module'; // Import PurchasesModule
-import { NotificationsModule } from '../notifications/notifications.module'; // Import NotificationsModule
+import { NotificationsModule } from '../notifications/notifications.module';
+import { FavoriteAuction } from '../favorites/favorite-auction.entity'; // Import NotificationsModule
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Auction, Bid, Product, User]),
+        TypeOrmModule.forFeature([Auction, Bid, Product, User, FavoriteAuction]),
         ScheduleModule.forRoot(),
         PurchasesModule, // Add to imports
         NotificationsModule

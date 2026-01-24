@@ -10,6 +10,7 @@ import {
 import { Product } from '../../products/products.entity';
 import { User } from '../../users/users.entity';
 import { Bid } from './bid.entity';
+import { FavoriteAuction } from '../../favorites/favorite-auction.entity';
 
 @Entity('auctions')
 export class Auction {
@@ -60,4 +61,7 @@ export class Auction {
 
     @Column({ name: 'notifications_sent', type: 'jsonb', default: {} })
     notifications_sent: Record<string, boolean>;
+
+    @OneToMany(() => FavoriteAuction, (favorite) => favorite.auction)
+    favorites: FavoriteAuction[];
 }

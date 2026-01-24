@@ -11,6 +11,7 @@ import { CreateAuctionDto } from './dto/create-auction.dto';
 import { Product } from '../products/products.entity';
 import { User } from '../users/users.entity';
 import { PurchasesService } from '../purchases/purchases.service';
+import { FavoriteAuction } from '../favorites/favorite-auction.entity';
 
 @Injectable()
 export class AuctionsService {
@@ -21,6 +22,8 @@ export class AuctionsService {
         private bidsRepository: Repository<Bid>,
         @InjectRepository(Product)
         private productsRepository: Repository<Product>,
+        @InjectRepository(FavoriteAuction)
+        private favoritesAuctionRepository: Repository<FavoriteAuction>,
         private purchasesService: PurchasesService,
     ) { }
 
@@ -65,12 +68,25 @@ export class AuctionsService {
         return await this.auctionsRepository.save(auction);
     }
 
-    async findAll() {
-        return await this.auctionsRepository.find({
+    async findAll(userId?: number) {
+        const auctions = await this.auctionsRepository.find({
             where: { status: 'active' },
             relations: ['product', 'product.images', 'seller'], // Include images for listing
             order: { created_at: 'DESC' },
         });
+
+        if (userId) {
+            const favorites = await this.favoritesAuctionRepository.find({
+                where: { user_id: userId }
+            });
+            const favoriteIds = favorites.map(f => f.auction_id);
+            return auctions.map(a => ({
+                ...a,
+                isFavorite: favoriteIds.includes(a.id)
+            }));
+        }
+
+        return auctions;
     }
 
     async findOne(id: number) {

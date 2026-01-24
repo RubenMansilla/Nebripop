@@ -22,6 +22,7 @@ import History from "./pages/User/Wallet/History/History";
 import ChatListPage from "./pages/User/Chat/ChatListPage";
 import FavoritesProducts from "./pages/User/Favorites/Products/FavoritesProducts";
 import FavoritesProfiles from "./pages/User/Favorites/Profiles/FavoritesProfiles";
+import FavoritesAuctions from "./pages/User/Favorites/Auctions/FavoritesAuctions";
 import PurchasesOngoing from "./pages/User/Purchases/Ongoing/PurchasesOngoing";
 import PurchasesCompleted from "./pages/User/Purchases/Completed/PurchasesCompleted";
 import SalesOngoing from "./pages/User/Sales/Ongoing/SalesOngoing";
@@ -140,6 +141,7 @@ export default function App() {
                             {/* Favoritos */}
                             <Route path="/favorites/products" element={<FavoritesProducts />} />
                             <Route path="/favorites/profiles" element={<FavoritesProfiles />} />
+                            <Route path="/favorites/auctions" element={<FavoritesAuctions />} />
 
                             {/* Compras y Ventas */}
                             <Route path="/purchases/ongoing" element={<PurchasesOngoing />} />
