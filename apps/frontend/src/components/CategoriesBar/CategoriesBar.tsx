@@ -1,9 +1,11 @@
 import "./CategoriesBar.css";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import CategoriesPanel from "../CategoriesPanel/CategoriesPanel";
 
 export default function CategoriesBar() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const categories = [
     "Tecnología",
@@ -15,6 +17,10 @@ export default function CategoriesBar() {
     "Bricolaje",
     "Electrodomésticos",
   ];
+
+  const goToFilters = () => {
+    navigate("/filtros"); // ✅ endpoint correcto
+  };
 
   return (
     <>
@@ -33,14 +39,22 @@ export default function CategoriesBar() {
           {/* CATEGORÍAS */}
           <div className="cat-links">
             {categories.map((c) => (
-              <a key={c} href="#" className="cat-item">
+              <a
+                key={c}
+                href="#"
+                className="cat-item"
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToFilters();
+                }}
+              >
                 {c}
               </a>
             ))}
           </div>
         </div>
-
       </div>
+
       <CategoriesPanel open={open} setOpen={setOpen} />
     </>
   );
