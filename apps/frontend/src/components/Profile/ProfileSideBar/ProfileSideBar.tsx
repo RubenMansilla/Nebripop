@@ -16,8 +16,7 @@ export default function ProfileSideBar() {
     const { user, setUser, token } = useContext(AuthContext);
 
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
-    const [showPenaltiesInfo, setShowPenaltiesInfo] = useState(false);
-    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+    const [tooltipCoords, setTooltipCoords] = useState<{ top: number; left: number } | null>(null);
     // const [loadingReviews, setLoadingReviews] = useState(false);
 
     const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LWJlZWMtZWI3ZGNhMzZiNjQ1IiwiYWxnIjoiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
@@ -90,16 +89,21 @@ export default function ProfileSideBar() {
         return () => sidebar.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Calculate tooltip position when showing
-    useEffect(() => {
-        if (showPenaltiesInfo && badgeRef.current) {
+    // Calcular posición y mostrar en un solo paso atómico para evitar saltos
+    const handleMouseEnter = () => {
+        if (badgeRef.current) {
             const rect = badgeRef.current.getBoundingClientRect();
-            setTooltipPosition({
-                top: rect.top + rect.height / 2,
+            setTooltipCoords({
+                top: rect.top + rect.height / 2 - 80, // Restamos aprox la mitad de la altura del tooltip (ajuste manual)
                 left: rect.right + 10
             });
         }
-    }, [showPenaltiesInfo]);
+    };
+
+    const handleMouseLeave = () => {
+        setTooltipCoords(null);
+    };
+
 
     if (!user) return null;
 
@@ -121,25 +125,25 @@ export default function ProfileSideBar() {
                                 <div
                                     ref={badgeRef}
                                     className="penalties-badge-container"
-                                    onMouseEnter={() => setShowPenaltiesInfo(true)}
-                                    onMouseLeave={() => setShowPenaltiesInfo(false)}
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
                                 >
                                     <div className="penalties-badge">
                                         {user.penaltiesCount}
                                     </div>
                                 </div>
-                                {showPenaltiesInfo && createPortal(
+                                {tooltipCoords && createPortal(
                                     <div
                                         className="penalties-tooltip-portal"
                                         style={{
-                                            top: `${tooltipPosition.top}px`,
-                                            left: `${tooltipPosition.left}px`
+                                            top: `${tooltipCoords.top}px`,
+                                            left: `${tooltipCoords.left}px`
                                         }}
-                                        onMouseEnter={() => setShowPenaltiesInfo(true)}
-                                        onMouseLeave={() => setShowPenaltiesInfo(false)}
+                                        onMouseEnter={handleMouseEnter}
+                                        onMouseLeave={handleMouseLeave}
                                     >
                                         <div className="penalties-tooltip-header">
-                                            <strong>⚠️ Penalizaciones</strong>
+                                            <strong>Penalizaciones</strong>
                                         </div>
                                         <div className="penalties-tooltip-content">
                                             <div className="penalty-level">

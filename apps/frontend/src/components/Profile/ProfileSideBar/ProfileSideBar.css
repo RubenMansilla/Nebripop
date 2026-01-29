@@ -162,18 +162,15 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(-50%) translateX(-5px);
     }
 
     to {
         opacity: 1;
-        transform: translateY(-50%) translateX(0);
     }
 }
 
 .penalties-tooltip-portal {
     position: fixed;
-    transform: translateY(-50%);
     background: white;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -183,18 +180,6 @@
     animation: fadeIn 0.2s ease;
 }
 
-.penalties-tooltip-portal::before {
-    content: '';
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-right: 6px solid white;
-}
 
 .profile-info {
     display: flex;
