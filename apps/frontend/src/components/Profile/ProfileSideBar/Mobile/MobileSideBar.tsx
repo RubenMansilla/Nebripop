@@ -1,8 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { AuthContext } from "../../../../context/AuthContext";
 import type { ReviewSummary } from "../../../../types/review";
 import { getUserReviewSummary } from "../../../../api/reviews.api";
+import { getMe } from "../../../../api/users.api";
 import "./MobileSideBar.css";
 
 export default function MobileSideBar() {
@@ -10,14 +12,16 @@ export default function MobileSideBar() {
     const { logout } = useContext(AuthContext);
 
     const sidebarRef = useRef<HTMLDivElement>(null);
+    const badgeRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
 
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
     const [loadingReviews, setLoadingReviews] = useState(false);
+    const [tooltipCoords, setTooltipCoords] = useState<{ top: number; left: number } | null>(null);
 
-    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LWJlZWMtZWI3ZGNhMzZiNjQ1IiwiYWxnIjoiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
 
     useEffect(() => {
@@ -25,6 +29,22 @@ export default function MobileSideBar() {
 
         let isMounted = true;
         setLoadingReviews(true);
+
+        // Fetch fresh user data
+        getMe()
+            .then((freshUserData) => {
+                if (freshUserData && isMounted) {
+                    const updatedUser = {
+                        ...user,
+                        ...freshUserData,
+                        id: Number(freshUserData.id)
+                    };
+                    setUser(updatedUser);
+                }
+            })
+            .catch((err) => {
+                console.error("❌ Error fetching user data:", err);
+            });
 
         // CAMBIO 3: Usamos el endpoint ligero de resumen
         getUserReviewSummary(user.id)
@@ -44,7 +64,7 @@ export default function MobileSideBar() {
             });
 
         return () => { isMounted = false; };
-    }, [user?.id]);
+    }, []); // Run once on mount
 
     useLayoutEffect(() => {
         const sidebar = sidebarRef.current;
@@ -74,12 +94,94 @@ export default function MobileSideBar() {
         return n <= summary.average ? "filled" : "";
     };
 
+    // En móvil/tablet usamos CLICK para alternar (toggle), ya que no hay hover
+    const toggleTooltip = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Evita que el click suba al contenedor y navegue
+
+        if (tooltipCoords) {
+            setTooltipCoords(null);
+        } else {
+            if (badgeRef.current) {
+                const rect = badgeRef.current.getBoundingClientRect();
+                setTooltipCoords({
+                    top: rect.top + rect.height / 2 - 80,
+                    left: rect.right + 10
+                });
+            }
+        }
+    };
+
+    const handleClose = (e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        setTooltipCoords(null);
+    };
+
     return (
         <>
             <div className='sidebar-left-mobile' ref={sidebarRef} style={{ overflowY: 'auto', height: '100%' }}>
                 <div className={`sidebar-profile-mobile ${(location.pathname === "/profile/info" || location.pathname === "/profile/reviews") ? "active" : ""}`} onClick={() => navigate("/profile/info")}>
                     <div className="profile-pic-mobile">
                         <img src={imageSrc} alt="Foto de perfil" />
+                        {(user.penaltiesCount || 0) > 0 && (
+                            <>
+                                <div
+                                    ref={badgeRef}
+                                    className="penalties-badge-container"
+                                    onClick={toggleTooltip}
+                                >
+                                    <div className="penalties-badge">
+                                        {user.penaltiesCount}
+                                    </div>
+                                </div>
+                                {tooltipCoords && createPortal(
+                                    <>
+                                        {/* Backdrop invisible para cerrar al hacer click fuera */}
+                                        <div
+                                            style={{
+                                                position: 'fixed',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                zIndex: 999998,
+                                                background: 'transparent'
+                                            }}
+                                            onClick={handleClose}
+                                        />
+                                        <div
+                                            className="penalties-tooltip-portal"
+                                            style={{
+                                                top: `${tooltipCoords.top}px`,
+                                                left: `${tooltipCoords.left}px`
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div className="penalties-tooltip-header">
+                                                <strong>Penalizaciones</strong>
+                                            </div>
+                                            <div className="penalties-tooltip-content">
+                                                <div className="penalty-level">
+                                                    <span className="penalty-count">1 penalización:</span>
+                                                    <span className="penalty-description">Advertencia por incumplimiento leve</span>
+                                                </div>
+                                                <div className="penalty-level">
+                                                    <span className="penalty-count">2 penalizaciones:</span>
+                                                    <span className="penalty-description">Restricción temporal de funciones</span>
+                                                </div>
+                                                <div className="penalty-level">
+                                                    <span className="penalty-count">3 penalizaciones:</span>
+                                                    <span className="penalty-description">Cuenta en revisión - riesgo de suspensión</span>
+                                                </div>
+                                                <div className="penalties-tooltip-footer">
+                                                    Tienes actualmente: <strong>{user.penaltiesCount} penalización{user.penaltiesCount !== 1 ? 'es' : ''}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>,
+                                    document.body
+                                )}
+                            </>
+                        )}
                     </div>
                     <div className="profile-info-mobile">
                         <div className="profile-name-mobile">
@@ -115,6 +217,13 @@ export default function MobileSideBar() {
                                 <path fill-rule="evenodd" clip-rule="evenodd" d="M17.6 17.716L12.1152 23.2008C11.8619 23.4542 11.5611 23.6552 11.2301 23.7923C10.8991 23.9294 10.5443 24 10.186 24C9.82773 24 9.47294 23.9294 9.14193 23.7923C8.81091 23.6552 8.51015 23.4542 8.25683 23.2008L0.799226 15.744C0.545844 15.4907 0.344847 15.1899 0.207714 14.8589C0.070582 14.5279 0 14.1731 0 13.8148C0 13.4565 0.070582 13.1017 0.207714 12.7707C0.344847 12.4397 0.545844 12.1389 0.799226 11.8856L11.8848 0.7992C12.3963 0.287578 13.0902 9.94637e-05 13.8136 1.17313e-07H21.2712C21.6295 -0.00010496 21.9844 0.0703792 22.3154 0.207427C22.6465 0.344475 22.9473 0.545401 23.2007 0.79873C23.4541 1.05206 23.6551 1.35283 23.7923 1.68385C23.9294 2.01488 24 2.36969 24 2.728V10.1864C23.9999 10.9099 23.7124 11.6037 23.2008 12.1152L21.6 13.716V22C21.6 22.5304 21.3893 23.0391 21.0142 23.4142C20.6392 23.7893 20.1305 24 19.6 24C19.0696 24 18.5609 23.7893 18.1858 23.4142C17.8107 23.0391 17.6 22.5304 17.6 22V17.716ZM13.8136 1.6C13.5145 1.60001 13.2276 1.71886 13.016 1.9304L1.93043 13.016C1.82557 13.1208 1.74238 13.2452 1.68563 13.3821C1.62887 13.519 1.59966 13.6658 1.59966 13.814C1.59966 13.9622 1.62887 14.109 1.68563 14.2459C1.74238 14.3828 1.82557 14.5072 1.93043 14.612L9.38803 22.0696C9.82883 22.5096 10.5432 22.5096 10.984 22.0696L17.6 15.4536V7.8632C17.066 7.67448 16.616 7.30304 16.3293 6.81456C16.0427 6.32607 15.938 5.75198 16.0338 5.19377C16.1295 4.63556 16.4195 4.12917 16.8525 3.7641C17.2855 3.39904 17.8337 3.19881 18.4 3.19881C18.9664 3.19881 19.5145 3.39904 19.9475 3.7641C20.3805 4.12917 20.6705 4.63556 20.7663 5.19377C20.862 5.75198 20.7573 6.32607 20.4707 6.81456C20.1841 7.30304 19.734 7.67448 19.2 7.8632V13.8536L22.0696 10.984C22.2812 10.7725 22.4 10.4856 22.4 10.1864V2.728C22.4 2.42884 22.2812 2.14192 22.0696 1.93038C21.8581 1.71884 21.5712 1.6 21.272 1.6H13.8136ZM20 15.316V22C20 22.1061 19.9579 22.2078 19.8829 22.2828C19.8079 22.3579 19.7061 22.4 19.6 22.4C19.4939 22.4 19.3922 22.3579 19.3172 22.2828C19.2422 22.2078 19.2 22.1061 19.2 22V16.116L20 15.316ZM18.4 6.4C18.6122 6.4 18.8157 6.31571 18.9657 6.16569C19.1157 6.01566 19.2 5.81217 19.2 5.6C19.2 5.38783 19.1157 5.18434 18.9657 5.03431C18.8157 4.88429 18.6122 4.8 18.4 4.8C18.1879 4.8 17.9844 4.88429 17.8343 5.03431C17.6843 5.18434 17.6 5.38783 17.6 5.6C17.6 5.81217 17.6843 6.01566 17.8343 6.16569C17.9844 6.31571 18.1879 6.4 18.4 6.4Z" fill="#253238" />
                             </svg>
                             <p>Productos</p>
+                            <div className="arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#000000" d="m14.475 12l-7.35-7.35q-.375-.375-.363-.888t.388-.887t.888-.375t.887.375l7.675 7.7q.3.3.45.675t.15.75t-.15.75t-.45.675l-7.7 7.7q-.375.375-.875.363T7.15 21.1t-.375-.888t.375-.887z" /></svg>
+                            </div>
+                        </div>
+                        <div className={`menu-item-mobile ${location.pathname.startsWith("/my-auctions") ? "active" : ""}`} onClick={() => navigate("/my-auctions/created")}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 36 36"><path fill="#000000" d="M23.7 10.41a1 1 0 0 1-.71-.29l-7.43-7.43A1 1 0 0 1 17 1.28l7.44 7.43a1 1 0 0 1-.71 1.7ZM11.86 22.25a1 1 0 0 0-.29-.71l-7.43-7.43a1 1 0 0 0-1.42 1.42L10.15 23a1 1 0 0 0 1.42 0a1 1 0 0 0 .29-.75M21.93 34H3a1 1 0 0 1-1-1.27l1.13-4a1 1 0 0 1 1-.73H20.8a1 1 0 0 1 1 .73l1.13 4a1 1 0 0 1-.17.87a1 1 0 0 1-.83.4M4.31 32H20.6l-.6-2H4.87Zm28.8-4.56l-14-14l2.36-2.36l-6.95-6.95l-8.94 8.94L12.51 20l2.35-2.34l14 14a3 3 0 0 0 4.24 0a3 3 0 0 0 .01-4.22M8.4 13.07L14.52 7l4.11 4.11l-6.12 6.11Zm23.29 17.2a1 1 0 0 1-1.41 0l-14-14l1.41-1.41l14 14a1 1 0 0 1 0 1.41" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                            <p>Subastas</p>
                             <div className="arrow">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#000000" d="m14.475 12l-7.35-7.35q-.375-.375-.363-.888t.388-.887t.888-.375t.887.375l7.675 7.7q.3.3.45.675t.15.75t-.15.75t-.45.675l-7.7 7.7q-.375.375-.875.363T7.15 21.1t-.375-.888t.375-.887z" /></svg>
                             </div>

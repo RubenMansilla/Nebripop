@@ -108,9 +108,6 @@ export default function App() {
                         />
                         <Route path="/you" element={<User />} />
 
-                       // Ejemplo en tu App.tsx o Router
-
-
                         <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
                             <Route path="/profile/info" element={<Info />} />
@@ -126,7 +123,7 @@ export default function App() {
                             <Route path="/catalog/sold" element={<Solds />} />
 
                             {/* Subastas (User) */}
-                            <Route path="/profile/auctions" element={<AuctionsManager />}>
+                            <Route path="/my-auctions" element={<AuctionsManager />}>
                                 <Route index element={<Navigate to="created" replace />} />
                                 <Route path="created" element={<MyAuctions />} />
                                 <Route path="active" element={<ActiveAuctions />} />

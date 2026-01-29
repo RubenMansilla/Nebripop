@@ -32,9 +32,13 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Estados de Interfaz
-  const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop">(
-    "desktop",
-  );
+  const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop">(() => {
+    if (typeof window !== "undefined") {
+      if (window.innerWidth < 600) return "mobile";
+      if (window.innerWidth < 1050) return "tablet";
+    }
+    return "desktop";
+  });
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const words = [

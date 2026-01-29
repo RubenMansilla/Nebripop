@@ -44,6 +44,8 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10000;
 }
 
 .profile-pic-mobile img {
