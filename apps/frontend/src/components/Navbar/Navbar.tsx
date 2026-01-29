@@ -32,10 +32,21 @@ export default function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
 
   // Estados de Interfaz
-  const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop">("desktop");
+  const [screenSize, setScreenSize] = useState<"mobile" | "tablet" | "desktop">(
+    "desktop",
+  );
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  const words = ["nintendo", "iPhone", "bicicleta", "PlayStation", "Switch", "patinete", "cámara", "AirPods"];
+  const words = [
+    "nintendo",
+    "iPhone",
+    "bicicleta",
+    "PlayStation",
+    "Switch",
+    "patinete",
+    "cámara",
+    "AirPods",
+  ];
 
   /* 1. LÓGICA DE BÚSQUEDA */
   useEffect(() => {
@@ -50,8 +61,9 @@ export default function Navbar() {
       setShowDropdown(true);
       try {
         const allProducts = await getAllProducts();
-        const filtered = allProducts.filter((p: any) =>
-          p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase())
+        const filtered = allProducts.filter(
+          (p: any) =>
+            p.name && p.name.toLowerCase().includes(searchQuery.toLowerCase()),
         );
         setSearchResults(filtered.slice(0, 6));
       } catch (error) {
@@ -68,7 +80,10 @@ export default function Navbar() {
   /* 2. CERRAR DROPDOWN AL HACER CLICK FUERA */
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
       }
     };
@@ -87,7 +102,7 @@ export default function Navbar() {
   useEffect(() => {
     const updateScreen = () => {
       if (window.innerWidth < 600) setScreenSize("mobile");
-      else if (window.innerWidth < 1000) setScreenSize("tablet");
+      else if (window.innerWidth < 1050) setScreenSize("tablet");
       else setScreenSize("desktop");
     };
     updateScreen();
@@ -100,7 +115,9 @@ export default function Navbar() {
     let i = 0;
     let timer: number | undefined;
 
-    const stopRotate = () => { if (timer) window.clearInterval(timer); };
+    const stopRotate = () => {
+      if (timer) window.clearInterval(timer);
+    };
 
     const startRotate = () => {
       stopRotate();
@@ -130,7 +147,11 @@ export default function Navbar() {
         <div className="search-status">Buscando...</div>
       ) : searchResults.length > 0 ? (
         searchResults.map((product) => (
-          <div key={product.id} className="search-item" onClick={() => handleProductSelect(product.id)}>
+          <div
+            key={product.id}
+            className="search-item"
+            onClick={() => handleProductSelect(product.id)}
+          >
             <img
               src={product.images?.[0]?.image_url || "/no-image.webp"}
               alt={product.name}
@@ -154,7 +175,9 @@ export default function Navbar() {
       {screenSize === "mobile" && (
         <nav className="navbar-mobile">
           <div className="mobile-top">
-            <div className="mobile-logo" onClick={() => navigate("/")}><img src={logoSmall} alt="logo" /></div>
+            <div className="mobile-logo" onClick={() => navigate("/")}>
+              <img src={logoSmall} alt="logo" />
+            </div>
             <div className="mobile-search">
               <div className="search-wrap">
                 <input
@@ -169,7 +192,7 @@ export default function Navbar() {
 
                 {/* MODIFICACIÓN AQUÍ: Añadimos la clase 'hidden' si searchQuery tiene texto */}
                 <div
-                  className={`fake-placeholder ${searchQuery.length > 0 ? 'hidden' : ''}`}
+                  className={`fake-placeholder ${searchQuery.length > 0 ? "hidden" : ""}`}
                   ref={placeholderRef}
                 >
                   <span className="buscar">Busca</span>
@@ -179,16 +202,39 @@ export default function Navbar() {
                 {showDropdown && <ResultsDropdown />}
               </div>
             </div>
-            <button className="mobile-hamb" onClick={() => setUserMenuOpen(!userMenuOpen)}>☰</button>
+            <button
+              className="mobile-hamb"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+            >
+              ☰
+            </button>
           </div>
           {userMenuOpen && (
             <div className="mobile-popover">
               {!user ? (
-                <p className="mobile-popover-item" onClick={openLogin}>Registrarte o iniciar sesión</p>
+                <p className="mobile-popover-item" onClick={openLogin}>
+                  Registrarte o iniciar sesión
+                </p>
               ) : (
-                <p className="mobile-popover-item" onClick={() => navigate("/you")}>Mi perfil</p>
+                <p
+                  className="mobile-popover-item"
+                  onClick={() => navigate("/you")}
+                >
+                  Mi perfil
+                </p>
               )}
-              <p className="mobile-popover-item" onClick={() => navigate("/sell-product")}>Vender artículos</p>
+              <p
+                className="mobile-popover-item"
+                onClick={() => navigate("/sell-product")}
+              >
+                Vender artículos
+              </p>
+              <p
+                className="mobile-popover-item"
+                onClick={() => navigate("/auctions")}
+              >
+                Subastas
+              </p>
             </div>
           )}
         </nav>
@@ -217,7 +263,7 @@ export default function Navbar() {
 
               {/* MODIFICACIÓN AQUÍ: Añadimos la clase 'hidden' si searchQuery tiene texto */}
               <div
-                className={`fake-placeholder ${searchQuery.length > 0 ? 'hidden' : ''}`}
+                className={`fake-placeholder ${searchQuery.length > 0 ? "hidden" : ""}`}
                 ref={placeholderRef}
               >
                 <span className="buscar">Busca</span>
@@ -229,13 +275,40 @@ export default function Navbar() {
           </div>
           <div className="nav-right">
             {!user ? (
-              <button className="btn-registro" onClick={openLogin}>Inicia sesión</button>
+              <button className="btn-registro" onClick={openLogin}>
+                Inicia sesión
+              </button>
             ) : (
-              <div className="profile-pic-container" onClick={() => navigate("/you")}>
-                <img src={profilePic} alt="perfil" /><p>Tú</p>
+              <div
+                className="profile-pic-container"
+                onClick={() => navigate("/you")}
+              >
+                <img src={profilePic} alt="perfil" />
+                <p>Tú</p>
               </div>
             )}
-            <button className="btn-vender" onClick={() => navigate("/sell-product")}>Vender<span className="icon-plus">+</span></button>
+            <button
+              className="mobile-hamb"
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+            >
+              ☰
+            </button>
+            {userMenuOpen && (
+              <div className="mobile-popover">
+                <p
+                  className="mobile-popover-item"
+                  onClick={() => navigate("/auctions")}
+                >
+                  Subastas
+                </p>
+                <p
+                  className="mobile-popover-item"
+                  onClick={() => navigate("/sell-product")}
+                >
+                  Vender artículos
+                </p>
+              </div>
+            )}
           </div>
         </nav>
       )}
@@ -243,7 +316,11 @@ export default function Navbar() {
       {/* DESKTOP */}
       {screenSize === "desktop" && (
         <nav className="navbar">
-          <div className="nav-left" onClick={() => navigate("/")}><div className="nav-logo"><img src={logo} alt="logo" /></div></div>
+          <div className="nav-left" onClick={() => navigate("/")}>
+            <div className="nav-logo">
+              <img src={logo} alt="logo" />
+            </div>
+          </div>
           <div className="nav-center">
             <div className="search-wrap">
               <input
@@ -258,7 +335,7 @@ export default function Navbar() {
 
               {/* MODIFICACIÓN AQUÍ: Añadimos la clase 'hidden' si searchQuery tiene texto */}
               <div
-                className={`fake-placeholder ${searchQuery.length > 0 ? 'hidden' : ''}`}
+                className={`fake-placeholder ${searchQuery.length > 0 ? "hidden" : ""}`}
                 ref={placeholderRef}
               >
                 <span className="buscar">Busca</span>
@@ -270,13 +347,30 @@ export default function Navbar() {
           </div>
           <div className="nav-right">
             {!user ? (
-              <button className="btn-registro" onClick={openLogin}>Registrarte o Inicia sesión</button>
+              <button className="btn-registro" onClick={openLogin}>
+                Registrarte o Inicia sesión
+              </button>
             ) : (
-              <div className="profile-pic-container" onClick={() => navigate("/you")}>
-                <img src={profilePic} alt="perfil" /><p>Tú</p>
+              <div
+                className="profile-pic-container"
+                onClick={() => navigate("/you")}
+              >
+                <img src={profilePic} alt="perfil" />
+                <p>Tú</p>
               </div>
             )}
-            <button className="btn-vender" onClick={() => navigate("/sell-product")}>Vender<span className="icon-plus">+</span></button>
+            <button
+              className="btn-subastas"
+              onClick={() => navigate("/auctions")}
+            >
+              Subastas
+            </button>
+            <button
+              className="btn-vender"
+              onClick={() => navigate("/sell-product")}
+            >
+              Vender<span className="icon-plus">+</span>
+            </button>
           </div>
         </nav>
       )}

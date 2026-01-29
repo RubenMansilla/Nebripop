@@ -12,14 +12,17 @@ import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
 import { PlaceBidDto } from './dto/place-bid.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
 
 @Controller('auctions')
 export class AuctionsController {
     constructor(private readonly auctionsService: AuctionsService) { }
 
+    @UseGuards(OptionalJwtAuthGuard)
     @Get()
-    findAll() {
-        return this.auctionsService.findAll();
+    findAll(@Request() req) {
+        const userId = req.user?.sub ?? req.user?.id;
+        return this.auctionsService.findAll(userId);
     }
 
     @UseGuards(JwtAuthGuard)

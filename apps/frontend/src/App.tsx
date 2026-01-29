@@ -59,9 +59,9 @@ import NotFound from "./pages/NotFound/NotFound";
 
 // AUCTIONS
 import AuctionsManager from "./pages/User/Auctions/AuctionsManager";
-import MyAuctions from "./pages/User/Auctions/components/MyAuctions";
-import ActiveAuctions from "./pages/User/Auctions/components/ActiveAuctions";
-import AuctionsHistory from "./pages/User/Auctions/components/AuctionsHistory";
+import MyAuctions from "./pages/User/Auctions/MyAuctions/MyAuctions";
+import ActiveAuctions from "./pages/User/Auctions/ActiveAuctions/ActiveAuctions";
+import AuctionsHistory from "./pages/User/Auctions/HistoryAuctions/AuctionsHistory";
 import AuctionList from "./pages/Auctions/AuctionList";
 import AuctionDetail from "./pages/Auctions/AuctionDetail";
 

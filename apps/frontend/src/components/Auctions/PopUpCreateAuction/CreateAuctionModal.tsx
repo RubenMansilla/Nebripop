@@ -1,8 +1,8 @@
 
 import { useState, useEffect, useContext } from 'react';
-import { createAuction, getMyAuctions } from '../../../../api/auctions.api';
-import { getMyActiveProducts } from '../../../../api/products.api';
-import { AuthContext } from '../../../../context/AuthContext';
+import { createAuction, getMyAuctions } from '../../../api/auctions.api';
+import { getMyActiveProducts } from '../../../api/products.api';
+import { AuthContext } from '../../../context/AuthContext';
 import './CreateAuctionModal.css';
 
 interface CreateAuctionModalProps {

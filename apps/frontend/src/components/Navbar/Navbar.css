@@ -23,7 +23,7 @@
 }
 
 /* ================================
-   NAVBAR DESKTOP (>1000px)
+   NAVBAR DESKTOP (>1050px)
 ================================ */
 .navbar {
   width: 96%;
@@ -148,7 +148,7 @@
    BOTONES
 ================================ */
 .btn-registro {
-  padding: 12px 26px;
+  padding: 12px 18px;
   border: 2px solid var(--beige);
   border-radius: 12px;
   font-size: 17px;
@@ -162,6 +162,23 @@
   background: var(--beige);
   color: white;
   transform: scale(1.05);
+}
+
+.btn-subastas {
+  padding: 11.5px 20px;
+  border: 1px solid #d2b990;
+  border-radius: 12px;
+  font-size: 17px;
+  background: white;
+  color: var(--gris-texto);
+  cursor: pointer;
+  transition: 0.25s ease;
+  font-weight: 600;
+}
+
+.btn-subastas:hover {
+  background: #f2e2c7;
+  color: var(--gris-texto);
 }
 
 .btn-vender {
@@ -218,7 +235,15 @@
 /* ====================================
    NAVBAR TABLET (600px – 1000px)
 ==================================== */
-@media (max-width: 1000px) and (min-width: 600px) {
+@media (max-width: 1050px) and (min-width: 600px) {
+
+  .mobile-hamb {
+    font-size: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: black;
+  }
 
   .logo-small {
     display: none;
@@ -267,14 +292,14 @@
   }
 
   .navbar-tablet .search-wrap {
-    width: 70%;
+    width: 80%;
     max-width: 450px;
   }
 
   .navbar-tablet .nav-right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 20px;
   }
 
   .navbar-tablet {
@@ -341,7 +366,7 @@
   }
 
   .search-wrap {
-    width: 10px;
+    width: 80%;
     margin: auto;
     max-width: none;
   }
@@ -408,7 +433,7 @@
 }
 
 .mobile-popover-item {
-  padding: 14px 18px;
+  padding: 14px 16px;
   font-size: 15px;
   color: var(--gris-texto);
   cursor: pointer;
@@ -424,7 +449,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-right: 20px;
 }
 
 .profile-pic-container p {

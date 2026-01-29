@@ -11,6 +11,7 @@ interface User {
   gender?: string | null;
   profilePicture?: string;
   walletBalance?: number;
+  penaltiesCount?: number;
 }
 
 interface AuthContextType {

@@ -5,9 +5,11 @@
   display: flex;
   width: 100%;
   max-width: 1300px;
-  margin: 40px auto; /* ✔ centrado sin espacio lateral */
+  margin: 40px auto;
+  /* ✔ centrado sin espacio lateral */
   gap: 50px;
-  padding: 0 20px;  /* ✔ margen suave responsivo */
+  padding: 0 20px;
+  /* ✔ margen suave responsivo */
 }
 
 /* Cabecera móvil (por defecto oculta en escritorio) */
@@ -333,7 +335,7 @@
 .results-title {
   font-size: 26px;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 12px;
 }
 
 .results-subtitle {
@@ -355,7 +357,8 @@
 
 /* ✅ grid correcto: UL -> LI */
 .products-grid-item {
-  min-width: 0; /* 🔑 evita que el contenido “empuje” la columna */
+  min-width: 0;
+  /* 🔑 evita que el contenido “empuje” la columna */
 }
 
 .product-link {
@@ -512,7 +515,8 @@
 /* ============================================
    RESPONSIVE · MOBILE (≤ 768px)
 ============================================ */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+
   /* Cabecera móvil visible */
   .filtro-mobile-header {
     display: flex;
@@ -544,11 +548,13 @@
     border: 1px solid #eee;
     border-radius: 16px;
     padding: 16px;
-    display: none;            /* 🔥 por defecto oculto en móvil */
+    display: none;
+    /* 🔥 por defecto oculto en móvil */
   }
 
   .filtro-sidebar.filtro-sidebar--open {
-    display: block;           /* 🔓 se muestra cuando el toggle está abierto */
+    display: block;
+    /* 🔓 se muestra cuando el toggle está abierto */
   }
 
   .filtro-title {
@@ -585,7 +591,8 @@
   }
 
   .ver-todo {
-    grid-column: 1 / -1; /* ocupa ancho completo */
+    grid-column: 1 / -1;
+    /* ocupa ancho completo */
     margin-top: 6px;
   }
 
@@ -599,6 +606,7 @@
     width: 50%;
     padding: 10px 0;
     font-size: 12px;
+    text-align: center;
   }
 
   /* Estado (checkbox): más compacto */
@@ -661,23 +669,28 @@
   }
 
   .filtro-list {
-    grid-template-columns: 1fr; /* filtros en 1 col para no apretar */
+    grid-template-columns: 1fr;
+    /* filtros en 1 col para no apretar */
   }
 
   .envio-toggle {
-    height: 42px;                 /* más cómodo táctil */
+    height: 42px;
+    /* más cómodo táctil */
     border-radius: 14px;
   }
 
   .envio-option {
-    flex: 1;                      /* 🔑 cada uno 50% */
+    flex: 1;
+    /* 🔑 cada uno 50% */
     padding: 0;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
-    white-space: nowrap;          /* evita saltos raros */
+    white-space: nowrap;
+    /* evita saltos raros */
+    text-align: center;
   }
 
   .envio-option.active {

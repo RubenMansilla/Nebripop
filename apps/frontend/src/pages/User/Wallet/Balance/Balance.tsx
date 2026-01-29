@@ -66,7 +66,7 @@ export default function Balance() {
 
     // LÓGICA DE RETIRO
     const handleWithdraw = async (amountToWithdraw: number) => {
-        if (!token) return alert("Error de autenticación");
+        if (!token) return toast.error("Error de sesión");
         try {
             const updatedWallet = await withdrawMoney(amountToWithdraw);
             setBalance(Number(updatedWallet.balance));

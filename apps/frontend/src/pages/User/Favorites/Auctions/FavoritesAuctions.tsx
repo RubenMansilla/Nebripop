@@ -1,11 +1,11 @@
 import "./FavoritesAuctions.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import AuctionCard from "../../../../components/AuctionCard/AuctionCard";
+import AuctionCard from "../../../../components/Auctions/AuctionCard/AuctionCard";
 import ProductSkeleton from "../../../../components/ProductSkeleton/ProductSkeleton";
 import { getMyFavoriteAuctions } from "../../../../api/favorites.api";
 import { AuthContext } from "../../../../context/AuthContext";
-import noReviewsImg from '../../../../assets/profile/pop-no-favorite-products.svg'; // Reuse or get new image
+import noReviewsImg from "../../../../assets/profile/pop-no-favorite-products.svg"; // Reuse or get new image
 
 export default function FavoritesAuctions() {
     const { token } = useContext(AuthContext);
@@ -17,7 +17,6 @@ export default function FavoritesAuctions() {
 
     const [loading, setLoading] = useState(true);
     const [showSkeleton, setShowSkeleton] = useState(false);
-
 
     const showMore = () => {
         setVisibleCount((prev) => prev + 25);
@@ -54,7 +53,6 @@ export default function FavoritesAuctions() {
         return () => clearTimeout(skeletonTimer);
     }, [token]);
 
-
     // NAVEGAR ENTRE PRODUCTOS / PERFILES / SUBASTAS
     const navigate = useNavigate();
     const [selected, setSelected] = useState("auctions");
@@ -85,16 +83,33 @@ export default function FavoritesAuctions() {
 
             <div className="info-selector">
                 <div className="info-items-wallet">
-                    <div className={`info-item-wallet ${selected === "products" ? "active" : ""}`} onClick={() => setSelected("products")}><p>Productos</p></div>
-                    <div className={`info-item-wallet ${selected === "profiles" ? "active" : ""}`} onClick={() => setSelected("profiles")}><p>Perfiles</p></div>
-                    <div className={`info-item-wallet ${selected === "auctions" ? "active" : ""}`} onClick={() => setSelected("auctions")}><p>Subastas</p></div>
+                    <div
+                        className={`info-item-wallet ${selected === "products" ? "active" : ""}`}
+                        onClick={() => setSelected("products")}
+                    >
+                        <p>Productos</p>
+                    </div>
+                    <div
+                        className={`info-item-wallet ${selected === "profiles" ? "active" : ""}`}
+                        onClick={() => setSelected("profiles")}
+                    >
+                        <p>Perfiles</p>
+                    </div>
+                    <div
+                        className={`info-item-wallet ${selected === "auctions" ? "active" : ""}`}
+                        onClick={() => setSelected("auctions")}
+                    >
+                        <p>Subastas</p>
+                    </div>
                 </div>
             </div>
 
             {/* Está cargando Y ha pasado suficiente tiempo -> Muestra Skeleton */}
             {loading && showSkeleton ? (
-                <div className="product-container favorites-auctions-container">
-                    {[...Array(5)].map((_, i) => <ProductSkeleton key={i} />)}
+                <div className="product-container">
+                    {[...Array(5)].map((_, i) => (
+                        <ProductSkeleton key={i} />
+                    ))}
                 </div>
             ) : (
                 <>
@@ -114,14 +129,14 @@ export default function FavoritesAuctions() {
                     {/* LISTA DE SUBASTAS */}
                     {FavoriteAuctions.length > 0 && (
                         <>
-                            <div className="product-container favorites-auctions-container">
+                            <div className="product-container">
                                 {visibleAuctions.map((auction) => (
                                     <AuctionCard key={auction.id} auction={auction} />
                                 ))}
                             </div>
                             {hasMore && (
                                 <div className="btn-more-reviews-container" onClick={showMore}>
-                                    <div className='btn-more-reviews'>Ver más subastas</div>
+                                    <div className="btn-more-reviews">Ver más subastas</div>
                                 </div>
                             )}
                         </>

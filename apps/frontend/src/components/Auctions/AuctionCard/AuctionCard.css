@@ -35,7 +35,7 @@
 }
 
 .auction-name {
-    font-size: 1.1rem;
+    font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
@@ -56,7 +56,7 @@
 }
 
 .current-bid-amount {
-    font-size: 1.4rem;
+    font-size: 18px;
     font-weight: 800;
     color: #253238;
 }

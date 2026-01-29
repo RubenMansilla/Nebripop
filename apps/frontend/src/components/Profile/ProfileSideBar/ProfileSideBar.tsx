@@ -1,21 +1,49 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { AuthContext } from "../../../context/AuthContext";
 import type { ReviewSummary } from "../../../types/review";
 import { getUserReviewSummary } from "../../../api/reviews.api";
+import { getMe } from "../../../api/users.api";
 import './ProfileSideBar.css';
 
 export default function ProfileSideBar() {
 
     const sidebarRef = useRef<HTMLDivElement>(null);
+    const badgeRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useContext(AuthContext);
+    const { user, setUser, token } = useContext(AuthContext);
 
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
+    const [showPenaltiesInfo, setShowPenaltiesInfo] = useState(false);
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
     // const [loadingReviews, setLoadingReviews] = useState(false);
 
-    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LWJlZWMtZWI3ZGNhMzZiNjQ1IiwiYWxnIjoiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+
+    // 🔄 Fetch fresh user data on mount to get penalties_count and other fields
+    useEffect(() => {
+        if (!token) {
+            console.log('❌ No token, skipping getMe');
+            return;
+        }
+
+        getMe()
+            .then((freshUserData) => {
+                if (freshUserData) {
+                    const updatedUser = {
+                        ...user,
+                        ...freshUserData,
+                        id: Number(freshUserData.id)
+                    };
+                    setUser(updatedUser);
+                }
+            })
+            .catch((err) => {
+                console.error("❌ Error fetching user data:", err);
+            });
+    }, []); // Run once on mount
 
     useEffect(() => {
         if (!user?.id) return;
@@ -62,6 +90,17 @@ export default function ProfileSideBar() {
         return () => sidebar.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Calculate tooltip position when showing
+    useEffect(() => {
+        if (showPenaltiesInfo && badgeRef.current) {
+            const rect = badgeRef.current.getBoundingClientRect();
+            setTooltipPosition({
+                top: rect.top + rect.height / 2,
+                left: rect.right + 10
+            });
+        }
+    }, [showPenaltiesInfo]);
+
     if (!user) return null;
 
     const year = new Date(user.createdAt).getFullYear();
@@ -77,6 +116,53 @@ export default function ProfileSideBar() {
                 <div className={`sidebar-profile ${(location.pathname === "/profile/info" || location.pathname === "/profile/reviews") ? "active" : ""}`} onClick={() => navigate("/profile/info")}>
                     <div className="profile-pic">
                         <img src={imageSrc} alt="Foto de perfil" />
+                        {(user.penaltiesCount || 0) > 0 && (
+                            <>
+                                <div
+                                    ref={badgeRef}
+                                    className="penalties-badge-container"
+                                    onMouseEnter={() => setShowPenaltiesInfo(true)}
+                                    onMouseLeave={() => setShowPenaltiesInfo(false)}
+                                >
+                                    <div className="penalties-badge">
+                                        {user.penaltiesCount}
+                                    </div>
+                                </div>
+                                {showPenaltiesInfo && createPortal(
+                                    <div
+                                        className="penalties-tooltip-portal"
+                                        style={{
+                                            top: `${tooltipPosition.top}px`,
+                                            left: `${tooltipPosition.left}px`
+                                        }}
+                                        onMouseEnter={() => setShowPenaltiesInfo(true)}
+                                        onMouseLeave={() => setShowPenaltiesInfo(false)}
+                                    >
+                                        <div className="penalties-tooltip-header">
+                                            <strong>⚠️ Penalizaciones</strong>
+                                        </div>
+                                        <div className="penalties-tooltip-content">
+                                            <div className="penalty-level">
+                                                <span className="penalty-count">1 penalización:</span>
+                                                <span className="penalty-description">Advertencia por incumplimiento leve</span>
+                                            </div>
+                                            <div className="penalty-level">
+                                                <span className="penalty-count">2 penalizaciones:</span>
+                                                <span className="penalty-description">Restricción temporal de funciones</span>
+                                            </div>
+                                            <div className="penalty-level">
+                                                <span className="penalty-count">3 penalizaciones:</span>
+                                                <span className="penalty-description">Cuenta en revisión - riesgo de suspensión</span>
+                                            </div>
+                                            <div className="penalties-tooltip-footer">
+                                                Tienes actualmente: <strong>{user.penaltiesCount} penalización{user.penaltiesCount !== 1 ? 'es' : ''}</strong>
+                                            </div>
+                                        </div>
+                                    </div>,
+                                    document.body
+                                )}
+                            </>
+                        )}
                     </div>
                     <div className="profile-info">
                         <div className="profile-name">

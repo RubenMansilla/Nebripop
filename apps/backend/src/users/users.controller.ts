@@ -17,7 +17,7 @@ import { ChangePasswordDto } from "./change-password.dto";
 
 @Controller("users")
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersService) { }
 
   @UseGuards(JwtAuthGuard)
   @Patch("update")
@@ -42,6 +42,13 @@ export class UsersController {
   async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
     const userId = req.user.id;
     return this.usersService.changePassword(userId, dto.oldPassword, dto.newPassword);
+  }
+
+  // ✅ GET CURRENT USER (ME)
+  @UseGuards(JwtAuthGuard)
+  @Get("me")
+  getCurrentUser(@Req() req) {
+    return this.usersService.findById(req.user.id);
   }
 
   // ✅ SEARCH USERS (CHAT)

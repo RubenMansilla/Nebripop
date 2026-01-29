@@ -1,34 +1,3 @@
-/* Reuse FavoritesProducts styles usually, but creating specific file if needed */
-/* Importing FavoritesProducts.css in the TSX, but defining local overrides here if necessary */
-
-.no-reviews {
-    text-align: center;
-    padding: 60px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.no-reviews-img {
-    width: 200px;
-    height: auto;
-    margin-bottom: 20px;
-    opacity: 0.8;
-}
-
-.no-reviews h3 {
-    font-size: 1.5rem;
-    color: #253238;
-    margin: 0;
-}
-
-.no-reviews p {
-    color: #666;
-    font-size: 1rem;
-    margin: 0;
-}
-
 .product-container.favorites-auctions-container {
     background-color: white;
     border: 1.5px solid var(--beige, #e0e0e0);

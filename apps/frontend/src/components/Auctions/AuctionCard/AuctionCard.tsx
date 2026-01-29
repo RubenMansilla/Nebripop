@@ -1,19 +1,25 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { AuthContext } from '../../context/AuthContext';
-import { useNotificationSettings } from '../../context/NotificationContext';
-import { addFavoriteAuction, removeFavoriteAuction } from '../../api/favorites.api';
-import '../Product/Product.css';
+import { AuthContext } from '../../../context/AuthContext';
+import { useNotificationSettings } from '../../../context/NotificationContext';
+import { addFavoriteAuction, removeFavoriteAuction } from '../../../api/favorites.api';
+import '../../Product/Product.css';
 import './AuctionCard.css';
+import { Link } from 'react-router-dom';
+
 
 interface AuctionCardProps {
-    auction: any; // Type should ideally be AuctionType but using any to match List for now
+    auction: any;
+    user?: any;
+    mode?: 'my_auctions' | 'active_auctions' | 'history';
+    onDelete?: (id: number) => void;
 }
 
-export default function AuctionCard({ auction }: AuctionCardProps) {
+export default function AuctionCard({ auction, user, mode = 'active_auctions', onDelete }: AuctionCardProps) {
+
     const navigate = useNavigate();
-    const { token, user } = useContext(AuthContext);
+    const { token } = useContext(AuthContext);
     const { notify } = useNotificationSettings();
 
     // Product info
@@ -93,13 +99,13 @@ export default function AuctionCard({ auction }: AuctionCardProps) {
     const isOwner = user && user.id === product?.owner_id;
 
     return (
-        <div className="auction-card-public" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
-            <div className="auction-card-img-wrapper" style={{ position: 'relative' }}>
+        <div className="product" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
+            <div className="product-img" style={{ position: 'relative' }}>
                 <img src={product?.images?.[0]?.image_url || "/no-image.webp"} alt={product?.name} />
 
 
             </div>
-            <div className="auction-card-content">
+            <div className="product-info">
                 <div className="auction-card-header">
                     <h3 className="auction-name">{product?.name || "Producto sin nombre"}</h3>
 
@@ -151,6 +157,27 @@ export default function AuctionCard({ auction }: AuctionCardProps) {
                             {calculateTimeLeft(auction.end_time)}
                         </div>
                     </div>
+                </div>
+                <div className="card-actions">
+
+                    {mode === 'my_auctions' && onDelete && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                onDelete(auction.id);
+                            }}
+                            className="btn-action btn-delete"
+                        >
+                            Borrar
+                        </button>
+                    )}
+
+                    {mode === 'active_auctions' && auction.status === 'awaiting_payment' && user && auction.winner_id === user.id && (
+                        <Link to={`/checkout?auctionId=${auction.id}`} className="btn-action btn-pay">
+                            Pagar
+                        </Link>
+                    )}
                 </div>
             </div>
         </div>
