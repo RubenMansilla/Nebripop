@@ -40,4 +40,13 @@ export class NotificationsService {
     async markAsRead(id: string) {
         return await this.notificationRepository.update(id, { isRead: true });
     }
+
+    // ELIMINAR NOTIFICACIÓN ESPECÍFICA (Para limpieza de estados)
+    async deleteByTypeAndProduct(userId: number | string, type: string, productId: number) {
+        return await this.notificationRepository.delete({
+            userId: String(userId),
+            type: type,
+            productId: productId
+        });
+    }
 }

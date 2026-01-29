@@ -108,10 +108,15 @@ export default function NotificationListener() {
 
                         if (shouldShow) {
                             let clickAction = undefined;
+                            const options: any = {};
 
                             // Si es mensaje nuevo -> Chat
                             if (newNotif.type === 'newMessage') {
                                 clickAction = () => navigate('/profile/chat');
+                                // AÑADIDO: toastId para evitar duplicados. 
+                                // Si el mensaje es "Nuevo mensaje de Juan", el ID será ese mismo string.
+                                // Si ya existe un toast con ese ID, react-toastify lo actualiza en lugar de crear uno nuevo.
+                                (options as any).toastId = newNotif.message;
                             }
 
                             // Si es bajada de precio -> Producto Específico
@@ -128,7 +133,8 @@ export default function NotificationListener() {
                             }
 
                             notify(mappedType, newNotif.message, 'info', {
-                                onClick: clickAction
+                                onClick: clickAction,
+                                ...options
                             });
                         }
                     }

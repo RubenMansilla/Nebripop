@@ -1,4 +1,5 @@
 import { useEffect, useState, useContext } from "react";
+import { createPortal } from "react-dom";
 import { getMyAuctions, deleteAuction } from "../../../../api/auctions.api";
 import { AuthContext } from "../../../../context/AuthContext";
 import AuctionCard from "../../../../components/Auctions/AuctionCard/AuctionCard";
@@ -82,9 +83,9 @@ export default function MyAuctions() {
                 </div>
             )}
 
-            {showDeletePopup && (
-                <div className="popup-backdrop">
-                    <div className="unsaved-changes-popup">
+            {showDeletePopup && createPortal(
+                <div className="popup-backdrop" onClick={handleCancelDelete}>
+                    <div className="unsaved-changes-popup" onClick={(e) => e.stopPropagation()}>
                         <h3>¿Estás seguro que quieres eliminar esta subasta?</h3>
                         <p>
                             Esta acción no se puede deshacer. Si eliminas la subasta, se
@@ -100,7 +101,8 @@ export default function MyAuctions() {
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             <div className="my-auctions-content">

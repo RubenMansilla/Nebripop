@@ -56,6 +56,14 @@ export class AuctionsScheduler {
                     const uniqueBidders = new Set(auction.bids.map(b => b.bidder.id));
 
                     for (const bidderId of uniqueBidders) {
+
+                        // CLEANUP: Eliminar notificaciones previas de "quedan X tiempo" para no acumularlas
+                        await this.notificationsService.deleteByTypeAndProduct(
+                            bidderId,
+                            'auction_alert',
+                            auction.product.id
+                        );
+
                         await this.notificationsService.create(
                             bidderId,
                             `Subasta "${auction.product.name}": quedan ${t.label}`,
@@ -216,6 +224,13 @@ export class AuctionsScheduler {
             // 2. Track failed payment to prevent loops
             auction.notifications_sent = auction.notifications_sent || {};
             auction.notifications_sent[`failed_payment_${currentWinner.id}`] = true;
+
+            // CLEANUP: Eliminar la notificación de "Has ganado" para que no se contradiga con la de penalización
+            await this.notificationsService.deleteByTypeAndProduct(
+                currentWinner.id,
+                'auction_win',
+                auction.product.id
+            );
 
             // NOTIFY PENALTY
             await this.notificationsService.create(
