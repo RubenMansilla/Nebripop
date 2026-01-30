@@ -14,9 +14,12 @@ interface AuctionCardProps {
     user?: any;
     mode?: 'my_auctions' | 'active_auctions' | 'history';
     onDelete?: (id: number) => void;
+    onRepublish?: (id: number) => void;
+    onModify?: (id: number) => void;
+    onCancel?: (id: number) => void;
 }
 
-export default function AuctionCard({ auction, user, mode = 'active_auctions', onDelete }: AuctionCardProps) {
+export default function AuctionCard({ auction, user, mode = 'active_auctions', onDelete, onRepublish, onModify, onCancel }: AuctionCardProps) {
 
     const navigate = useNavigate();
     const { token } = useContext(AuthContext);
@@ -98,6 +101,10 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
     // Check if user is owner to hide heart (optional, matching Product logic)
     const isOwner = user && user.id === product?.owner_id;
 
+    // Determine if auction is sold (has purchase)
+    const isSold = mode === 'history' && auction.status === 'sold' && auction.purchase;
+    const isExpired = mode === 'history' && auction.status === 'expired';
+
     return (
         <div className="product" onClick={handleCardClick} style={{ cursor: 'pointer' }}>
             <div className="product-img" style={{ position: 'relative' }}>
@@ -149,8 +156,12 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
                 </div>
                 <div className="auction-status-row">
                     <div>
-                        <p className="current-bid-label">Puja actual</p>
-                        <p className="current-bid-amount">{auction.current_bid || auction.starting_price}€</p>
+                        <p className="current-bid-label">
+                            {isSold ? 'Puja final' : 'Puja actual'}
+                        </p>
+                        <p className="current-bid-amount">
+                            {isSold ? `${auction.purchase.price}€` : `${auction.current_bid || auction.starting_price}€`}
+                        </p>
                     </div>
                     <div>
                         <div className="time-left-badge">
@@ -169,7 +180,7 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
                             }}
                             className="btn-action btn-delete"
                         >
-                            Borrar
+                            Cancelar
                         </button>
                     )}
 
@@ -177,6 +188,48 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
                         <Link to={`/checkout?auctionId=${auction.id}`} className="btn-action btn-pay">
                             Pagar
                         </Link>
+                    )}
+
+                    {/* Expired auction actions */}
+                    {mode === 'history' && isExpired && (
+                        <>
+                            {onRepublish && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        onRepublish(auction.id);
+                                    }}
+                                    className="btn-action btn-republish"
+                                >
+                                    Republicar
+                                </button>
+                            )}
+                            {onModify && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        onModify(auction.id);
+                                    }}
+                                    className="btn-action btn-modify"
+                                >
+                                    Modificar
+                                </button>
+                            )}
+                            {onCancel && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        onCancel(auction.id);
+                                    }}
+                                    className="btn-action btn-cancel-expired"
+                                >
+                                    Cancelar
+                                </button>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

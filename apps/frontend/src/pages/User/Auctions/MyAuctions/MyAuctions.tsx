@@ -74,13 +74,14 @@ export default function MyAuctions() {
 
     return (
         <>
-            {showModal && (
+            {showModal && createPortal(
                 <div style={{ position: "fixed", zIndex: 1000 }}>
                     <CreateAuctionModal
                         onClose={() => setShowModal(false)}
                         onAuctionCreated={handleAuctionCreated}
                     />
-                </div>
+                </div>,
+                document.body
             )}
 
             {showDeletePopup && createPortal(

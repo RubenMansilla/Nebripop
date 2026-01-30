@@ -3,19 +3,29 @@ import { useState, useEffect, useContext } from 'react';
 import { createAuction, getMyAuctions } from '../../../api/auctions.api';
 import { getMyActiveProducts } from '../../../api/products.api';
 import { AuthContext } from '../../../context/AuthContext';
+import { toast } from 'react-toastify';
 import './CreateAuctionModal.css';
 
 interface CreateAuctionModalProps {
     onClose: () => void;
     onAuctionCreated: () => void;
+    preselectedProductId?: string | number;
+    preselectedPrice?: string | number;
+    preselectedDuration?: string | number;
 }
 
-export default function CreateAuctionModal({ onClose, onAuctionCreated }: CreateAuctionModalProps) {
+export default function CreateAuctionModal({
+    onClose,
+    onAuctionCreated,
+    preselectedProductId,
+    preselectedPrice,
+    preselectedDuration
+}: CreateAuctionModalProps) {
     const { user } = useContext(AuthContext);
     const [products, setProducts] = useState<any[]>([]);
-    const [selectedProduct, setSelectedProduct] = useState('');
-    const [startPrice, setStartPrice] = useState('');
-    const [duration, setDuration] = useState('24');
+    const [selectedProduct, setSelectedProduct] = useState(preselectedProductId?.toString() || '');
+    const [startPrice, setStartPrice] = useState(preselectedPrice?.toString() || '');
+    const [duration, setDuration] = useState(preselectedDuration?.toString() || '24');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -35,9 +45,11 @@ export default function CreateAuctionModal({ onClose, onAuctionCreated }: Create
         setLoading(true);
         try {
             await createAuction(selectedProduct, Number(startPrice), Number(duration));
+            toast.success('Subasta creada correctamente');
             onAuctionCreated();
             onClose();
-        } catch (error) {
+        } catch (error: any) {
+            toast.error(error.message || 'Error al crear la subasta');
             console.error(error);
         } finally {
             setLoading(false);

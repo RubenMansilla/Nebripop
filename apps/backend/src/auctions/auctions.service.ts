@@ -44,12 +44,26 @@ export class AuctionsService {
         }
 
         // Check if already in active auction
-        const existingAuction = await this.auctionsRepository.findOne({
+        const existingActiveAuction = await this.auctionsRepository.findOne({
             where: { product_id: productId, status: 'active' },
         });
 
-        if (existingAuction) {
+        if (existingActiveAuction) {
             throw new BadRequestException('El producto ya está en una subasta activa');
+        }
+
+        // Delete any previous expired/cancelled/completed auctions of the same product
+        // to avoid duplicates in history
+        const previousAuctions = await this.auctionsRepository.find({
+            where: [
+                { product_id: productId, seller_id: userId, status: 'expired' },
+                { product_id: productId, seller_id: userId, status: 'cancelled' },
+                { product_id: productId, seller_id: userId, status: 'completed' },
+            ],
+        });
+
+        if (previousAuctions.length > 0) {
+            await this.auctionsRepository.remove(previousAuctions);
         }
 
         // Calculate end time
@@ -174,15 +188,35 @@ export class AuctionsService {
     }
 
     async findHistoryByUser(userId: number) {
-        return await this.auctionsRepository.find({
-            where: [
-                { seller_id: userId, status: 'completed' },
-                { seller_id: userId, status: 'cancelled' },
-                { seller_id: userId, status: 'sold' },
-                { seller_id: userId, status: 'expired' },
-            ],
-            relations: ['product', 'product.images'],
-            order: { created_at: 'DESC' },
+        const auctions = await this.auctionsRepository.createQueryBuilder('auction')
+            .leftJoinAndSelect('auction.product', 'product')
+            .leftJoinAndSelect('product.images', 'images')
+            .leftJoinAndSelect(
+                'purchases',
+                'purchase',
+                'purchase.product_id = auction.product_id AND purchase.seller_id = :userId',
+                { userId }
+            )
+            .where('auction.seller_id = :userId', { userId })
+            .andWhere('auction.status IN (:...statuses)', {
+                statuses: ['completed', 'cancelled', 'sold', 'expired']
+            })
+            .orderBy('auction.created_at', 'DESC')
+            .addSelect([
+                'purchase.id',
+                'purchase.price',
+                'purchase.purchasedAt',
+                'purchase.buyerId'
+            ])
+            .getMany();
+
+        // Map the purchase data into the auction object for easier frontend access
+        return auctions.map(auction => {
+            const purchase = (auction as any).purchase;
+            return {
+                ...auction,
+                purchase: purchase || null
+            };
         });
     }
 
