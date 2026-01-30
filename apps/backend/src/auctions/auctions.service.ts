@@ -83,12 +83,23 @@ export class AuctionsService {
     }
 
     async findAll(userId?: number) {
-        const auctions = await this.auctionsRepository.find({
-            where: { status: 'active' },
-            relations: ['product', 'product.images', 'seller'], // Include images for listing
-            order: { created_at: 'DESC' },
-        });
+        // Build query to get active auctions
+        const queryBuilder = this.auctionsRepository
+            .createQueryBuilder('auction')
+            .leftJoinAndSelect('auction.product', 'product')
+            .leftJoinAndSelect('product.images', 'images')
+            .leftJoinAndSelect('auction.seller', 'seller')
+            .where('auction.status = :status', { status: 'active' })
+            .orderBy('auction.created_at', 'DESC');
 
+        // If user is authenticated, exclude their own auctions
+        if (userId) {
+            queryBuilder.andWhere('auction.seller_id != :userId', { userId });
+        }
+
+        const auctions = await queryBuilder.getMany();
+
+        // Add favorite status if user is authenticated
         if (userId) {
             const favorites = await this.favoritesAuctionRepository.find({
                 where: { user_id: userId }

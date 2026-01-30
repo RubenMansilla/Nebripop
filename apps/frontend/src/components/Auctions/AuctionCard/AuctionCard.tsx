@@ -66,6 +66,12 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
             return;
         }
 
+        // Prevent favoriting own auction
+        if (!isFavorite && user && auction.seller_id === user.id) {
+            toast.error("No puedes añadir tu propia subasta a favoritos");
+            return;
+        }
+
         const previousState = isFavorite;
         setIsFavorite(!previousState);
 
@@ -77,10 +83,11 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
                 await addFavoriteAuction(auction.id);
                 notify("addedToFavorites", "Subasta añadida a favoritos", "success");
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Error toggling favorite:", err);
             setIsFavorite(previousState);
-            toast.error("Error al actualizar favoritos");
+            // Use backend error message if available
+            toast.error(err.response?.data?.message || "Error al actualizar favoritos");
         }
     };
 

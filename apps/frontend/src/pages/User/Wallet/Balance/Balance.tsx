@@ -1,6 +1,7 @@
 import "./Balance.css";
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext } from 'react';
+import { createPortal } from 'react-dom';
 import { BiPlus, BiQrScan, BiBuildingHouse } from "react-icons/bi";
 import RechargeModal from "../../../../components/RechargeModal/RechargeModal";
 import ATMWithdraw from "../../../../components/ATMWithdraw/ATMWithdraw";
@@ -131,23 +132,32 @@ export default function Balance() {
                 </div>
             </div>
 
-            <RechargeModal
-                isOpen={showModal}
-                onClose={() => setShowModal(false)}
-                onConfirm={handleRechargeConfirm}
-            />
+            {showModal && createPortal(
+                <RechargeModal
+                    isOpen={showModal}
+                    onClose={() => setShowModal(false)}
+                    onConfirm={handleRechargeConfirm}
+                />,
+                document.body
+            )}
 
-            <ATMWithdraw
-                isOpen={showWithdraw}
-                onClose={() => setShowWithdraw(false)}
-                balance={balance}
-                onWithdraw={handleWithdraw}
-            />
+            {showWithdraw && createPortal(
+                <ATMWithdraw
+                    isOpen={showWithdraw}
+                    onClose={() => setShowWithdraw(false)}
+                    balance={balance}
+                    onWithdraw={handleWithdraw}
+                />,
+                document.body
+            )}
 
-            <ReceiveModal
-                isOpen={showReceive}
-                onClose={() => setShowReceive(false)}
-            />
+            {showReceive && createPortal(
+                <ReceiveModal
+                    isOpen={showReceive}
+                    onClose={() => setShowReceive(false)}
+                />,
+                document.body
+            )}
         </>
     )
 }

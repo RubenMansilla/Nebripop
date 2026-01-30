@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { FavoriteProduct } from "./favorite-product.entity";
 import { FavoriteUser } from "./favorite-user.entity";
 import { FavoriteAuction } from "./favorite-auction.entity";
+import { Auction } from "../auctions/entities/auction.entity";
 
 @Injectable()
 export class FavoritesService {
@@ -17,6 +18,9 @@ export class FavoritesService {
 
     @InjectRepository(FavoriteAuction)
     private favoritesAuctionRepo: Repository<FavoriteAuction>,
+
+    @InjectRepository(Auction)
+    private auctionsRepo: Repository<Auction>,
   ) { }
 
   /* ================= PRODUCTOS ================= */
@@ -110,6 +114,29 @@ export class FavoritesService {
   /* ================= SUBASTAS ================= */
 
   async addFavoriteAuction(userId: number, auctionId: number) {
+    // Check if the auction exists and get the seller_id
+    const auction = await this.auctionsRepo.findOne({
+      where: { id: auctionId }
+    });
+
+    if (!auction) {
+      throw new BadRequestException("La subasta no existe");
+    }
+
+    // Prevent user from favoriting their own auction
+    if (auction.seller_id === userId) {
+      throw new BadRequestException("No puedes añadir tu propia subasta a favoritos");
+    }
+
+    // Check if already favorited
+    const exists = await this.favoritesAuctionRepo.findOne({
+      where: { user_id: userId, auction_id: auctionId }
+    });
+
+    if (exists) {
+      throw new BadRequestException("La subasta ya está en favoritos");
+    }
+
     return this.favoritesAuctionRepo.save({
       user_id: userId,
       auction_id: auctionId,

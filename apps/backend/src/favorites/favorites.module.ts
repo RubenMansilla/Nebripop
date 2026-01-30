@@ -7,6 +7,7 @@ import { FavoritesController } from "./favorites.controller";
 import { FavoriteProduct } from "./favorite-product.entity";
 import { FavoriteUser } from "./favorite-user.entity";
 import { FavoriteAuction } from "./favorite-auction.entity";
+import { Auction } from "../auctions/entities/auction.entity";
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { FavoriteAuction } from "./favorite-auction.entity";
       FavoriteProduct,
       FavoriteUser,
       FavoriteAuction,
+      Auction,
     ]),
   ],
   controllers: [FavoritesController],
