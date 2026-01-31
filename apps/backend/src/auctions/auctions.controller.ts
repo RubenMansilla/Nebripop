@@ -13,6 +13,7 @@ import { CreateAuctionDto } from './dto/create-auction.dto';
 import { PlaceBidDto } from './dto/place-bid.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
+import { CanParticipateGuard } from '../common/guards/can-participate.guard';
 
 @Controller('auctions')
 export class AuctionsController {
@@ -34,7 +35,7 @@ export class AuctionsController {
 
 
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, CanParticipateGuard)
     @Post()
     create(@Body() createAuctionDto: CreateAuctionDto, @Request() req) {
         return this.auctionsService.create(createAuctionDto, req.user.sub ?? req.user.id);
@@ -57,7 +58,7 @@ export class AuctionsController {
         return this.auctionsService.findOne(+id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, CanParticipateGuard)
     @Post(':id/bid')
     placeBid(@Param('id') id: string, @Body() placeBidDto: PlaceBidDto, @Request() req) {
         return this.auctionsService.placeBid(+id, placeBidDto.amount, req.user.sub ?? req.user.id);

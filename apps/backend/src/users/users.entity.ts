@@ -37,6 +37,21 @@ export class User {
     @Column({ type: 'text', nullable: true })
     refreshToken: string | null;
 
-    @Column({ name: 'penalties_count', default: 0 })
-    penaltiesCount: number;
+    // ===== Penalty System Fields =====
+
+    @Column({ name: 'active_penalties_count', default: 0 })
+    activePenaltiesCount: number;
+
+    @Column({ name: 'penalty_level', default: 0 })
+    penaltyLevel: number;
+
+    @Column({ name: 'penalty_assigned_at', type: 'timestamp', nullable: true })
+    penaltyAssignedAt: Date | null;
+
+    @Column({ name: 'recidivism_count', default: 0 })
+    recidivismCount: number;
+
+    @Column({ name: 'total_penalties_received', default: 0 })
+    totalPenaltiesReceived: number;
 }
+

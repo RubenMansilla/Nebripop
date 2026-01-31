@@ -78,6 +78,15 @@ export default function AuctionsHistory() {
 
 
     const handleRepublish = async (auctionId: number) => {
+        if ((user?.penaltyLevel || 0) >= 2) {
+            toast.error(
+                user?.penaltyLevel === 3
+                    ? "No puedes republicar subastas: tienes un bloqueo permanente (Strike 3)"
+                    : "No puedes republicar subastas: tienes un bloqueo temporal (Strike 2)"
+            );
+            return;
+        }
+
         const auction = auctions.find(a => a.id === auctionId);
         if (!auction) return;
 
@@ -101,6 +110,15 @@ export default function AuctionsHistory() {
     };
 
     const handleModify = (auctionId: number) => {
+        if ((user?.penaltyLevel || 0) >= 2) {
+            toast.error(
+                user?.penaltyLevel === 3
+                    ? "No puedes modificar subastas: tienes un bloqueo permanente (Strike 3)"
+                    : "No puedes modificar subastas: tienes un bloqueo temporal (Strike 2)"
+            );
+            return;
+        }
+
         const auction = auctions.find(a => a.id === auctionId);
         if (!auction) return;
 

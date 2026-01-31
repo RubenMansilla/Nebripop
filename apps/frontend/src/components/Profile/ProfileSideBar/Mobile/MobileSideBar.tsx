@@ -122,7 +122,7 @@ export default function MobileSideBar() {
                 <div className={`sidebar-profile-mobile ${(location.pathname === "/profile/info" || location.pathname === "/profile/reviews") ? "active" : ""}`} onClick={() => navigate("/profile/info")}>
                     <div className="profile-pic-mobile">
                         <img src={imageSrc} alt="Foto de perfil" />
-                        {(user.penaltiesCount || 0) > 0 && (
+                        {(user.penaltyLevel || 0) > 0 && (
                             <>
                                 <div
                                     ref={badgeRef}
@@ -130,7 +130,7 @@ export default function MobileSideBar() {
                                     onClick={toggleTooltip}
                                 >
                                     <div className="penalties-badge">
-                                        {user.penaltiesCount}
+                                        {user.penaltyLevel}
                                     </div>
                                 </div>
                                 {tooltipCoords && createPortal(
@@ -173,7 +173,7 @@ export default function MobileSideBar() {
                                                     <span className="penalty-description">Cuenta en revisión - riesgo de suspensión</span>
                                                 </div>
                                                 <div className="penalties-tooltip-footer">
-                                                    Tienes actualmente: <strong>{user.penaltiesCount} penalización{user.penaltiesCount !== 1 ? 'es' : ''}</strong>
+                                                    Tienes actualmente: <strong>{user.penaltyLevel} penalización{user.penaltyLevel !== 1 ? 'es' : ''}</strong>
                                                 </div>
                                             </div>
                                         </div>

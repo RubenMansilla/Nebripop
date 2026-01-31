@@ -1,4 +1,5 @@
 import "../User/Auctions/Auctions.css";
+import { toast } from "react-toastify";
 
 import { useEffect, useState, useContext, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -161,6 +162,15 @@ export default function AuctionDetail() {
 
         if (!user) {
             openLogin();
+            return;
+        }
+
+        if ((user?.penaltyLevel || 0) >= 2) {
+            toast.error(
+                user?.penaltyLevel === 3
+                    ? "No puedes pujar: tienes un bloqueo permanente (Strike 3)"
+                    : "No puedes pujar: tienes un bloqueo temporal (Strike 2)"
+            );
             return;
         }
 
@@ -456,23 +466,55 @@ export default function AuctionDetail() {
                                     </div>
                                 ) : (
                                     <>
-                                        <form className="bid-form" onSubmit={handleBid}>
-                                            <input
-                                                className="bid-input"
-                                                type="number"
-                                                step="0.01"
-                                                placeholder={`min ${minBid}€`}
-                                                value={bidAmount}
-                                                onChange={(e) => setBidAmount(e.target.value)}
-                                                min={minBid}
-                                            />
-                                            <button className="bid-btn" type="submit">
-                                                Pujar
-                                            </button>
-                                        </form>
-                                        <p className="bid-increment-info">
-                                            Incremento mínimo: {bidIncrement}€
-                                        </p>
+                                        {(user?.penaltyLevel || 0) >= 2 ? (
+                                            <div className="penalty-blocked-box">
+                                                <h4 className="penalty-blocked-header">Puja Bloqueada</h4>
+                                                {user?.penaltyLevel === 3 ? (
+                                                    <p className="penalty-blocked-desc">
+                                                        Bloqueo permanente (Strike 3).
+                                                    </p>
+                                                ) : (
+                                                    <div className="penalty-blocked-temp-container">
+                                                        <p className="penalty-blocked-temp-text">Bloqueo temporal (Strike 2).</p>
+                                                        {user?.penaltyAssignedAt && (
+                                                            <p className="penalty-blocked-timer">
+                                                                Fin estimado: {(() => {
+                                                                    const assignedDate = new Date(user.penaltyAssignedAt);
+                                                                    const daysDuration = 180 * Math.pow(2, user.recidivismCount || 0);
+                                                                    const endDate = new Date(assignedDate);
+                                                                    endDate.setDate(endDate.getDate() + daysDuration);
+                                                                    const now = new Date();
+                                                                    const diffTime = endDate.getTime() - now.getTime();
+                                                                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                                                    if (diffDays <= 0) return "Pronto";
+                                                                    return `${diffDays} días`;
+                                                                })()}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <form className="bid-form" onSubmit={handleBid}>
+                                                    <input
+                                                        className="bid-input"
+                                                        type="number"
+                                                        step="0.01"
+                                                        placeholder={`min ${minBid}€`}
+                                                        value={bidAmount}
+                                                        onChange={(e) => setBidAmount(e.target.value)}
+                                                        min={minBid}
+                                                    />
+                                                    <button className="bid-btn" type="submit">
+                                                        Pujar
+                                                    </button>
+                                                </form>
+                                                <p className="bid-increment-info">
+                                                    Incremento mínimo: {bidIncrement}€
+                                                </p>
+                                            </>
+                                        )}
                                     </>
                                 )}
                                 {bidError && (

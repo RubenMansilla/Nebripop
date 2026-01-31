@@ -16,7 +16,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private repo: Repository<User>
-  ) {}
+  ) { }
 
   create(data: Partial<User>) {
     const user = this.repo.create(data);
@@ -113,4 +113,121 @@ export class UsersService {
 
     return { message: "Contraseña actualizada correctamente" };
   }
+
+  // ============================================
+  // PENALTY SYSTEM METHODS
+  // ============================================
+
+  /**
+   * Asigna una penalización a un usuario
+   * Llama a la función SQL assign_penalty que maneja la lógica de strikes
+   */
+  async assignPenalty(userId: number, reason?: string) {
+    const result = await this.repo.query(
+      `SELECT * FROM assign_penalty($1, $2)`,
+      [userId, reason || null]
+    );
+
+    if (!result || result.length === 0) {
+      throw new NotFoundException('No se pudo asignar la penalización');
+    }
+
+    const { new_penalty_level, is_permanent, days_until_cleanup } = result[0];
+
+    // Retornar información completa
+    return {
+      userId,
+      newPenaltyLevel: new_penalty_level,
+      isPermanent: is_permanent,
+      daysUntilCleanup: days_until_cleanup,
+      message: `Penalización asignada: Strike ${new_penalty_level}`,
+    };
+  }
+
+  /**
+   * Obtiene el estado de penalizaciones de un usuario
+   */
+  async getPenaltyStatus(userId: number) {
+    const user = await this.repo.findOne({
+      where: { id: userId },
+      select: [
+        'id',
+        'penaltyLevel',
+        'activePenaltiesCount',
+        'penaltyAssignedAt',
+        'recidivismCount',
+        'totalPenaltiesReceived',
+      ],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
+    // Calcular días restantes hasta limpieza
+    let daysUntilCleanup: number | null = null;
+    if (user.penaltyLevel > 0 && user.penaltyLevel < 3 && user.penaltyAssignedAt) {
+      const baseDays = user.penaltyLevel === 1 ? 30 : 180;
+      const multiplier = Math.pow(2, user.recidivismCount);
+      const totalDays = baseDays * multiplier;
+
+      const assignedDate = new Date(user.penaltyAssignedAt);
+      const cleanupDate = new Date(assignedDate.getTime() + totalDays * 24 * 60 * 60 * 1000);
+      const now = new Date();
+
+      daysUntilCleanup = Math.max(0, Math.ceil((cleanupDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)));
+    }
+
+    return {
+      userId: user.id,
+      penaltyLevel: user.penaltyLevel,
+      activePenaltiesCount: user.activePenaltiesCount,
+      penaltyAssignedAt: user.penaltyAssignedAt,
+      recidivismCount: user.recidivismCount,
+      totalPenaltiesReceived: user.totalPenaltiesReceived,
+      daysUntilCleanup,
+      canParticipate: user.penaltyLevel < 2,
+      isPermanent: user.penaltyLevel === 3,
+    };
+  }
+
+  /**
+   * Verifica si un usuario puede participar en subastas
+   * (pujar o crear nuevas subastas)
+   */
+  async canParticipateInAuctions(userId: number): Promise<boolean> {
+    const result = await this.repo.query(
+      `SELECT can_participate_in_auctions($1)`,
+      [userId]
+    );
+
+    return result[0]?.can_participate_in_auctions ?? false;
+  }
+
+  /**
+   * Ejecuta la limpieza manual de penalizaciones expiradas
+   * Normalmente esto se ejecuta automáticamente via cron job
+   */
+  async cleanExpiredPenalties() {
+    const result = await this.repo.query(`SELECT * FROM clean_expired_penalties()`);
+
+    if (!result || result.length === 0) {
+      return {
+        totalCleaned: 0,
+        strike1Cleaned: 0,
+        strike2Cleaned: 0,
+        details: 'No hay penalizaciones para limpiar',
+      };
+    }
+
+    const { total_cleaned, strike1_cleaned, strike2_cleaned, details } = result[0];
+
+    return {
+      totalCleaned: total_cleaned,
+      strike1Cleaned: strike1_cleaned,
+      strike2Cleaned: strike2_cleaned,
+      details,
+    };
+  }
 }
+

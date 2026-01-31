@@ -1,7 +1,10 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext';
 import './Auctions.css';
 
 export default function AuctionsManager() {
+    const { user } = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -43,6 +46,16 @@ export default function AuctionsManager() {
                     <div className="description">
                         <p>{getDescription()}</p>
                     </div>
+                </div>
+                <div className="info-right-section">
+                    {(user?.penaltyLevel || 0) > 0 && (
+                        <div className="penalties-info-badge">
+                            <div className="penalties-info-text">
+                                <span className="penalties-info-count">{user?.penaltyLevel}</span>
+                                <span className="penalties-info-label">Penalización{(user?.penaltyLevel || 0) !== 1 ? 'es' : ''}</span>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

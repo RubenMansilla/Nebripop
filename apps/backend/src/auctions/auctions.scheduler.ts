@@ -6,6 +6,7 @@ import { Auction } from './entities/auction.entity';
 import { User } from '../users/users.entity';
 import { Bid } from './entities/bid.entity';
 import { NotificationsService } from '../notifications/notifications.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuctionsScheduler {
@@ -19,6 +20,7 @@ export class AuctionsScheduler {
         @InjectRepository(Bid)
         private bidsRepository: Repository<Bid>,
         private notificationsService: NotificationsService,
+        private usersService: UsersService,
     ) { }
 
     // ======================================
@@ -217,9 +219,16 @@ export class AuctionsScheduler {
 
             this.logger.log(`Auction ${auction.id}: Winner ${currentWinner.id} failed to pay. Penalizing.`);
 
-            // 1. Penalize
-            currentWinner.penaltiesCount = (currentWinner.penaltiesCount || 0) + 1;
-            await this.usersRepository.save(currentWinner);
+            // 1. Penalize using new penalty system
+            try {
+                const penaltyResult = await this.usersService.assignPenalty(
+                    currentWinner.id,
+                    `No pagó subasta ganada: "${auction.product.name}"`
+                );
+                this.logger.log(`Penalty assigned to user ${currentWinner.id}: Strike ${penaltyResult.newPenaltyLevel}`);
+            } catch (error) {
+                this.logger.error(`Failed to assign penalty to user ${currentWinner.id}:`, error);
+            }
 
             // 2. Track failed payment to prevent loops
             auction.notifications_sent = auction.notifications_sent || {};

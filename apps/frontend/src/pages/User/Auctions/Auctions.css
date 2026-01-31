@@ -327,4 +327,48 @@
     background-color: #f2e2c7;
 }
 
+/* Info right section */
+.info-right-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Penalties Info Badge */
+.penalties-info-badge {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+    border: 1.5px solid #ffcdd2;
+    border-radius: 10px;
+    padding: 10px 16px;
+}
+
+.penalties-info-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.penalties-info-count {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c62828;
+    line-height: 1;
+}
+
+.penalties-info-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+    line-height: 1;
+}
+
+@media (max-width: 768px) {
+    .penalties-info-badge {
+        display: none;
+    }
+}
+
 /* End of Auctions.css */
