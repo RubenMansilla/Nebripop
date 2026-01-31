@@ -205,9 +205,8 @@
 }
 
 .unread-badge {
-    background-color: var(--beige);
+    background-color: #e1caa5;
     color: #4a4238;
-
     font-size: 0.7rem;
     font-weight: 700;
     width: 26px;
