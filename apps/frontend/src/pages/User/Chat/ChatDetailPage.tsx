@@ -25,6 +25,8 @@ import {
     type ChatSummary
 } from "../../../utils/ChatHelpers";
 
+import ChatInput from "./ChatInput";
+
 export default function ChatDetailPage() {
 
     const { chatId } = useParams();
@@ -35,9 +37,10 @@ export default function ChatDetailPage() {
 
     const [messages, setMessages] = useState<ChatMessageType[]>([]);
     const [loading, setLoading] = useState(true);
-    const [newMessage, setNewMessage] = useState("");
+    // newMessage state moved to ChatInput
 
     const [chatProducts, setChatProducts] = useState<ProductLite[]>([]);
+
 
     const loadingProductsRef = useRef<Set<number>>(new Set());
 
@@ -322,11 +325,9 @@ export default function ChatDetailPage() {
     };
 
     // --- Helpers de envio y estructura ---
-    const handleSend = () => {
-        if (!newMessage.trim()) return;
+    const handleSend = (text: string) => {
         const socket = getChatSocket();
-        socket.emit("send_message", { chatId, senderId: myId, content: newMessage });
-        setNewMessage("");
+        socket.emit("send_message", { chatId, senderId: myId, content: text });
     };
 
     const sendOfferAction = (payload: any) => {
@@ -373,63 +374,56 @@ export default function ChatDetailPage() {
                 <h3 className="cr-header__title">{headerUser?.name || "Chat"}</h3>
             </div>
 
-            <div
-                className="cr-messages"
-                ref={messagesContainerRef}
-                onScroll={handleScroll}
-                style={{ opacity: isReady && !loading ? 1 : 0 }}
-            >
-                {loading ? <p style={{ textAlign: 'center', padding: 20, color: '#888' }}>Cargando...</p> :
-                    Object.entries(messagesByDate).map(([dateLabel, msgs]) => (
-                        <div key={dateLabel} style={{ display: 'flex', flexDirection: 'column' }}>
-                            <div className="cr-date-divider">{formatDateLabel(msgs[0].createdAt)}</div>
-                            {msgs.map(msg => {
-                                const mine = Number(msg.sender.id) === myId;
-                                let offerCard = null;
-                                // Verificar si es oferta
-                                if (isOfferNode(msg.content)) {
-                                    const action = extractOfferActionFromText(msg.content);
-                                    if (action === "counter") {
-                                        const rootId = extractOfferRefFromText(msg.content);
-                                        const rootMsg = rootId ? messages.find(m => m.id === rootId) : null;
-                                        if (rootMsg) offerCard = <RenderOfferCard msg={msg} rootMsg={rootMsg} />;
-                                    } else {
-                                        offerCard = <RenderOfferCard msg={msg} rootMsg={msg} />;
+            <div className="cr-messages-wrapper">
+                <div
+                    className="cr-messages"
+                    ref={messagesContainerRef}
+                    onScroll={handleScroll}
+                    style={{ opacity: isReady && !loading ? 1 : 0 }}
+                >
+                    {loading ? <p style={{ textAlign: 'center', padding: 20, color: '#888' }}>Cargando...</p> :
+                        Object.entries(messagesByDate).map(([dateLabel, msgs]) => (
+                            <div key={dateLabel} style={{ display: 'flex', flexDirection: 'column' }}>
+                                <div className="cr-date-divider">{formatDateLabel(msgs[0].createdAt)}</div>
+                                {msgs.map(msg => {
+                                    const mine = Number(msg.sender.id) === myId;
+                                    let offerCard = null;
+                                    // Verificar si es oferta
+                                    if (isOfferNode(msg.content)) {
+                                        const action = extractOfferActionFromText(msg.content);
+                                        if (action === "counter") {
+                                            const rootId = extractOfferRefFromText(msg.content);
+                                            const rootMsg = rootId ? messages.find(m => m.id === rootId) : null;
+                                            if (rootMsg) offerCard = <RenderOfferCard msg={msg} rootMsg={rootMsg} />;
+                                        } else {
+                                            offerCard = <RenderOfferCard msg={msg} rootMsg={msg} />;
+                                        }
                                     }
-                                }
-                                return (
-                                    <div key={msg.id} className={`msg-row ${mine ? "msg-row--mine" : "msg-row--theirs"}`}>
-                                        <div className="msg-bubble">
-                                            {offerCard}
-                                            <div className="msg-text">{stripAllMarkers(msg.content)}</div>
-                                            <span className="msg-time">{formatTime(msg.createdAt)}</span>
+                                    return (
+                                        <div key={msg.id} className={`msg-row ${mine ? "msg-row--mine" : "msg-row--theirs"}`}>
+                                            <div className="msg-bubble">
+                                                {offerCard}
+                                                <div className="msg-text">{stripAllMarkers(msg.content)}</div>
+                                                <span className="msg-time">{formatTime(msg.createdAt)}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ))
-                }
-                <div ref={bottomRef} />
+                                    );
+                                })}
+                            </div>
+                        ))
+                    }
+                    <div ref={bottomRef} />
+                </div>
+
+                <button
+                    className={`scroll-bottom-btn ${showScrollButton ? 'visible' : ''}`}
+                    onClick={scrollToBottomSmooth}
+                >
+                    ↓
+                </button>
             </div>
 
-            <button
-                className={`scroll-bottom-btn ${showScrollButton ? 'visible' : ''}`}
-                onClick={scrollToBottomSmooth}
-            >
-                ↓
-            </button>
-
-            <div className="cr-input-area">
-                <input
-                    className="cr-input"
-                    value={newMessage}
-                    onChange={e => setNewMessage(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleSend()}
-                    placeholder="Escribe un mensaje..."
-                />
-                <button className="cr-send-btn" onClick={handleSend}>➤</button>
-            </div>
+            <ChatInput onSend={handleSend} />
         </div>
     );
 }

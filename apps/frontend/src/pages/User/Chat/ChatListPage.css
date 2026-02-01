@@ -564,6 +564,39 @@
     border-color: var(--c-primary);
 }
 
+.cr-textarea {
+    min-height: 48px;
+    max-height: 80px;
+    padding: 12px;
+    line-height: 1.4;
+    overflow-y: auto;
+    height: auto;
+    resize: none;
+    font-family: inherit;
+}
+
+.cr-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cr-textarea::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 8px 0;
+    border-radius: 14px;
+}
+
+.cr-textarea::-webkit-scrollbar-thumb {
+    background-color: #dcdcdc;
+    border-radius: 20px;
+    border: 2px solid transparent;
+
+}
+
+.cr-textarea::-webkit-scrollbar-thumb:hover {
+    background-color: #b0b0b0;
+    width: 10px;
+}
+
 .cr-send-btn {
     background-color: #fffaf2;
     color: #7a6c58;
@@ -786,9 +819,18 @@
     height: 100%;
 }
 
+.cr-messages-wrapper {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .scroll-bottom-btn {
     position: absolute;
-    bottom: 90px;
+    bottom: 20px;
     right: 20px;
     width: 40px;
     height: 40px;

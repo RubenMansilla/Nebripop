@@ -84,6 +84,6 @@
 @media (max-width: 800px) {
     .sidebar-container {
         width: 100%;
-        height: calc(100vh - 118px);
+        height: calc(100vh - 134px);
     }
 }
