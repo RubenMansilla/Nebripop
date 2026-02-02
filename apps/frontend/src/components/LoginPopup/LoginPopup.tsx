@@ -88,11 +88,10 @@ export default function LoginPopup({
       }
 
       login(res.user, accessToken, refreshToken);
-      setSuccessMsg("Has iniciado sesión correctamente");
 
       setTimeout(() => {
         onClose();
-      }, 1200);
+      }, 200);
     } catch (err: any) {
       const msg =
         err?.response?.data?.message ||
@@ -200,18 +199,24 @@ export default function LoginPopup({
 
           {isResetMode ? (
             <>
-              <input
-                className="login-input"
-                placeholder="Tu email"
-                value={resetEmail}
-                onKeyDown={onKeyDownLogin}
-                onChange={(e) => {
-                  setResetEmail(e.target.value);
-                  setErrorMsg(null);
-                  setSuccessMsg(null);
-                }}
-                autoFocus
-              />
+              <div className="login-inputs-row">
+                <div className="login-material-textfield">
+                  <input
+                    className="login-material-input"
+                    placeholder=" "
+                    value={resetEmail}
+                    onKeyDown={onKeyDownLogin}
+                    onChange={(e) => {
+                      setResetEmail(e.target.value);
+                      setErrorMsg(null);
+                      setSuccessMsg(null);
+                    }}
+                    autoFocus
+                  />
+                  <label className="login-material-label">Dirección de e-mail</label>
+                </div>
+              </div>
+
               {errorMsg && <div className="login-error">{errorMsg}</div>}
 
               <button
@@ -224,17 +229,14 @@ export default function LoginPopup({
                   cursor: resetEmail.trim() && !loading ? "pointer" : "not-allowed",
                 }}
               >
-                {loading ? "Enviando..." : "Enviar email de recuperación"}
+                <p>{loading ? "Enviando..." : "Enviar email de recuperación"}</p>
               </button>
 
-              <button
-                type="button"
-                className="login-btn secondary"
-                onClick={backToLogin}
-                disabled={loading}
-              >
-                Volver a iniciar sesión
-              </button>
+              <p className="register-text" style={{ marginTop: "15px" }}>
+                <span className="register-link" onClick={backToLogin}>
+                  Volver a iniciar sesión
+                </span>
+              </p>
             </>
           ) : (
             <>

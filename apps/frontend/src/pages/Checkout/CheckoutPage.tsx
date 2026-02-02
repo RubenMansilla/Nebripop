@@ -141,7 +141,6 @@ export default function CheckoutPage() {
 
       try {
         const data = await getProductById(String(productId));
-        console.log("Producto cargado para checkout:", data);
         setProduct({
           id: data.id,
           owner_id: data.owner_id,
@@ -282,13 +281,20 @@ export default function CheckoutPage() {
       navigate("/purchase/completed", {
         replace: true,
         state: {
-          // ... state data ...
           productName: product?.name,
           totalAmount: total,
           orderId: purchaseResponse?.id || `NP-${Date.now()}`,
           image: firstImage,
-          // ...
-        }
+          customerName: `${form.firstName} ${form.lastName}`,
+          paymentMethod: method === "external" ? "Tarjeta / PayPal" : "Monedero",
+          shippingAddress: form.address,
+          shippingComplement: form.complement,
+          shippingCity: form.city,
+          shippingProvince: form.province,
+          shippingPostcode: form.postcode,
+          seller_id: product?.owner_id,
+          productId: product?.id,
+        },
       });
 
     } catch (err: any) {

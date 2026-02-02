@@ -43,12 +43,18 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
 
         setIsSubmitting(true);
 
+        if (!productId) {
+            setErrors({ general: "No se ha podido identificar el producto para la reseña" });
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
             await createReview({
                 owner_id: Number(seller_id),
                 rating: rating,
                 comment: text,
-                product_id: productId
+                product_id: Number(productId)
             });
 
             notify("newReview", "Reseña publicada con éxito", "success");
@@ -87,7 +93,7 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
                     </div>
 
                     <div className="product-note">
-                        {[...Array(5)].map((star, index) => {
+                        {[...Array(5)].map((_, index) => {
                             const ratingValue = index + 1;
                             return (
                                 <label key={index}>
@@ -136,7 +142,13 @@ export default function PublicReview({ onClose, onSuccess, productName, productI
                     )}
 
                     <div className="submit-container-review">
-                        <button className="submit-btn-review" onClick={handleSubmit} >Enviar</button>
+                        <button
+                            className="submit-btn-review"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? "Enviando..." : "Enviar"}
+                        </button>
                     </div>
                 </div>
             </div>

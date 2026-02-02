@@ -61,7 +61,7 @@
 }
 
 .welcome-wrapper {
-  margin-bottom: 16px;
+  margin-bottom: 26px;
   margin-top: 15px;
   width: 100%;
 }
@@ -556,18 +556,7 @@
   }
 }
 
-/* ===================== PEQUEÑOS MÓVILES (Optimización) ===================== */
-@media (max-width: 480px) {
-  .popup-right {
-    padding: 20px 24px;
-    /* Reduce side padding slightly */
-  }
 
-  .login-material-textfield {
-    max-width: 100%;
-    /* Ensure full width usage */
-  }
-}
 
 /* ===================== ACCESIBILIDAD ===================== */
 @media (prefers-reduced-motion: reduce) {
