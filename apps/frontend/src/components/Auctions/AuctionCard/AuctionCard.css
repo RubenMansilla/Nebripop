@@ -113,39 +113,30 @@
 }
 
 .btn-republish {
-    background-color: #4caf50;
-    color: white;
+    background-color: #E8F5E9;
+    color: #2E7D32;
 }
 
 .btn-republish:hover {
-    background-color: #45a049;
+    background-color: #C8E6C9;
 }
 
 .btn-modify {
-    background-color: #2196f3;
-    color: white;
+    background-color: #E3F2FD;
+    color: #1565C0;
 }
 
 .btn-modify:hover {
-    background-color: #1976d2;
+    background-color: #BBDEFB;
 }
 
 .btn-cancel-expired {
-    background-color: #f44336;
-    color: white;
+    background-color: #fbe3e2;
+    color: #e53935;
 }
 
 .btn-cancel-expired:hover {
-    background-color: #da190b;
-}
-
-.btn-delete {
-    background-color: #ff6b6b;
-    color: white;
-}
-
-.btn-delete:hover {
-    background-color: #ff5252;
+    background-color: #fad7d7;
 }
 
 .btn-pay {

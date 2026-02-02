@@ -79,6 +79,10 @@ export class AuctionsService {
             status: 'active',
         });
 
+        // Set product as auction
+        product.is_auction = true;
+        await this.productsRepository.save(product);
+
         return await this.auctionsRepository.save(auction);
     }
 
@@ -247,6 +251,19 @@ export class AuctionsService {
 
         if (auction.bids && auction.bids.length > 0) {
             throw new BadRequestException('No puedes eliminar una subasta con pujas activas. Debes esperar a que finalice.');
+        }
+
+        // Set product as normal product (not auction)
+        if (auction.product) {
+            auction.product.is_auction = false;
+            await this.productsRepository.save(auction.product);
+        } else {
+            // If product is not loaded in relation, load it and update
+            const product = await this.productsRepository.findOne({ where: { id: auction.product_id } });
+            if (product) {
+                product.is_auction = false;
+                await this.productsRepository.save(product);
+            }
         }
 
         return await this.auctionsRepository.remove(auction);

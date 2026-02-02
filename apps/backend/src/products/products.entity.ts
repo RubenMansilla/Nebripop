@@ -112,6 +112,9 @@ export class Product {
   @Column({ default: false })
   sold: boolean;
 
+  @Column({ default: false })
+  is_auction: boolean;
+
   @DeleteDateColumn({ name: "deleted_at", select: false })
   deletedAt: Date;
 

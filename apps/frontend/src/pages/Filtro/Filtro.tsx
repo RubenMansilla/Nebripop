@@ -275,7 +275,7 @@ export default function Filtro() {
                                     )
                                 }
                             >
-                                Con envío
+                                <p className="envio-option-text">Con envío</p>
                             </div>
                             <div
                                 className={`envio-option ${shippingFilter === "person" ? "active" : ""
@@ -286,7 +286,7 @@ export default function Filtro() {
                                     )
                                 }
                             >
-                                Venta en persona
+                                <p className="envio-option-text">Venta en persona</p>
                             </div>
                         </div>
                     </div>

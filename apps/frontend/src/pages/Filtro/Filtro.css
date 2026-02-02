@@ -158,6 +158,13 @@
   transition: 0.25s ease;
 }
 
+.envio-option-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #7a766f;
+  margin: auto;
+}
+
 .envio-option.active {
   background: #d1c1a7;
   border-radius: 50px;

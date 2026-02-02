@@ -223,16 +223,6 @@
     font-size: 1.1rem;
 }
 
-.create-auction-link {
-    color: #b0a18c;
-    font-weight: 600;
-    text-decoration: none;
-    transition: opacity 0.2s;
-}
-
-.create-auction-link:hover {
-    text-decoration: underline;
-}
 
 /* Auction Card Internal Styles */
 .card-price-text {

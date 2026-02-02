@@ -8,12 +8,14 @@ import AuctionSkeleton from "../../../../components/AuctionSkeleton/AuctionSkele
 import { toast } from "react-toastify";
 import CreateAuctionModal from "../../../../components/Auctions/PopUpCreateAuction/CreateAuctionModal";
 import { createAuction } from "../../../../api/auctions.api";
+import { useNotificationSettings } from "../../../../context/NotificationContext";
 
 export default function AuctionsHistory() {
     const { user } = useContext(AuthContext);
     const [auctions, setAuctions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showSkeleton, setShowSkeleton] = useState(false);
+    const { notify } = useNotificationSettings();
 
     // Modal state for modify
     const [showModal, setShowModal] = useState(false);
@@ -102,7 +104,12 @@ export default function AuctionsHistory() {
                 durationHours
             );
 
-            toast.success("Subasta republicada correctamente");
+            notify(
+                "auctions",
+                "Subasta republicada correctamente",
+                "success"
+            );
+
             loadHistory();
         } catch (error: any) {
             toast.error(error.message || "Error al republicar la subasta");

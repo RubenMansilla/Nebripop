@@ -5,9 +5,11 @@ import { AuthContext } from "../../../../context/AuthContext";
 import AuctionCard from "../../../../components/Auctions/AuctionCard/AuctionCard";
 import CreateAuctionModal from "../../../../components/Auctions/PopUpCreateAuction/CreateAuctionModal";
 import noReviewsImg from "../../../../assets/profile/pop-nothing-for-auction.svg";
+import blockedImg from "../../../../assets/profile/pop-ban-for-auction.png";
 import AuctionSkeleton from "../../../../components/AuctionSkeleton/AuctionSkeleton";
 import { toast } from "react-toastify";
 import "./MyAuctions.css";
+import { useNotificationSettings } from "../../../../context/NotificationContext";
 
 export default function MyAuctions() {
     const { user } = useContext(AuthContext);
@@ -17,6 +19,7 @@ export default function MyAuctions() {
     const [showModal, setShowModal] = useState(false);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [auctionToDelete, setAuctionToDelete] = useState<string | number | null>(null);
+    const { notify } = useNotificationSettings();
 
     const loadAuctions = () => {
         if (!user) return;
@@ -58,7 +61,11 @@ export default function MyAuctions() {
         try {
             await deleteAuction(auctionToDelete);
             setAuctions((prev) => prev.filter((a) => a.id !== auctionToDelete));
-            toast.success("Subasta eliminada correctamente");
+            notify(
+                "auctions",
+                "Subasta eliminada correctamente",
+                "success"
+            );
             setShowDeletePopup(false);
             setAuctionToDelete(null);
         } catch (error: any) {
@@ -143,62 +150,65 @@ export default function MyAuctions() {
                 ) : (
                     <>
                         {auctions.length === 0 && !loading ? (
-                            <div className="no-reviews">
-                                {(user?.penaltyLevel || 0) >= 2 ? (
-                                    <div className="my-auctions-penalty-box">
-                                        <h3 className="my-auctions-penalty-title">
-                                            Subastas Bloqueadas
-                                        </h3>
+                            (user?.penaltyLevel || 0) >= 2 ? (
+                                <div className="my-auctions-penalty-box">
+                                    <img
+                                        src={blockedImg}
+                                        alt="Acceso Bloqueado"
+                                        className="my-auctions-penalty-img"
+                                    />
+                                    <h3 className="my-auctions-penalty-title">
+                                        Subastas Bloqueadas
+                                    </h3>
 
-                                        {user?.penaltyLevel === 3 ? (
-                                            <p className="my-auctions-penalty-text">
-                                                Tu cuenta tiene un bloqueo permanente (Strike 3).
-                                                <br />
-                                                No puedes crear ni participar en subastas.
-                                            </p>
-                                        ) : (
-                                            <div className="my-auctions-penalty-text">
-                                                <p>Tu cuenta tiene un bloqueo temporal (Strike 2).</p>
-                                                {user?.penaltyAssignedAt && (
-                                                    <p className="my-auctions-timer-text">
-                                                        Tiempo restante estimado:{" "}
-                                                        <span className="my-auctions-timer-count">
-                                                            {(() => {
-                                                                const assignedDate = new Date(user.penaltyAssignedAt);
-                                                                // Strike 2 base duration: 180 days * 2^recidivism
-                                                                const daysDuration = 180 * Math.pow(2, user.recidivismCount || 0);
-                                                                const endDate = new Date(assignedDate);
-                                                                endDate.setDate(endDate.getDate() + daysDuration);
+                                    {user?.penaltyLevel === 3 ? (
+                                        <p className="my-auctions-penalty-text">
+                                            Tu cuenta tiene un bloqueo permanente (Strike 3).
+                                            <br />
+                                            No puedes crear ni participar en subastas.
+                                        </p>
+                                    ) : (
+                                        <div className="my-auctions-penalty-text">
+                                            <p>Tu cuenta tiene un bloqueo temporal (Strike 2).</p>
+                                            {user?.penaltyAssignedAt && (
+                                                <p className="my-auctions-timer-text">
+                                                    Tiempo restante estimado:{" "}
+                                                    <span className="my-auctions-timer-count">
+                                                        {(() => {
+                                                            const assignedDate = new Date(user.penaltyAssignedAt);
+                                                            // Strike 2 base duration: 180 days * 2^recidivism
+                                                            const daysDuration = 180 * Math.pow(2, user.recidivismCount || 0);
+                                                            const endDate = new Date(assignedDate);
+                                                            endDate.setDate(endDate.getDate() + daysDuration);
 
-                                                                const now = new Date();
-                                                                const diffTime = endDate.getTime() - now.getTime();
-                                                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                                            const now = new Date();
+                                                            const diffTime = endDate.getTime() - now.getTime();
+                                                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                                                                return diffDays > 0 ? `${diffDays} días` : "Pendiente de revisión";
-                                                            })()}
-                                                        </span>
-                                                    </p>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <>
-                                        <img
-                                            src={noReviewsImg}
-                                            alt="Sin valoraciones"
-                                            className="no-reviews-img"
-                                        />
-                                        <h3>Nada subastado todavía</h3>
-                                        <button
-                                            onClick={() => setShowModal(true)}
-                                            className="create-auction-link"
-                                        >
-                                            ¡Crea tu primera subasta aquí!
-                                        </button>
-                                    </>
-                                )}
-                            </div>
+                                                            return diffDays > 0 ? `${diffDays} días` : "Pendiente de revisión";
+                                                        })()}
+                                                    </span>
+                                                </p>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="no-reviews">
+                                    <img
+                                        src={noReviewsImg}
+                                        alt="Sin valoraciones"
+                                        className="no-reviews-img"
+                                    />
+                                    <h3>Nada subastado todavía</h3>
+                                    <button
+                                        onClick={() => setShowModal(true)}
+                                        className="create-auction-link"
+                                    >
+                                        ¡Crea tu primera subasta aquí!
+                                    </button>
+                                </div>
+                            )
                         ) : (
                             auctions.length > 0 && (
                                 <div className="product-container">

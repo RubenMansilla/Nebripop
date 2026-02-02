@@ -2,27 +2,32 @@
 .my-auctions-penalty-box {
     text-align: center;
     padding: 32px;
-    background-color: #fff5f5;
-    border: 1px solid #ffcdd2;
     border-radius: 12px;
-    max-width: 500px;
-    margin: 40px auto;
+    max-width: 600px;
+    margin: 0px auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
+    align-items: center;
+}
+
+.my-auctions-penalty-img {
+    width: 400px;
+    height: auto;
+    object-fit: contain;
 }
 
 .my-auctions-penalty-title {
-    color: #d32f2f;
-    font-size: 1.4rem;
+    color: #000000;
+    font-size: 18px;
     font-weight: 700;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
 }
 
 .my-auctions-penalty-text {
-    color: #4a4a4a;
-    font-size: 1rem;
-    line-height: 1.8;
+    color: #607d8b;
+    font-size: 16px;
+    line-height: 24px;
 }
 
 .my-auctions-timer-text {
@@ -53,6 +58,7 @@
     text-decoration: underline;
     color: inherit;
     transition: color 0.2s;
+    color: #607d8b;
 }
 
 .create-auction-link:hover {

@@ -325,6 +325,7 @@ export class ProductsService {
     }
 
     where.sold = false;
+    where.is_auction = false; // Exclude products in auction
 
     if (categoryId) {
       where.category_id = Number(categoryId);

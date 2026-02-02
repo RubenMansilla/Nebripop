@@ -5,6 +5,7 @@ import { getMyActiveProducts } from '../../../api/products.api';
 import { AuthContext } from '../../../context/AuthContext';
 import { toast } from 'react-toastify';
 import './CreateAuctionModal.css';
+import { useNotificationSettings } from '../../../context/NotificationContext';
 
 interface CreateAuctionModalProps {
     onClose: () => void;
@@ -27,6 +28,7 @@ export default function CreateAuctionModal({
     const [startPrice, setStartPrice] = useState(preselectedPrice?.toString() || '');
     const [duration, setDuration] = useState(preselectedDuration?.toString() || '24');
     const [loading, setLoading] = useState(false);
+    const { notify } = useNotificationSettings();
 
     useEffect(() => {
         if (user) {
@@ -45,8 +47,11 @@ export default function CreateAuctionModal({
         setLoading(true);
         try {
             await createAuction(selectedProduct, Number(startPrice), Number(duration));
-            toast.success('Subasta creada correctamente');
-            onAuctionCreated();
+            notify(
+                "auctions",
+                `Subasta creada correctamente.`,
+                "success",
+            );
             onClose();
         } catch (error: any) {
             toast.error(error.message || 'Error al crear la subasta');

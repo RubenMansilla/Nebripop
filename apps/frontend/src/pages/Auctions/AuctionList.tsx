@@ -249,7 +249,7 @@ export default function AuctionList() {
                                     )
                                 }
                             >
-                                Con envío
+                                <p className="envio-option-text">Con envío</p>
                             </div>
                             <div
                                 className={`envio-option ${shippingFilter === "person" ? "active" : ""}`}
@@ -259,7 +259,7 @@ export default function AuctionList() {
                                     )
                                 }
                             >
-                                Venta en persona
+                                <p className="envio-option-text">Venta en persona</p>
                             </div>
                         </div>
                     </div>
