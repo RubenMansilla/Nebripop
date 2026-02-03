@@ -28,6 +28,7 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
     // Product info
     const product = auction.product;
 
+    const [showOptions, setShowOptions] = useState(false);
     // Heart logic (Favoriting the AUCTION, not just the product)
     // Backend should now return 'isFavorite' on the auction object
     const [isFavorite, setIsFavorite] = useState(auction.isFavorite ?? false);
@@ -50,6 +51,39 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
     const handleCardClick = () => {
         navigate(`/auction/${auction.id}`);
     };
+
+    const handleOptionsClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const willOpen = !showOptions;
+        if (willOpen) {
+            window.dispatchEvent(
+                new CustomEvent("product-options-opened", {
+                    detail: { id: auction.id },
+                })
+            );
+        }
+        setShowOptions(willOpen);
+    };
+
+    useEffect(() => {
+        const handleCloseMenu = () => setShowOptions(false);
+        const handleOtherMenuOpened = (e: Event) => {
+            const customEvent = e as CustomEvent;
+            if (customEvent.detail.id !== auction.id) {
+                setShowOptions(false);
+            }
+        };
+
+        if (showOptions) {
+            document.addEventListener("click", handleCloseMenu);
+            window.addEventListener("product-options-opened", handleOtherMenuOpened);
+        }
+
+        return () => {
+            document.removeEventListener("click", handleCloseMenu);
+            window.removeEventListener("product-options-opened", handleOtherMenuOpened);
+        };
+    }, [showOptions, auction.id]);
 
     const handleFavoriteClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -121,7 +155,87 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
             </div>
             <div className="product-info">
                 <div className="auction-card-header">
-                    <h3 className="auction-name">{product?.name || "Producto sin nombre"}</h3>
+                    <div className="auction-name-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flex: 1, minWidth: 0 }}>
+                        <h3 className="auction-name" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }}>{product?.name || "Producto sin nombre"}</h3>
+
+                        {(mode === 'history' && isExpired) || (mode === 'my_auctions' && onDelete) ? (
+                            <div className="product-options-container">
+                                <div className="options-btn" onClick={handleOptionsClick}>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="24"
+                                        height="24"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <circle cx="12" cy="12" r="1" />
+                                        <circle cx="19" cy="12" r="1" />
+                                        <circle cx="5" cy="12" r="1" />
+                                    </svg>
+                                </div>
+                                {showOptions && (
+                                    <div className="popover-menu" onClick={(e) => e.stopPropagation()}>
+                                        {mode === 'history' && isExpired && (
+                                            <>
+                                                {onRepublish && (
+                                                    <div
+                                                        className="popover-option"
+                                                        onClick={(e) => {
+                                                            setShowOptions(false);
+                                                            e.stopPropagation();
+                                                            onRepublish(auction.id);
+                                                        }}
+                                                    >
+                                                        <span>Republicar</span>
+                                                    </div>
+                                                )}
+                                                {onModify && (
+                                                    <div
+                                                        className="popover-option"
+                                                        onClick={(e) => {
+                                                            setShowOptions(false);
+                                                            e.stopPropagation();
+                                                            onModify(auction.id);
+                                                        }}
+                                                    >
+                                                        <span>Modificar</span>
+                                                    </div>
+                                                )}
+                                                {onCancel && (
+                                                    <div
+                                                        className="popover-option delete"
+                                                        onClick={(e) => {
+                                                            setShowOptions(false);
+                                                            e.stopPropagation();
+                                                            onCancel(auction.id);
+                                                        }}
+                                                    >
+                                                        <span>Eliminar</span>
+                                                    </div>
+                                                )}
+                                            </>
+                                        )}
+                                        {mode === 'my_auctions' && onDelete && (
+                                            <div
+                                                className="popover-option delete"
+                                                onClick={(e) => {
+                                                    setShowOptions(false);
+                                                    e.stopPropagation();
+                                                    onDelete(auction.id);
+                                                }}
+                                            >
+                                                <span>Eliminar</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        ) : null}
+                    </div>
 
                     {/* Heart Icon */}
                     {!isOwner && (
@@ -177,66 +291,10 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
                     </div>
                 </div>
                 <div className="card-actions">
-
-                    {mode === 'my_auctions' && onDelete && (
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                onDelete(auction.id);
-                            }}
-                            className="btn-action btn-delete"
-                        >
-                            Cancelar
-                        </button>
-                    )}
-
                     {mode === 'active_auctions' && auction.status === 'awaiting_payment' && user && auction.winner_id === user.id && (
-                        <Link to={`/checkout?auctionId=${auction.id}`} className="btn-action btn-pay">
+                        <Link to={`/checkout?auctionId=${auction.id}`} className="btn-action btn-pay" onClick={(e) => e.stopPropagation()}>
                             Pagar
                         </Link>
-                    )}
-
-                    {/* Expired auction actions */}
-                    {mode === 'history' && isExpired && (
-                        <>
-                            {onRepublish && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        onRepublish(auction.id);
-                                    }}
-                                    className="btn-action btn-republish"
-                                >
-                                    Republicar
-                                </button>
-                            )}
-                            {onModify && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        onModify(auction.id);
-                                    }}
-                                    className="btn-action btn-modify"
-                                >
-                                    Modificar
-                                </button>
-                            )}
-                            {onCancel && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        e.preventDefault();
-                                        onCancel(auction.id);
-                                    }}
-                                    className="btn-action btn-cancel-expired"
-                                >
-                                    Cancelar
-                                </button>
-                            )}
-                        </>
                     )}
                 </div>
             </div>

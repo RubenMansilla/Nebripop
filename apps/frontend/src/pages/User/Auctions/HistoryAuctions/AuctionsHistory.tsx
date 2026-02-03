@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { getMyAuctionHistory } from "../../../../api/auctions.api";
+import { getMyAuctionHistory, deleteAuction } from "../../../../api/auctions.api";
 import { AuthContext } from "../../../../context/AuthContext";
 import AuctionCard from "../../../../components/Auctions/AuctionCard/AuctionCard";
 import noReviewsImg from "../../../../assets/profile/pop-nothing-for-sale.svg";
@@ -24,6 +24,9 @@ export default function AuctionsHistory() {
         price?: number;
         duration?: number;
     }>({});
+
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [auctionToDelete, setAuctionToDelete] = useState<number | null>(null);
 
     // Filter state for payment status
     const [filterOpen, setFilterOpen] = useState(false);
@@ -143,9 +146,33 @@ export default function AuctionsHistory() {
     };
 
     const handleCancel = (auctionId: number) => {
-        // TODO: Implement cancel logic
-        toast.info("Función de cancelar en desarrollo");
-        console.log("Cancelar subasta:", auctionId);
+        setAuctionToDelete(auctionId);
+        setShowDeletePopup(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!auctionToDelete) return;
+
+        try {
+            await deleteAuction(auctionToDelete);
+            setAuctions((prev) => prev.filter((a) => a.id !== auctionToDelete));
+            notify(
+                "auctions",
+                "Subasta eliminada correctamente",
+                "success"
+            );
+            setShowDeletePopup(false);
+            setAuctionToDelete(null);
+        } catch (error: any) {
+            toast.error(error.message);
+            setShowDeletePopup(false);
+            setAuctionToDelete(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setShowDeletePopup(false);
+        setAuctionToDelete(null);
     };
 
     const handleAuctionCreated = () => {
@@ -199,6 +226,28 @@ export default function AuctionsHistory() {
                         preselectedPrice={modalConfig.price}
                         preselectedDuration={modalConfig.duration}
                     />
+                </div>,
+                document.body
+            )}
+
+            {showDeletePopup && createPortal(
+                <div className="popup-backdrop" onClick={handleCancelDelete}>
+                    <div className="unsaved-changes-popup" onClick={(e) => e.stopPropagation()}>
+                        <h3>¿Estás seguro que quieres eliminar esta subasta?</h3>
+                        <p>
+                            Esta acción no se puede deshacer. Si eliminas la subasta, se
+                            perderá toda la información asociada.
+                        </p>
+                        <div className="popup-buttons-product">
+                            <span className="popup-no" onClick={handleCancelDelete}>
+                                No
+                            </span>
+                            <span className="divider"></span>
+                            <span className="popup-yes" onClick={handleConfirmDelete}>
+                                Sí, eliminar
+                            </span>
+                        </div>
+                    </div>
                 </div>,
                 document.body
             )}

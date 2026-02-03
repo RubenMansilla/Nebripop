@@ -120,8 +120,7 @@ export class AuctionsScheduler {
 
                 // Set deadline (48 hours)
                 const deadline = new Date();
-                deadline.setMinutes(deadline.getMinutes() + 1);
-                // deadline.setHours(deadline.getHours() + 48);
+                deadline.setHours(deadline.getHours() + 48);
                 auction.payment_deadline = deadline;
 
                 // NOTIFY WINNER
@@ -281,8 +280,7 @@ export class AuctionsScheduler {
 
                 // Reset deadline (48h)
                 const deadline = new Date();
-                // deadline.setHours(deadline.getHours() + 48);
-                deadline.setMinutes(deadline.getMinutes() + 1);
+                deadline.setHours(deadline.getHours() + 48);
                 auction.payment_deadline = deadline;
 
                 // We DO NOT reset notifications_sent completely because we need to keep the failed_payment flags!
