@@ -1,0 +1,66 @@
+/* Penalty Empty State Styles */
+.my-auctions-penalty-box {
+    text-align: center;
+    padding: 32px;
+    border-radius: 12px;
+    max-width: 600px;
+    margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.my-auctions-penalty-img {
+    width: 400px;
+    height: auto;
+    object-fit: contain;
+}
+
+.my-auctions-penalty-title {
+    color: #000000;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.my-auctions-penalty-text {
+    color: #607d8b;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.my-auctions-timer-text {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #ffcdd2;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #444;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.my-auctions-timer-count {
+    color: #d32f2f;
+    font-weight: 800;
+    font-size: 1.1rem;
+}
+
+/* Link Style for Create Button */
+.create-auction-link {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    text-decoration: underline;
+    color: inherit;
+    transition: color 0.2s;
+    color: #607d8b;
+}
+
+.create-auction-link:hover {
+    color: #666;
+}

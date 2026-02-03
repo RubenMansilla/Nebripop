@@ -1,98 +1,569 @@
-/* Reutiliza el estilo general del popup */
+/* ===================== BASE (PC & TABLET) ===================== */
 .popup-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 9999;
+  padding: 20px;
 }
 
 .popup-box {
-  width: 900px;
-  height: 520px;
+  width: 100%;
+  max-width: 850px;
+  min-height: 540px;
   background: white;
   border-radius: 15px;
   display: flex;
   overflow: hidden;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+  animation: popup 0.25s ease-out;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
 
+
+.password-check {
+  margin-bottom: 10px;
+}
+
+/* Panel Izquierdo */
 .popup-left {
-  width: 40%;
+  flex: 0 0 35%;
   background: #d6c6b0;
+  padding: 40px;
   color: white;
-  padding: 60px 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.popup-right {
-  width: 60%;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .brand-title {
-  font-size: 40px;
+  font-size: clamp(28px, 4vw, 36px);
+  margin-bottom: 10px;
   font-weight: 700;
 }
 
 .brand-subtitle {
-  margin-top: 12px;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
+  opacity: 0.9;
+}
+
+/* Panel Derecho */
+.popup-right {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  overflow-y: auto;
+  /* Permite scroll si el contenido es muy alto */
 }
 
 .welcome-title {
-  font-size: 26px;
+  font-size: 24px;
+  margin-bottom: 0;
+  /* Managed by wrapper */
   font-weight: 600;
-  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+/* Elementos de Formulario */
+.login-input,
+.login-btn,
+.login-error,
+.login-success {
+  width: 100%;
+  max-width: 340px;
+  box-sizing: border-box;
 }
 
 .login-input {
-  width: 320px;
-  height: 46px;
+  height: 48px;
   border: 1px solid #ddd;
   border-radius: 10px;
+  padding: 0 16px;
   margin-bottom: 12px;
-  padding-left: 10px;
-  outline: none;
+  font-size: 16px;
+  transition: border-color 0.2s;
 }
 
-.password-check {
-  font-size: 14px;
-  margin-top: -6px;
+.login-input:focus {
+  outline: none;
+  border-color: #d6c6b0;
+  box-shadow: 0 0 0 3px rgba(214, 198, 176, 0.1);
+}
+
+.forgot-password-wrapper {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.forgot-password {
+  font-size: 13px;
+  color: #c2a98a;
+  text-decoration: none;
+  display: inline-block;
+  transition: color 0.2s;
+}
+
+.forgot-password:hover {
+  color: #a38b6d;
+  text-decoration: underline;
 }
 
 .login-btn {
-  width: 320px;
-  height: 50px;
   background: #d6c6b0;
   border: none;
   border-radius: 10px;
   color: white;
+  font-weight: 600;
   font-size: 16px;
   cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 5px;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
   margin-bottom: 10px;
 }
 
-.login-text {
-  margin-top: 14px;
-  font-size: 14px;
-  color: #555;
+.login-btn p {
+  height: fit-content;
 }
 
+.login-btn:hover:not(:disabled) {
+  background: #cbb59c;
+  box-shadow: 0 4px 12px rgba(214, 198, 176, 0.3);
+}
+
+.login-btn:disabled {
+  cursor: not-allowed;
+}
+
+.login-btn.secondary {
+  background: #f2ebe3;
+  color: #6d5a45;
+  border: 1px solid #e6dbcf;
+  margin-top: 10px;
+}
+
+.login-btn.secondary:hover:not(:disabled) {
+  background: #e6dbcf;
+}
+
+.register-text,
+.login-text {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #444;
+  text-align: center;
+}
+
+.register-link,
 .login-link {
   color: #c2a98a;
   cursor: pointer;
   font-weight: bold;
+  transition: color 0.2s;
 }
 
+.register-link:hover,
 .login-link:hover {
+  color: #a38b6d;
   text-decoration: underline;
+}
+
+/* Manejo de Errores y Mensajes */
+.login-error,
+.login-success {
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.login-error {
+  background: #ffe5e5;
+  color: #b30000;
+  border: 1px solid #ffcccc;
+}
+
+.login-success {
+  background: #e6f7ec;
+  color: #1e7f4d;
+  border: 1px solid #c3e6cb;
+}
+
+.popup-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  border: none;
+  background: #eee;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  font-size: 18px;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.popup-close:hover {
+  background: #ddd;
+}
+
+/* ReCAPTCHA responsive */
+/* ReCAPTCHA responsive */
+.recaptcha-wrapper {
+  width: 100%;
+  max-width: 340px;
+  margin-bottom: 25px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  transform: scale(1.10);
+  transform-origin: center;
+}
+
+.popup-right>div[class*="recaptcha"] {
+  /* Legacy/Fallback if needed, or just specific override for inner */
+  display: flex;
+  justify-content: center;
+}
+
+/* ===================== MATERIAL INPUTS (BASE) ===================== */
+.login-inputs-row {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  justify-content: center;
+}
+
+.login-material-textfield {
+  max-width: 340px;
+  position: relative;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.login-material-input {
+  width: 100%;
+  height: 52px;
+  padding: 18px 16px 4px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: transparent;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.login-material-input:focus {
+  outline: none;
+  border-color: #d6c6b0;
+}
+
+.login-material-label {
+  position: absolute;
+  left: 16px;
+  top: 17px;
+  color: #888;
+  font-size: 15px;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  padding: 0 4px;
+}
+
+.login-material-input:focus+.login-material-label,
+.login-material-input:not(:placeholder-shown)+.login-material-label {
+  top: 6px;
+  left: 12px;
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: #d6c6b0;
+}
+
+.password-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Error state adaptation */
+.input-error {
+  border-color: #d32f2f !important;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1) !important;
+  border-color: #d32f2f !important;
+}
+
+.input-error+.login-material-label {
+  color: #d32f2f !important;
+}
+
+/* ===================== TABLET (768px - 1024px) ===================== */
+@media (max-width: 1024px) and (min-width: 769px) {
+
+  .popup-box {
+    max-width: 750px;
+  }
+
+  .popup-left {
+    flex: 0 0 40%;
+    padding: 30px;
+  }
+
+  .popup-right {
+    padding: 20px 25px;
+  }
+
+  .login-inputs-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 25px;
+    width: 100%;
+    max-width: none;
+  }
+
+  /* Force side-by-side equal width for children */
+  .login-inputs-row .login-material-textfield {
+    flex: 1;
+    width: calc(50% - 13px);
+    /* Account for gap */
+    margin-bottom: 0;
+    max-width: none;
+  }
+}
+
+/* ===================== MÓVIL (BOTTOM SHEET) ===================== */
+@media (max-width: 768px) {
+
+
+  .popup-overlay {
+    align-items: center;
+    /* Center vertically */
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .popup-box {
+    flex-direction: column;
+    max-width: 500px;
+    /* Limit width */
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    min-height: 0;
+    border-radius: 20px;
+    margin: 0;
+    animation: slideUp 0.3s ease-out;
+  }
+
+  /* Stack inputs nicely */
+  .login-inputs-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .login-inputs-row .login-material-textfield {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 15px;
+  }
+
+
+  .popup-left {
+    display: none !important;
+  }
+
+  .popup-left .brand-title {
+    font-size: 24px !important;
+    margin-bottom: 4px !important;
+    font-weight: 700;
+  }
+
+  .popup-left .brand-subtitle {
+    font-size: 13px !important;
+    line-height: 1.2 !important;
+    opacity: 0.95 !important;
+    max-width: 260px;
+    margin: 0 auto;
+  }
+
+  .popup-right {
+    padding: 20px 44px;
+    justify-content: center;
+    overflow-y: auto;
+    max-height: 100%;
+    /* Ajustado para el header más pequeño */
+  }
+
+  .welcome-wrapper {
+    margin-bottom: 5px;
+  }
+
+  .recaptcha-wrapper {
+    margin-bottom: 15px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .login-input,
+  .login-btn,
+  .login-error,
+  .login-success {
+    max-width: 100%;
+  }
+
+  .login-input {
+    height: 48px;
+    /* Reducido de 52px */
+    font-size: 16px;
+    margin-bottom: 12px;
+    /* Reducido de 14px */
+  }
+
+  .login-btn {
+    height: 48px;
+    /* Reducido de 52px */
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .forgot-password-wrapper {
+    margin-bottom: 10px;
+    max-width: 100%;
+  }
+
+  .forgot-password {
+    font-size: 14px;
+    margin: 0px 0;
+    /* Reducido de 12px */
+  }
+
+  .register-text,
+  .login-text {
+    font-size: 14px;
+    margin-top: 14px;
+    /* Reducido de 16px */
+  }
+
+  .popup-close {
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  /* ReCAPTCHA en móvil */
+  .popup-right>div[class*="recaptcha"] {
+    transform: scale(0.95);
+    transform-origin: center;
+    margin-bottom: 16px;
+  }
+
+  /* Forzar que el iframe del captcha sea responsive */
+  .popup-right iframe[src*="recaptcha"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+}
+
+/* ===================== MODO LANDSCAPE EN MÓVIL ===================== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .popup-box {
+    max-height: 98vh;
+  }
+
+  .popup-right {
+    padding: 20px 24px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+
+  .login-input {
+    height: 46px;
+    margin-bottom: 10px;
+  }
+
+  .login-btn {
+    height: 46px;
+    margin-bottom: 6px;
+  }
+
+  .forgot-password {
+    margin: 10px 0;
+  }
+
+  .register-text,
+  .login-text {
+    margin-top: 12px;
+  }
+}
+
+/* ===================== ACCESIBILIDAD ===================== */
+@media (prefers-reduced-motion: reduce) {
+
+  .popup-box,
+  .login-btn,
+  .popup-close {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Focus visible para navegación por teclado */
+.login-input:focus-visible,
+.login-btn:focus-visible,
+.forgot-password:focus-visible,
+.register.popup-close:focus-visible {
+  outline: 2px solid #d6c6b0;
+  outline-offset: 2px;
 }

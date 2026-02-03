@@ -11,6 +11,12 @@ interface User {
   gender?: string | null;
   profilePicture?: string;
   walletBalance?: number;
+  // Penalty system fields
+  activePenaltiesCount?: number;
+  penaltyLevel?: number;
+  penaltyAssignedAt?: string | null;
+  recidivismCount?: number;
+  totalPenaltiesReceived?: number;
 }
 
 interface AuthContextType {

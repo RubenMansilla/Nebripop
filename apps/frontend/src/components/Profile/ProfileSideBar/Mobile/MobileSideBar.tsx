@@ -1,8 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { AuthContext } from "../../../../context/AuthContext";
 import type { ReviewSummary } from "../../../../types/review";
 import { getUserReviewSummary } from "../../../../api/reviews.api";
+import { getMe } from "../../../../api/users.api";
 import "./MobileSideBar.css";
 
 export default function MobileSideBar() {
@@ -10,14 +12,16 @@ export default function MobileSideBar() {
     const { logout } = useContext(AuthContext);
 
     const sidebarRef = useRef<HTMLDivElement>(null);
+    const badgeRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useContext(AuthContext);
+    const { user, setUser } = useContext(AuthContext);
 
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
     const [loadingReviews, setLoadingReviews] = useState(false);
+    const [tooltipCoords, setTooltipCoords] = useState<{ top: number; left: number } | null>(null);
 
-    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LWJlZWMtZWI3ZGNhMzZiNjQ1IiwiYWxnIjoiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
 
 
     useEffect(() => {
@@ -25,6 +29,22 @@ export default function MobileSideBar() {
 
         let isMounted = true;
         setLoadingReviews(true);
+
+        // Fetch fresh user data
+        getMe()
+            .then((freshUserData) => {
+                if (freshUserData && isMounted) {
+                    const updatedUser = {
+                        ...user,
+                        ...freshUserData,
+                        id: Number(freshUserData.id)
+                    };
+                    setUser(updatedUser);
+                }
+            })
+            .catch((err) => {
+                console.error("❌ Error fetching user data:", err);
+            });
 
         // CAMBIO 3: Usamos el endpoint ligero de resumen
         getUserReviewSummary(user.id)
@@ -44,7 +64,7 @@ export default function MobileSideBar() {
             });
 
         return () => { isMounted = false; };
-    }, [user?.id]);
+    }, []); // Run once on mount
 
     useLayoutEffect(() => {
         const sidebar = sidebarRef.current;
@@ -74,12 +94,94 @@ export default function MobileSideBar() {
         return n <= summary.average ? "filled" : "";
     };
 
+    // En móvil/tablet usamos CLICK para alternar (toggle), ya que no hay hover
+    const toggleTooltip = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Evita que el click suba al contenedor y navegue
+
+        if (tooltipCoords) {
+            setTooltipCoords(null);
+        } else {
+            if (badgeRef.current) {
+                const rect = badgeRef.current.getBoundingClientRect();
+                setTooltipCoords({
+                    top: rect.top + rect.height / 2 - 80,
+                    left: rect.right + 10
+                });
+            }
+        }
+    };
+
+    const handleClose = (e?: React.MouseEvent) => {
+        if (e) e.stopPropagation();
+        setTooltipCoords(null);
+    };
+
     return (
         <>
             <div className='sidebar-left-mobile' ref={sidebarRef} style={{ overflowY: 'auto', height: '100%' }}>
                 <div className={`sidebar-profile-mobile ${(location.pathname === "/profile/info" || location.pathname === "/profile/reviews") ? "active" : ""}`} onClick={() => navigate("/profile/info")}>
                     <div className="profile-pic-mobile">
                         <img src={imageSrc} alt="Foto de perfil" />
+                        {(user.penaltyLevel || 0) > 0 && (
+                            <>
+                                <div
+                                    ref={badgeRef}
+                                    className="penalties-badge-container"
+                                    onClick={toggleTooltip}
+                                >
+                                    <div className="penalties-badge">
+                                        {user.penaltyLevel}
+                                    </div>
+                                </div>
+                                {tooltipCoords && createPortal(
+                                    <>
+                                        {/* Backdrop invisible para cerrar al hacer click fuera */}
+                                        <div
+                                            style={{
+                                                position: 'fixed',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                zIndex: 999998,
+                                                background: 'transparent'
+                                            }}
+                                            onClick={handleClose}
+                                        />
+                                        <div
+                                            className="penalties-tooltip-portal"
+                                            style={{
+                                                top: `${tooltipCoords.top}px`,
+                                                left: `${tooltipCoords.left}px`
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <div className="penalties-tooltip-header">
+                                                <strong>Penalizaciones</strong>
+                                            </div>
+                                            <div className="penalties-tooltip-content">
+                                                <div className="penalty-level">
+                                                    <span className="penalty-count">1 penalización:</span>
+                                                    <span className="penalty-description">Advertencia por incumplimiento leve</span>
+                                                </div>
+                                                <div className="penalty-level">
+                                                    <span className="penalty-count">2 penalizaciones:</span>
+                                                    <span className="penalty-description">Restricción temporal de funciones</span>
+                                                </div>
+                                                <div className="penalty-level">
+                                                    <span className="penalty-count">3 penalizaciones:</span>
+                                                    <span className="penalty-description">Cuenta en revisión - riesgo de suspensión</span>
+                                                </div>
+                                                <div className="penalties-tooltip-footer">
+                                                    Tienes actualmente: <strong>{user.penaltyLevel} penalización{user.penaltyLevel !== 1 ? 'es' : ''}</strong>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>,
+                                    document.body
+                                )}
+                            </>
+                        )}
                     </div>
                     <div className="profile-info-mobile">
                         <div className="profile-name-mobile">
@@ -119,6 +221,13 @@ export default function MobileSideBar() {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#000000" d="m14.475 12l-7.35-7.35q-.375-.375-.363-.888t.388-.887t.888-.375t.887.375l7.675 7.7q.3.3.45.675t.15.75t-.15.75t-.45.675l-7.7 7.7q-.375.375-.875.363T7.15 21.1t-.375-.888t.375-.887z" /></svg>
                             </div>
                         </div>
+                        <div className={`menu-item-mobile ${location.pathname.startsWith("/my-auctions") ? "active" : ""}`} onClick={() => navigate("/my-auctions/created")}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 36 36"><path fill="#000000" d="M23.7 10.41a1 1 0 0 1-.71-.29l-7.43-7.43A1 1 0 0 1 17 1.28l7.44 7.43a1 1 0 0 1-.71 1.7ZM11.86 22.25a1 1 0 0 0-.29-.71l-7.43-7.43a1 1 0 0 0-1.42 1.42L10.15 23a1 1 0 0 0 1.42 0a1 1 0 0 0 .29-.75M21.93 34H3a1 1 0 0 1-1-1.27l1.13-4a1 1 0 0 1 1-.73H20.8a1 1 0 0 1 1 .73l1.13 4a1 1 0 0 1-.17.87a1 1 0 0 1-.83.4M4.31 32H20.6l-.6-2H4.87Zm28.8-4.56l-14-14l2.36-2.36l-6.95-6.95l-8.94 8.94L12.51 20l2.35-2.34l14 14a3 3 0 0 0 4.24 0a3 3 0 0 0 .01-4.22M8.4 13.07L14.52 7l4.11 4.11l-6.12 6.11Zm23.29 17.2a1 1 0 0 1-1.41 0l-14-14l1.41-1.41l14 14a1 1 0 0 1 0 1.41" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                            <p>Subastas</p>
+                            <div className="arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#000000" d="m14.475 12l-7.35-7.35q-.375-.375-.363-.888t.388-.887t.888-.375t.887.375l7.675 7.7q.3.3.45.675t.15.75t-.15.75t-.45.675l-7.7 7.7q-.375.375-.875.363T7.15 21.1t-.375-.888t.375-.887z" /></svg>
+                            </div>
+                        </div>
                     </div>
                     <div className="menu-container">
                         <p className="menu-category">TRANSACCIONES</p>
@@ -152,7 +261,7 @@ export default function MobileSideBar() {
                     </div>
                     <div className="menu-container">
                         <p className="menu-category">COMUNICACIÓN</p>
-                        <div className={`menu-item ${location.pathname.startsWith("/profile/chat") ? "active" : ""}`} onClick={() => navigate("/profile/chat")}>
+                        <div className={`menu-item-mobile ${location.pathname.startsWith("/profile/chat") ? "active" : ""}`} onClick={() => navigate("/profile/chat")}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#29363d" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.26 6.95a.75.75 0 1 0-1.02 1.1l.02.018.056.052.211.193a83 83 0 0 0 3.208 2.768c.53.433 1.085.87 1.63 1.274L4 16.72a.75.75 0 1 0 1.06 1.06l4.551-4.55c.422.274.83.514 1.204.69.368.174.79.33 1.185.33.396 0 .817-.156 1.185-.33.384-.181.806-.43 1.24-.714L19 17.78a.75.75 0 1 0 1.06-1.06l-4.39-4.39a47 47 0 0 0 1.595-1.249 79 79 0 0 0 3.42-2.961l.055-.052.02-.018a.75.75 0 0 0-1.02-1.1l-.017.016-.053.049-.206.188a82 82 0 0 1-3.146 2.716c-.913.743-1.866 1.475-2.69 2.017a9.5 9.5 0 0 1-1.084.628c-.326.154-.495.186-.544.186s-.218-.032-.544-.186a9 9 0 0 1-1.083-.628c-.826-.542-1.778-1.274-2.69-2.017A78 78 0 0 1 4.33 7.015l-.054-.049z"></path><path fill-rule="evenodd" d="M12 1.5C-.123 1.5-.074 4.563.014 10.097c.008.49.016 1 .016 1.528l-.002.884C0 18.514-.018 22.5 12 22.5s12-3.986 11.973-9.99q-.003-.436-.003-.885.002-.793.016-1.528C24.074 4.563 24.123 1.5 12 1.5M1.53 11.625c0-.595-.009-1.137-.017-1.64-.016-.97-.029-1.793.028-2.573.082-1.131.303-1.844.707-2.362.397-.507 1.133-1.034 2.683-1.427C6.495 3.226 8.75 3 12 3s5.505.226 7.069.623c1.55.393 2.286.92 2.683 1.427.404.518.625 1.23.707 2.362.057.78.044 1.604.028 2.573-.008.503-.017 1.045-.017 1.64l.002.925c.006 1.278.01 2.367-.093 3.359-.124 1.194-.392 2.046-.873 2.694C20.563 19.871 18.283 21 12 21s-8.563-1.129-9.505-2.397c-.482-.648-.75-1.5-.874-2.694-.104-.992-.099-2.08-.093-3.358z" clip-rule="evenodd"></path></svg>
                             <p>Buzón</p>
                             <div className="arrow">

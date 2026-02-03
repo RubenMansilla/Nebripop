@@ -253,11 +253,8 @@ export default function Detail() {
       return;
     }
 
-    const priceNum = Number(product?.price ?? 0);
-    const suggested = priceNum > 0 ? Math.max(1, Math.floor(priceNum * 0.8)) : 0;
-
     setChatMode("offer");
-    setInitialOffer(suggested > 0 ? suggested : null);
+    setInitialOffer(null);
     setChatOpen(true);
   };
 

@@ -1,0 +1,364 @@
+/* Auctions.css */
+
+/* General Container */
+.auctions-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: #253238;
+}
+
+/* Page Titles */
+.auctions-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #1a1a1a;
+}
+
+@media (max-width: 768px) {
+    .auctions-title {
+        display: none;
+    }
+}
+
+/* Matching Published.css .product-container */
+.product-container {
+    background-color: white;
+    border: 1.5px solid var(--beige, #e0e0e0);
+    /* Fallback if var not defined */
+    width: 100%;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .product-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+}
+
+/* --- AUCTION LIST GRID (Legacy/Public) --- */
+.auctions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+}
+
+/* Styles moved to AuctionCard.css */
+
+/* --- DETAIL PAGE --- */
+.auction-detail-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    display: flex;
+    gap: 50px;
+    padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+    .auction-detail-container {
+        flex-direction: column;
+    }
+}
+
+.detail-gallery {
+    flex: 1.2;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.detail-gallery img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
+.detail-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-product-name {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.detail-desc {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.bidding-box {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+}
+
+.bid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+
+.bid-label {
+    font-size: 0.9rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bid-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #253238;
+}
+
+.bid-form {
+    display: flex;
+    gap: 15px;
+}
+
+
+.bid-history-list {
+    margin-top: 40px;
+}
+
+.history-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f5f5f5;
+    font-size: 0.95rem;
+}
+
+.history-user {
+    font-weight: 500;
+    color: #333;
+}
+
+.history-meta {
+    display: flex;
+    gap: 15px;
+    color: #888;
+}
+
+.history-amount {
+    color: #253238;
+    font-weight: 700;
+}
+
+/* User Manager */
+.manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+
+.btn-create {
+    background-color: #253238;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.2s;
+}
+
+.btn-create:hover {
+    opacity: 0.9;
+}
+
+/* --- Refactored Components Styles --- */
+
+/* Loading State */
+.loading-container {
+    padding: 40px;
+    text-align: center;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Empty States */
+.empty-state-container {
+    text-align: center;
+    padding: 40px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin: 0 20px;
+}
+
+.empty-state-text {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+
+/* Auction Card Internal Styles */
+.card-price-text {
+    font-weight: 800;
+    color: #253238;
+    font-size: 1.2rem;
+}
+
+.card-status-text {
+    font-size: 0.8rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-action {
+    flex: 1;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-view {
+    color: #253238;
+    background: #f5f5f5;
+}
+
+.btn-view:hover {
+    background: #eeeeee;
+}
+
+.btn-delete {
+    background: rgba(229, 57, 53, 0.1);
+    /* #e5393520 */
+    color: #e53935;
+}
+
+.btn-delete:hover {
+    background: rgba(229, 57, 53, 0.2);
+}
+
+.btn-pay {
+    color: white;
+    background: #00a0a0;
+}
+
+.btn-pay:hover {
+    background: #008f8f;
+}
+
+/* MyAuctions Specific Styles */
+.my-auctions-content {
+    width: 100%;
+}
+
+.my-auctions-header {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-new-auction {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+    border: 1px solid #d6c9b4;
+    color: #253238;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-new-auction:hover {
+    background-color: #f2e2c7;
+}
+
+/* Info right section */
+.info-right-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Penalties Info Badge */
+.penalties-info-badge {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+    border: 1.5px solid #ffcdd2;
+    border-radius: 10px;
+    padding: 10px 16px;
+}
+
+.penalties-info-text {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.penalties-info-count {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c62828;
+    line-height: 1;
+}
+
+.penalties-info-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+    line-height: 1;
+}
+
+@media (max-width: 768px) {
+    .penalties-info-badge {
+        display: none;
+    }
+}
+
+/* End of Auctions.css */

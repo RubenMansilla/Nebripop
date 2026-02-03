@@ -3,10 +3,10 @@
    - Misma paleta (beige), tamaños de burbujas, sombras, etc.
 ========================================================= */
 
-.chatpop-overlay{
+.chatpop-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.45);
+  background: rgba(0, 0, 0, .45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -14,7 +14,7 @@
   padding: 16px;
 }
 
-.chatpop-box{
+.chatpop-box {
   width: 520px;
   max-width: 100%;
   height: 720px;
@@ -29,17 +29,17 @@
   display: flex;
   flex-direction: column;
 
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 /* Close button */
-.chatpop-close{
+.chatpop-close {
   position: absolute;
   right: 10px;
   top: 10px;
 
   border: none;
-  background: rgba(0,0,0,.06);
+  background: rgba(0, 0, 0, .06);
   border-radius: 10px;
   width: 36px;
   height: 36px;
@@ -48,15 +48,14 @@
   transition: transform .12s ease, background .15s ease;
 }
 
-.chatpop-close:hover{
-  background: rgba(0,0,0,.10);
-  transform: translateY(-1px);
+.chatpop-close:hover {
+  background: rgba(0, 0, 0, .10);
 }
 
 /* =========================================================
    HEADER
 ========================================================= */
-.chatpop-header{
+.chatpop-header {
   display: flex;
   gap: 12px;
   padding: 14px 16px;
@@ -65,20 +64,20 @@
   background: #fff;
 }
 
-.chatpop-seller-avatar{
+.chatpop-seller-avatar {
   width: 44px;
   height: 44px;
   border-radius: 999px;
   object-fit: cover;
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
   background: #f2f2f2;
 }
 
-.chatpop-header-info{
+.chatpop-header-info {
   min-width: 0;
 }
 
-.chatpop-title{
+.chatpop-title {
   margin: 0;
   font-weight: 800;
   color: #2b2b2b;
@@ -88,7 +87,7 @@
   text-overflow: ellipsis;
 }
 
-.chatpop-subtitle{
+.chatpop-subtitle {
   margin: 2px 0 0;
   color: #6b6b6b;
   font-size: 12px;
@@ -98,7 +97,7 @@
 /* =========================================================
    PRODUCTO (igual feeling que las tarjetas de Chat.css)
 ========================================================= */
-.chatpop-product{
+.chatpop-product {
   display: flex;
   gap: 10px;
   padding: 10px 16px;
@@ -106,17 +105,17 @@
   background: #fff;
 }
 
-.chatpop-product-img{
+.chatpop-product-img {
   width: 46px;
   height: 46px;
   border-radius: 10px;
   object-fit: cover;
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
   background: #f2f2f2;
   flex: 0 0 46px;
 }
 
-.chatpop-product-info{
+.chatpop-product-info {
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -124,7 +123,7 @@
   justify-content: center;
 }
 
-.chatpop-product-name{
+.chatpop-product-name {
   margin: 0;
   font-weight: 900;
   font-size: 13px;
@@ -134,7 +133,7 @@
   text-overflow: ellipsis;
 }
 
-.chatpop-product-price{
+.chatpop-product-price {
   margin: 0;
   font-size: 12px;
   font-weight: 800;
@@ -144,7 +143,7 @@
 /* =========================================================
    ERROR
 ========================================================= */
-.chatpop-error{
+.chatpop-error {
   margin: 10px 16px 0;
   background: #ffe7e7;
   color: #7b1414;
@@ -152,21 +151,22 @@
   border-radius: 12px;
   font-weight: 800;
   font-size: 13px;
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 /* =========================================================
    MENSAJES (mismo look que .chat-messages y .message)
 ========================================================= */
-.chatpop-messages{
+.chatpop-messages {
   flex: 1;
   overflow: auto;
   padding: 14px 16px;
-  background: #f7f5f2; /* igual que Chat.css */
+  background: #f7f5f2;
+  /* igual que Chat.css */
 }
 
 .chatpop-loading,
-.chatpop-empty{
+.chatpop-empty {
   color: #777;
   text-align: center;
   margin-top: 12px;
@@ -174,18 +174,19 @@
   font-weight: 700;
 }
 
-.chatpop-msg{
+.chatpop-msg {
   display: flex;
   margin-bottom: 10px;
 }
 
-.chatpop-msg.mine{
+.chatpop-msg.mine {
   justify-content: flex-end;
 }
 
 /* Burbujas */
-.chatpop-bubble{
-  background: #d6c9b4; /* igual que .message */
+.chatpop-bubble {
+  background: #d6c9b4;
+  /* igual que .message */
   padding: 9px 12px;
   border-radius: 14px;
   max-width: min(520px, 78%);
@@ -194,32 +195,46 @@
   line-height: 1.35;
   color: #1f1f1f;
 
-  box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
   border: none;
 }
 
-.chatpop-msg.mine .chatpop-bubble{
-  background: #c0b299; /* igual que .message.own-message */
+.chatpop-msg.mine .chatpop-bubble {
+  background: #c0b299;
+  /* igual que .message.own-message */
 }
 
-.chatpop-text{
+.chatpop-text {
   margin: 0 0 4px 0;
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: anywhere;
 }
 
-.chatpop-date{
+.chatpop-date {
   display: flex;
   justify-content: flex-end;
   font-size: 11px;
-  color: rgba(0,0,0,0.55);
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.chatpop-date-divider {
+  align-self: center;
+  background: rgba(122, 108, 88, 0.1);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--c-primary);
+  margin: 16px auto;
+  /* Ensure it doesn't stretch */
+  width: fit-content;
 }
 
 /* =========================================================
    INPUT BAR (igual que .chat-input-box)
 ========================================================= */
-.chatpop-inputbar{
+.chatpop-inputbar {
   display: flex;
   gap: 10px;
   padding: 12px;
@@ -227,7 +242,7 @@
   background: #fff;
 }
 
-.chatpop-input{
+.chatpop-input {
   flex: 1;
   resize: none;
 
@@ -242,12 +257,44 @@
   transition: border 0.15s ease, box-shadow 0.15s ease;
 }
 
-.chatpop-input:focus{
+.chatpop-input:focus {
   border-color: #d6c9b4;
   box-shadow: 0 0 0 4px rgba(214, 201, 180, 0.25);
 }
 
-.chatpop-send{
+.chatpop-textarea {
+  min-height: 48px;
+  max-height: 90px;
+  padding: 12px;
+  line-height: 1.4;
+  overflow-y: auto;
+  height: auto;
+  clip-path: inset(0 round 12px)
+}
+
+.chatpop-textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatpop-textarea::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+  border-radius: 14px;
+}
+
+.chatpop-textarea::-webkit-scrollbar-thumb {
+  background-color: #dcdcdc;
+  border-radius: 20px;
+  border: 2px solid transparent;
+
+}
+
+.chatpop-textarea::-webkit-scrollbar-thumb:hover {
+  background-color: #b0b0b0;
+  width: 10px;
+}
+
+.chatpop-send {
   border: none;
   border-radius: 12px;
   padding: 10px 16px;
@@ -261,12 +308,11 @@
   transition: transform 0.15s ease, background 0.15s ease;
 }
 
-.chatpop-send:hover{
+.chatpop-send:hover {
   background: #c9b79d;
-  transform: translateY(-1px);
 }
 
-.chatpop-send:disabled{
+.chatpop-send:disabled {
   opacity: .5;
   cursor: not-allowed;
   transform: none;
@@ -275,36 +321,36 @@
 /* =========================================================
    SCROLLBARS suaves (opcional, igual idea)
 ========================================================= */
-.chatpop-messages::-webkit-scrollbar{
+.chatpop-messages::-webkit-scrollbar {
   width: 8px;
 }
 
-.chatpop-messages::-webkit-scrollbar-thumb{
-  background: rgba(0,0,0,0.12);
+.chatpop-messages::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 999px;
 }
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
-@media (max-width: 520px){
-  .chatpop-box{
+@media (max-width: 520px) {
+  .chatpop-box {
     height: 86vh;
   }
 
-  .chatpop-header{
+  .chatpop-header {
     padding: 12px 14px;
   }
 
-  .chatpop-product{
+  .chatpop-product {
     padding: 10px 14px;
   }
 
-  .chatpop-messages{
+  .chatpop-messages {
     padding: 12px 14px;
   }
 
-  .chatpop-inputbar{
+  .chatpop-inputbar {
     padding: 10px;
   }
 }
@@ -312,7 +358,7 @@
 /* =========================================================
    BOTÓN HACER OFERTA (toggle)
 ========================================================= */
-.chatpop-offer-toggle{
+.chatpop-offer-toggle {
   padding: 12px 12px 14px;
   background: #fff;
   border-top: 1px solid #eee;
@@ -320,7 +366,7 @@
   justify-content: center;
 }
 
-.offer-toggle-btn{
+.offer-toggle-btn {
   width: 100%;
   max-width: 360px;
 
@@ -331,50 +377,50 @@
   font-size: 14px;
   letter-spacing: .2px;
 
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   background: #f7f5f2;
   color: #2b2b2b;
 
   cursor: pointer;
   transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
-.offer-toggle-btn:hover{
+.offer-toggle-btn:hover {
   background: #efe9df;
   transform: translateY(-1px);
-  border-color: rgba(0,0,0,0.14);
+  border-color: rgba(0, 0, 0, 0.14);
 }
 
-.offer-toggle-btn:active{
+.offer-toggle-btn:active {
   transform: translateY(0px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
-.offer-toggle-btn:focus{
+.offer-toggle-btn:focus {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(214, 201, 180, 0.30), 0 6px 16px rgba(0,0,0,0.06);
+  box-shadow: 0 0 0 4px rgba(214, 201, 180, 0.30), 0 6px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* Cuando está activado (modo oferta) -> estilo "cancelar" */
-.offer-toggle-btn.is-active{
+.offer-toggle-btn.is-active {
   background: #fff2f2;
   color: #7b1414;
   border-color: rgba(123, 20, 20, 0.22);
 }
 
-.offer-toggle-btn.is-active:hover{
+.offer-toggle-btn.is-active:hover {
   background: #ffe7e7;
   border-color: rgba(123, 20, 20, 0.30);
 }
 
 /* Responsive: que no se pegue demasiado abajo */
-@media (max-width: 520px){
-  .chatpop-offer-toggle{
+@media (max-width: 520px) {
+  .chatpop-offer-toggle {
     padding: 10px 10px 12px;
   }
 
-  .offer-toggle-btn{
+  .offer-toggle-btn {
     max-width: 100%;
     font-size: 13.5px;
   }

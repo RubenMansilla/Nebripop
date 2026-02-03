@@ -17,5 +17,6 @@ import { Chat } from "../chat/chat.entity";
   ],
   controllers: [PurchasesController],
   providers: [PurchasesService],
+  exports: [PurchasesService], // Export service
 })
 export class PurchasesModule { }

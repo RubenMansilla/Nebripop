@@ -137,6 +137,18 @@ export default function ChatPopup({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
+  // ✅ Bloquear scroll de fondo
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   // ✅ Abrir popup
   useEffect(() => {
     if (!open) return;
@@ -161,14 +173,53 @@ export default function ChatPopup({
       setText("");
     } else {
       const niceVisible =
-        `Hola 😊 Me interesa tu producto “${product.name}” (${formatPrice}). ` + `¿Sigue disponible?`;
+        `Hola, me interesa tu producto “${product.name}”. ` + `¿Sigue disponible?`;
       setText(niceVisible);
     }
   }, [open, user, token, product.name, formatPrice, onClose, openLogin, mode, initialOffer]);
 
+  // ✅ Cargar mensajes al abrir
+  useEffect(() => {
+    if (!open || !user || !token) return;
+
+    let mounted = true;
+
+    const loadChat = async () => {
+      try {
+        setLoading(true);
+        // Intentamos obtener el chat existente (o crearlo si no existe, según la API actual)
+        // OJO: createOrGetChat idealmente no debería crear UNO NUEVO vacío si solo queremos leer, 
+        // pero asumiendo que es la única vía para obtener el ID:
+        const chatData = await createOrGetChat(Number(seller.id), Number(product.id));
+
+        if (mounted && chatData && chatData.id) {
+          setChat(chatData);
+          const msgs = await getChatMessages(chatData.id);
+          if (mounted) {
+            const sorted = [...msgs].sort(
+              (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+            );
+            setMessages(sorted);
+          }
+        }
+      } catch (err: any) {
+        console.error("Error loading chat:", err);
+        // No mostramos error UI bloqueante para no molestar si solo es que no había chat previo
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadChat();
+
+    return () => {
+      mounted = false;
+    };
+  }, [open, user, token, seller.id, product.id]);
+
   useEffect(() => {
     if (!open) return;
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView();
   }, [messages, open]);
 
   const messagesByDate = useMemo(() => {
@@ -209,17 +260,14 @@ export default function ChatPopup({
       setLoading(true);
 
       if (!chatId) {
+        // Fallback: si por alguna razón no se cargó arriba, lo intentamos crear/obtener aquí
         const createdOrExisting = await createOrGetChat(Number(seller.id), Number(product.id));
         chatId = createdOrExisting?.id;
         setChat(createdOrExisting);
 
-        if (chatId) {
-          const msgs = await getChatMessages(chatId);
-          const sorted = [...msgs].sort(
-            (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-          setMessages(sorted);
-        }
+        // No hace falta volver a pedir mensajes si acabamos de "crear" el chat vacío, 
+        // pero si ya existía podríamos quererlos. 
+        // Como handleSend es para ENVIAR, lo importante es tener el ID.
       }
 
       if (!chatId) throw new Error("No se pudo crear/obtener el chat");
@@ -284,7 +332,7 @@ export default function ChatPopup({
         {error && <div className="chatpop-error">{error}</div>}
 
         <div className="chatpop-messages">
-          {loading ? (
+          {loading && messages.length === 0 ? (
             <div className="chatpop-loading">Cargando...</div>
           ) : messages.length === 0 ? (
             <div className="chatpop-empty">
@@ -342,10 +390,22 @@ export default function ChatPopup({
           ) : (
             <>
               <textarea
-                className="chatpop-input"
+                ref={(el) => {
+                  if (el) {
+                    // Auto-resize logic
+                    el.style.height = "auto";
+                    el.style.height = el.scrollHeight + "px";
+                  }
+                }}
+                className="chatpop-input chatpop-textarea"
                 placeholder="Escribe tu mensaje..."
                 value={text}
-                onChange={(e) => setText(e.target.value)}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  // Adjust height on change
+                  e.target.style.height = "auto";
+                  e.target.style.height = e.target.scrollHeight + "px";
+                }}
                 onKeyDown={onKeyDown}
                 rows={1}
               />
@@ -361,15 +421,6 @@ export default function ChatPopup({
             </>
           )}
         </div>
-
-        {/* ✅ Toggle solo si NO está bloqueado por Detail */}
-        {!lockedOfferMode && (
-          <div className="chatpop-offer-toggle">
-            <button className="offer-toggle-btn" type="button" onClick={() => setIsOfferMode(!isOfferMode)}>
-              {isOfferMode ? "Cancelar oferta" : "Hacer oferta"}
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

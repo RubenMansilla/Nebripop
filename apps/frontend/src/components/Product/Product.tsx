@@ -1,4 +1,5 @@
 import type React from "react";
+import { createPortal } from "react-dom";
 import "./Product.css";
 import type { ProductType } from "../../types/product";
 import { useState, useContext, useEffect } from "react";
@@ -398,9 +399,10 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                         )}
                     </div>
                 </div>
-            </li>            {showPopup && (
-                <div className="popup-backdrop">
-                    <div className="unsaved-changes-popup">
+            </li>
+            {showPopup && createPortal(
+                <div className="popup-backdrop" onClick={handleCancelDelete}>
+                    <div className="unsaved-changes-popup" onClick={(e) => e.stopPropagation()}>
                         <h3>¿Estás seguro que quieres eliminar este producto?</h3>
                         <p>
                             Esta acción no se puede deshacer. Si eliminas el producto, se
@@ -416,7 +418,8 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );

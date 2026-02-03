@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginModalProvider } from "./context/LoginModalContext";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/Routes/ProtectedRoute";
@@ -22,6 +22,7 @@ import History from "./pages/User/Wallet/History/History";
 import ChatListPage from "./pages/User/Chat/ChatListPage";
 import FavoritesProducts from "./pages/User/Favorites/Products/FavoritesProducts";
 import FavoritesProfiles from "./pages/User/Favorites/Profiles/FavoritesProfiles";
+import FavoritesAuctions from "./pages/User/Favorites/Auctions/FavoritesAuctions";
 import PurchasesOngoing from "./pages/User/Purchases/Ongoing/PurchasesOngoing";
 import PurchasesCompleted from "./pages/User/Purchases/Completed/PurchasesCompleted";
 import SalesOngoing from "./pages/User/Sales/Ongoing/SalesOngoing";
@@ -56,6 +57,14 @@ import PurchaseCompleted from "./pages/PurchaseCompleted/PurchaseCompleted";
 // PAGINA 404
 import NotFound from "./pages/NotFound/NotFound";
 
+// AUCTIONS
+import AuctionsManager from "./pages/User/Auctions/AuctionsManager";
+import MyAuctions from "./pages/User/Auctions/MyAuctions/MyAuctions";
+import ActiveAuctions from "./pages/User/Auctions/ActiveAuctions/ActiveAuctions";
+import AuctionsHistory from "./pages/User/Auctions/HistoryAuctions/AuctionsHistory";
+import AuctionList from "./pages/Auctions/AuctionList";
+import AuctionDetail from "./pages/Auctions/AuctionDetail";
+
 export default function App() {
     return (
         <AuthProvider>
@@ -85,6 +94,10 @@ export default function App() {
                         <Route path="/filtros" element={<Filtro />} />
                         <Route path="/product/:productId" element={<Detail />} />
 
+                        {/* Auctions Public Routes */}
+                        <Route path="/auctions" element={<AuctionList />} />
+                        <Route path="/auction/:id" element={<AuctionDetail />} />
+
                         <Route
                             path="/product/edit/:productId"
                             element={
@@ -94,9 +107,6 @@ export default function App() {
                             }
                         />
                         <Route path="/you" element={<User />} />
-
-                       // Ejemplo en tu App.tsx o Router
-
 
                         <Route element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
 
@@ -112,6 +122,14 @@ export default function App() {
                             <Route path="/catalog/published" element={<Published />} />
                             <Route path="/catalog/sold" element={<Solds />} />
 
+                            {/* Subastas (User) */}
+                            <Route path="/my-auctions" element={<AuctionsManager />}>
+                                <Route index element={<Navigate to="created" replace />} />
+                                <Route path="created" element={<MyAuctions />} />
+                                <Route path="active" element={<ActiveAuctions />} />
+                                <Route path="history" element={<AuctionsHistory />} />
+                            </Route>
+
                             {/* Monedero */}
                             <Route path="/wallet/balance" element={<Balance />} />
                             <Route path="/wallet/bank-details" element={<BankDetails />} />
@@ -120,6 +138,7 @@ export default function App() {
                             {/* Favoritos */}
                             <Route path="/favorites/products" element={<FavoritesProducts />} />
                             <Route path="/favorites/profiles" element={<FavoritesProfiles />} />
+                            <Route path="/favorites/auctions" element={<FavoritesAuctions />} />
 
                             {/* Compras y Ventas */}
                             <Route path="/purchases/ongoing" element={<PurchasesOngoing />} />

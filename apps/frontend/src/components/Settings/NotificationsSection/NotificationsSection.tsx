@@ -59,6 +59,11 @@ export default function NotificationsSection() {
                     checked={settings.addedToFavorites}
                     onChange={() => updateSetting('addedToFavorites')}
                 />
+                <ToggleItem
+                    label="Subasta"
+                    checked={settings.auctions}
+                    onChange={() => updateSetting('auctions')}
+                />
             </div>
 
             <div className="notif-group">

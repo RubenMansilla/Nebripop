@@ -1,0 +1,23 @@
+.product-container.favorites-auctions-container {
+    background-color: white;
+    border: 1.5px solid var(--beige, #e0e0e0);
+    width: 100%;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    /* 240px to make them less wide */
+    gap: 20px;
+    list-style: none;
+    /* In case it's a ul */
+}
+
+@media (max-width: 600px) {
+    .product-container.favorites-auctions-container {
+        grid-template-columns: repeat(1, 1fr);
+        /* Auctions might need more space, or 2 if they fit */
+        gap: 10px;
+        padding: 10px;
+    }
+}

@@ -861,3 +861,7 @@
       /* Botones más grandes para dedos */
     }
   }
+
+  .no-reviews {
+    font-style: normal !important;
+  }

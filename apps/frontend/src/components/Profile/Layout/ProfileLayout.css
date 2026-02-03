@@ -4,6 +4,9 @@
     width: 15%;
     min-width: 200px;
     overflow-y: auto;
+    overflow-x: visible;
+    position: relative;
+    z-index: 200;
 }
 
 .navbar-and-categoriesbar {
@@ -34,6 +37,8 @@
     border-left: 1.3px solid #e7ebed;
     align-content: flex-start;
     justify-content: center;
+    position: relative;
+    z-index: 1;
 }
 
 .sidebar-right.chat-mode {
@@ -79,6 +84,6 @@
 @media (max-width: 800px) {
     .sidebar-container {
         width: 100%;
-        height: calc(100vh - 118px);
+        height: calc(100vh - 134px);
     }
 }

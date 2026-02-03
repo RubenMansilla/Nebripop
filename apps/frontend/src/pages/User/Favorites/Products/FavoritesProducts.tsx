@@ -63,6 +63,8 @@ export default function FavoritesProducts() {
     useEffect(() => {
         if (selected === "profiles") {
             navigate("/favorites/profiles");
+        } else if (selected === "auctions") {
+            navigate("/favorites/auctions");
         }
     }, [selected, navigate]);
 
@@ -81,23 +83,12 @@ export default function FavoritesProducts() {
             </div>
 
             {/* SELECTOR */}
-            <div className="info-selector">
-                <div className="info-items">
-                    <div
-                        className={`info-item ${selected === "products" ? "active" : ""
-                            }`}
-                        onClick={() => setSelected("products")}
-                    >
-                        <p>Productos</p>
-                    </div>
 
-                    <div
-                        className={`info-item ${selected === "profiles" ? "active" : ""
-                            }`}
-                        onClick={() => setSelected("profiles")}
-                    >
-                        <p>Perfiles</p>
-                    </div>
+            <div className="info-selector">
+                <div className="info-items-wallet">
+                    <div className={`info-item-wallet ${selected === "products" ? "active" : ""}`} onClick={() => setSelected("products")}><p>Productos</p></div>
+                    <div className={`info-item-wallet ${selected === "profiles" ? "active" : ""}`} onClick={() => setSelected("profiles")}><p>Perfiles</p></div>
+                    <div className={`info-item-wallet ${selected === "auctions" ? "active" : ""}`} onClick={() => setSelected("auctions")}><p>Subastas</p></div>
                 </div>
             </div>
 

@@ -26,7 +26,9 @@ export default function Solds() {
   const [showSkeleton, setShowSkeleton] = useState(false);
 
   // ✅ NUEVO: productId -> total pagado (purchase.price)
-  const [paidByProductId, setPaidByProductId] = useState<Record<number, number>>({});
+  const [paidByProductId, setPaidByProductId] = useState<
+    Record<number, number>
+  >({});
 
   const visibleProducts = Soldproducts.slice(0, visibleCount);
   const hasMore = visibleCount < Soldproducts.length;
@@ -103,8 +105,8 @@ export default function Solds() {
           </div>
           <div className="description">
             <p>
-              Aquí podrás subir productos, gestionar los que ya tienes y eliminar los que ya no quieras
-              vender
+              Aquí podrás subir productos, gestionar los que ya tienes y
+              eliminar los que ya no quieras vender
             </p>
           </div>
         </div>
@@ -137,7 +139,11 @@ export default function Solds() {
         <>
           {Soldproducts.length === 0 && !loading && (
             <div className="no-reviews">
-              <img src={noReviewsImg} alt="Sin valoraciones" className="no-reviews-img" />
+              <img
+                src={noReviewsImg}
+                alt="Sin valoraciones"
+                className="no-reviews-img"
+              />
               <h3>Sin ventas finalizadas todavía</h3>
               <p>Si quieres vender algo, simplemente súbelo.</p>
             </div>
@@ -152,7 +158,11 @@ export default function Solds() {
 
                   return (
                     <li key={p.id} style={{ listStyle: "none" }}>
-                      <Product product={p} mode="sold" onDelete={handleRemoveFromList} />
+                      <Product
+                        product={p}
+                        mode="sold"
+                        onDelete={handleRemoveFromList}
+                      />
 
                       {/* ✅ Línea debajo: Original + Pagado */}
                       {paid !== null && (

@@ -1,0 +1,149 @@
+/* AuctionCard.css */
+
+.auction-card-public {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    border: 1px solid #f0f0f0;
+}
+
+.auction-card-img-wrapper {
+    height: 220px;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+.auction-card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.auction-card-content {
+    padding: 20px;
+}
+
+.auction-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.auction-name {
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #253238;
+}
+
+.auction-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.current-bid-label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+.current-bid-amount {
+    font-size: 18px;
+    font-weight: 800;
+    color: #253238;
+}
+
+.time-left-badge {
+    background: #fff0f0;
+    color: #e53935;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.auction-card-public .favorite-icon-container {
+    z-index: 10;
+    border-radius: 50%;
+    padding: 4px;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease;
+    background: rgba(255, 255, 255, 0.7);
+    /* moved from inline */
+}
+
+/* Action buttons for expired auctions */
+.card-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-action {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-republish {
+    background-color: #E8F5E9;
+    color: #2E7D32;
+}
+
+.btn-republish:hover {
+    background-color: #C8E6C9;
+}
+
+.btn-modify {
+    background-color: #E3F2FD;
+    color: #1565C0;
+}
+
+.btn-modify:hover {
+    background-color: #BBDEFB;
+}
+
+.btn-cancel-expired {
+    background-color: #fbe3e2;
+    color: #e53935;
+}
+
+.btn-cancel-expired:hover {
+    background-color: #fad7d7;
+}
+
+.btn-pay {
+    background-color: #4caf50;
+    color: white;
+}
+
+.btn-pay:hover {
+    background-color: #45a049;
+}

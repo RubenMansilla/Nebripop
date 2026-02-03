@@ -1,27 +1,57 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState, useRef, useLayoutEffect } from "react";
+import { createPortal } from "react-dom";
 import { AuthContext } from "../../../context/AuthContext";
 import type { ReviewSummary } from "../../../types/review";
 import { getUserReviewSummary } from "../../../api/reviews.api";
+import { getMe } from "../../../api/users.api";
+import { getUserChats } from "../../../api/chat.api";
+import { getChatSocket } from "../../../chatSocket";
 import './ProfileSideBar.css';
 
 export default function ProfileSideBar() {
 
     const sidebarRef = useRef<HTMLDivElement>(null);
+    const badgeRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useContext(AuthContext);
+    const { user, setUser, token } = useContext(AuthContext);
 
     const [summary, setSummary] = useState<ReviewSummary>({ average: 0, total: 0 });
-    const [loadingReviews, setLoadingReviews] = useState(false);
+    const [tooltipCoords, setTooltipCoords] = useState<{ top: number; left: number } | null>(null);
+    const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+    // const [loadingReviews, setLoadingReviews] = useState(false);
 
-    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LTQyNjYtYmVlYy1lYjdkY2EzNmI2NDUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+    const defaultPic = "https://zxetwkoirtyweevvatuf.supabase.co/storage/v1/object/sign/userImg/Default_Profile_Picture.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kYWMwYTY1NC1mOTY4LWJlZWMtZWI3ZGNhMzZiNjQ1IiwiYWxnIjoiJIUzI1NiJ9.eyJ1cmwiOiJ1c2VySW1nL0RlZmF1bHRfUHJvZmlsZV9QaWN0dXJlLnBuZyIsImlhdCI6MTc2NDU4MzQ3OSwiZXhwIjoxNzk2MTE5NDc5fQ.yJUBlEuws9Tl5BK9tIyMNtKp52Jj8reTF_y_a71oR1I";
+
+    // 🔄 Fetch fresh user data on mount to get penalties_count and other fields
+    useEffect(() => {
+        if (!token) {
+            console.log('❌ No token, skipping getMe');
+            return;
+        }
+
+        getMe()
+            .then((freshUserData) => {
+                if (freshUserData) {
+                    const updatedUser = {
+                        ...user,
+                        ...freshUserData,
+                        id: Number(freshUserData.id)
+                    };
+                    setUser(updatedUser);
+                }
+            })
+            .catch((err) => {
+                console.error("❌ Error fetching user data:", err);
+            });
+    }, []); // Run once on mount
 
     useEffect(() => {
         if (!user?.id) return;
 
         let isMounted = true;
-        setLoadingReviews(true);
+        // setLoadingReviews(true);
 
         // CAMBIO 3: Usamos el endpoint ligero de resumen
         getUserReviewSummary(user.id)
@@ -37,11 +67,66 @@ export default function ProfileSideBar() {
                 if (isMounted) setSummary({ average: 0, total: 0 });
             })
             .finally(() => {
-                if (isMounted) setLoadingReviews(false);
+                // if (isMounted) setLoadingReviews(false);
             });
 
         return () => { isMounted = false; };
     }, [user?.id]);
+
+    // 🔔 Check for unread messages - Helper function
+    const checkUnreadMessages = () => {
+        if (!user) return;
+
+        getUserChats()
+            .then((data) => {
+                const raw = Array.isArray(data) ? data : (data as any).data || [];
+                const hasUnread = raw.some((chat: any) => (chat.unreadCount || 0) > 0);
+                setHasUnreadMessages(hasUnread);
+            })
+            .catch(err => {
+                console.error("Error checking unread messages:", err);
+            });
+    };
+
+    // Check on mount and when user changes
+    useEffect(() => {
+        checkUnreadMessages();
+    }, [user]);
+
+    // 🔔 Refresh when navigating away from chat (messages might have been read)
+    useEffect(() => {
+        if (location.pathname.startsWith("/profile/chat")) {
+            // When leaving the chat page, refresh the unread count
+            return () => {
+                checkUnreadMessages();
+            };
+        }
+    }, [location.pathname]);
+
+    // 🔔 Listen to socket events for real-time updates
+    useEffect(() => {
+        if (!user) return;
+
+        const socket = getChatSocket();
+
+        const handleNewMessage = () => {
+            // When a new message arrives, refresh unread count
+            checkUnreadMessages();
+        };
+
+        const handleMessageRead = () => {
+            // When messages are marked as read, refresh count
+            checkUnreadMessages();
+        };
+
+        socket.on("new_message", handleNewMessage);
+        socket.on("chat_read", handleMessageRead);
+
+        return () => {
+            socket.off("new_message", handleNewMessage);
+            socket.off("chat_read", handleMessageRead);
+        };
+    }, [user]);
 
     useLayoutEffect(() => {
         const sidebar = sidebarRef.current;
@@ -62,6 +147,22 @@ export default function ProfileSideBar() {
         return () => sidebar.removeEventListener("scroll", handleScroll);
     }, []);
 
+    // Calcular posición y mostrar en un solo paso atómico para evitar saltos
+    const handleMouseEnter = () => {
+        if (badgeRef.current) {
+            const rect = badgeRef.current.getBoundingClientRect();
+            setTooltipCoords({
+                top: rect.top + rect.height / 2 - 80, // Restamos aprox la mitad de la altura del tooltip (ajuste manual)
+                left: rect.right + 10
+            });
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setTooltipCoords(null);
+    };
+
+
     if (!user) return null;
 
     const year = new Date(user.createdAt).getFullYear();
@@ -77,6 +178,53 @@ export default function ProfileSideBar() {
                 <div className={`sidebar-profile ${(location.pathname === "/profile/info" || location.pathname === "/profile/reviews") ? "active" : ""}`} onClick={() => navigate("/profile/info")}>
                     <div className="profile-pic">
                         <img src={imageSrc} alt="Foto de perfil" />
+                        {(user.penaltyLevel || 0) > 0 && (
+                            <>
+                                <div
+                                    ref={badgeRef}
+                                    className="penalties-badge-container"
+                                    onMouseEnter={handleMouseEnter}
+                                    onMouseLeave={handleMouseLeave}
+                                >
+                                    <div className="penalties-badge">
+                                        {user.penaltyLevel}
+                                    </div>
+                                </div>
+                                {tooltipCoords && createPortal(
+                                    <div
+                                        className="penalties-tooltip-portal"
+                                        style={{
+                                            top: `${tooltipCoords.top}px`,
+                                            left: `${tooltipCoords.left}px`
+                                        }}
+                                        onMouseEnter={handleMouseEnter}
+                                        onMouseLeave={handleMouseLeave}
+                                    >
+                                        <div className="penalties-tooltip-header">
+                                            <strong>Penalizaciones</strong>
+                                        </div>
+                                        <div className="penalties-tooltip-content">
+                                            <div className="penalty-level">
+                                                <span className="penalty-count">1 penalización:</span>
+                                                <span className="penalty-description">Advertencia por incumplimiento leve</span>
+                                            </div>
+                                            <div className="penalty-level">
+                                                <span className="penalty-count">2 penalizaciones:</span>
+                                                <span className="penalty-description">Restricción temporal de funciones</span>
+                                            </div>
+                                            <div className="penalty-level">
+                                                <span className="penalty-count">3 penalizaciones:</span>
+                                                <span className="penalty-description">Cuenta en revisión - riesgo de suspensión</span>
+                                            </div>
+                                            <div className="penalties-tooltip-footer">
+                                                Tienes actualmente: <strong>{user.penaltyLevel} penalización{user.penaltyLevel !== 1 ? 'es' : ''}</strong>
+                                            </div>
+                                        </div>
+                                    </div>,
+                                    document.body
+                                )}
+                            </>
+                        )}
                     </div>
                     <div className="profile-info">
                         <div className="profile-name">
@@ -120,8 +268,19 @@ export default function ProfileSideBar() {
                         </svg>
                         <p>Tu Catálogo</p>
                     </div>
+                    <div className={`menu-item ${location.pathname.startsWith("/my-auctions") ? "active" : ""}`} onClick={() => navigate("/my-auctions/created")}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 36 36"><path fill="#000000" d="M23.7 10.41a1 1 0 0 1-.71-.29l-7.43-7.43A1 1 0 0 1 17 1.28l7.44 7.43a1 1 0 0 1-.71 1.7ZM11.86 22.25a1 1 0 0 0-.29-.71l-7.43-7.43a1 1 0 0 0-1.42 1.42L10.15 23a1 1 0 0 0 1.42 0a1 1 0 0 0 .29-.75M21.93 34H3a1 1 0 0 1-1-1.27l1.13-4a1 1 0 0 1 1-.73H20.8a1 1 0 0 1 1 .73l1.13 4a1 1 0 0 1-.17.87a1 1 0 0 1-.83.4M4.31 32H20.6l-.6-2H4.87Zm28.8-4.56l-14-14l2.36-2.36l-6.95-6.95l-8.94 8.94L12.51 20l2.35-2.34l14 14a3 3 0 0 0 4.24 0a3 3 0 0 0 .01-4.22M8.4 13.07L14.52 7l4.11 4.11l-6.12 6.11Zm23.29 17.2a1 1 0 0 1-1.41 0l-14-14l1.41-1.41l14 14a1 1 0 0 1 0 1.41" /><path fill="none" d="M0 0h36v36H0z" /></svg>
+                        <p>Subastas</p>
+                    </div>
                     <div className={`menu-item ${location.pathname.startsWith("/profile/chat") ? "active" : ""}`} onClick={() => navigate("/profile/chat")}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#29363d" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4.26 6.95a.75.75 0 1 0-1.02 1.1l.02.018.056.052.211.193a83 83 0 0 0 3.208 2.768c.53.433 1.085.87 1.63 1.274L4 16.72a.75.75 0 1 0 1.06 1.06l4.551-4.55c.422.274.83.514 1.204.69.368.174.79.33 1.185.33.396 0 .817-.156 1.185-.33.384-.181.806-.43 1.24-.714L19 17.78a.75.75 0 1 0 1.06-1.06l-4.39-4.39a47 47 0 0 0 1.595-1.249 79 79 0 0 0 3.42-2.961l.055-.052.02-.018a.75.75 0 0 0-1.02-1.1l-.017.016-.053.049-.206.188a82 82 0 0 1-3.146 2.716c-.913.743-1.866 1.475-2.69 2.017a9.5 9.5 0 0 1-1.084.628c-.326.154-.495.186-.544.186s-.218-.032-.544-.186a9 9 0 0 1-1.083-.628c-.826-.542-1.778-1.274-2.69-2.017A78 78 0 0 1 4.33 7.015l-.054-.049z"></path><path fill-rule="evenodd" d="M12 1.5C-.123 1.5-.074 4.563.014 10.097c.008.49.016 1 .016 1.528l-.002.884C0 18.514-.018 22.5 12 22.5s12-3.986 11.973-9.99q-.003-.436-.003-.885.002-.793.016-1.528C24.074 4.563 24.123 1.5 12 1.5M1.53 11.625c0-.595-.009-1.137-.017-1.64-.016-.97-.029-1.793.028-2.573.082-1.131.303-1.844.707-2.362.397-.507 1.133-1.034 2.683-1.427C6.495 3.226 8.75 3 12 3s5.505.226 7.069.623c1.55.393 2.286.92 2.683 1.427.404.518.625 1.23.707 2.362.057.78.044 1.604.028 2.573-.008.503-.017 1.045-.017 1.64l.002.925c.006 1.278.01 2.367-.093 3.359-.124 1.194-.392 2.046-.873 2.694C20.563 19.871 18.283 21 12 21s-8.563-1.129-9.505-2.397c-.482-.648-.75-1.5-.874-2.694-.104-.992-.099-2.08-.093-3.358z" clip-rule="evenodd"></path></svg>
+                        <div className="menu-item-icon-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#29363d" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M4.26 6.95a.75.75 0 1 0-1.02 1.1l.02.018.056.052.211.193a83 83 0 0 0 3.208 2.768c.53.433 1.085.87 1.63 1.274L4 16.72a.75.75 0 1 0 1.06 1.06l4.551-4.55c.422.274.83.514 1.204.69.368.174.79.33 1.185.33.396 0 .817-.156 1.185-.33.384-.181.806-.43 1.24-.714L19 17.78a.75.75 0 1 0 1.06-1.06l-4.39-4.39a47 47 0 0 0 1.595-1.249 79 79 0 0 0 3.42-2.961l.055-.052.02-.018a.75.75 0 0 0-1.02-1.1l-.017.016-.053.049-.206.188a82 82 0 0 1-3.146 2.716c-.913.743-1.866 1.475-2.69 2.017a9.5 9.5 0 0 1-1.084.628c-.326.154-.495.186-.544.186s-.218-.032-.544-.186a9 9 0 0 1-1.083-.628c-.826-.542-1.778-1.274-2.69-2.017A78 78 0 0 1 4.33 7.015l-.054-.049z"></path><path fill-rule="evenodd" d="M12 1.5C-.123 1.5-.074 4.563.014 10.097c.008.49.016 1 .016 1.528l-.002.884C0 18.514-.018 22.5 12 22.5s12-3.986 11.973-9.99q-.003-.436-.003-.885.002-.793.016-1.528C24.074 4.563 24.123 1.5 12 1.5M1.53 11.625c0-.595-.009-1.137-.017-1.64-.016-.97-.029-1.793.028-2.573.082-1.131.303-1.844.707-2.362.397-.507 1.133-1.034 2.683-1.427C6.495 3.226 8.75 3 12 3s5.505.226 7.069.623c1.55.393 2.286.92 2.683 1.427.404.518.625 1.23.707 2.362.057.78.044 1.604.028 2.573-.008.503-.017 1.045-.017 1.64l.002.925c.006 1.278.01 2.367-.093 3.359-.124 1.194-.392 2.046-.873 2.694C20.563 19.871 18.283 21 12 21s-8.563-1.129-9.505-2.397c-.482-.648-.75-1.5-.874-2.694-.104-.992-.099-2.08-.093-3.358z" clip-rule="evenodd"></path>
+                            </svg>
+                            {hasUnreadMessages && (
+                                <span className="unread-indicator"></span>
+                            )}
+                        </div>
                         <p>Buzón</p>
                     </div>
                     <div className={`menu-item ${location.pathname.startsWith("/favorites") ? "active" : ""}`} onClick={() => navigate("/favorites/products")}>

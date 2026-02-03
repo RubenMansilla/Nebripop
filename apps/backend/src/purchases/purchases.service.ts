@@ -85,10 +85,7 @@ export class PurchasesService {
         throw new BadRequestException("agreedPrice no es válido");
       }
 
-      // ✅ seguridad: no permitimos que paguen más que el precio original por oferta
-      if (n > originalBasePrice) {
-        throw new BadRequestException("agreedPrice no puede ser superior al precio original");
-      }
+      // ✅ Eliminada restricción de precio máximo para permitir subastas
 
       basePriceToCharge = n;
     }

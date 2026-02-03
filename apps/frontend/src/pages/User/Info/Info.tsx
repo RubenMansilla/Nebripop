@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect, useRef } from 'react';
+import { createPortal } from "react-dom";
 import { AuthContext } from '../../../context/AuthContext';
 import './Info.css'
 import ProfileData from '../../../components/Profile/Data/ProfileData';
@@ -64,9 +65,9 @@ export default function Info() {
             </div>
             {selected === "perfil" && <ProfileData setHasUnsavedChanges={setHasUnsavedChanges} />}
 
-            {showPopup && (
-                <div className="popup-backdrop">
-                    <div className="unsaved-changes-popup">
+            {showPopup && createPortal(
+                <div className="popup-backdrop" onClick={() => setShowPopup(false)}>
+                    <div className="unsaved-changes-popup" onClick={(e) => e.stopPropagation()}>
                         <h3>¿Estás seguro que quieres abandonar esta página?</h3>
                         <p>Hay información que no has guardado. Si te vas sin guardar perderás los cambios que has hecho.</p>
                         <div className="popup-buttons-product">
@@ -86,7 +87,8 @@ export default function Info() {
                             </span>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     )

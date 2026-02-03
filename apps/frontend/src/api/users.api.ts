@@ -13,6 +13,15 @@ export async function updateUser(data: any) {
   }
 }
 
+export async function getMe() {
+  try {
+    const res = await api.get("/users/me");
+    return res.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Error al obtener datos del usuario");
+  }
+}
+
 export async function uploadProfilePicture(file: File) {
   const formData = new FormData();
   formData.append("file", file);
@@ -61,10 +70,10 @@ export async function searchUsers(query: string) {
 
     const raw =
       Array.isArray(res.data) ? res.data :
-      Array.isArray(res.data?.users) ? res.data.users :
-      Array.isArray(res.data?.data) ? res.data.data :
-      Array.isArray(res.data?.results) ? res.data.results :
-      [];
+        Array.isArray(res.data?.users) ? res.data.users :
+          Array.isArray(res.data?.data) ? res.data.data :
+            Array.isArray(res.data?.results) ? res.data.results :
+              [];
 
     return raw
       .filter(Boolean)

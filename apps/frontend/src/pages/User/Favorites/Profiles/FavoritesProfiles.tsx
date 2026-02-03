@@ -1,7 +1,4 @@
 import "./FavoritesProfiles.css";
-import Navbar from "../../../../components/Navbar/Navbar";
-import CategoriesBar from "../../../../components/CategoriesBar/CategoriesBar";
-import ProfileSideBar from "../../../../components/Profile/ProfileSideBar/ProfileSideBar";
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../context/AuthContext";
@@ -52,6 +49,8 @@ export default function FavoritesProfiles() {
     useEffect(() => {
         if (selected === "products") {
             navigate("/favorites/products");
+        } else if (selected === "auctions") {
+            navigate("/favorites/auctions");
         }
     }, [selected, navigate]);
 
@@ -95,20 +94,10 @@ export default function FavoritesProfiles() {
 
             {/* SELECTOR */}
             <div className="info-selector">
-                <div className="info-items">
-                    <div
-                        className={`info-item ${selected === "products" ? "active" : ""}`}
-                        onClick={() => setSelected("products")}
-                    >
-                        <p>Productos</p>
-                    </div>
-
-                    <div
-                        className={`info-item ${selected === "profiles" ? "active" : ""}`}
-                        onClick={() => setSelected("profiles")}
-                    >
-                        <p>Perfiles</p>
-                    </div>
+                <div className="info-items-wallet">
+                    <div className={`info-item-wallet ${selected === "products" ? "active" : ""}`} onClick={() => setSelected("products")}><p>Productos</p></div>
+                    <div className={`info-item-wallet ${selected === "profiles" ? "active" : ""}`} onClick={() => setSelected("profiles")}><p>Perfiles</p></div>
+                    <div className={`info-item-wallet ${selected === "auctions" ? "active" : ""}`} onClick={() => setSelected("auctions")}><p>Subastas</p></div>
                 </div>
             </div>
 

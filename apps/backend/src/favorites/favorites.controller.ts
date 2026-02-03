@@ -5,7 +5,7 @@ import { FavoritesService } from "./favorites.service";
 @Controller("favorites")
 export class FavoritesController {
 
-  constructor(private favoritesService: FavoritesService) {}
+  constructor(private favoritesService: FavoritesService) { }
 
   /* ========= PRODUCTOS ========= */
 
@@ -51,5 +51,31 @@ export class FavoritesController {
   @Get("users/:userId/is-favorite")
   isFavoriteUser(@Req() req, @Param("userId") userId: number) {
     return this.favoritesService.isFavoriteUser(req.user.id, userId);
+  }
+
+  /* ========= SUBASTAS ========= */
+
+  @UseGuards(AuthGuard("jwt"))
+  @Post("auctions/:auctionId")
+  addFavoriteAuction(@Req() req, @Param("auctionId") auctionId: number) {
+    return this.favoritesService.addFavoriteAuction(req.user.id, auctionId);
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Delete("auctions/:auctionId")
+  removeFavoriteAuction(@Req() req, @Param("auctionId") auctionId: number) {
+    return this.favoritesService.removeFavoriteAuction(req.user.id, auctionId);
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("auctions/:auctionId/is-favorite")
+  isFavoriteAuction(@Req() req, @Param("auctionId") auctionId: number) {
+    return this.favoritesService.isFavoriteAuction(req.user.id, auctionId);
+  }
+
+  @UseGuards(AuthGuard("jwt"))
+  @Get("auctions")
+  getFavoriteAuctions(@Req() req) {
+    return this.favoritesService.getFavoriteAuctions(req.user.id);
   }
 }
