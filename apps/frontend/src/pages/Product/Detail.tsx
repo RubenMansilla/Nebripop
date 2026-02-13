@@ -450,13 +450,16 @@ export default function Detail() {
               <>
                 <div className="buy-shipping">🚚 Envío disponible</div>
 
-                {product.active_negotiation ? (
-                  <div className="negotiation-block">
-                    <p>Producto en proceso de negociación</p>
-                    <button className="buy-main-btn disabled" disabled>
-                      No disponible
-                    </button>
-                  </div>
+                {product.sold ? (
+                  <button className="buy-main-btn disabled" disabled>
+                    Vendido
+                  </button>
+                ) : Number(product.active_negotiation) > 0 ? (
+
+                  <button className="buy-main-btn disabled" disabled>
+                    Producto en proceso de negociación
+                  </button>
+
                 ) : (
                   <Link to={`/checkout?productId=${product.id}`}>
                     <button className="buy-main-btn" type="button">
@@ -465,14 +468,15 @@ export default function Detail() {
                   </Link>
                 )}
 
-                <button
-                  className="buy-offer-btn"
-                  type="button"
-                  onClick={handleMakeOffer}
-                  disabled={!!product.active_negotiation}
-                >
-                  {product.active_negotiation ? "Oferta en curso" : "Hacer oferta"}
-                </button>
+                {!product.sold && (
+                  <button
+                    className="buy-offer-btn"
+                    type="button"
+                    onClick={handleMakeOffer}
+                  >
+                    Hacer oferta
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -565,28 +569,30 @@ export default function Detail() {
             )}
           </div>
         </div>
-      </div>
+      </div >
 
       {/* ✅ Popup del chat (TU CAMBIO) */}
-      {chatOpen && sellerIdForChat && (
-        <ChatPopup
-          open={chatOpen}
-          onClose={() => setChatOpen(false)}
-          seller={{
-            id: sellerIdForChat,
-            fullName: sellerName,
-            profilePicture: sellerAvatar,
-          }}
-          product={{
-            id: product.id,
-            name: product.name,
-            price: Number(product.price),
-            images: product.images ?? [],
-          }}
-          mode={chatMode}
-          initialOffer={initialOffer}
-        />
-      )}
+      {
+        chatOpen && sellerIdForChat && (
+          <ChatPopup
+            open={chatOpen}
+            onClose={() => setChatOpen(false)}
+            seller={{
+              id: sellerIdForChat,
+              fullName: sellerName,
+              profilePicture: sellerAvatar,
+            }}
+            product={{
+              id: product.id,
+              name: product.name,
+              price: Number(product.price),
+              images: product.images ?? [],
+            }}
+            mode={chatMode}
+            initialOffer={initialOffer}
+          />
+        )
+      }
 
       <Footer />
     </>

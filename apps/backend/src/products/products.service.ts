@@ -396,6 +396,15 @@ export class ProductsService {
       throw new NotFoundException("Producto no encontrado");
     }
 
+    // Contar chats asociados a este producto en chat_products
+    const { count } = await this.chatRepo
+      .createQueryBuilder("chat")
+      .innerJoin("chat.products", "product", "product.id = :productId", { productId })
+      .select("COUNT(chat.id)", "count")
+      .getRawOne();
+
+    (product as any).active_negotiation = Number(count) || 0;
+
     return product;
   }
 

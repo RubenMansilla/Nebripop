@@ -104,22 +104,11 @@ export class PurchasesService {
     product.sold = true;
     await this.productRepo.save(product);
 
-    // 3.5) Eliminar producto de los chats
-    // Buscamos los chats que tienen este producto
-    const chatsWithProduct = await this.chatRepo.find({
-      where: { products: { id: product.id } },
-      select: ["id"], // Solo necesitamos el ID
-    });
-
-    // Usamos QueryBuilder 'relation' para borrar solo esa entrada de la tabla intermedia
-    // sin afectar a los otros productos del chat.
-    for (const chat of chatsWithProduct) {
-      await this.chatRepo
-        .createQueryBuilder()
-        .relation(Chat, "products")
-        .of(chat.id)
-        .remove(product.id);
-    }
+    // 3.5) Eliminar producto de todos los chats donde aparezca
+    await this.chatRepo.query(
+      `DELETE FROM chat_products WHERE product_id = $1`,
+      [product.id],
+    );
 
     // 4) Crear compra guardando el TOTAL real pagado
     const purchase = this.purchaseRepo.create({
@@ -127,7 +116,6 @@ export class PurchasesService {
       sellerId: String(product.owner_id) as any,
       productId: product.id,
 
-      // ✅ IMPORTANTE: aquí guardas el TOTAL real pagado
       price: totalToCharge,
 
       paymentMethod,
