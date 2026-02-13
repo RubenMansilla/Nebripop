@@ -12,6 +12,7 @@
   [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
   [![Supabase](https://img.shields.io/badge/Supabase-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E)](https://supabase.com/)
+  [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white)](https://socket.io/)
 
   <br />
 
@@ -23,54 +24,93 @@
 
 ## About the Project
 
-**NebriPop** is a robust, full-stack **C2C (Consumer-to-Consumer) marketplace** designed to facilitate the buying and selling of second-hand goods. Inspired by platforms like Wallapop or Vinted, it provides a seamless experience for users to list products, negotiate via real-time chat, and manage transactions securely.
+**NebriPop** is a full-stack **C2C (Consumer-to-Consumer) marketplace** for buying and selling second-hand goods. Inspired by platforms like Wallapop or Vinted, it offers a complete experience: list products, negotiate in real time, purchase securely, and participate in live auctions — all from one place.
 
-The platform is built with a focus on scalability and performance, utilizing **NestJS** for a solid backend architecture and **React** for a responsive, mobile-first frontend experience.
+Built with **React** on the frontend and **NestJS** on the backend, with a responsive, mobile-first design.
+
+---
 
 ## Key Features
 
-### Marketplace Core
-- **Product Management:** Users can upload products with multiple images, categories, and detailed descriptions.
-- **Advanced Search & Filters:** Filter by price range, date, category, and keywords.
-- **Favorites System:** Save items for later.
+### 🛒 Marketplace
+- Upload products with multiple images, categories, subcategories, and detailed descriptions (condition, color, material, dimensions).
+- All images are automatically optimized for fast loading.
+- Advanced search with filters by price range, publication date, category, and keywords.
+- Save your favorite products and auctions. Get notified when a product you follow drops in price.
+- Products under active negotiation are flagged, preventing other buyers from purchasing them until the conversation concludes.
 
-### Real-Time & Interaction
-- **Live Chat:** Integrated messaging system using **Socket.io**. Buyers and sellers can negotiate deals instantly without refreshing the page.
-- **Notification System:** Real-time alerts for new messages and product updates. Includes a user preference center to **toggle notifications ON/OFF**.
+### 🔨 Auctions
+- Sellers can create timed auctions with a starting price and a custom end time.
+- Users place bids that must exceed the current highest offer, with a live countdown and full bid history visible.
+- **Automatic notifications** alert all bidders as the auction nears its end (5h, 1h, 30min, 10min, 5min).
+- When the auction finishes, the highest bidder wins and has **48 hours to complete the payment**.
+- If the winner doesn't pay, the system **automatically penalizes** them and **reassigns the auction** to the next highest bidder.
+- Auctions with no bids or no remaining valid bidders expire automatically, and the seller is notified.
 
-### Analytics & Engagement
-- **View Counters:** Unique view tracking logic (filtering owner views and repeated visits via IP/User ID).
-- **Public Profiles:** View seller ratings, active products, and transaction history.
-- **Reviews:** Rating system for completed transactions.
+### ⚠️ Penalty System
+A progressive **3-strike system** to discourage non-payment and ensure fair play:
 
-### Financial System (Wallet)
-- **Integrated Wallet:** Users have a virtual balance to receive payments or make purchases.
-- **Transactions:** Deposit and withdrawal simulation.
+| Strike | Consequence | Duration |
+|--------|------------|----------|
+| **Strike 1** | Warning — the user can still participate | 30 days |
+| **Strike 2** | Blocked from bidding and creating auctions | 180 days |
+| **Strike 3** | **Permanent ban** from all auction activity | Permanent |
 
-### Security & Architecture
-- **Authentication:** JWT-based auth (Access & Refresh tokens).
-- **Role-Based Access:** Distinction between public/private routes.
-- **Data Integrity:** PostgreSQL with TypeORM for strict data modeling and relationships.
+- Repeat offenders face exponentially longer restriction periods.
+- Penalties expire automatically after their duration. Permanent bans do not expire.
+
+### 💬 Real-Time Chat & Offers
+- Integrated messaging system where buyers and sellers can negotiate deals instantly via live chat.
+- Users can send price offers directly in the conversation. If accepted, the agreed price is used at checkout.
+- Each conversation is linked to the products being discussed, and products are automatically unlinked when sold.
+
+### 🔔 Notifications
+- Real-time notifications for messages, auction countdowns, wins, payment reminders, penalties, price drops, and transaction updates.
+- Outdated notifications are automatically replaced to keep things clean.
+- Users can customize which notification categories they want to receive from a preferences panel.
+
+### 📊 Statistics & Profiles
+- Unique view counter for each product, filtering out repeated visits and owner views.
+- Seller dashboard with financial charts (income, expenses, sales, reviews) filterable by week, month, or year.
+- Top products ranking by views, favorites, and activity.
+- Public profiles showing seller ratings, active listings, and review history.
+- Review system for completed transactions.
+
+### 💰 Wallet & Checkout
+- Each user has a virtual wallet to receive payments and make purchases.
+- Simulated deposit and withdrawal operations.
+- Full checkout flow with shipping details, 21% IVA calculation, shipping costs, and support for wallet or PayPal payment methods.
+- If a price was negotiated via chat, the checkout automatically uses the agreed amount.
+
+### 🔐 Security
+- JWT-based authentication with access and refresh tokens.
+- Public and private routes with role-based access control.
+- Passwords securely hashed.
+- Strict data integrity with relational constraints.
+- Transactional email system for account-related communications.
 
 ---
 
 ## Tech Stack
 
 ### Frontend
-- **Framework:** React.js (Vite)
-- **Language:** TypeScript
-- **Styling:** CSS Modules / Responsive Design (Mobile First)
-- **State Management:** React Context API
-- **Routing:** React Router DOM
-- **HTTP Client:** Axios
+- **React.js** (Vite) — UI Framework
+- **TypeScript** — Type Safety
+- **CSS** — Responsive, Mobile-First Styling
+- **React Context API** — State Management
+- **React Router DOM** — Client-Side Routing
+- **Axios** — HTTP Client
+- **Socket.io Client** — Real-Time Communication
 
 ### Backend
-- **Framework:** NestJS
-- **Language:** TypeScript
-- **Database:** PostgreSQL (hosted on Supabase)
-- **ORM:** TypeORM
-- **Real-time:** Socket.io (for Chat)
-- **File Storage:** Supabase Storage / Multer
+- **NestJS** — Server Framework
+- **TypeScript** — Type Safety
+- **PostgreSQL** (Supabase) — Relational Database
+- **TypeORM** — ORM & Data Modeling
+- **Socket.io** — Real-Time Chat
+- **Supabase Storage** — Image Hosting
+- **Sharp** — Image Optimization
+- **Cron Scheduler** — Automated Auction Lifecycle
 
 ---
 
