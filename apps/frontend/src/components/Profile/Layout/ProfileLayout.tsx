@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import './ProfileLayout.css';
 import Navbar from "../../Navbar/Navbar";
@@ -10,6 +11,24 @@ export default function ProfileLayout() {
     const location = useLocation();
 
     const isChatPage = location.pathname.includes('/chat');
+
+    useEffect(() => {
+        const navbar = document.querySelector('.header-block-container');
+        const catBar = document.querySelector('.category-block-container');
+        if (!navbar || !catBar) return;
+
+        const update = () => {
+            const total = navbar.getBoundingClientRect().height + catBar.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--header-total-height', `${total}px`);
+        };
+
+        const ro = new ResizeObserver(update);
+        ro.observe(navbar);
+        ro.observe(catBar);
+        update();
+
+        return () => ro.disconnect();
+    }, []);
 
     return (
         <>

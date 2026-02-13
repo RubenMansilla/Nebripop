@@ -16,7 +16,7 @@
 .sidebar-container {
     width: 100%;
     margin: auto;
-    height: calc(100vh - 82px - 72px);
+    height: calc(100dvh - var(--header-total-height, 154px));
     max-height: 100vh;
     display: flex;
     justify-content: center;
@@ -52,11 +52,7 @@
     flex-wrap: nowrap;
 }
 
-@media (max-width: 1000px) and (min-width: 800px) {
-    .sidebar-container {
-        height: calc(100vh - 153.6px);
-    }
-}
+
 
 @media (max-width: 990px) {
 
@@ -78,12 +74,5 @@
 
     .hide-left-sidebar {
         display: none;
-    }
-}
-
-@media (max-width: 800px) {
-    .sidebar-container {
-        width: 100%;
-        height: calc(100vh - 134px);
     }
 }

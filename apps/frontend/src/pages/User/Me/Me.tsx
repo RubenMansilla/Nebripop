@@ -25,6 +25,24 @@ export default function Me() {
         }
     }, [user, navigate]);
 
+    useEffect(() => {
+        const navbar = document.querySelector('.header-block-container');
+        const catBar = document.querySelector('.category-block-container');
+        if (!navbar || !catBar) return;
+
+        const update = () => {
+            const total = navbar.getBoundingClientRect().height + catBar.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--header-total-height', `${total}px`);
+        };
+
+        const ro = new ResizeObserver(update);
+        ro.observe(navbar);
+        ro.observe(catBar);
+        update();
+
+        return () => ro.disconnect();
+    }, []);
+
     if (!user) return null;
 
     return (
