@@ -18,7 +18,7 @@
 
 .ad-image {
     width: 100%;
-    height: 100%;
+    height: 600px;
     object-fit: cover;
     border-radius: 16px;
 }
@@ -200,6 +200,7 @@
     color: #4b4b4b;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
@@ -500,11 +501,10 @@
     }
 
     .detail-main {
-        width: 100%;
+        width: 98%;
     }
 
     .right-sidebar {
-        width: 100%;
-        max-width: 600px;
+        width: 98%;
     }
 }

@@ -92,13 +92,6 @@ export default function Detail() {
   useEffect(() => {
     // Inicializar con uno aleatorio
     setAdIndex(Math.floor(Math.random() * AD_IMAGES.length));
-
-    // Rotar cada 4 segundos
-    const interval = setInterval(() => {
-      setAdIndex((prev) => (prev + 1) % AD_IMAGES.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
   }, []);
 
   // --- fallback para ID del usuario logueado (main) + preferencia AuthContext ---
@@ -296,7 +289,7 @@ export default function Detail() {
             key={adIndex}
             src={AD_IMAGES[adIndex]}
             alt="Publicidad"
-            className="ad-image fade-in"
+            className="ad-image"
             onError={() => {
               // Si falla la imagen, saltamos a la siguiente
               setAdIndex((prev) => (prev + 1) % AD_IMAGES.length);

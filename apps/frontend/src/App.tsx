@@ -65,12 +65,14 @@ import AuctionsHistory from "./pages/User/Auctions/HistoryAuctions/AuctionsHisto
 import AuctionList from "./pages/Auctions/AuctionList";
 import AuctionDetail from "./pages/Auctions/AuctionDetail";
 
+import ScrollToTop from "./components/ScrollToTop";
+
 export default function App() {
     return (
         <AuthProvider>
             <LoginModalProvider>
                 <BrowserRouter>
-
+                    <ScrollToTop />
                     <NotificationListener />
 
                     <Routes>

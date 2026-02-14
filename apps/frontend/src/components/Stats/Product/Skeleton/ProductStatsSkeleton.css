@@ -22,7 +22,7 @@
 .skeleton-text {
     height: 14px;
     width: 100%;
-    margin-bottom: 6px;
+    /* margin-bottom eliminado porque la estructura lo maneja */
 }
 
 .skeleton-text.short {
@@ -50,29 +50,8 @@
     border-radius: 6px;
 }
 
-/* PRECIOS */
-.skeleton-price {
-    height: 16px;
-    width: 50px;
-    border-radius: 4px;
-}
-
-/* Control de visibilidad del precio esqueleto igual que el real */
-.desktop-price-skeleton {
-    display: block;
-}
-
-.mobile-price-skeleton {
-    width: 60px;
-    height: 20px;
-}
-
+/* Responsive adjustments matching ProductStats */
 @media (max-width: 900px) {
-
-    /* Ocultar precio desktop en móvil */
-    .desktop-price-skeleton {
-        display: none;
-    }
 
     /* Ajustar imagen en móvil */
     .skeleton-img {
@@ -80,7 +59,7 @@
         height: 80px;
     }
 
-    /* Ajustar stats en móvil (cajas más grandes) */
+    /* Ajustar stats en móvil */
     .skeleton-stat {
         width: 100%;
         height: 24px;
@@ -90,7 +69,7 @@
 
 @media (max-width: 400px) {
 
-    /* Ajuste micro-móvil para coincidir con tu corrección anterior */
+    /* Ajuste micro-móvil */
     .skeleton-img {
         width: 55px;
         height: 55px;

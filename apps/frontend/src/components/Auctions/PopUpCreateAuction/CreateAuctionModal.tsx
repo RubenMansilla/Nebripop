@@ -52,7 +52,7 @@ export default function CreateAuctionModal({
                 `Subasta creada correctamente.`,
                 "success",
             );
-            onClose();
+            onAuctionCreated();
         } catch (error: any) {
             toast.error(error.message || 'Error al crear la subasta');
             console.error(error);

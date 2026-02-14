@@ -26,19 +26,7 @@
     border-radius: 16px;
   }
 
-  .ad-image.fade-in {
-    animation: fadeInAd 1.5s ease-in-out;
-  }
 
-  @keyframes fadeInAd {
-    from {
-      opacity: 0.2;
-    }
-
-    to {
-      opacity: 1;
-    }
-  }
 
 
   /* ======================================================
@@ -137,6 +125,8 @@
     align-items: center;
     justify-content: center;
     z-index: 3;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
 
   .image-arrow.left {
@@ -864,7 +854,7 @@
 
     .seller-reviews.mobile-only {
       order: 8;
-      width: 100%;
+      width: 98%;
       padding-top: 20px;
       border-top: 1.5px solid #e6d8c3;
     }

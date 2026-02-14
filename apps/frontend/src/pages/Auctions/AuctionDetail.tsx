@@ -21,6 +21,15 @@ import { getCategoryIcon } from "../../utils/categoryIcons";
 import { getSubcategoryIcon } from "../../utils/subcategoryIcons";
 import AuctionDetailSkeleton from "../../components/AuctionDetailSkeleton/AuctionDetailSkeleton";
 
+const AD_IMAGES = [
+    "/assets/publicidad/set1_2.png",
+    "/assets/publicidad/set1_3.png",
+    "/assets/publicidad/set1_4.png",
+    "/assets/publicidad/set2_1.png",
+    "/assets/publicidad/set2_3.png",
+    "/assets/publicidad/set2_4.png",
+];
+
 export default function AuctionDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -51,6 +60,13 @@ export default function AuctionDetail() {
 
     // Image Gallery State
     const [currentImage, setCurrentImage] = useState(0);
+
+    const [adIndex, setAdIndex] = useState(0);
+
+    useEffect(() => {
+        // Inicializar con uno aleatorio
+        setAdIndex(Math.floor(Math.random() * AD_IMAGES.length));
+    }, []);
 
     // Initial Load
     useEffect(() => {
@@ -282,9 +298,14 @@ export default function AuctionDetail() {
                 {/* 1. LEFT SIDEBAR (Ad) */}
                 <div className="left-sidebar">
                     <img
-                        src="https://via.placeholder.com/300x600.png?text=Publicidad"
+                        key={adIndex}
+                        src={AD_IMAGES[adIndex]}
                         alt="Publicidad"
                         className="ad-image"
+                        onError={() => {
+                            // Si falla la imagen, saltamos a la siguiente
+                            setAdIndex((prev) => (prev + 1) % AD_IMAGES.length);
+                        }}
                     />
                 </div>
 

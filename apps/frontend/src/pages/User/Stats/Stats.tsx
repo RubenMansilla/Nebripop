@@ -1,9 +1,6 @@
 import './Stats.css'
 import { useEffect, useState, useContext } from 'react';
 import { AuthContext } from "../../../context/AuthContext";
-import Navbar from '../../../components/Navbar/Navbar'
-import CategoriesBar from '../../../components/CategoriesBar/CategoriesBar'
-import ProfileSideBar from '../../../components/Profile/ProfileSideBar/ProfileSideBar';
 import ProductStats from '../../../components/Stats/Product/ProductStats';
 import FinanceStats from '../../../components/Stats/Finance/FinanceStats';
 import { getMostViewedProducts, getFinancialStats } from "../../../api/products.api";
