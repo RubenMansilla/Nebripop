@@ -26,7 +26,9 @@ type ChatPopupMode = "message" | "offer";
 // COMPONENTE SKELETON PARA CARGA
 const DetailSkeleton = () => (
   <div className="detail-container skeleton-active">
-    <div className="left-sidebar skeleton-item" style={{ height: "600px" }}></div>
+    <div className="left-sidebar">
+      <div className="skeleton-item" style={{ height: "600px", borderRadius: "16px" }}></div>
+    </div>
     <div className="detail-main">
       <div className="image-wrapper skeleton-item" style={{ aspectRatio: "4/3" }}></div>
       <div className="skeleton-item" style={{ height: "40px", width: "70%", marginTop: "20px" }}></div>
@@ -38,6 +40,15 @@ const DetailSkeleton = () => (
     </div>
   </div>
 );
+
+const AD_IMAGES = [
+  "/assets/publicidad/set1_2.png",
+  "/assets/publicidad/set1_3.png",
+  "/assets/publicidad/set1_4.png",
+  "/assets/publicidad/set2_1.png",
+  "/assets/publicidad/set2_3.png",
+  "/assets/publicidad/set2_4.png",
+];
 
 export default function Detail() {
   const { productId } = useParams();
@@ -75,6 +86,20 @@ export default function Detail() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMode, setChatMode] = useState<ChatPopupMode>("message");
   const [initialOffer, setInitialOffer] = useState<number | null>(null);
+
+  const [adIndex, setAdIndex] = useState(0);
+
+  useEffect(() => {
+    // Inicializar con uno aleatorio
+    setAdIndex(Math.floor(Math.random() * AD_IMAGES.length));
+
+    // Rotar cada 4 segundos
+    const interval = setInterval(() => {
+      setAdIndex((prev) => (prev + 1) % AD_IMAGES.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // --- fallback para ID del usuario logueado (main) + preferencia AuthContext ---
   const currentUserId = useMemo(() => {
@@ -268,9 +293,14 @@ export default function Detail() {
       <div className="detail-container">
         <div className="left-sidebar">
           <img
-            src="https://via.placeholder.com/300x600.png?text=Publicidad"
+            key={adIndex}
+            src={AD_IMAGES[adIndex]}
             alt="Publicidad"
-            className="ad-image"
+            className="ad-image fade-in"
+            onError={() => {
+              // Si falla la imagen, saltamos a la siguiente
+              setAdIndex((prev) => (prev + 1) % AD_IMAGES.length);
+            }}
           />
         </div>
 
@@ -380,7 +410,7 @@ export default function Detail() {
 
             {product.location && <div className="product-location">📍 {product.location}</div>}
 
-            <div className="seller-reviews">
+            <div className="seller-reviews desktop-only">
               <h3 className="section-title">
                 ⭐ {reviewSummary.average.toFixed(1)} · {sellerName} – {reviewSummary.total} valoraciones
               </h3>
@@ -568,6 +598,32 @@ export default function Detail() {
               </>
             )}
           </div>
+        </div>
+
+        <div className="seller-reviews mobile-only">
+          <h3 className="section-title">
+            ⭐ {reviewSummary.average.toFixed(1)} · {sellerName} – {reviewSummary.total} valoraciones
+          </h3>
+
+          {reviews.length === 0 ? (
+            <p className="no-reviews">Este vendedor aún no tiene valoraciones</p>
+          ) : (
+            reviews.map((rev) => (
+              <Review
+                key={rev.id}
+                mode="public"
+                review={{
+                  ...rev,
+                  reviewer: {
+                    ...rev.reviewer,
+                    fullName: rev.reviewer?.full_name || rev.reviewer?.full_name || "Usuario",
+                    profilePicture: rev.reviewer?.profile_picture || rev.reviewer?.profilePicture,
+                  },
+                  product: rev.product || { id: product.id, name: product.name, images: product.images },
+                }}
+              />
+            ))
+          )}
         </div>
       </div >
 

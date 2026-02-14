@@ -21,9 +21,23 @@
 
   .ad-image {
     width: 100%;
-    height: 100%;
+    height: 600px;
     object-fit: cover;
     border-radius: 16px;
+  }
+
+  .ad-image.fade-in {
+    animation: fadeInAd 1.5s ease-in-out;
+  }
+
+  @keyframes fadeInAd {
+    from {
+      opacity: 0.2;
+    }
+
+    to {
+      opacity: 1;
+    }
   }
 
 
@@ -315,6 +329,10 @@
     padding: 20px 0;
   }
 
+  .mobile-only {
+    display: none !important;
+  }
+
   .review {
     margin: 25px 0 0 0;
   }
@@ -379,6 +397,7 @@
     /* Solución para nombres infinitos */
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     /* Máximo 2 líneas, luego puntos suspensivos */
     -webkit-box-orient: vertical;
     overflow: hidden;
@@ -733,6 +752,7 @@
     /* Truncado a 2 líneas */
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     word-break: break-word;
@@ -798,21 +818,68 @@
 
     /* El sidebar de publicidad suele ocultarse en móvil para ahorrar espacio */
     .left-sidebar {
-      display: none;
+      display: none !important;
     }
 
-    .detail-main {
-      width: 100%;
-      /* Ocupa todo el ancho */
-      order: 1;
-      /* La info del producto va primero */
-    }
-
+    .detail-main,
     .right-sidebar {
+      display: contents;
+    }
+
+    /* Order of elements in mobile */
+    .breadcrumb {
+      order: 1;
       width: 100%;
-      /* La tarjeta de compra y vendedor ocupan todo el ancho */
+    }
+
+    .product-images {
       order: 2;
-      /* Aparecen debajo de las imágenes y descripción */
+      width: 100%;
+    }
+
+    .product-tags {
+      order: 3;
+      width: 100%;
+    }
+
+    .detail-buy-card {
+      order: 4;
+      width: 100%;
+    }
+
+    .seller-card {
+      order: 5;
+      width: 100%;
+    }
+
+    .shipping-card {
+      order: 6;
+      width: 100%;
+    }
+
+    .product-details {
+      order: 7;
+      width: 100%;
+    }
+
+    .seller-reviews.mobile-only {
+      order: 8;
+      width: 100%;
+      padding-top: 20px;
+      border-top: 1.5px solid #e6d8c3;
+    }
+
+    .seller-reviews {
+      padding-top: 20px;
+      border-top: 1.5px solid #e6d8c3;
+    }
+
+    .desktop-only {
+      display: none !important;
+    }
+
+    .mobile-only {
+      display: block !important;
     }
 
     /* Ajustamos la galería para que no sea tan alta en pantallas pequeñas */
