@@ -118,11 +118,11 @@ A progressive **3-strike system** to discourage non-payment and ensure fair play
 
 | Home Page | Product Detail |
 |:---:|:---:|
-| <img src="https://via.placeholder.com/300x600?text=Home+Screen" width="300"> | <img src="https://via.placeholder.com/300x600?text=Product+Detail" width="300"> |
+| <img src="./doc/assets/Home.png" width="300"> | <img src="./doc/assets/ProductDetail.png" width="300"> |
 
-| Wallet & Stats | User Profile |
+| Real-Time Chat & Offers | User Profile |
 |:---:|:---:|
-| <img src="https://via.placeholder.com/300x600?text=Wallet" width="300"> | <img src="https://via.placeholder.com/300x600?text=Profile" width="300"> |
+| <img src="./doc/assets/Chat.png" width="300"> | <img src="./doc/assets/Profile.png" width="300"> |
 
 ---
 
