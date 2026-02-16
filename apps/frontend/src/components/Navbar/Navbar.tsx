@@ -8,8 +8,8 @@ import { useLoginModal } from "../../context/LoginModalContext";
 import { getAllProducts } from "../../api/products.api";
 
 // Assets
-import logo from "../../assets/logos/nebripop.png";
-import logoSmall from "../../assets/logos/nebripop-fav-icon.png";
+import logo from "../../assets/logos/nebripop.webp";
+import logoSmall from "../../assets/logos/nebripop-fav-icon.webp";
 import searchIcon from "../../assets/iconos/buscar.png";
 
 export default function Navbar() {

@@ -9,7 +9,7 @@ import "./Home.css";
 // 1. IMPORTACIÓN DE ASSETS (Esto soluciona el problema del host)
 import bolsa from "../../assets/iconos/bolsa.png";
 import userIcon from "../../assets/home/user-icon.png";
-import aboutWorkImg from "../../assets/home/about-work.jpg";
+import aboutWorkImg from "../../assets/home/about-work.webp";
 
 import { HOME_CATEGORIES } from "../../data/homeCategories";
 import type { HomeCategoryBlock } from "../../data/homeCategories";
