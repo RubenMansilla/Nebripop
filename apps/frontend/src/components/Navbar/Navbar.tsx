@@ -188,6 +188,7 @@ export default function Navbar() {
                   ref={inputRef}
                   className="search"
                   type="text"
+                  aria-label="Buscar"
                   placeholder=" "
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)} // Esto actualiza el estado
@@ -259,13 +260,13 @@ export default function Navbar() {
                 ref={inputRef}
                 className="search"
                 type="text"
+                aria-label="Buscar"
                 placeholder=" "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} // Esto actualiza el estado
               />
               <img src={searchIcon} className="icon" alt="buscar" />
 
-              {/* MODIFICACIÓN AQUÍ: Añadimos la clase 'hidden' si searchQuery tiene texto */}
               <div
                 className={`fake-placeholder ${searchQuery.length > 0 ? "hidden" : ""}`}
                 ref={placeholderRef}
@@ -331,6 +332,7 @@ export default function Navbar() {
                 ref={inputRef}
                 className="search"
                 type="text"
+                aria-label="Buscar"
                 placeholder=" "
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)} // Esto actualiza el estado

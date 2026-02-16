@@ -12,7 +12,7 @@ export default function ProfileLayout() {
 
     const isChatPage = location.pathname.includes('/chat');
 
-    const sidebarRightRef = useRef<HTMLDivElement>(null);
+    const sidebarRightRef = useRef<HTMLElement>(null);
 
     useEffect(() => {
         if (sidebarRightRef.current) {
@@ -48,9 +48,9 @@ export default function ProfileLayout() {
                 <div className='hide-left-sidebar'>
                     <ProfileSideBar />
                 </div>
-                <div ref={sidebarRightRef} className={`sidebar-right ${isChatPage ? 'chat-mode' : ''}`}>
+                <main ref={sidebarRightRef} className={`sidebar-right ${isChatPage ? 'chat-mode' : ''}`}>
                     <Outlet />
-                </div>
+                </main>
             </section>
         </>
 
