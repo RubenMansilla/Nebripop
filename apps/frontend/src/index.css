@@ -215,6 +215,7 @@ button,
 [type="reset"],
 [type="submit"] {
     -webkit-appearance: button;
+    appearance: button;
 }
 
 /**
@@ -326,6 +327,7 @@ textarea {
 
 [type="search"]::-webkit-search-decoration {
     -webkit-appearance: none;
+    appearance: none;
 }
 
 /**
