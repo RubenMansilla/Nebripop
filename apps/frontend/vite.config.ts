@@ -9,13 +9,15 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
 
-          // Core
-          if (id.includes("react-dom") || id.includes("react")) return "react";
-          if (id.includes("react-router-dom")) return "router";
-
           // UI / icons
-          if (id.includes("lucide-react")) return "icons";
+          if (id.includes("lucide-react") || id.includes("lucide")) return "icons";
           if (id.includes("react-icons")) return "react-icons";
+
+          // Core Routing
+          if (id.includes("react-router-dom") || id.includes("react-router")) return "router";
+
+          // Core React
+          if (id.includes("/node_modules/react/") || id.includes("/node_modules/react-dom/")) return "react";
 
           // Data / realtime
           if (id.includes("@supabase/supabase-js")) return "supabase";
