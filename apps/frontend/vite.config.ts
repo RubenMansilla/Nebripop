@@ -9,28 +9,41 @@ export default defineConfig({
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
 
-          // UI / icons
-          if (id.includes("lucide-react") || id.includes("lucide")) return "icons";
-          if (id.includes("react-icons")) return "react-icons";
+          // 1. Core React (Group ALL core dependencies to avoid init errors)
+          if (
+            id.includes("/node_modules/react/") ||
+            id.includes("/node_modules/react-dom/") ||
+            id.includes("/node_modules/react-router/") ||
+            id.includes("/node_modules/react-router-dom/") ||
+            id.includes("/node_modules/scheduler/")
+          ) {
+            return "vendor-react";
+          }
 
-          // Core Routing
-          if (id.includes("react-router-dom") || id.includes("react-router")) return "router";
+          // 2. UI & Icons (Heavy but independent)
+          if (
+            id.includes("/node_modules/lucide-react/") ||
+            id.includes("/node_modules/lucide/") ||
+            id.includes("/node_modules/react-icons/")
+          ) {
+            return "vendor-icons";
+          }
 
-          // Core React
-          if (id.includes("/node_modules/react/") || id.includes("/node_modules/react-dom/")) return "react";
+          // 3. Data & Realtime
+          if (
+            id.includes("/node_modules/@supabase/") ||
+            id.includes("/node_modules/socket.io-client/")
+          ) {
+            return "vendor-data";
+          }
 
-          // Data / realtime
-          if (id.includes("@supabase/supabase-js")) return "supabase";
-          if (id.includes("socket.io-client")) return "socket";
+          // 4. Heavy Features
+          if (id.includes("/node_modules/recharts/")) return "vendor-charts";
+          if (id.includes("/node_modules/jspdf/")) return "vendor-pdf";
+          if (id.includes("/node_modules/browser-image-compression/")) return "vendor-image";
+          if (id.includes("/node_modules/axios/")) return "vendor-http";
 
-          // Heavy features
-          if (id.includes("recharts")) return "charts";
-          if (id.includes("jspdf")) return "pdf";
-          if (id.includes("browser-image-compression")) return "image-tools";
-
-          // Misc
-          if (id.includes("axios")) return "http";
-
+          // Default vendor chunk for everything else
           return "vendor";
         },
       },
