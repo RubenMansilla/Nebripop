@@ -32,7 +32,7 @@ export class AuthService {
     // ✅ AÑADIDO: tabla password_resets
     @InjectRepository(PasswordResetEntity)
     private passwordResetRepo: Repository<PasswordResetEntity>,
-  ) {}
+  ) { }
 
   // --- LOGIN ---
   async login(data: LoginDto) {
@@ -161,7 +161,11 @@ export class AuthService {
     const frontendUrl = this.config.get<string>('FRONTEND_URL') || 'http://localhost:5173';
     const resetLink = `${frontendUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
-    await this.mailService.sendPasswordResetEmail(user.email, resetLink);
+    // 🚀 Enviar el correo en segundo plano (sin await) para que la respuesta sea inmediata
+    // y la vista no se quede en "Enviando..." si el servidor de correo o Render es muy lento
+    this.mailService.sendPasswordResetEmail(user.email, resetLink).catch(err => {
+      console.error(`forgotPassword: Fallo crítico al enviar email a ${user.email} ->`, err);
+    });
 
     return generic;
   }
