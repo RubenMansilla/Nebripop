@@ -79,9 +79,10 @@ export default function App() {
 
                         {/* PUBLIC ROUTES */}
                         <Route path="/" element={<Home />} />
+                        <Route path="/reset-password" element={<Home />} />
 
                         {/* Footer pages */}
-                        <Route path="/quienes-somos" element={<About />} />
+                        <Route path="/quienes-somos" element={<About />} /> 
                         <Route path="/como-funciona" element={<HowItWorks />} />
                         <Route path="/empleo" element={<Jobs />} />
                         <Route path="/sostenibilidad" element={<Sustainability />} />

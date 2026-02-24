@@ -128,6 +128,7 @@ export default function LoginPopup({
       setTimeout(() => {
         setIsResetMode(false);
         setResetEmail("");
+        setSuccessMsg(null);
       }, 2000);
     } catch (err: any) {
       const msg =

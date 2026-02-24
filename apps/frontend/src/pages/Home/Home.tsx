@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
+import ResetPasswordPopup from "../../components/LoginPopup/ResetPasswordPopup";
+import { useSearchParams } from "react-router-dom";
 import "./Home.css";
 
 // 1. IMPORTACIÓN DE ASSETS (Esto soluciona el problema del host)
@@ -20,6 +22,11 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export default function Home() {
   const [randomCategories, setRandomCategories] = useState<HomeCategoryBlock[]>([]);
+  const [searchParams] = useSearchParams();
+
+  // Si venimos de un enlace de recuperación con el token, abrimos el popup de reset
+  const hasResetToken = !!searchParams.get("token") && window.location.pathname === "/reset-password";
+  const [resetPopupOpen, setResetPopupOpen] = useState(hasResetToken);
 
   useEffect(() => {
     const picked = shuffleArray(HOME_CATEGORIES).slice(0, 3);
@@ -30,6 +37,11 @@ export default function Home() {
     <>
       <Navbar />
       <CategoriesBar />
+
+      <ResetPasswordPopup
+        open={resetPopupOpen}
+        onClose={() => setResetPopupOpen(false)}
+      />
 
       <main>
         {/* HERO */}

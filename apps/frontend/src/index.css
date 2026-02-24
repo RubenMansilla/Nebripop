@@ -13,6 +13,8 @@ html {
     /* 1 */
     -webkit-text-size-adjust: 100%;
     /* 2 */
+    color-scheme: light;
+    /* Fuerza al navegador/SO a usar un cursor de texto negro (I-beam) en vez del blanco oscuro */
 }
 
 /* Sections
@@ -182,6 +184,10 @@ textarea {
     /* 1 */
     margin: 0;
     /* 2 */
+    color: #333;
+    caret-color: #333;
+    cursor: text;
+    -webkit-text-fill-color: #333;
 }
 
 /**
