@@ -79,7 +79,7 @@ export default function CategoriesPanel({ open, setOpen }: CategoriesPanelProps)
   }, [setOpen]);
 
   const handleCategoryClick = (cat: Category) => {
-    navigate(`/filtros?category=${cat.id}`);
+    navigate(`/filtros?categoryId=${cat.id}`);
     setOpen(false);
   };
 

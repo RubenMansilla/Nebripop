@@ -67,7 +67,7 @@ export default function Home() {
                 {block.subcategories.map((sub) => (
                   <Link
                     key={sub.id}
-                    to={`/filtros?category=${block.categoryId}&subcategory=${sub.id}`}
+                    to={`/filtros?categoryId=${block.categoryId}&subcategoryId=${sub.id}`}
                     className="category-card"
                   >
                     <div className="card-inner">

@@ -7,6 +7,7 @@ import {
     UseGuards,
     Request,
     Delete,
+    Query,
 } from '@nestjs/common';
 import { AuctionsService } from './auctions.service';
 import { CreateAuctionDto } from './dto/create-auction.dto';
@@ -18,6 +19,19 @@ import { CanParticipateGuard } from '../common/guards/can-participate.guard';
 @Controller('auctions')
 export class AuctionsController {
     constructor(private readonly auctionsService: AuctionsService) { }
+
+    @UseGuards(OptionalJwtAuthGuard)
+    @Get('filter')
+    findFiltered(
+        @Request() req,
+        @Query('categoryId') categoryId?: number,
+        @Query('subcategoryId') subcategoryId?: number,
+        @Query('minPrice') minPrice?: number,
+        @Query('maxPrice') maxPrice?: number,
+    ) {
+        const userId = req.user?.sub ?? req.user?.id;
+        return this.auctionsService.findAll(userId, categoryId, subcategoryId, minPrice, maxPrice);
+    }
 
     @UseGuards(OptionalJwtAuthGuard)
     @Get()

@@ -1,25 +1,34 @@
 import "./CategoriesBar.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import CategoriesPanel from "../CategoriesPanel/CategoriesPanel";
+import { getCategories } from "../../api/categories.api";
+import type { Category } from "../../api/categories.api";
 
 export default function CategoriesBar() {
   const [open, setOpen] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
 
-  const categories = [
-    "Tecnología",
-    "Hogar",
-    "Deportes",
-    "Moda",
-    "Coleccionismo",
-    "Mascotas",
-    "Bricolaje",
-    "Electrodomésticos",
-  ];
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const data = await getCategories();
+        // Filter or limit if needed, or just show first few
+        setCategories(data.slice(0, 8));
+      } catch (error) {
+        console.error("Error fetching categories for bar:", error);
+      }
+    };
+    fetchCats();
+  }, []);
 
-  const goToFilters = () => {
-    navigate("/filtros"); // ✅ endpoint correcto
+  const goToFilters = (categoryId?: number) => {
+    if (categoryId) {
+      navigate(`/filtros?categoryId=${categoryId}`);
+    } else {
+      navigate("/filtros");
+    }
   };
 
   return (
@@ -38,17 +47,17 @@ export default function CategoriesBar() {
 
           {/* CATEGORÍAS */}
           <div className="cat-links">
-            {categories.map((c) => (
+            {categories.map((cat) => (
               <a
-                key={c}
+                key={cat.id}
                 href="#"
                 className="cat-item"
                 onClick={(e) => {
                   e.preventDefault();
-                  goToFilters();
+                  goToFilters(cat.id);
                 }}
               >
-                {c}
+                {cat.name}
               </a>
             ))}
           </div>

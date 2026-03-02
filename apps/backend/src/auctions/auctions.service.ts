@@ -86,7 +86,13 @@ export class AuctionsService {
         return await this.auctionsRepository.save(auction);
     }
 
-    async findAll(userId?: number) {
+    async findAll(
+        userId?: number,
+        categoryId?: number,
+        subcategoryId?: number,
+        minPrice?: number,
+        maxPrice?: number,
+    ) {
         // Build query to get active auctions
         const queryBuilder = this.auctionsRepository
             .createQueryBuilder('auction')
@@ -99,6 +105,22 @@ export class AuctionsService {
         // If user is authenticated, exclude their own auctions
         if (userId) {
             queryBuilder.andWhere('auction.seller_id != :userId', { userId });
+        }
+
+        if (categoryId) {
+            queryBuilder.andWhere('product.category_id = :categoryId', { categoryId });
+        }
+
+        if (subcategoryId) {
+            queryBuilder.andWhere('product.subcategory_id = :subcategoryId', { subcategoryId });
+        }
+
+        if (minPrice !== undefined) {
+            queryBuilder.andWhere('auction.current_bid >= :minPrice', { minPrice });
+        }
+
+        if (maxPrice !== undefined) {
+            queryBuilder.andWhere('auction.current_bid <= :maxPrice', { maxPrice });
         }
 
         const auctions = await queryBuilder.getMany();

@@ -88,13 +88,15 @@ export class ProductsController {
   }
 
   @UseGuards(OptionalJwtAuthGuard)
-  @Get()
-  getAllProducts(
+  @Get("filter")
+  filterProducts(
     @Req() req,
     @Query("categoryId") categoryId?: number,
     @Query("subcategoryId") subcategoryId?: number,
     @Query("minPrice") minPrice?: number,
     @Query("maxPrice") maxPrice?: number,
+    @Query("condition") condition?: string,
+    @Query("shippingActive") shippingActive?: boolean,
     @Query("dateFilter") dateFilter?: "today" | "7days" | "30days",
   ) {
     const userId = req.user?.id || null;
@@ -106,7 +108,16 @@ export class ProductsController {
       minPrice,
       maxPrice,
       dateFilter,
+      condition,
+      shippingActive,
     );
+  }
+
+  @UseGuards(OptionalJwtAuthGuard)
+  @Get()
+  getAllProducts(@Req() req) {
+    const userId = req.user?.id || null;
+    return this.productsService.getAllProducts(userId);
   }
 
   // PERFIL PÚBLICO – PRODUCTOS DE UN USUARIO

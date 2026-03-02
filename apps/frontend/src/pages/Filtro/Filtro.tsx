@@ -2,19 +2,23 @@
 import { useState, useEffect, useContext } from "react";
 import "./Filtro.css";
 import { AuthContext } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
 import Footer from "../../components/Footer/Footer";
 import Product from "../../components/Product/Product";
 
-import { getAllProducts } from "../../api/products.api";
+import { filterProducts } from "../../api/products.api";
 import { getCategories } from "../../api/categories.api";
 import { getSubcategoriesByCategory } from "../../api/subcategories.api";
 
 export default function Filtro() {
     const { token } = useContext(AuthContext);
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const urlCategoryId = searchParams.get("categoryId");
+    const urlSubcategoryId = searchParams.get("subcategoryId");
 
     // ========================
     // ESTADOS PRINCIPALES
@@ -28,9 +32,11 @@ export default function Filtro() {
     const [categories, setCategories] = useState<any[]>([]);
     const [subcategories, setSubcategories] = useState<any[]>([]);
 
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(
+        urlCategoryId ? Number(urlCategoryId) : null
+    );
     const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(
-        null,
+        urlSubcategoryId ? Number(urlSubcategoryId) : null
     );
 
     // Rango de precio que se manda a la API (si lo usas)
@@ -66,12 +72,17 @@ export default function Filtro() {
     useEffect(() => {
         setLoading(true);
 
-        getAllProducts(
+        const condition = conditionFilters.length > 0 ? conditionFilters[0] : undefined;
+        const shippingActive = shippingFilter === "shipping" ? true : (shippingFilter === "person" ? false : undefined);
+
+        filterProducts(
             selectedCategory,
             selectedSubcategory,
             minPrice,
             maxPrice,
             dateFilter,
+            condition,
+            shippingActive
         )
             .then(setProducts)
             .finally(() => setLoading(false));
@@ -82,7 +93,23 @@ export default function Filtro() {
         minPrice,
         maxPrice,
         dateFilter,
+        conditionFilters,
+        shippingFilter,
     ]);
+
+    // Update URL when filters change
+    useEffect(() => {
+        const params: any = {};
+        if (selectedCategory) params.categoryId = selectedCategory.toString();
+        if (selectedSubcategory) params.subcategoryId = selectedSubcategory.toString();
+        setSearchParams(params, { replace: true });
+    }, [selectedCategory, selectedSubcategory]);
+
+    // Update state when URL changes (e.g. back button or direct navigation)
+    useEffect(() => {
+        setSelectedCategory(urlCategoryId ? Number(urlCategoryId) : null);
+        setSelectedSubcategory(urlSubcategoryId ? Number(urlSubcategoryId) : null);
+    }, [urlCategoryId, urlSubcategoryId]);
 
     // Cada vez que cambian productos o filtros → volver a 40 primeros
     useEffect(() => {
@@ -160,22 +187,7 @@ export default function Filtro() {
     // ========================
     // FILTRADO REAL (front)
     // ========================
-    const filteredProducts = products.filter((p) => {
-        const price = Number(p.price);
-        if (Number.isNaN(price)) return false;
-        if (price < min || price > max) return false;
-
-        // ESTADO
-        if (conditionFilters.length > 0 && !conditionFilters.includes(p.condition)) {
-            return false;
-        }
-
-        // ENVÍO
-        if (shippingFilter === "shipping" && !p.shipping_active) return false;
-        if (shippingFilter === "person" && p.shipping_active) return false;
-
-        return true;
-    });
+    const filteredProducts = products;
 
     const paginatedProducts = filteredProducts.slice(0, visibleCount);
 

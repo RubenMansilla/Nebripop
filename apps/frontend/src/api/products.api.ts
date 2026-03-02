@@ -40,7 +40,7 @@ export async function getMyActiveProducts() {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener productos activos",
+      "Error al obtener productos activos",
     );
   }
 }
@@ -53,18 +53,20 @@ export async function getMySoldProducts() {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener productos vendidos",
+      "Error al obtener productos vendidos",
     );
   }
 }
 
-// ---------- TODOS LOS PRODUCTOS (HOME) ----------
-export async function getAllProducts(
+// ---------- FILTRAR PRODUCTOS ----------
+export async function filterProducts(
   categoryId?: number | null,
   subcategoryId?: number | null,
   minPrice?: number,
   maxPrice?: number,
   dateFilter?: "today" | "7days" | "30days",
+  condition?: string,
+  shippingActive?: boolean,
 ) {
   const params: any = {};
 
@@ -73,14 +75,29 @@ export async function getAllProducts(
   if (minPrice !== undefined) params.minPrice = minPrice;
   if (maxPrice !== undefined) params.maxPrice = maxPrice;
   if (dateFilter) params.dateFilter = dateFilter;
+  if (condition) params.condition = condition;
+  if (shippingActive !== undefined) params.shippingActive = shippingActive;
 
   try {
-    const res = await api.get("/products", { params });
+    const res = await api.get("/products/filter", { params });
     return res.data;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener productos",
+      "Error al filtrar productos",
+    );
+  }
+}
+
+// ---------- TODOS LOS PRODUCTOS (HOME) ----------
+export async function getAllProducts() {
+  try {
+    const res = await api.get("/products");
+    return res.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message ||
+      "Error al obtener productos",
     );
   }
 }
@@ -93,7 +110,7 @@ export async function getProductById(productId: string) {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener el producto",
+      "Error al obtener el producto",
     );
   }
 }
@@ -106,7 +123,7 @@ export async function deleteProduct(productId: number) {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "No se pudo eliminar el producto",
+      "No se pudo eliminar el producto",
     );
   }
 }
@@ -119,7 +136,7 @@ export async function getMyPurchasedProducts() {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener productos comprados",
+      "Error al obtener productos comprados",
     );
   }
 }
@@ -132,7 +149,7 @@ export async function getMyBuyingProcessProducts() {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener productos en proceso de compra",
+      "Error al obtener productos en proceso de compra",
     );
   }
 }
@@ -145,7 +162,7 @@ export async function getMySellingProcessProducts() {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener productos en proceso de venta",
+      "Error al obtener productos en proceso de venta",
     );
   }
 }
@@ -158,7 +175,7 @@ export async function getPublicProductsByUser(userId: number) {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error obteniendo productos del usuario",
+      "Error obteniendo productos del usuario",
     );
   }
 }
@@ -171,7 +188,7 @@ export async function getMostViewedProducts() {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener los productos más vistos",
+      "Error al obtener los productos más vistos",
     );
   }
 }
@@ -186,7 +203,7 @@ export async function getFinancialStats(range: string) {
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al obtener las estadísticas financieras",
+      "Error al obtener las estadísticas financieras",
     );
   }
 }
@@ -220,7 +237,7 @@ export async function updateProduct(
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "Error al editar producto",
+      "Error al editar producto",
     );
   }
 }
@@ -238,7 +255,7 @@ export async function deleteProductImage(
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message ||
-        "No se pudo eliminar la imagen",
+      "No se pudo eliminar la imagen",
     );
   }
 }

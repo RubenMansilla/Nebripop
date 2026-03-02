@@ -317,6 +317,8 @@ export class ProductsService {
     minPrice?: number,
     maxPrice?: number,
     dateFilter?: "today" | "7days" | "30days",
+    condition?: string,
+    shippingActive?: boolean,
   ) {
     const where: any = {};
 
@@ -337,6 +339,14 @@ export class ProductsService {
 
     if (minPrice !== undefined && maxPrice !== undefined) {
       where.price = Between(Number(minPrice), Number(maxPrice));
+    }
+
+    if (condition) {
+      where.condition = condition;
+    }
+
+    if (shippingActive !== undefined) {
+      where.shipping_active = shippingActive;
     }
 
     if (dateFilter) {
