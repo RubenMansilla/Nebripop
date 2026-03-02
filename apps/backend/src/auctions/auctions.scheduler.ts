@@ -7,6 +7,7 @@ import { User } from '../users/users.entity';
 import { Bid } from './entities/bid.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { UsersService } from '../users/users.service';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class AuctionsScheduler {
@@ -21,6 +22,7 @@ export class AuctionsScheduler {
         private bidsRepository: Repository<Bid>,
         private notificationsService: NotificationsService,
         private usersService: UsersService,
+        private walletService: WalletService,
     ) { }
 
     // ======================================
@@ -218,7 +220,7 @@ export class AuctionsScheduler {
 
             this.logger.log(`Auction ${auction.id}: Winner ${currentWinner.id} failed to pay. Penalizing.`);
 
-            // 1. Penalize using new penalty system
+            // 1. Penalize using new penalty system (Strikes)
             try {
                 const penaltyResult = await this.usersService.assignPenalty(
                     currentWinner.id,
@@ -227,6 +229,42 @@ export class AuctionsScheduler {
                 this.logger.log(`Penalty assigned to user ${currentWinner.id}: Strike ${penaltyResult.newPenaltyLevel}`);
             } catch (error) {
                 this.logger.error(`Failed to assign penalty to user ${currentWinner.id}:`, error);
+            }
+
+            // 1b. APLICAR PENALIZACIÓN DEL 5% DEL SALDO TOTAL (Nueva lógica solicitada)
+            // "se te quita un 5 porcieerto del dinero de la cuenta y se le da como compensación al dueño de la puja"
+            try {
+                const winnerWallet = await this.walletService.getBalance(currentWinner.id);
+                const penaltyAmount = Number(winnerWallet.balance) * 0.05;
+
+                if (penaltyAmount > 0) {
+                    // Descontar del ganador
+                    await this.walletService.withdraw(currentWinner.id, penaltyAmount);
+                    // Compensar al vendedor
+                    await this.walletService.deposit(auction.seller_id, penaltyAmount);
+
+                    this.logger.log(`Applied 5% penalty (${penaltyAmount.toFixed(2)}€) from winner ${currentWinner.id} to seller ${auction.seller_id}`);
+
+                    // Notificar al vendedor sobre la compensación
+                    await this.notificationsService.create(
+                        auction.seller_id,
+                        `Compensación de ${penaltyAmount.toFixed(2)}€ recibida por impago en "${auction.product.name}".`,
+                        'wallet_update',
+                        auction.product.id
+                    );
+                }
+            } catch (error) {
+                this.logger.error(`Failed to apply 5% balance penalty/compensation:`, error);
+            }
+
+            // 1c. Liberar fondos retenidos (garantía) del ganador que no pagó
+            // Cambiado a 5%
+            try {
+                const retentionAmount = Number(auction.starting_price) * 0.05;
+                await this.walletService.releaseFunds(currentWinner.id, retentionAmount);
+                this.logger.log(`Released ${retentionAmount}€ held funds for user ${currentWinner.id}`);
+            } catch (error) {
+                this.logger.error(`Failed to release held funds for user ${currentWinner.id}:`, error);
             }
 
             // 2. Track failed payment to prevent loops
@@ -301,6 +339,16 @@ export class AuctionsScheduler {
                     'auction_win',
                     auction.product.id
                 );
+
+                // Retener fondos del nuevo ganador como garantía (5%)
+                try {
+                    const retentionAmount = Number(auction.starting_price) * 0.05;
+                    await this.walletService.holdFunds(nextHighestBid.bidder.id, retentionAmount);
+                    this.logger.log(`Held ${retentionAmount}€ for new winner ${nextHighestBid.bidder.id}`);
+                } catch (error) {
+                    // Si no tiene saldo, notificamos pero no cancelamos el flujo
+                    this.logger.warn(`Could not hold funds for new winner ${nextHighestBid.bidder.id}: ${error.message}`);
+                }
             }
 
             await this.auctionsRepository.save(auction);

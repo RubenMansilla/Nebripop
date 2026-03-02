@@ -12,6 +12,7 @@ import { Product } from '../products/products.entity';
 import { User } from '../users/users.entity';
 import { PurchasesService } from '../purchases/purchases.service';
 import { FavoriteAuction } from '../favorites/favorite-auction.entity';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class AuctionsService {
@@ -25,6 +26,7 @@ export class AuctionsService {
         @InjectRepository(FavoriteAuction)
         private favoritesAuctionRepository: Repository<FavoriteAuction>,
         private purchasesService: PurchasesService,
+        private walletService: WalletService,
     ) { }
 
     async create(createAuctionDto: CreateAuctionDto, userId: number) {
@@ -204,8 +206,6 @@ export class AuctionsService {
         }
 
         if (new Date() > auction.end_time) {
-            auction.status = 'completed';
-            await this.auctionsRepository.save(auction);
             throw new BadRequestException('La subasta ha finalizado');
         }
 
@@ -213,10 +213,41 @@ export class AuctionsService {
             throw new BadRequestException(`La puja debe ser mayor a ${auction.current_bid}`);
         }
 
-        // Prevent self-bidding?
         if (Number(auction.seller_id) === Number(userId)) {
             throw new BadRequestException('No puedes pujar en tu propia subasta');
         }
+
+        // ── RETENCIÓN DE FONDOS ──────────────────────────────────────────────
+        // 1. Verificar si tiene saldo suficiente para cubrir la PUJA TOTAL (no solo la garantía)
+        // El usuario pidió: "tienes que tener dinero suficiente en el monedero para poder pujar"
+        const wallet = await this.walletService.getBalance(userId);
+        if (Number(wallet.balance) < Number(amount)) {
+            throw new BadRequestException(
+                `Saldo insuficiente. Para pujar ${amount}€ debes tener esa cantidad disponible en tu monedero.`
+            );
+        }
+
+        // 2. Calcular el 5% del precio inicial como garantía (antes era 10%)
+        const retentionAmount = Number(auction.starting_price) * 0.05;
+
+        // Obtener el pujador anterior (para liberar sus fondos retenidos)
+        const previousHighestBid = await this.bidsRepository.findOne({
+            where: { auction_id: auctionId },
+            order: { amount: 'DESC' },
+        });
+        const previousBidderId = previousHighestBid?.bidder_id;
+
+        // Solo procesar wallet si el nuevo pujador es diferente al anterior
+        if (!previousBidderId || Number(previousBidderId) !== Number(userId)) {
+            // 3. Retener fondos del nuevo pujador (garantía)
+            await this.walletService.holdFunds(userId, retentionAmount);
+
+            // 4. Liberar fondos del pujador anterior (si existe y es diferente)
+            if (previousBidderId && Number(previousBidderId) !== Number(userId)) {
+                await this.walletService.releaseFunds(Number(previousBidderId), retentionAmount);
+            }
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         const bid = this.bidsRepository.create({
             auction_id: auctionId,
@@ -333,6 +364,11 @@ export class AuctionsService {
             throw new BadRequestException('Solo el ganador puede pagar esta subasta');
         }
 
+        // Liberar la retención del ganador antes de procesar el pago
+        // Cambiado a 5% siguiendo la nueva lógica
+        const retentionAmount = Number(auction.starting_price) * 0.05;
+        await this.walletService.releaseFunds(userId, retentionAmount);
+
         // Prepare info for Purchase creation
         const purchasePayload = {
             productId: auction.product_id,
@@ -345,7 +381,7 @@ export class AuctionsService {
 
         // Finalize Auction
         auction.status = 'sold';
-        auction.payment_deadline = null; // Clear deadline
+        auction.payment_deadline = null;
 
         return await this.auctionsRepository.save(auction);
     }

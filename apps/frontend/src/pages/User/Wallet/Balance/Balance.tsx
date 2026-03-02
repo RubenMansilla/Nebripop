@@ -16,6 +16,7 @@ export default function Balance() {
     const { notify } = useNotificationSettings();
 
     const [balance, setBalance] = useState(0);
+    const [heldBalance, setHeldBalance] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const { token } = useContext(AuthContext);
@@ -33,6 +34,7 @@ export default function Balance() {
             getWalletBalance()
                 .then((data) => {
                     setBalance(Number(data.balance));
+                    setHeldBalance(Number(data.heldBalance || 0));
                 })
                 .catch((err) => {
                     console.error("Error cargando saldo:", err);
@@ -56,6 +58,7 @@ export default function Balance() {
         try {
             const updatedWallet = await depositMoney(amount);
             setBalance(Number(updatedWallet.balance));
+            setHeldBalance(Number(updatedWallet.heldBalance || 0));
 
             // Notificación de Éxito
             notify('accountUpdates', `Has recargado ${amount.toFixed(2)}€ en tu monedero.`, 'success');
@@ -71,6 +74,7 @@ export default function Balance() {
         try {
             const updatedWallet = await withdrawMoney(amountToWithdraw);
             setBalance(Number(updatedWallet.balance));
+            setHeldBalance(Number(updatedWallet.heldBalance || 0));
 
             // Notificación de Éxito
             notify('accountUpdates', `Has retirado ${amountToWithdraw.toFixed(2)}€ de tu monedero.`, 'success');
@@ -115,6 +119,21 @@ export default function Balance() {
                     <span className="amount-integer">{displayInteger}</span>
                     <span className="amount-decimal">{displayDecimal}€</span>
                 </div>
+
+                <p className="balance-available-label">Saldo disponible</p>
+
+                {heldBalance > 0 && (
+                    <div className="balance-held-card">
+                        <div className="balance-held-row">
+                            <span>Retenido en subastas</span>
+                            <span className="held-amount">-{heldBalance.toFixed(2)}€</span>
+                        </div>
+                        <div className="balance-held-row balance-held-total">
+                            <span>Saldo total</span>
+                            <span>{(balance + heldBalance).toFixed(2)}€</span>
+                        </div>
+                    </div>
+                )}
 
                 <div className="balance-actions">
                     <div className="action-btn-container" onClick={() => setShowModal(true)}>

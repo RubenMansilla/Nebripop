@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 
 import { useEffect, useState, useContext, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getAuctionById, placeBid, payAuction } from "../../api/auctions.api";
+import { getAuctionById, placeBid } from "../../api/auctions.api";
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import CategoriesBar from "../../components/CategoriesBar/CategoriesBar";
@@ -210,13 +210,7 @@ export default function AuctionDetail() {
     };
 
     const handlePayment = async () => {
-        if (!confirm("¿Confirmar pago de la subasta?")) return;
-        try {
-            await payAuction(auction.id);
-            loadAuction(true);
-        } catch (error: any) {
-            console.error(error.message || "Error al procesar el pago");
-        }
+        navigate(`/checkout?auctionId=${auction.id}`);
     };
 
     // Helpers
@@ -459,11 +453,21 @@ export default function AuctionDetail() {
                                     {auction.status === "active"
                                         ? calculateTimeLeft(auction.end_time)
                                         : auction.status === "awaiting_payment"
-                                            ? "Esperando Pago"
+                                            ? "Pago Pendiente"
                                             : auction.status === "sold"
                                                 ? "VENDIDO"
                                                 : "EXPIRADO"}
                                 </div>
+                                {auction.status === "awaiting_payment" && auction.payment_deadline && (
+                                    <p className="payment-deadline-text" style={{ fontSize: '0.75rem', color: '#e53935', marginTop: '4px', fontWeight: 'bold' }}>
+                                        Límite: {new Date(auction.payment_deadline).toLocaleString([], {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </p>
+                                )}
                             </div>
                         </div>
 
@@ -533,6 +537,9 @@ export default function AuctionDetail() {
                                                 </form>
                                                 <p className="bid-increment-info">
                                                     Incremento mínimo: {bidIncrement}€
+                                                </p>
+                                                <p className="bid-retention-info">
+                                                    💰 Se retendrán {(Number(auction.starting_price) * 0.05).toFixed(2)}€ (5% del precio inicial) como garantía al pujar.
                                                 </p>
                                             </>
                                         )}

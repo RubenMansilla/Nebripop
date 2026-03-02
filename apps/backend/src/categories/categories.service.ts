@@ -8,12 +8,18 @@ export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private categoriesRepo: Repository<Category>
-  ) {}
+  ) { }
 
-  findAll() {
-    return this.categoriesRepo.find({
-      relations: ["subcategories"],
-      order: { name: "ASC" },
-    });
+  async findAll() {
+    try {
+      const categories = await this.categoriesRepo.find({
+        relations: ["subcategories"],
+        order: { name: "ASC" },
+      });
+      return categories;
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      throw error;
+    }
   }
 }

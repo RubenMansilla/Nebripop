@@ -4,6 +4,7 @@ import "./CheckoutPage.css";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { createPurchase } from "../../api/purchases.api";
 import { getProductById } from "../../api/products.api";
+import { getAuctionById, payAuction } from "../../api/auctions.api";
 import { useNotificationSettings } from "../../context/NotificationContext";
 import { toast } from "react-toastify";
 import api from "../../utils/axiosConfig";
@@ -59,6 +60,7 @@ export default function CheckoutPage() {
   // WALLET
   // =========================
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [heldBalance, setHeldBalance] = useState<number>(0);
   const [walletError, setWalletError] = useState<string | null>(null);
 
   // =========================
@@ -102,8 +104,6 @@ export default function CheckoutPage() {
       // 1. Si es SUBASTA
       if (auctionIdParam) {
         try {
-          // Importamos aqui para no romper imports, o mejor arriba si es posible
-          const { getAuctionById } = await import("../../api/auctions.api");
           const auctionData = await getAuctionById(auctionIdParam);
 
           if (!auctionData || !auctionData.product) throw new Error("Datos de subasta inválidos");
@@ -166,6 +166,7 @@ export default function CheckoutPage() {
       try {
         const res = await api.get("/wallet/balance");
         setWalletBalance(Number(res.data.balance));
+        setHeldBalance(Number(res.data.heldBalance || 0));
       } catch (err) {
         console.error("Error obteniendo saldo del monedero", err);
         setWalletError("No se pudo obtener el saldo del monedero.");
@@ -269,8 +270,6 @@ export default function CheckoutPage() {
       // --- LOGICA DIFERENCIADA ---
       if (auctionIdParam) {
         // Pagar Subasta
-        const { payAuction } = await import("../../api/auctions.api");
-        // payAuction necesita aceptar payload shipping ahora
         purchaseResponse = await payAuction(auctionIdParam, payload);
       } else {
         // Compra Normal
@@ -368,9 +367,16 @@ export default function CheckoutPage() {
             </button>
 
             {walletBalance !== null && (
-              <p className="wallet-balance-text">
-                Saldo actual en tu monedero: {formatPrice(walletBalance)}
-              </p>
+              <div className="checkout-wallet-info">
+                <p className="wallet-balance-text">
+                  Saldo disponible: {formatPrice(walletBalance)}
+                </p>
+                {heldBalance > 0 && (
+                  <p className="wallet-held-text" style={{ fontSize: '0.8rem', color: '#666' }}>
+                    Retenido en subastas: {formatPrice(heldBalance)}
+                  </p>
+                )}
+              </div>
             )}
 
             {walletError && (

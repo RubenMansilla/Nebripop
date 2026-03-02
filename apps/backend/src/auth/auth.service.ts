@@ -36,19 +36,24 @@ export class AuthService {
 
   // --- LOGIN ---
   async login(data: LoginDto) {
-    const user = await this.usersService.findByEmail(data.email);
-    if (!user) throw new UnauthorizedException('Credenciales inválidas');
+    try {
+      const user = await this.usersService.findByEmail(data.email);
+      if (!user) throw new UnauthorizedException('Credenciales inválidas');
 
-    const valid = await bcrypt.compare(data.password, user.passwordHash);
-    if (!valid) throw new UnauthorizedException('Credenciales inválidas');
+      const valid = await bcrypt.compare(data.password, user.passwordHash);
+      if (!valid) throw new UnauthorizedException('Credenciales inválidas');
 
-    // Generar los tokens
-    const tokens = await this.getTokens(user.id, user.email);
+      // Generar los tokens
+      const tokens = await this.getTokens(user.id, user.email);
 
-    // Guardar el hash del Refresh Token en BD
-    await this.updateRefreshToken(user.id, tokens.refreshToken);
+      // Guardar el hash del Refresh Token en BD
+      await this.updateRefreshToken(user.id, tokens.refreshToken);
 
-    return { user: this.sanitizeUser(user), ...tokens };
+      return { user: this.sanitizeUser(user), ...tokens };
+    } catch (error) {
+      console.error('Error during login:', error);
+      throw error;
+    }
   }
 
   // --- REGISTRO ---

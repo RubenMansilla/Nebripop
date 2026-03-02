@@ -44,9 +44,9 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
         navigate(`/product/${product.id}`);
     };
 
-    const handleDeleteClickWrapper = (e: React.MouseEvent, id: number) => {
+    const handleDeleteClickWrapper = (e: React.MouseEvent) => {
         e.stopPropagation();
-        handleDeleteClick(id);
+        handleDeleteClick();
     };
 
     const handleEditClick = (e: React.MouseEvent) => {
@@ -90,7 +90,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
     }, [showOptions, product.id]);
 
     /* ================= ELIMINAR PRODUCTO ================= */
-    const handleDeleteClick = (productId: number) => {
+    const handleDeleteClick = () => {
         setShowPopup(true);
     };
 
@@ -192,7 +192,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
 
     return (
         <>
-            <li className="product" onClick={handleCardClick}>
+            <div className="product" onClick={handleCardClick}>
                 <div className="product-img">
                     <div
                         className="slider-track"
@@ -336,7 +336,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                                                         className="popover-option delete"
                                                         onClick={(e) => {
                                                             setShowOptions(false);
-                                                            handleDeleteClickWrapper(e, product.id);
+                                                            handleDeleteClickWrapper(e);
                                                         }}
                                                     >
                                                         <span>Eliminar</span>
@@ -356,7 +356,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                         {product.shipping_active ? (
                             <>
                                 <svg
-                                    xmlns="http://wwwhttp://www.w3.org/2000/svg"
+                                    xmlns="http://www.w3.org/2000/svg"
                                     width="16"
                                     height="16"
                                     fill="#86418a"
@@ -399,7 +399,7 @@ export default function Product({ product, mode, onUnfavorite, onDelete }: Produ
                         )}
                     </div>
                 </div>
-            </li>
+            </div>
             {showPopup && createPortal(
                 <div className="popup-backdrop" onClick={handleCancelDelete}>
                     <div className="unsaved-changes-popup" onClick={(e) => e.stopPropagation()}>

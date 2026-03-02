@@ -14,6 +14,9 @@ export class User {
     @Column({ name: 'password_hash' })
     passwordHash: string;
 
+    @Column({ name: 'held_balance', type: 'decimal', precision: 12, scale: 2, default: 0.00 })
+    held_balance: number;
+
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
 

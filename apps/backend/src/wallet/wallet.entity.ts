@@ -11,6 +11,9 @@ export class Wallet {
     @Column({ type: 'decimal', precision: 12, scale: 2, default: 0.00 })
     balance: number;
 
+    @Column({ name: 'held_balance', type: 'decimal', precision: 12, scale: 2, default: 0.00 })
+    heldBalance: number;
+
     @Column({ default: 'EUR' })
     currency: string;
 

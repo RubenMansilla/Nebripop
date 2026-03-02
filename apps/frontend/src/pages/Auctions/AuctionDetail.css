@@ -283,6 +283,17 @@
     text-align: center;
 }
 
+.bid-retention-info {
+    color: #a07c45;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    text-align: center;
+    background: #fdf8f0;
+    border: 1px dashed #d2b990;
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
 .auction-bid-label {
     font-size: 0.9rem;
     color: #888;
