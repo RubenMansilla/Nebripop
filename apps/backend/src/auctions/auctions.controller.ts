@@ -28,9 +28,22 @@ export class AuctionsController {
         @Query('subcategoryId') subcategoryId?: number,
         @Query('minPrice') minPrice?: number,
         @Query('maxPrice') maxPrice?: number,
+        @Query('dateFilter') dateFilter?: 'today' | '7days' | '30days',
+        @Query('condition') condition?: string,
+        @Query('shippingActive') shippingActive?: string,
     ) {
         const userId = req.user?.sub ?? req.user?.id;
-        return this.auctionsService.findAll(userId, categoryId, subcategoryId, minPrice, maxPrice);
+        const isShippingActive = shippingActive === 'true' ? true : (shippingActive === 'false' ? false : undefined);
+        return this.auctionsService.findAll(
+            userId,
+            categoryId,
+            subcategoryId,
+            minPrice,
+            maxPrice,
+            dateFilter,
+            condition,
+            isShippingActive
+        );
     }
 
     @UseGuards(OptionalJwtAuthGuard)

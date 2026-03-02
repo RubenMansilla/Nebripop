@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { getAuctions } from "../../api/auctions.api";
+import { filterAuctions } from "../../api/auctions.api";
 import { getCategories } from "../../api/categories.api";
 import { getSubcategoriesByCategory } from "../../api/subcategories.api";
 import { useSearchParams } from "react-router-dom";
@@ -12,17 +12,22 @@ import "../../pages/Filtro/Filtro.css"; // Importing shared CSS for filters layo
 import AuctionCard from "../../components/Auctions/AuctionCard/AuctionCard";
 
 export default function AuctionList() {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     // Data states
     const [auctions, setAuctions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState<any[]>([]);
     const [subcategories, setSubcategories] = useState<any[]>([]);
 
+    const urlCategoryId = searchParams.get("categoryId");
+    const urlSubcategoryId = searchParams.get("subcategoryId");
+
     // Filter states
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(
+        urlCategoryId ? Number(urlCategoryId) : null
+    );
     const [selectedSubcategory, setSelectedSubcategory] = useState<number | null>(
-        null,
+        urlSubcategoryId ? Number(urlSubcategoryId) : null
     );
     const [minPrice, setMinPrice] = useState<number | "">("");
     const [maxPrice, setMaxPrice] = useState<number | "">("");
@@ -38,26 +43,54 @@ export default function AuctionList() {
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [visibleCount, setVisibleCount] = useState(40);
 
-    // Sync URL params with state
-    useEffect(() => {
-        const catId = searchParams.get("categoryId");
-        const subId = searchParams.get("subcategoryId");
-
-        if (catId) setSelectedCategory(Number(catId));
-        if (subId) setSelectedSubcategory(Number(subId));
-    }, [searchParams]);
-
     // Initial Data Fetch
     useEffect(() => {
-        setLoading(true);
-        Promise.all([getAuctions(), getCategories()])
-            .then(([auctionsData, categoriesData]) => {
-                setAuctions(auctionsData);
-                setCategories(categoriesData);
-            })
-            .catch((err) => console.error(err))
-            .finally(() => setLoading(false));
+        getCategories()
+            .then(setCategories)
+            .catch(console.error);
     }, []);
+
+    // Fetch filtered auctions
+    useEffect(() => {
+        setLoading(true);
+        const condition = conditionFilters.length > 0 ? conditionFilters[0] : undefined;
+        const shippingActive = shippingFilter === "shipping" ? true : (shippingFilter === "person" ? false : undefined);
+
+        filterAuctions(
+            selectedCategory,
+            selectedSubcategory,
+            minPrice,
+            maxPrice,
+            dateFilter,
+            condition,
+            shippingActive
+        )
+            .then(setAuctions)
+            .catch(err => console.error(err))
+            .finally(() => setLoading(false));
+    }, [
+        selectedCategory,
+        selectedSubcategory,
+        minPrice,
+        maxPrice,
+        dateFilter,
+        conditionFilters,
+        shippingFilter
+    ]);
+
+    // Update URL when filters change
+    useEffect(() => {
+        const params: any = {};
+        if (selectedCategory) params.categoryId = selectedCategory.toString();
+        if (selectedSubcategory) params.subcategoryId = selectedSubcategory.toString();
+        setSearchParams(params, { replace: true });
+    }, [selectedCategory, selectedSubcategory]);
+
+    // Update state when URL changes
+    useEffect(() => {
+        setSelectedCategory(urlCategoryId ? Number(urlCategoryId) : null);
+        setSelectedSubcategory(urlSubcategoryId ? Number(urlSubcategoryId) : null);
+    }, [urlCategoryId, urlSubcategoryId]);
 
     // Fetch Subcategories when Category changes
     useEffect(() => {
@@ -100,62 +133,7 @@ export default function AuctionList() {
         );
     };
 
-    // Filtering Logic
-    const filteredAuctions = auctions.filter((auction) => {
-        const product = auction.product;
-        if (!product) return false;
-
-        // 1. Category
-        if (selectedCategory && product.category_id !== selectedCategory) {
-            return false;
-        }
-
-        // 1.1 Subcategory
-        if (selectedSubcategory && product.subcategory_id !== selectedSubcategory) {
-            return false;
-        }
-
-        // 2. Price (Current Bid or Starting Price)
-        const price = auction.current_bid || auction.starting_price;
-        if (minPrice !== "" && price < Number(minPrice)) return false;
-        if (maxPrice !== "" && price > Number(maxPrice)) return false;
-
-        // 3. Condition (Estado)
-        // Adjust property name based on DB. Assuming product.condition or product.state
-        // If product has property 'condition' that matches 'Nuevo', etc.
-        if (
-            conditionFilters.length > 0 &&
-            !conditionFilters.includes(product.condition)
-        ) {
-            return false;
-        }
-
-        // 4. Shipping
-        // Assuming product.shipping_active boolean or similar
-        // If logic differs, update here.
-        if (shippingFilter === "shipping" && !product.shipping_active) return false;
-        if (shippingFilter === "person" && product.shipping_active) return false;
-
-        // 5. Date (Publication Date)
-        if (dateFilter) {
-            const pubDate = new Date(auction.created_at || auction.start_time); // Use appropriate field
-            const now = new Date();
-            const diffTime = Math.abs(now.getTime() - pubDate.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (dateFilter === "today" && diffDays > 1) return false;
-            if (dateFilter === "7days" && diffDays > 7) return false;
-            if (dateFilter === "30days" && diffDays > 30) return false;
-        }
-
-        // Only active auctions
-        // (Previously getAuctions returned all, but checking end_time is good practice)
-        if (new Date(auction.end_time).getTime() <= new Date().getTime())
-            return false;
-
-        return true;
-    });
-
+    const filteredAuctions = auctions;
     const paginatedAuctions = filteredAuctions.slice(0, visibleCount);
 
     return (

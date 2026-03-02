@@ -381,135 +381,77 @@
 
   .popup-overlay {
     align-items: center;
-    /* Center vertically */
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.7);
   }
 
   .popup-box {
     flex-direction: column;
-    max-width: 500px;
-    /* Limit width */
+    max-width: 440px;
     width: 100%;
-    height: auto;
-    max-height: 90vh;
+    max-height: 95vh;
     min-height: 0;
     border-radius: 20px;
     margin: 0;
     animation: slideUp 0.3s ease-out;
   }
 
-  /* Stack inputs nicely */
+  .popup-left {
+    display: none !important;
+  }
+
+  .popup-right {
+    padding: 30px 24px;
+    justify-content: flex-start;
+    overflow-y: auto;
+  }
+
+  .welcome-wrapper {
+    margin-bottom: 20px;
+    margin-top: 10px;
+  }
+
+  .welcome-title {
+    font-size: 22px;
+    margin-bottom: 0;
+  }
+
   .login-inputs-row {
     flex-direction: column;
     gap: 0;
   }
 
-  .login-inputs-row .login-material-textfield {
-    width: 100%;
+  .login-material-textfield {
     max-width: 100%;
-    margin-bottom: 15px;
-  }
-
-
-  .popup-left {
-    display: none !important;
-  }
-
-  .popup-left .brand-title {
-    font-size: 24px !important;
-    margin-bottom: 4px !important;
-    font-weight: 700;
-  }
-
-  .popup-left .brand-subtitle {
-    font-size: 13px !important;
-    line-height: 1.2 !important;
-    opacity: 0.95 !important;
-    max-width: 260px;
-    margin: 0 auto;
-  }
-
-  .popup-right {
-    padding: 20px 44px;
-    justify-content: center;
-    overflow-y: auto;
-    max-height: 100%;
-    /* Ajustado para el header más pequeño */
-  }
-
-  .welcome-wrapper {
-    margin-bottom: 5px;
   }
 
   .recaptcha-wrapper {
-    margin-bottom: 15px;
-  }
-
-  .welcome-title {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-
-  .login-input,
-  .login-btn,
-  .login-error,
-  .login-success {
-    max-width: 100%;
-  }
-
-  .login-input {
-    height: 48px;
-    /* Reducido de 52px */
-    font-size: 16px;
-    margin-bottom: 12px;
-    /* Reducido de 14px */
+    margin-bottom: 20px;
+    transform: scale(0.9);
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
   .login-btn {
-    height: 48px;
-    /* Reducido de 52px */
+    height: 52px;
     font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .forgot-password-wrapper {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     max-width: 100%;
   }
 
-  .forgot-password {
-    font-size: 14px;
-    margin: 0px 0;
-    /* Reducido de 12px */
-  }
-
-  .register-text,
-  .login-text {
-    font-size: 14px;
-    margin-top: 14px;
-    /* Reducido de 16px */
+  .forgot-password-wrapper {
+    margin-bottom: 15px;
+    max-width: 100%;
   }
 
   .popup-close {
-    top: 12px;
-    right: 12px;
+    top: 10px;
+    right: 10px;
     width: 36px;
     height: 36px;
-    font-size: 20px;
-  }
-
-  /* ReCAPTCHA en móvil */
-  .popup-right>div[class*="recaptcha"] {
-    transform: scale(0.95);
-    transform-origin: center;
-    margin-bottom: 16px;
-  }
-
-  /* Forzar que el iframe del captcha sea responsive */
-  .popup-right iframe[src*="recaptcha"] {
-    max-width: 100% !important;
-    width: 100% !important;
+    font-size: 16px;
+    background: #f5f5f5;
   }
 }
 

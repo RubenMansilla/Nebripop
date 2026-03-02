@@ -92,6 +92,9 @@ export class AuctionsService {
         subcategoryId?: number,
         minPrice?: number,
         maxPrice?: number,
+        dateFilter?: 'today' | '7days' | '30days',
+        condition?: string,
+        shippingActive?: boolean,
     ) {
         // Build query to get active auctions
         const queryBuilder = this.auctionsRepository
@@ -121,6 +124,31 @@ export class AuctionsService {
 
         if (maxPrice !== undefined) {
             queryBuilder.andWhere('auction.current_bid <= :maxPrice', { maxPrice });
+        }
+
+        if (condition) {
+            queryBuilder.andWhere('product.condition = :condition', { condition });
+        }
+
+        if (shippingActive !== undefined) {
+            queryBuilder.andWhere('product.shipping_active = :shippingActive', { shippingActive });
+        }
+
+        if (dateFilter) {
+            const now = new Date();
+            let startDate: Date | null = null;
+
+            if (dateFilter === 'today') {
+                startDate = new Date(now.setHours(0, 0, 0, 0));
+            } else if (dateFilter === '7days') {
+                startDate = new Date(now.setDate(now.getDate() - 7));
+            } else if (dateFilter === '30days') {
+                startDate = new Date(now.setDate(now.getDate() - 30));
+            }
+
+            if (startDate) {
+                queryBuilder.andWhere('auction.created_at >= :startDate', { startDate });
+            }
         }
 
         const auctions = await queryBuilder.getMany();

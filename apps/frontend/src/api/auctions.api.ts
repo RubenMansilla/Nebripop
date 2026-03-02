@@ -24,14 +24,20 @@ export async function createAuction(
 export async function filterAuctions(
     categoryId?: number | null,
     subcategoryId?: number | null,
-    minPrice?: number,
-    maxPrice?: number,
+    minPrice?: number | string,
+    maxPrice?: number | string,
+    dateFilter?: string,
+    condition?: string,
+    shippingActive?: boolean
 ) {
     const params: any = {};
     if (categoryId) params.categoryId = categoryId;
     if (subcategoryId) params.subcategoryId = subcategoryId;
-    if (minPrice !== undefined) params.minPrice = minPrice;
-    if (maxPrice !== undefined) params.maxPrice = maxPrice;
+    if (minPrice !== undefined && minPrice !== "") params.minPrice = minPrice;
+    if (maxPrice !== undefined && maxPrice !== "") params.maxPrice = maxPrice;
+    if (dateFilter) params.dateFilter = dateFilter;
+    if (condition) params.condition = condition;
+    if (shippingActive !== undefined) params.shippingActive = shippingActive;
 
     try {
         const res = await api.get("/auctions/filter", { params });
