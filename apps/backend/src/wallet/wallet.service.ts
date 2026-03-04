@@ -18,11 +18,7 @@ export class WalletService {
             await this.walletRepo.save(wallet);
         }
 
-        return {
-            ...wallet,
-            balance: Number(wallet.balance),
-            heldBalance: Number(wallet.heldBalance),
-        };
+        return wallet;
     }
 
     async deposit(userId: number, amount: number) {
@@ -74,7 +70,7 @@ export class WalletService {
             heldBalance: newHeld,
         });
 
-        return this.getBalance(userId) as any;
+        return this.getBalance(userId);
     }
 
     /**
@@ -96,7 +92,7 @@ export class WalletService {
             heldBalance: newHeld,
         });
 
-        return this.getBalance(userId) as any;
+        return this.getBalance(userId);
     }
 
     /**
@@ -114,6 +110,6 @@ export class WalletService {
         const newHeld = Number(wallet.heldBalance) - amount;
         await this.walletRepo.update({ userId }, { heldBalance: newHeld });
 
-        return this.getBalance(userId) as any;
+        return this.getBalance(userId);
     }
 }

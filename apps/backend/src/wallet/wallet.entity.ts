@@ -8,10 +8,29 @@ export class Wallet {
     @Column({ name: 'user_id', unique: true })
     userId: number;
 
-    @Column({ type: 'decimal', precision: 12, scale: 2, default: 0.00 })
+    @Column({
+        type: 'decimal',
+        precision: 12,
+        scale: 2,
+        default: 0.00,
+        transformer: {
+            to: (value: number) => value,
+            from: (value: string) => parseFloat(value),
+        },
+    })
     balance: number;
 
-    @Column({ name: 'held_balance', type: 'decimal', precision: 12, scale: 2, default: 0.00 })
+    @Column({
+        name: 'held_balance',
+        type: 'decimal',
+        precision: 12,
+        scale: 2,
+        default: 0.00,
+        transformer: {
+            to: (value: number) => value,
+            from: (value: string) => parseFloat(value),
+        },
+    })
     heldBalance: number;
 
     @Column({ default: 'EUR' })

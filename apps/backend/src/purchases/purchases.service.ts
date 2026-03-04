@@ -31,6 +31,39 @@ export class PurchasesService {
     private notificationsService: NotificationsService,
   ) { }
 
+  // ─── GEO UTILS (NORMALIZATION) ─────────────────────────────────────────────
+  private normalizeCountryToISO2(country: string): string | null {
+    if (!country) return null;
+    const key = country.trim().toLowerCase();
+    const COUNTRY_ALIASES: Record<string, string> = {
+      spain: "ES", España: "ES", espana: "ES", es: "ES",
+      "united states": "US", usa: "US", eeuu: "US", "estados unidos": "US",
+      france: "FR", francia: "FR",
+      italy: "IT", italia: "IT",
+      germany: "DE", alemania: "DE",
+      portugal: "PT",
+      "united kingdom": "GB", uk: "GB", "reino unido": "GB",
+      mexico: "MX", méxico: "MX",
+      canada: "CA", canadá: "CA",
+    };
+    return (
+      COUNTRY_ALIASES[key] ?? (key.length === 2 ? key.toUpperCase() : null)
+    );
+  }
+
+  private continentFromISO2(iso2: string): string | null {
+    if (!iso2) return null;
+    const ISO2_TO_CONTINENT: Record<string, string> = {
+      ES: "Europe", FR: "Europe", IT: "Europe", DE: "Europe", PT: "Europe", GB: "Europe",
+      US: "North America", CA: "North America", MX: "North America",
+      BR: "South America", AR: "South America", CL: "South America", CO: "South America", PE: "South America",
+      MA: "Africa", DZ: "Africa", TN: "Africa", NG: "Africa", ZA: "Africa",
+      CN: "Asia", JP: "Asia", KR: "Asia", IN: "Asia", TH: "Asia",
+      AU: "Oceania", NZ: "Oceania",
+    };
+    return ISO2_TO_CONTINENT[iso2.toUpperCase()] ?? null;
+  }
+
   // =========================
   // CREAR COMPRA (PayPal / Monedero)
   // =========================
@@ -50,6 +83,10 @@ export class PurchasesService {
 
       // ✅ NUEVO: precio acordado (oferta aceptada)
       agreedPrice,
+
+      // ✅ NUEVO: Analítica
+      deviceType,
+      purchaseType, // opcional, el backend puede inferirlo
     } = data;
 
     if (!productId) {
@@ -130,6 +167,27 @@ export class PurchasesService {
       shippingPhone: shippingPhone || null,
       shippingCountry: shippingCountry || null,
     });
+
+    // ─── ANALYTICS INJECTION ───────────────────────────────────────────────
+    const countryCode = this.normalizeCountryToISO2(shippingCountry);
+    purchase.purchaseCountryCode = countryCode;
+    purchase.purchaseContinent = countryCode ? this.continentFromISO2(countryCode) : null;
+    purchase.purchaseCity = (shippingCity || "").trim() || null;
+    purchase.deviceType = deviceType || "desktop";
+
+    // Inferir purchaseType si no viene
+    if (purchaseType) {
+      purchase.purchaseType = purchaseType;
+    } else if (agreedPrice !== undefined && agreedPrice !== null && agreedPrice !== "") {
+      // Se pasó un precio acordado -> 'offer' o 'auction'?
+      // CheckoutPage envía 'agreedPrice' tanto para ofertas como subastas.
+      // Pero si viene de AuctionsService.processPayment, podemos saberlo.
+      // Por defecto si hay agreedPrice y no es el original, asumimos 'offer' a menos que se especifique.
+      purchase.purchaseType = "offer";
+    } else {
+      purchase.purchaseType = "direct";
+    }
+    // ───────────────────────────────────────────────────────────────────────
 
     const saved = await this.purchaseRepo.save(purchase);
 

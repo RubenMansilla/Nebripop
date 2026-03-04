@@ -8,6 +8,7 @@ import { getAuctionById, payAuction } from "../../api/auctions.api";
 import { useNotificationSettings } from "../../context/NotificationContext";
 import { toast } from "react-toastify";
 import api from "../../utils/axiosConfig";
+import { getDeviceType } from "../../utils/deviceType";
 
 interface CheckoutProduct {
   id: number;
@@ -227,6 +228,11 @@ export default function CheckoutPage() {
     if (product && parsedOffer !== null && parsedOffer > 0 && parsedOffer <= product.price && !auctionIdParam) {
       payload.agreedPrice = parsedOffer;
     }
+
+    // ─── ANALYTICS ──────────────────────────────────────────────────────────
+    payload.deviceType = getDeviceType();
+    // ────────────────────────────────────────────────────────────────────────
+
     return payload;
   };
 

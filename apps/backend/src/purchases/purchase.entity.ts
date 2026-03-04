@@ -74,4 +74,22 @@ export class Purchase {
 
   @CreateDateColumn({ name: "purchased_at" })
   purchasedAt: Date;
+
+  // =====================
+  // ANALYTICS FIELDS
+  // =====================
+  @Column({ type: "varchar", name: "purchase_country_code", length: 2, nullable: true })
+  purchaseCountryCode: string | null;
+
+  @Column({ type: "varchar", name: "purchase_continent", length: 20, nullable: true })
+  purchaseContinent: string | null;
+
+  @Column({ type: "varchar", name: "purchase_city", length: 120, nullable: true })
+  purchaseCity: string | null;
+
+  @Column({ type: "varchar", name: "device_type", length: 10, nullable: true })
+  deviceType: string | null;
+
+  @Column({ type: "varchar", name: "purchase_type", length: 10, default: "direct" })
+  purchaseType: string; // "direct" | "auction" | "offer"
 }

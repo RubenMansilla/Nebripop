@@ -373,6 +373,7 @@ export class AuctionsService {
         const purchasePayload = {
             productId: auction.product_id,
             agreedPrice: auction.current_bid,
+            purchaseType: 'auction',
             ...shippingData
         };
 

@@ -126,17 +126,44 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
     };
 
     // Helper: Calculate Time Left
-    const calculateTimeLeft = (endTime: string) => {
-        const end = new Date(endTime).getTime();
+    const [timeLeft, setTimeLeft] = useState('');
+
+    useEffect(() => {
+        const updateTimer = () => {
+            const end = new Date(auction.end_time).getTime();
+            const now = new Date().getTime();
+            const diff = end - now;
+
+            if (diff <= 0) {
+                setTimeLeft('Finalizada');
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            if (hours > 0) {
+                setTimeLeft(`${hours}h ${minutes}m`);
+            } else {
+                setTimeLeft(`${minutes}m`);
+            }
+        };
+
+        updateTimer();
+        const interval = setInterval(updateTimer, 60000); // Update every minute
+        return () => clearInterval(interval);
+    }, [auction.end_time]);
+
+    // Determine badge color based on time left
+    const getTimeLeftStatus = () => {
+        const end = new Date(auction.end_time).getTime();
         const now = new Date().getTime();
         const diff = end - now;
 
-        if (diff <= 0) return 'Finalizada';
-
-        const hours = Math.floor(diff / (1000 * 60 * 60));
-        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-        return `${hours}h ${minutes}m`;
+        if (diff <= 0) return 'expired';
+        if (diff < 1000 * 60 * 60) return 'urgent'; // < 1 hour
+        if (diff < 1000 * 60 * 60 * 5) return 'soon'; // < 5 hours
+        return 'normal';
     };
 
     // Check if user is owner to hide heart (optional, matching Product logic)
@@ -285,8 +312,8 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
                         </p>
                     </div>
                     <div>
-                        <div className="time-left-badge">
-                            {calculateTimeLeft(auction.end_time)}
+                        <div className={`time-left-badge ${getTimeLeftStatus()}`}>
+                            {timeLeft}
                         </div>
                     </div>
                 </div>
