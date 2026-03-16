@@ -13,11 +13,11 @@ export class FavoriteProduct {
     product_id: number;
 
     @ManyToOne(() => Product, (product) => product.favorites)
-    @JoinColumn({ name: 'product_id' }) // Le decimos que use la columna 'product_id' para unir
+    @JoinColumn({ name: 'product_id' })
     product: Product;
 
     @ManyToOne(() => User)
-    @JoinColumn({ name: 'user_id' }) // Le decimos que use la columna 'user_id' para unir
+    @JoinColumn({ name: 'user_id' })
     user: User;
 
 }
