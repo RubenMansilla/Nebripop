@@ -564,7 +564,7 @@ export default function Detail() {
                 <div className="shipping-row">
                   <div className="shipping-icon">🛡</div>
                   <div className="shipping-info">
-                    <p className="shipping-title">Protección de Wallastock</p>
+                    <p className="shipping-title">Protección de Nebripop</p>
                     <p className="shipping-desc">
                       Envío protegido: reembolso fácil y ayuda cuando lo necesites
                     </p>
