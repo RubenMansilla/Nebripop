@@ -21,6 +21,14 @@ import { AuthContext } from "../../context/AuthContext";
 import { useLoginModal } from "../../context/LoginModalContext";
 import ChatPopup from "../../components/ChatPopup/ChatPopup";
 
+// Importar imágenes de publicidad directamente para que Vite las incluya en el build
+import adSet1_2 from "../../assets/publicidad/set1_2.png";
+import adSet1_3 from "../../assets/publicidad/set1_3.png";
+import adSet1_4 from "../../assets/publicidad/set1_4.png";
+import adSet2_1 from "../../assets/publicidad/set2_1.png";
+import adSet2_3 from "../../assets/publicidad/set2_3.png";
+import adSet2_4 from "../../assets/publicidad/set2_4.png";
+
 type ChatPopupMode = "message" | "offer";
 
 // COMPONENTE SKELETON PARA CARGA
@@ -42,12 +50,12 @@ const DetailSkeleton = () => (
 );
 
 const AD_IMAGES = [
-  "/assets/publicidad/set1_2.png",
-  "/assets/publicidad/set1_3.png",
-  "/assets/publicidad/set1_4.png",
-  "/assets/publicidad/set2_1.png",
-  "/assets/publicidad/set2_3.png",
-  "/assets/publicidad/set2_4.png",
+  adSet1_2,
+  adSet1_3,
+  adSet1_4,
+  adSet2_1,
+  adSet2_3,
+  adSet2_4,
 ];
 
 export default function Detail() {

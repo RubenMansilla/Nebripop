@@ -22,7 +22,7 @@ import { OptionalJwtAuthGuard } from "../auth/optional-jwt.guard";
 
 @Controller("products")
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -147,7 +147,7 @@ export class ProductsController {
     return this.productsService.getTopSuccessfulProducts(req.user.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(OptionalJwtAuthGuard)
   @Get(":productId")
   async getProductById(
     @Param("productId") productId: string,
