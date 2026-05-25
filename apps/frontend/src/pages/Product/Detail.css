@@ -318,6 +318,10 @@
     padding: 20px 0;
   }
 
+  .seller-reviews .review-body {
+    padding-right: 0;
+  }
+
   .mobile-only {
     display: none !important;
   }
