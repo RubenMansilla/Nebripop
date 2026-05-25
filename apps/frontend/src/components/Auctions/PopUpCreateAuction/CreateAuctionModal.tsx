@@ -105,6 +105,7 @@ export default function CreateAuctionModal({
                             value={duration}
                             onChange={e => setDuration(e.target.value)}
                         >
+                            <option value="0.01667">1 Minuto (Demo)</option>
                             <option value="12">12 Horas</option>
                             <option value="24">24 Horas</option>
                             <option value="48">48 Horas</option>

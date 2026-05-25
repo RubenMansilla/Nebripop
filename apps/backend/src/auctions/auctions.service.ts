@@ -68,9 +68,8 @@ export class AuctionsService {
             await this.auctionsRepository.remove(previousAuctions);
         }
 
-        // Calculate end time
-        const endTime = new Date();
-        endTime.setHours(endTime.getHours() + durationHours);
+        // Calculate end time (supports fractional hours, e.g. 1/60 for 1 minute)
+        const endTime = new Date(Date.now() + durationHours * 60 * 60 * 1000);
 
         const auction = this.auctionsRepository.create({
             product_id: productId,
