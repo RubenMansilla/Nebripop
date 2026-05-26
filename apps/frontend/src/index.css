@@ -184,10 +184,16 @@ textarea {
     /* 1 */
     margin: 0;
     /* 2 */
+}
+
+/* Text color overrides only for text-input elements, not buttons */
+input,
+optgroup,
+select,
+textarea {
     color: #333;
     caret-color: #333;
     cursor: text;
-    -webkit-text-fill-color: #333;
 }
 
 /**
