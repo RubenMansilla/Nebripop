@@ -272,7 +272,7 @@ export class AuctionsService {
     }
 
     async findParticipatingByUser(userId: number) {
-        return await this.auctionsRepository.createQueryBuilder('auction')
+        const auctions = await this.auctionsRepository.createQueryBuilder('auction')
             .leftJoinAndSelect('auction.product', 'product')
             .leftJoinAndSelect('product.images', 'images')
             .innerJoin('auction.bids', 'bid')
@@ -280,6 +280,16 @@ export class AuctionsService {
             .andWhere('auction.status IN (:...statuses)', { statuses: ['active', 'awaiting_payment', 'sold'] })
             .orderBy('auction.created_at', 'DESC')
             .getMany();
+
+        // Add favorite status
+        const favorites = await this.favoritesAuctionRepository.find({
+            where: { user_id: userId }
+        });
+        const favoriteIds = favorites.map(f => f.auction_id);
+        return auctions.map(a => ({
+            ...a,
+            isFavorite: favoriteIds.includes(a.id)
+        }));
     }
 
     async findHistoryByUser(userId: number) {
