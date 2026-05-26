@@ -671,14 +671,13 @@ export class ProductsService {
       .groupBy(`TO_CHAR(purchase.purchasedAt, '${sqlFormat}')`)
       .getRawMany();
 
-    const salesRaw = await this.productRepo
-      .createQueryBuilder("product")
-      .select(`TO_CHAR(product.created_at, '${sqlFormat}')`, "dateKey")
-      .addSelect("COUNT(product.id)", "count")
-      .where("product.owner_id = :userId", { userId })
-      .andWhere("product.sold = true")
-      .andWhere("product.created_at >= :startDate", { startDate })
-      .groupBy(`TO_CHAR(product.created_at, '${sqlFormat}')`)
+    const salesRaw = await this.purchaseRepo
+      .createQueryBuilder("purchase")
+      .select(`TO_CHAR(purchase.purchasedAt, '${sqlFormat}')`, "dateKey")
+      .addSelect("COUNT(purchase.id)", "count")
+      .where("purchase.sellerId = :userId", { userId })
+      .andWhere("purchase.purchasedAt >= :startDate", { startDate })
+      .groupBy(`TO_CHAR(purchase.purchasedAt, '${sqlFormat}')`)
       .getRawMany();
 
     const reviewsRaw = await this.reviewRepo
