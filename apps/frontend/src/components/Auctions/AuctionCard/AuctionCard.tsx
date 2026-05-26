@@ -141,16 +141,19 @@ export default function AuctionCard({ auction, user, mode = 'active_auctions', o
 
             const hours = Math.floor(diff / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
             if (hours > 0) {
                 setTimeLeft(`${hours}h ${minutes}m`);
+            } else if (minutes > 0) {
+                setTimeLeft(`${minutes}m ${seconds}s`);
             } else {
-                setTimeLeft(`${minutes}m`);
+                setTimeLeft(`${seconds}s`);
             }
         };
 
         updateTimer();
-        const interval = setInterval(updateTimer, 60000); // Update every minute
+        const interval = setInterval(updateTimer, 1000);
         return () => clearInterval(interval);
     }, [auction.end_time]);
 
