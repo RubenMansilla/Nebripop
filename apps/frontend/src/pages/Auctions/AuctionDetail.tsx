@@ -48,6 +48,7 @@ export default function AuctionDetail() {
     const [loading, setLoading] = useState(true);
     const [bidAmount, setBidAmount] = useState("");
     const [bidError, setBidError] = useState("");
+    const [timeLeft, setTimeLeft] = useState("");
 
     // Seller & Reviews State
     const [sellerPublic, setSellerPublic] = useState<any | null>(null);
@@ -229,8 +230,24 @@ export default function AuctionDetail() {
         if (diff <= 0) return "Finalizada";
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        return `${hours}h ${minutes}m`;
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        if (hours > 0) return `${hours}h ${minutes}m`;
+        if (minutes > 0) return `${minutes}m ${seconds}s`;
+        return `${seconds}s`;
     };
+
+    // Live countdown timer
+    useEffect(() => {
+        if (!auction?.end_time || auction.status !== "active") return;
+
+        const updateTimer = () => {
+            setTimeLeft(calculateTimeLeft(auction.end_time));
+        };
+
+        updateTimer();
+        const interval = setInterval(updateTimer, 1000);
+        return () => clearInterval(interval);
+    }, [auction?.end_time, auction?.status]);
 
     // Navigation
     const goToSellerProfile = () => {
@@ -459,7 +476,7 @@ export default function AuctionDetail() {
                                 </p>
                                 <div className="auction-time-badge">
                                     {auction.status === "active"
-                                        ? calculateTimeLeft(auction.end_time)
+                                        ? timeLeft
                                         : auction.status === "awaiting_payment"
                                             ? "Pago Pendiente"
                                             : auction.status === "sold"
